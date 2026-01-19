@@ -105,10 +105,9 @@ ESLint • Prettier • Jest • React Testing Library
 ### Backend
 
 ```
-Java 17 • Spring Boot • Spring Data JPA • QueryDSL
-MySQL • Redis • WebSocket • SSE
-RabbitMQ / Redis Stream • Python
-AWS EC2 • AWS Lambda • Docker • GitHub Actions
+Java 17 • Spring Boot 4.0 • Spring Data JPA • QueryDSL
+MySQL • WebSocket • SSE
+AWS EC2 • Docker • GitHub Actions
 ```
 
 > 📝 기술 스택 상세 선정 이유는 [Wiki](https://github.com/softeerbootcamp-7th/Team7-Jackpot/wiki)를 참고해주세요.
