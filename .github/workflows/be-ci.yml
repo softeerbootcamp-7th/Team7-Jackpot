@@ -30,6 +30,7 @@ jobs:
         run: |
           mkdir -p ./mcp-client/src/main/resources
           echo "${{ secrets.APPLICATION_PROD_YML }}" >> src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_TEST_YML }}" >> src/test/resources/application.yml
 
         shell: bash
 
