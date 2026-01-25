@@ -25,12 +25,15 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
+          cache: 'gradle'
 
       - name: Create yml files
         run: |
-          mkdir -p ./mcp-client/src/main/resources
-          echo "${{ secrets.APPLICATION_PROD_YML }}" >> src/main/resources/application.yml
-          echo "${{ secrets.APPLICATION_TEST_YML }}" >> src/test/resources/application.yml
+          mkdir -p src/main/resources
+          mkdir -p src/test/resources
+          
+          echo "${{ secrets.APPLICATION_PROD_YML }}" > src/main/resources/application.yml
+          echo "${{ secrets.APPLICATION_TEST_YML }}" > src/test/resources/application.yml
 
         shell: bash
 
