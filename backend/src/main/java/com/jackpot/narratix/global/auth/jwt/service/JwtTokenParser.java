@@ -1,31 +1,24 @@
 package com.jackpot.narratix.global.auth.jwt.service;
 
-import com.jackpot.narratix.global.auth.jwt.domain.AccessToken;
-import com.jackpot.narratix.global.auth.jwt.domain.RefreshToken;
+import com.jackpot.narratix.global.auth.jwt.JwtConstants;
+import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
 public class JwtTokenParser {
 
-    private final JwtGenerator jwtGenerator;
+    private final JwtKeyProvider jwtKeyProvider;
 
-    public AccessToken parseAccessToken(String rawToken) {
-        Claims claims = parseClaims(rawToken);
-        return AccessToken.of(
-                rawToken,
-                claims.getSubject(),
-                claims.getIssuedAt(),
-                claims.getExpiration()
-        );
-    }
-
-    public RefreshToken parseRefreshToken(String rawToken) {
-        Claims claims = parseClaims(rawToken);
-        return RefreshToken.of(
+    public Token parseToken(String rawToken) {
+        String token = extractPrefix(rawToken);
+        Claims claims = parseClaims(token);
+        return Token.of(
                 rawToken,
                 claims.getSubject(),
                 claims.getIssuedAt(),
@@ -34,8 +27,18 @@ public class JwtTokenParser {
     }
 
     private Claims parseClaims(String rawToken) {
-        JwtParser jwtParser = jwtGenerator.getJwtParser();
-        return jwtParser.parseSignedClaims(rawToken)
+        return Jwts.parser()
+                .verifyWith(jwtKeyProvider.getKey())
+                .build()
+                .parseSignedClaims(rawToken)
                 .getPayload();
+    }
+
+    private String extractPrefix(String accessToken) {
+        if (StringUtils.hasText(accessToken) && accessToken.startsWith(JwtConstants.BEARER)) {
+            return accessToken.substring(JwtConstants.BEARER.length());
+        }
+        // TODO: 커스텀 예외 처리 추가
+        throw new IllegalArgumentException();
     }
 }

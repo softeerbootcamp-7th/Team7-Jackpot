@@ -26,12 +26,6 @@ public class JwtGenerator {
     @Value("${jwt.refresh-token-expiration-time}")
     private Long REFRESH_TOKEN_EXPIRATION_TIME;
 
-    public JwtParser getJwtParser() {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build();
-    }
-
     public RefreshToken generateRefreshToken(String subjectId) {
         final Date now = new Date();
         final Date expiration = generateExpirationDate(true, now);
