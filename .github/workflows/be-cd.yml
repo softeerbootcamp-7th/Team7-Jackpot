@@ -66,7 +66,7 @@ jobs:
           username: ec2-user
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.PEM_KEY }}
-          source: "backend/docker-compose.yml"
+          source: "./backend/docker-compose.yml"
           target: "/home/ec2-user/app/"
           strip_components: 1
 
@@ -76,7 +76,7 @@ jobs:
           username: ec2-user
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.PEM_KEY }}
-          source: "backend/script/"
+          source: "./backend/script/"
           target: "/home/ec2-user/app/"
           strip_components: 1
 
