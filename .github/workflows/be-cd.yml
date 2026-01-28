@@ -68,7 +68,7 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.PEM_KEY }}
           source: "./backend/docker-compose.yml"
-          target: "/home/ubuntu/app/"
+          target: "/home/ubuntu/app/backend/"
           strip_components: 1
 
       - name: Send deploy script to EC2 Instance
@@ -77,8 +77,8 @@ jobs:
           username: ubuntu
           host: ${{ secrets.SERVER_IP }}
           key: ${{ secrets.PEM_KEY }}
-          source: "./backend/script/"
-          target: "/home/ubuntu/app/"
+          source: "./backend/script"
+          target: "/home/ubuntu/app/backend/"
           strip_components: 1
 
       - name: Docker Container Run
