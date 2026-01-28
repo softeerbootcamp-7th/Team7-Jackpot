@@ -22,7 +22,7 @@ import static org.mockito.BDDMockito.*;
 class TokenServiceTest {
 
     @Mock
-    private JwtProvider jwtProvider;
+    private JwtGenerator jwtGenerator;
 
     @Mock
     private JwtValidator jwtValidator;
@@ -45,9 +45,9 @@ class TokenServiceTest {
 
         AccessToken accessToken = AccessToken.of("access.token", TEST_USER_ID, now, accessExpiration);
         RefreshToken refreshToken = RefreshToken.of("refresh.token", TEST_USER_ID, now, refreshExpiration);
-        TokenResponse expectedResponse = TokenResponse.of(accessToken, refreshToken);
 
-        given(jwtProvider.issueToken(TEST_USER_ID)).willReturn(expectedResponse);
+        given(jwtGenerator.generateAccessToken(TEST_USER_ID)).willReturn(accessToken);
+        given(jwtGenerator.generateRefreshToken(TEST_USER_ID)).willReturn(refreshToken);
 
         // when
         TokenResponse result = tokenService.issueToken(TEST_USER_ID);
@@ -57,7 +57,8 @@ class TokenServiceTest {
         assertThat(result.getAccessToken()).isEqualTo("access.token");
         assertThat(result.getRefreshToken()).isEqualTo("refresh.token");
 
-        then(jwtProvider).should(times(1)).issueToken(TEST_USER_ID);
+        then(jwtGenerator).should(times(1)).generateAccessToken(TEST_USER_ID);
+        then(jwtGenerator).should(times(1)).generateRefreshToken(TEST_USER_ID);
     }
 
     @Test
@@ -72,7 +73,7 @@ class TokenServiceTest {
 
         given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
         willDoNothing().given(jwtValidator).validateToken(parsedToken);
-        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newAccessToken);
+        given(jwtGenerator.generateAccessToken(TEST_USER_ID)).willReturn(newAccessToken);
 
         // when
         AccessToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
@@ -84,7 +85,7 @@ class TokenServiceTest {
 
         then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
         then(jwtValidator).should(times(1)).validateToken(parsedToken);
-        then(jwtProvider).should(times(1)).reissueToken(TEST_USER_ID);
+        then(jwtGenerator).should(times(1)).generateAccessToken(TEST_USER_ID);
     }
 
     @Test
@@ -105,7 +106,7 @@ class TokenServiceTest {
 
         then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
         then(jwtValidator).should(times(1)).validateToken(parsedToken);
-        then(jwtProvider).should(never()).reissueToken(anyString());
+        then(jwtGenerator).should(never()).generateAccessToken(anyString());
     }
 
     @Test
@@ -126,7 +127,7 @@ class TokenServiceTest {
 
         then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
         then(jwtValidator).should(times(1)).validateToken(parsedToken);
-        then(jwtProvider).should(never()).reissueToken(anyString());
+        then(jwtGenerator).should(never()).generateAccessToken(anyString());
     }
 
     @Test
@@ -141,16 +142,16 @@ class TokenServiceTest {
 
         given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
         willDoNothing().given(jwtValidator).validateToken(parsedToken);
-        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newAccessToken);
+        given(jwtGenerator.generateAccessToken(TEST_USER_ID)).willReturn(newAccessToken);
 
         // when
         tokenService.reissueToken(BEARER_REFRESH_TOKEN);
 
         // then
-        var inOrder = inOrder(jwtTokenParser, jwtValidator, jwtProvider);
+        var inOrder = inOrder(jwtTokenParser, jwtValidator, jwtGenerator);
         then(jwtTokenParser).should(inOrder).parseToken(BEARER_REFRESH_TOKEN);
         then(jwtValidator).should(inOrder).validateToken(parsedToken);
-        then(jwtProvider).should(inOrder).reissueToken(TEST_USER_ID);
+        then(jwtGenerator).should(inOrder).generateAccessToken(TEST_USER_ID);
     }
 
     @Test
@@ -166,14 +167,14 @@ class TokenServiceTest {
 
         given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
         willDoNothing().given(jwtValidator).validateToken(parsedToken);
-        given(jwtProvider.reissueToken(expectedUserId)).willReturn(newAccessToken);
+        given(jwtGenerator.generateAccessToken(expectedUserId)).willReturn(newAccessToken);
 
         // when
         AccessToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
 
         // then
         assertThat(result.getSubject()).isEqualTo(expectedUserId);
-        then(jwtProvider).should(times(1)).reissueToken(expectedUserId);
+        then(jwtGenerator).should(times(1)).generateAccessToken(expectedUserId);
     }
 
     @Test
@@ -188,14 +189,14 @@ class TokenServiceTest {
 
         AccessToken accessToken1 = AccessToken.of("access1", user1, now, accessExpiration);
         RefreshToken refreshToken1 = RefreshToken.of("refresh1", user1, now, refreshExpiration);
-        TokenResponse response1 = TokenResponse.of(accessToken1, refreshToken1);
 
         AccessToken accessToken2 = AccessToken.of("access2", user2, now, accessExpiration);
         RefreshToken refreshToken2 = RefreshToken.of("refresh2", user2, now, refreshExpiration);
-        TokenResponse response2 = TokenResponse.of(accessToken2, refreshToken2);
 
-        given(jwtProvider.issueToken(user1)).willReturn(response1);
-        given(jwtProvider.issueToken(user2)).willReturn(response2);
+        given(jwtGenerator.generateAccessToken(user1)).willReturn(accessToken1);
+        given(jwtGenerator.generateRefreshToken(user1)).willReturn(refreshToken1);
+        given(jwtGenerator.generateAccessToken(user2)).willReturn(accessToken2);
+        given(jwtGenerator.generateRefreshToken(user2)).willReturn(refreshToken2);
 
         // when
         TokenResponse result1 = tokenService.issueToken(user1);
@@ -207,7 +208,9 @@ class TokenServiceTest {
         assertThat(result2.getAccessToken()).isEqualTo("access2");
         assertThat(result2.getRefreshToken()).isEqualTo("refresh2");
 
-        then(jwtProvider).should(times(1)).issueToken(user1);
-        then(jwtProvider).should(times(1)).issueToken(user2);
+        then(jwtGenerator).should(times(1)).generateAccessToken(user1);
+        then(jwtGenerator).should(times(1)).generateRefreshToken(user1);
+        then(jwtGenerator).should(times(1)).generateAccessToken(user2);
+        then(jwtGenerator).should(times(1)).generateRefreshToken(user2);
     }
 }

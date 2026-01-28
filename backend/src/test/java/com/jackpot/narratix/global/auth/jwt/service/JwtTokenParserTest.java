@@ -99,12 +99,13 @@ class JwtTokenParserTest {
         SecretKey secretKey = createSecretKey();
         given(jwtKeyProvider.getKey()).willReturn(secretKey);
 
-        Date now = new Date();
-        Date pastExpiration = new Date(now.getTime() - 3600000); // 1시간 전 만료
+        long currentTime = System.currentTimeMillis();
+        Date issuedAt = createDateWithoutMillis(currentTime - 7200000); // 2시간 전 발급
+        Date pastExpiration = createDateWithoutMillis(currentTime - 3600000); // 1시간 전 만료
 
         String token = Jwts.builder()
                 .subject(TEST_SUBJECT)
-                .issuedAt(new Date(now.getTime() - 7200000)) // 2시간 전 발급
+                .issuedAt(issuedAt)
                 .expiration(pastExpiration)
                 .signWith(secretKey)
                 .compact();

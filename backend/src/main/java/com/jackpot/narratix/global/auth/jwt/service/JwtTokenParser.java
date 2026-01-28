@@ -3,7 +3,7 @@ package com.jackpot.narratix.global.auth.jwt.service;
 import com.jackpot.narratix.global.auth.jwt.JwtConstants;
 import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -27,11 +27,15 @@ public class JwtTokenParser {
     }
 
     private Claims parseClaims(String rawToken) {
-        return Jwts.parser()
-                .verifyWith(jwtKeyProvider.getKey())
-                .build()
-                .parseSignedClaims(rawToken)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(jwtKeyProvider.getKey())
+                    .build()
+                    .parseSignedClaims(rawToken)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            return e.getClaims();
+        }
     }
 
     private String extractPrefix(String accessToken) {
