@@ -82,12 +82,6 @@ class JwtGeneratorTest {
     }
 
     @Test
-    void JwtParser가_정상적으로_생성됨() {
-        // when & then
-        assertThat(jwtGenerator.getJwtParser()).isNotNull();
-    }
-
-    @Test
     void 생성된_토큰에_올바른_subject_포함() {
         // given
         String expectedSubject = "user@example.com";

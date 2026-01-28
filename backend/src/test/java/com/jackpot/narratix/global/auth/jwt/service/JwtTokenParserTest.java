@@ -1,141 +1,224 @@
 package com.jackpot.narratix.global.auth.jwt.service;
 
-import com.jackpot.narratix.global.auth.jwt.domain.AccessToken;
-import com.jackpot.narratix.global.auth.jwt.domain.RefreshToken;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
+import com.jackpot.narratix.global.auth.jwt.domain.Token;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
 
 @ExtendWith(MockitoExtension.class)
 class JwtTokenParserTest {
 
     @Mock
-    private JwtGenerator jwtGenerator;
+    private JwtKeyProvider jwtKeyProvider;
 
     @InjectMocks
     private JwtTokenParser jwtTokenParser;
 
-    private static final String TEST_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.test.signature";
+    private static final String TEST_SECRET = "test-secret-key-for-jwt-token-generation-and-parsing";
     private static final String TEST_SUBJECT = "testUser123";
+    private static final String BEARER_PREFIX = "Bearer ";
 
-    @Test
-    void AccessToken_파싱_성공() {
-        // given
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + 3600000);
+    private SecretKey createSecretKey() {
+        String encodedSecret = Base64.getEncoder().encodeToString(TEST_SECRET.getBytes(StandardCharsets.UTF_8));
+        byte[] keyBytes = Base64.getDecoder().decode(encodedSecret);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
 
-        Claims mockClaims = mock(Claims.class);
-        given(mockClaims.getSubject()).willReturn(TEST_SUBJECT);
-        given(mockClaims.getIssuedAt()).willReturn(now);
-        given(mockClaims.getExpiration()).willReturn(expiration);
-
-        @SuppressWarnings("unchecked")
-        Jws<Claims> mockJws = mock(Jws.class);
-        given(mockJws.getPayload()).willReturn(mockClaims);
-
-        JwtParser mockParser = mock(JwtParser.class);
-        given(jwtGenerator.getJwtParser()).willReturn(mockParser);
-        given(mockParser.parseSignedClaims(anyString())).willReturn(mockJws);
-
-        // when
-        AccessToken result = jwtTokenParser.parseAccessToken(TEST_TOKEN);
-
-        // then
-        assertThat(result).isNotNull();
-        assertThat(result.getToken()).isEqualTo(TEST_TOKEN);
-        assertThat(result.getSubject()).isEqualTo(TEST_SUBJECT);
-        assertThat(result.getIssuedAt()).isEqualTo(now);
-        assertThat(result.getExpiration()).isEqualTo(expiration);
-
-        then(jwtGenerator).should(times(1)).getJwtParser();
+    private Date createDateWithoutMillis(long timeMillis) {
+        return new Date((timeMillis / 1000) * 1000);
     }
 
     @Test
-    void RefreshToken_파싱_성공() {
+    void Token_파싱_성공() {
         // given
-        Date now = new Date();
-        Date expiration = new Date(now.getTime() + 604800000);
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
 
-        Claims mockClaims = mock(Claims.class);
-        given(mockClaims.getSubject()).willReturn(TEST_SUBJECT);
-        given(mockClaims.getIssuedAt()).willReturn(now);
-        given(mockClaims.getExpiration()).willReturn(expiration);
+        Date now = createDateWithoutMillis(System.currentTimeMillis());
+        Date expiration = createDateWithoutMillis(now.getTime() + 3600000);
 
-        @SuppressWarnings("unchecked")
-        Jws<Claims> mockJws = mock(Jws.class);
-        given(mockJws.getPayload()).willReturn(mockClaims);
+        String token = Jwts.builder()
+                .subject(TEST_SUBJECT)
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(secretKey)
+                .compact();
 
-        JwtParser mockParser = mock(JwtParser.class);
-        given(jwtGenerator.getJwtParser()).willReturn(mockParser);
-        given(mockParser.parseSignedClaims(anyString())).willReturn(mockJws);
+        String bearerToken = BEARER_PREFIX + token;
 
         // when
-        RefreshToken result = jwtTokenParser.parseRefreshToken(TEST_TOKEN);
+        Token result = jwtTokenParser.parseToken(bearerToken);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getToken()).isEqualTo(TEST_TOKEN);
+        assertThat(result.getToken()).isEqualTo(bearerToken);
         assertThat(result.getSubject()).isEqualTo(TEST_SUBJECT);
         assertThat(result.getIssuedAt()).isEqualTo(now);
         assertThat(result.getExpiration()).isEqualTo(expiration);
-
-        then(jwtGenerator).should(times(1)).getJwtParser();
     }
 
     @Test
-    void 잘못된_토큰_파싱_시_예외_발생() {
+    void Bearer_prefix_없는_토큰_파싱_실패() {
         // given
-        JwtParser mockParser = mock(JwtParser.class);
-        given(jwtGenerator.getJwtParser()).willReturn(mockParser);
-        given(mockParser.parseSignedClaims(anyString()))
-                .willThrow(new JwtException("Invalid token"));
+        String tokenWithoutBearer = "invalid.token.here";
 
         // when & then
-        assertThatThrownBy(() -> jwtTokenParser.parseAccessToken("invalid.token"))
-                .isInstanceOf(JwtException.class)
-                .hasMessageContaining("Invalid token");
-
-        then(jwtGenerator).should(times(1)).getJwtParser();
+        assertThatThrownBy(() -> jwtTokenParser.parseToken(tokenWithoutBearer))
+                .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    void 파싱된_토큰의_모든_Claims가_올바르게_매핑됨() {
+    void 잘못된_형식의_토큰_파싱_실패() {
         // given
-        Date issuedAt = new Date(System.currentTimeMillis() - 1000);
-        Date expiration = new Date(System.currentTimeMillis() + 3600000);
-        String subject = "user@example.com";
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
 
-        Claims mockClaims = mock(Claims.class);
-        given(mockClaims.getSubject()).willReturn(subject);
-        given(mockClaims.getIssuedAt()).willReturn(issuedAt);
-        given(mockClaims.getExpiration()).willReturn(expiration);
+        String invalidToken = BEARER_PREFIX + "invalid.jwt.token";
 
-        @SuppressWarnings("unchecked")
-        Jws<Claims> mockJws = mock(Jws.class);
-        given(mockJws.getPayload()).willReturn(mockClaims);
+        // when & then
+        assertThatThrownBy(() -> jwtTokenParser.parseToken(invalidToken))
+                .isInstanceOf(Exception.class);
+    }
 
-        JwtParser mockParser = mock(JwtParser.class);
-        given(jwtGenerator.getJwtParser()).willReturn(mockParser);
-        given(mockParser.parseSignedClaims(anyString())).willReturn(mockJws);
+    @Test
+    void 만료된_토큰도_파싱은_성공() {
+        // given
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
+
+        Date now = new Date();
+        Date pastExpiration = new Date(now.getTime() - 3600000); // 1시간 전 만료
+
+        String token = Jwts.builder()
+                .subject(TEST_SUBJECT)
+                .issuedAt(new Date(now.getTime() - 7200000)) // 2시간 전 발급
+                .expiration(pastExpiration)
+                .signWith(secretKey)
+                .compact();
+
+        String bearerToken = BEARER_PREFIX + token;
 
         // when
-        AccessToken result = jwtTokenParser.parseAccessToken(TEST_TOKEN);
+        Token result = jwtTokenParser.parseToken(bearerToken);
 
         // then
-        assertThat(result.getToken()).isEqualTo(TEST_TOKEN);
+        assertThat(result).isNotNull();
+        assertThat(result.getSubject()).isEqualTo(TEST_SUBJECT);
+        assertThat(result.isExpired()).isTrue();
+    }
+
+    @Test
+    void 다양한_subject로_토큰_파싱() {
+        // given
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
+
+        String emailSubject = "user@example.com";
+        Date now = createDateWithoutMillis(System.currentTimeMillis());
+        Date expiration = createDateWithoutMillis(now.getTime() + 3600000);
+
+        String token = Jwts.builder()
+                .subject(emailSubject)
+                .issuedAt(now)
+                .expiration(expiration)
+                .signWith(secretKey)
+                .compact();
+
+        String bearerToken = BEARER_PREFIX + token;
+
+        // when
+        Token result = jwtTokenParser.parseToken(bearerToken);
+
+        // then
+        assertThat(result.getSubject()).isEqualTo(emailSubject);
+    }
+
+    @Test
+    void 공백_토큰_파싱_실패() {
+        // when & then
+        assertThatThrownBy(() -> jwtTokenParser.parseToken(""))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void null_토큰_파싱_실패() {
+        // when & then
+        assertThatThrownBy(() -> jwtTokenParser.parseToken(null))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void Bearer만_있는_토큰_파싱_실패() {
+        // when & then
+        assertThatThrownBy(() -> jwtTokenParser.parseToken(BEARER_PREFIX))
+                .isInstanceOf(Exception.class);
+    }
+
+    @Test
+    void 장기간_유효한_토큰_파싱_성공() {
+        // given
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
+
+        Date now = createDateWithoutMillis(System.currentTimeMillis());
+        Date longExpiration = createDateWithoutMillis(now.getTime() + 604800000); // 7일 후
+
+        String token = Jwts.builder()
+                .subject(TEST_SUBJECT)
+                .issuedAt(now)
+                .expiration(longExpiration)
+                .signWith(secretKey)
+                .compact();
+
+        String bearerToken = BEARER_PREFIX + token;
+
+        // when
+        Token result = jwtTokenParser.parseToken(bearerToken);
+
+        // then
+        assertThat(result).isNotNull();
+        assertThat(result.getSubject()).isEqualTo(TEST_SUBJECT);
+        assertThat(result.getExpiration()).isEqualTo(longExpiration);
+        assertThat(result.isExpired()).isFalse();
+    }
+
+    @Test
+    void 파싱된_토큰의_모든_필드가_올바르게_매핑됨() {
+        // given
+        SecretKey secretKey = createSecretKey();
+        given(jwtKeyProvider.getKey()).willReturn(secretKey);
+
+        Date issuedAt = createDateWithoutMillis(System.currentTimeMillis() - 1000);
+        Date expiration = createDateWithoutMillis(System.currentTimeMillis() + 3600000);
+        String subject = "user@example.com";
+
+        String token = Jwts.builder()
+                .subject(subject)
+                .issuedAt(issuedAt)
+                .expiration(expiration)
+                .signWith(secretKey)
+                .compact();
+
+        String bearerToken = BEARER_PREFIX + token;
+
+        // when
+        Token result = jwtTokenParser.parseToken(bearerToken);
+
+        // then
+        assertThat(result.getToken()).isEqualTo(bearerToken);
         assertThat(result.getSubject()).isEqualTo(subject);
         assertThat(result.getIssuedAt()).isEqualTo(issuedAt);
         assertThat(result.getExpiration()).isEqualTo(expiration);

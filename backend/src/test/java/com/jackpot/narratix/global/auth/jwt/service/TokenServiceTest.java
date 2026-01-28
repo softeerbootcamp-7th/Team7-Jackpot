@@ -2,6 +2,7 @@ package com.jackpot.narratix.global.auth.jwt.service;
 
 import com.jackpot.narratix.global.auth.jwt.domain.AccessToken;
 import com.jackpot.narratix.global.auth.jwt.domain.RefreshToken;
+import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import com.jackpot.narratix.global.auth.jwt.service.dto.TokenResponse;
 import io.jsonwebtoken.JwtException;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,9 @@ class TokenServiceTest {
 
     @Mock
     private JwtValidator jwtValidator;
+
+    @Mock
+    private JwtTokenParser jwtTokenParser;
 
     @InjectMocks
     private TokenService tokenService;
@@ -61,56 +65,67 @@ class TokenServiceTest {
         // given
         Date now = new Date();
         Date refreshExpiration = new Date(now.getTime() + 604800000);
+        Date accessExpiration = new Date(now.getTime() + 3600000);
 
-        RefreshToken parsedRefreshToken = RefreshToken.of("refresh.token", TEST_USER_ID, now, refreshExpiration);
-        RefreshToken newRefreshToken = RefreshToken.of("new.refresh.token", TEST_USER_ID, now, refreshExpiration);
+        Token parsedToken = Token.of(BEARER_REFRESH_TOKEN, TEST_USER_ID, now, refreshExpiration);
+        AccessToken newAccessToken = AccessToken.of("new.access.token", TEST_USER_ID, now, accessExpiration);
 
-        willDoNothing().given(jwtValidator).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        given(jwtProvider.parseRefreshToken(BEARER_REFRESH_TOKEN)).willReturn(parsedRefreshToken);
-        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newRefreshToken);
+        given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
+        willDoNothing().given(jwtValidator).validateToken(parsedToken);
+        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newAccessToken);
 
         // when
-        RefreshToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
+        AccessToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getToken()).isEqualTo("new.refresh.token");
+        assertThat(result.getToken()).isEqualTo("new.access.token");
         assertThat(result.getSubject()).isEqualTo(TEST_USER_ID);
 
-        then(jwtValidator).should(times(1)).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        then(jwtProvider).should(times(1)).parseRefreshToken(BEARER_REFRESH_TOKEN);
+        then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
+        then(jwtValidator).should(times(1)).validateToken(parsedToken);
         then(jwtProvider).should(times(1)).reissueToken(TEST_USER_ID);
     }
 
     @Test
-    void 유효하지_않은_RefreshToken으로_재발급_실패() {
+    void 유효하지_않은_Token으로_재발급_실패() {
         // given
-        willThrow(new JwtException("Invalid refresh token"))
-                .given(jwtValidator).validateRefreshToken(BEARER_REFRESH_TOKEN);
+        Date now = new Date();
+        Date refreshExpiration = new Date(now.getTime() + 604800000);
+        Token parsedToken = Token.of(BEARER_REFRESH_TOKEN, TEST_USER_ID, now, refreshExpiration);
+
+        given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
+        willThrow(new JwtException("Invalid token"))
+                .given(jwtValidator).validateToken(parsedToken);
 
         // when & then
         assertThatThrownBy(() -> tokenService.reissueToken(BEARER_REFRESH_TOKEN))
                 .isInstanceOf(JwtException.class)
-                .hasMessageContaining("Invalid refresh token");
+                .hasMessageContaining("Invalid token");
 
-        then(jwtValidator).should(times(1)).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        then(jwtProvider).should(never()).parseRefreshToken(anyString());
+        then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
+        then(jwtValidator).should(times(1)).validateToken(parsedToken);
         then(jwtProvider).should(never()).reissueToken(anyString());
     }
 
     @Test
-    void 만료된_RefreshToken으로_재발급_실패() {
+    void 만료된_Token으로_재발급_실패() {
         // given
-        willThrow(new JwtException("Expired refresh token"))
-                .given(jwtValidator).validateRefreshToken(BEARER_REFRESH_TOKEN);
+        Date now = new Date();
+        Date refreshExpiration = new Date(now.getTime() + 604800000);
+        Token parsedToken = Token.of(BEARER_REFRESH_TOKEN, TEST_USER_ID, now, refreshExpiration);
+
+        given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
+        willThrow(new JwtException("Expired token"))
+                .given(jwtValidator).validateToken(parsedToken);
 
         // when & then
         assertThatThrownBy(() -> tokenService.reissueToken(BEARER_REFRESH_TOKEN))
                 .isInstanceOf(JwtException.class)
-                .hasMessageContaining("Expired refresh token");
+                .hasMessageContaining("Expired token");
 
-        then(jwtValidator).should(times(1)).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        then(jwtProvider).should(never()).parseRefreshToken(anyString());
+        then(jwtTokenParser).should(times(1)).parseToken(BEARER_REFRESH_TOKEN);
+        then(jwtValidator).should(times(1)).validateToken(parsedToken);
         then(jwtProvider).should(never()).reissueToken(anyString());
     }
 
@@ -119,40 +134,42 @@ class TokenServiceTest {
         // given
         Date now = new Date();
         Date refreshExpiration = new Date(now.getTime() + 604800000);
+        Date accessExpiration = new Date(now.getTime() + 3600000);
 
-        RefreshToken parsedRefreshToken = RefreshToken.of("refresh.token", TEST_USER_ID, now, refreshExpiration);
-        RefreshToken newRefreshToken = RefreshToken.of("new.refresh.token", TEST_USER_ID, now, refreshExpiration);
+        Token parsedToken = Token.of(BEARER_REFRESH_TOKEN, TEST_USER_ID, now, refreshExpiration);
+        AccessToken newAccessToken = AccessToken.of("new.access.token", TEST_USER_ID, now, accessExpiration);
 
-        willDoNothing().given(jwtValidator).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        given(jwtProvider.parseRefreshToken(BEARER_REFRESH_TOKEN)).willReturn(parsedRefreshToken);
-        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newRefreshToken);
+        given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
+        willDoNothing().given(jwtValidator).validateToken(parsedToken);
+        given(jwtProvider.reissueToken(TEST_USER_ID)).willReturn(newAccessToken);
 
         // when
         tokenService.reissueToken(BEARER_REFRESH_TOKEN);
 
         // then
-        var inOrder = inOrder(jwtValidator, jwtProvider);
-        then(jwtValidator).should(inOrder).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        then(jwtProvider).should(inOrder).parseRefreshToken(BEARER_REFRESH_TOKEN);
+        var inOrder = inOrder(jwtTokenParser, jwtValidator, jwtProvider);
+        then(jwtTokenParser).should(inOrder).parseToken(BEARER_REFRESH_TOKEN);
+        then(jwtValidator).should(inOrder).validateToken(parsedToken);
         then(jwtProvider).should(inOrder).reissueToken(TEST_USER_ID);
     }
 
     @Test
-    void 파싱된_RefreshToken에서_올바른_subject_추출() {
+    void 파싱된_Token에서_올바른_subject_추출() {
         // given
         String expectedUserId = "user@example.com";
         Date now = new Date();
         Date refreshExpiration = new Date(now.getTime() + 604800000);
+        Date accessExpiration = new Date(now.getTime() + 3600000);
 
-        RefreshToken parsedRefreshToken = RefreshToken.of("refresh.token", expectedUserId, now, refreshExpiration);
-        RefreshToken newRefreshToken = RefreshToken.of("new.refresh.token", expectedUserId, now, refreshExpiration);
+        Token parsedToken = Token.of(BEARER_REFRESH_TOKEN, expectedUserId, now, refreshExpiration);
+        AccessToken newAccessToken = AccessToken.of("new.access.token", expectedUserId, now, accessExpiration);
 
-        willDoNothing().given(jwtValidator).validateRefreshToken(BEARER_REFRESH_TOKEN);
-        given(jwtProvider.parseRefreshToken(BEARER_REFRESH_TOKEN)).willReturn(parsedRefreshToken);
-        given(jwtProvider.reissueToken(expectedUserId)).willReturn(newRefreshToken);
+        given(jwtTokenParser.parseToken(BEARER_REFRESH_TOKEN)).willReturn(parsedToken);
+        willDoNothing().given(jwtValidator).validateToken(parsedToken);
+        given(jwtProvider.reissueToken(expectedUserId)).willReturn(newAccessToken);
 
         // when
-        RefreshToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
+        AccessToken result = tokenService.reissueToken(BEARER_REFRESH_TOKEN);
 
         // then
         assertThat(result.getSubject()).isEqualTo(expectedUserId);
