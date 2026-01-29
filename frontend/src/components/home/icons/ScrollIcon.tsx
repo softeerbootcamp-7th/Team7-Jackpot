@@ -6,6 +6,8 @@ const ScrollIcon = () => {
       height='40'
       viewBox='0 0 40 40'
       fill='none'
+      aria-hidden='true'
+      focusable='false'
     >
       <g clipPath='url(#clip0_12073_16122)'>
         <path

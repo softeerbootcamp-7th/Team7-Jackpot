@@ -6,6 +6,8 @@ const CalendarIcon = () => {
       height='28'
       viewBox='0 0 28 28'
       fill='none'
+      aria-hidden='true'
+      focusable='false'
     >
       <g clipPath='url(#clip0_12073_8056)'>
         <path

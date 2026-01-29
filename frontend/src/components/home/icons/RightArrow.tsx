@@ -14,6 +14,8 @@ const RightArrow = ({ size = 'lg', className = '' }: RightArrowProps) => {
       className={`${sizeClass} ${colorClass} ${className}`}
       viewBox={isLarge ? '0 0 32 32' : '0 0 24 24'}
       fill='none'
+      aria-hidden='true'
+      focusable='false'
     >
       <path
         d={isLarge ? 'M12 10L18 16L12 22' : 'M10 8L14 12L10 16'}

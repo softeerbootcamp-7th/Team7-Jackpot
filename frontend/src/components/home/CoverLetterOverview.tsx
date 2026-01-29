@@ -2,6 +2,8 @@ import CoverLetterPreview from '@/components/home/CoverLetterPreview';
 import CardIcon from '@/components/home/icons/CardIcon';
 import RightArrow from '@/components/home/icons/RightArrow';
 
+const previews = Array.from({ length: 6 });
+
 const CoverLetterOverview = () => {
   return (
     <div className='w-[82.5rem] inline-flex flex-col justify-start items-start gap-6'>
@@ -16,17 +18,10 @@ const CoverLetterOverview = () => {
         </div>
         <RightArrow size='lg' />
       </div>
-      <div className='flex flex-col justify-start items-start gap-3'>
-        <div className='w-[82.5rem] inline-flex justify-start items-center gap-3'>
-          <CoverLetterPreview />
-          <CoverLetterPreview />
-          <CoverLetterPreview />
-        </div>
-        <div className='w-[82.5rem] inline-flex justify-start items-center gap-3'>
-          <CoverLetterPreview />
-          <CoverLetterPreview />
-          <CoverLetterPreview />
-        </div>
+      <div className='w-[82.5rem] grid grid-cols-3 gap-3'>
+        {previews.map((_, idx) => (
+          <CoverLetterPreview key={idx} />
+        ))}
       </div>
     </div>
   );

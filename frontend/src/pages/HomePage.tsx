@@ -9,6 +9,7 @@ const HomePage = () => {
         <img
           className='w-[82.5rem] h-96 rounded-2xl'
           src='/images/banner.png'
+          alt='홈 화면 배너'
         />
         <SummaryOverview />
         <ScheduleOverview />
