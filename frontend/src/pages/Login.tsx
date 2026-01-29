@@ -1,9 +1,26 @@
+import { useState } from 'react';
+
 import loginBackground from '/images/loginBackgroundImage.png';
 import titleLogo from '/images/titleLogo.svg';
 
 import '@/index.css';
 
 const LoginPage = () => {
+  const [idData, setIdData] = useState<string>('');
+  const [passwordData, setPasswordData] = useState<string>('');
+
+  const isActived: boolean = idData !== '' && passwordData !== '';
+  const buttonActiveStyle: string = isActived
+    ? 'bg-gray-900 text-white cursor-pointer'
+    : 'bg-gray-50 text-gray-400';
+  const saveUserId = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIdData(e.target.value);
+  };
+
+  const saveUserPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordData(e.target.value);
+  };
+
   return (
     <div className='flex items-center ps-[30px] py-[30px] gap-[140px]'>
       <img
@@ -14,9 +31,7 @@ const LoginPage = () => {
       <div className='w-[392px] h-[392px] flex flex-col items-center gap-6'>
         <div className='flex flex-col items-center gap-3'>
           <img src={titleLogo} aria-label='타이틀 로고' />
-          <div
-            className='text-center justify-start text-gray-600 text-lg font-bold line-clamp-1 select-none'
-          >
+          <div className='text-center justify-start text-gray-600 text-lg font-bold line-clamp-1 select-none'>
             경험을 기록하는 가장 가벼운 시작
           </div>
         </div>
@@ -27,16 +42,19 @@ const LoginPage = () => {
                 className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
                 type='text'
                 placeholder='아이디를 입력해주세요'
+                onChange={saveUserId}
               />
               <input
                 className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
                 type='password'
                 placeholder='비밀번호를 입력해주세요'
+                onChange={saveUserPassword}
               />
             </div>
             <input
-              className='w-full bg-gray-900 text-white px-5 py-[12px] rounded-lg cursor-pointer'
+              className={`w-full ${buttonActiveStyle} px-5 py-[12px] rounded-lg`}
               type='submit'
+              disabled={!isActived}
               value='로그인'
             />
           </form>
