@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserAuth {
+public class UserAuth extends BaseTimeEntity {
 
     @Id
     private String userId;
