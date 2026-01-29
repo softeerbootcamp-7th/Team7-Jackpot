@@ -2,17 +2,20 @@ import { useState } from 'react';
 
 import loginBackground from '/images/loginBackgroundImage.png';
 import titleLogo from '/images/titleLogo.svg';
+import { useNavigate } from 'react-router';
 
 import '@/index.css';
 
 const LoginPage = () => {
   const [idData, setIdData] = useState<string>('');
   const [passwordData, setPasswordData] = useState<string>('');
+  const navigate = useNavigate();
 
   const isActived: boolean = idData !== '' && passwordData !== '';
   const buttonActiveStyle: string = isActived
     ? 'bg-gray-900 text-white cursor-pointer'
     : 'bg-gray-50 text-gray-400';
+
   const saveUserId = (e: React.ChangeEvent<HTMLInputElement>) => {
     setIdData(e.target.value);
   };
@@ -59,7 +62,7 @@ const LoginPage = () => {
             />
           </form>
         </div>
-        <button className='text-gray-600 font-medium text-base cursor-pointer'>
+        <button className='text-gray-600 font-medium text-base cursor-pointer' onClick={() => navigate('/signup')}>
           회원가입
         </button>
       </div>
