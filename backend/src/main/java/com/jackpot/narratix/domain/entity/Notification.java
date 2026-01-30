@@ -1,0 +1,40 @@
+package com.jackpot.narratix.domain.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import java.util.Map;
+
+@Entity
+@Table(name = "notification")
+@Getter
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+public class Notification extends BaseTimeEntity {
+
+    @Id
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private NotificationType type;
+
+    @Column(name = "title", nullable = true)
+    private String title;
+
+    @Column(name = "content", nullable = true)
+    private String content;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead = false;
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "json", name = "meta", nullable = true)
+    private Map<String, Object> meta;
+}
