@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -17,10 +18,12 @@ public class Notification extends BaseTimeEntity {
     @Id
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @NotNull
     @Column(name = "type", nullable = false)
     @Enumerated(EnumType.STRING)
     private NotificationType type;
@@ -31,6 +34,7 @@ public class Notification extends BaseTimeEntity {
     @Column(name = "content", nullable = true)
     private String content;
 
+    @NotNull
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
 
