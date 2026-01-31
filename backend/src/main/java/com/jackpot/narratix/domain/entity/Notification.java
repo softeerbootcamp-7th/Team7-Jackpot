@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jackpot.narratix.domain.entity.enums.NotificationType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import java.util.Map;
 public class Notification extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -36,6 +38,7 @@ public class Notification extends BaseTimeEntity {
     private String content;
 
     @NotNull
+    @JsonProperty("isRead")
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
 
