@@ -1,21 +1,21 @@
 import { type SVGProps } from 'react';
 
-export const ChevronDownIcon = (props: SVGProps<SVGSVGElement>) => {
+export const ChevronLeftIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
-      width='24'
-      height='24'
+      width='28'
+      height='28'
       fill='none'
-      viewBox='0 0 24 24'
+      viewBox='0 0 28 28'
       {...props}
     >
       <path
-        stroke='#989898'
-        d='m7 10 5 4.58L17 10'
+        stroke='#292929'
+        d='m16.332 19.834-5.343-5.835 5.343-5.832'
         strokeLinecap='round'
         strokeLinejoin='round'
-        strokeWidth='1.5'
+        strokeWidth='1.75'
       />
     </svg>
   );
