@@ -3,10 +3,11 @@ import { useState } from 'react';
 import loginBackground from '/images/loginBackgroundImage.png';
 import titleLogo from '/images/titleLogo.svg';
 
+import InputBarInSignUp from '@/components/signUp/InputBarInSignUp';
+
 import '@/index.css';
 
 const SignUpPage = () => {
-  const inputHintTextStyle = 'text-gray-950 font-bold text-lg';
   const [idData, setIdData] = useState<string>('');
   const [passwordData, setPasswordData] = useState<string>('');
   const [passwordCheckData, setPasswordCheckData] = useState<string>('');
@@ -52,54 +53,33 @@ const SignUpPage = () => {
         </div>
         <form className='flex flex-col justify-center items-center gap-[60px]'>
           <div className='w-[392px] flex flex-col justify-center items-center gap-[18px]'>
-            <div className='flex flex-col w-full gap-3'>
-              <div className='flex gap-[2px]'>
-                <div className={`${inputHintTextStyle}`}>아이디</div>
-                <div className='text-red-600'>*</div>
-              </div>
-              <input
-                className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
-                type='text'
-                placeholder='아이디를 입력해주세요 (6자 이상 영문 소문자, 숫자)'
-                onChange={saveUserId}
-              />
-            </div>
-            <div className='flex flex-col w-full gap-3'>
-              <div className='flex gap-[2px]'>
-                <div className={`${inputHintTextStyle}`}>비밀번호</div>
-                <div className='text-red-600'>*</div>
-              </div>
-              <input
-                className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
-                type='password'
-                placeholder='영문 숫자 조합 8자 이상으로 설정해주세요'
-                onChange={saveUserPassword}
-              />
-            </div>
-            <div className='flex flex-col w-full gap-3'>
-              <div className='flex gap-[2px]'>
-                <div className={`${inputHintTextStyle}`}>비밀번호 확인</div>
-                <div className='text-red-600'>*</div>
-              </div>
-              <input
-                className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
-                type='password'
-                placeholder='설정하신 비밀번호를 입력해주세요'
-                onChange={saveUserPasswordCheck}
-              />
-            </div>
-            <div className='flex flex-col w-full gap-3'>
-              <div className='flex gap-[2px]'>
-                <div className={`${inputHintTextStyle}`}>사용자 이름</div>
-                <div className='text-red-600'>*</div>
-              </div>
-              <input
-                className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
-                type='password'
-                placeholder='네러틱스에서 사용하고 싶은 이름을 설정해주세요'
-                onChange={saveUserNickname}
-              />
-            </div>
+            <InputBarInSignUp
+              hintText='아이디'
+              type='text'
+              placeholder='아이디를 입력해주세요'
+              onChange={saveUserId}
+            />
+
+            <InputBarInSignUp
+              hintText='비밀번호'
+              type='password'
+              placeholder='영문 숫자 조합 8자 이상으로 설정해주세요'
+              onChange={saveUserPassword}
+            />
+
+            <InputBarInSignUp
+              hintText='비밀번호 확인'
+              type='password'
+              placeholder='설정하신 비밀번호를 입력해주세요'
+              onChange={saveUserPasswordCheck}
+            />
+
+            <InputBarInSignUp
+              hintText='사용자 이름'
+              type='text'
+              placeholder='네러틱스에서 사용하고 싶은 이름을 설정해주세요'
+              onChange={saveUserNickname}
+            />
           </div>
           <input
             className={`w-full ${buttonActiveStyle} px-5 py-[12px] rounded-lg`}
