@@ -1,15 +1,13 @@
-interface InputBarInSignUpProps {
+import type { InputBarProps } from '@/components/common/InputBar';
+import InputBar from '@/components/common/InputBar';
+
+interface InputBarInSignUpProps extends InputBarProps {
   hintText: string;
-  type: string;
-  placeholder: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 const InputBarInSignUp = ({
   hintText,
-  type,
-  placeholder,
-  onChange,
+  ...inputBarProps
 }: InputBarInSignUpProps) => {
   return (
     <div className='flex flex-col w-full gap-3'>
@@ -17,12 +15,7 @@ const InputBarInSignUp = ({
         <div className='text-gray-950 font-bold text-lg'>{hintText}</div>
         <div className='text-red-600'>*</div>
       </div>
-      <input
-        className='w-full bg-gray-50 px-5 py-[14px] rounded-lg'
-        type={type}
-        placeholder={placeholder}
-        onChange={onChange}
-      />
+      <InputBar {...inputBarProps} />
     </div>
   );
 };
