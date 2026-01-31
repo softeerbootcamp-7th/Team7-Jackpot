@@ -14,6 +14,7 @@ import lombok.NoArgsConstructor;
 public class QnA extends BaseTimeEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull
@@ -22,14 +23,14 @@ public class QnA extends BaseTimeEntity {
     private CoverLetter coverLetter;
 
     @NotNull
-    @Column(name = "question", nullable = false)
-    private String question;
-
-    @NotNull
     @Column(name = "question_category", nullable = false)
     private QuestionCategoryType questionCategory;
 
     @NotNull
-    @Column(name = "answer", nullable = true)
+    @Column(name = "question", nullable = false, columnDefinition = "TEXT")
+    private String question;
+
+    @NotNull
+    @Column(name = "answer", nullable = true, columnDefinition = "TEXT")
     private String answer;
 }
