@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.entity;
 
+import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -25,6 +26,10 @@ public class QnA extends BaseTimeEntity {
     private String question;
 
     @NotNull
-    @Column(name = "answer", nullable = false)
+    @Column(name = "question_category", nullable = false)
+    private QuestionCategoryType questionCategory;
+
+    @NotNull
+    @Column(name = "answer", nullable = true)
     private String answer;
 }
