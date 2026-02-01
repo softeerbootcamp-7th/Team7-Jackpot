@@ -17,6 +17,11 @@ import { validateId } from '@/utils/auth/validation';
 
 import '@/index.css';
 
+type InputIdType = (typeof INPUT_BAR_IN_LOGIN)[number]['ID'];
+
+interface isActivedType {
+  id: boolean;
+  submit: boolean;
 }
 
 const LoginPage = () => {
@@ -24,19 +29,34 @@ const LoginPage = () => {
     id: '',
     password: '',
   });
+
   const navigate = useNavigate();
 
-  const isActived: boolean = Object.values(formData).every(
-    (each) => each !== '',
-  );
+  const isActived: isActivedType = {
+    id: validateId(formData.id),
+    submit: validateId(formData.id) && formData.password.length >= 8,
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    key: keyof FormDataType,
+    key: InputIdType,
   ) => {
+    let value = e.target.value;
+
+    switch (key) {
+      case 'id':
+        value = value.toLowerCase().replace(/[^a-z0-9]/g, '');
+        break;
+      case 'password':
+        value = value.replace(/\s/g, '');
+        break;
+      default:
+        break;
+    }
+
     setFormData((prev) => ({
       ...prev,
-      [key]: e.target.value,
+      [key]: value,
     }));
   };
 
@@ -61,14 +81,17 @@ const LoginPage = () => {
                   key={each.ID}
                   type={each.TYPE}
                   placeholder={each.PLACEHOLDER}
+                  maxLength={each.MAX_LENGTH}
+                  value={formData[each.ID]}
                   onChange={(e) => handleInputChange(e, each.ID)}
                 />
               ))}
             </div>
-            <SubmitButton isActived={isActived} value='로그인' />
+            <SubmitButton isActived={isActived.submit} value='로그인' />
           </form>
         </div>
         <button
+          type='button'
           className='text-gray-600 font-medium text-base cursor-pointer'
           onClick={() => navigate('/signup')}
         >
