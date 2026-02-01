@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
 import HomePage from '@/pages/HomePage';
+import UploadPage from '@/pages/Upload';
 
 function App() {
   return (
@@ -10,7 +11,7 @@ function App() {
         {/* <Route path="/login" element={<LoginPage />}/> */}
         {/* <Route path="/signup" element={<SignUpPage />}/> */}
         <Route path='/home' element={<HomePage />} />
-        {/* <Route path="/upload" element={<UploadPage />}/> */}
+        <Route path="/upload" element={<UploadPage />}/>
         {/* <Route path="/library?id:" element={<LibraryPage />}/> */}
         {/* <Route path="/coverLetter/:id" element={<CoverLetterPage />}/> */}
         {/* <Route path="/review/:id" element={<ReviewPage />}/> */}
