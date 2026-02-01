@@ -12,16 +12,14 @@ import {
   INPUT_BAR_IN_LOGIN,
   SUB_TITLE,
 } from '@/constants/constatnsInLoginPage';
+import type { AuthFormData } from '@/types/auth';
 
 import '@/index.css';
 
-interface FormDataType {
-  id: string;
-  password: string;
 }
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState<FormDataType>({
+  const [formData, setFormData] = useState<AuthFormData>({
     id: '',
     password: '',
   });

@@ -12,6 +12,7 @@ import {
   INPUT_BAR_IN_SIGNUP,
   SUB_TITLE,
 } from '@/constants/constantsInSignUpPage';
+import type { AuthFormData } from '@/types/auth';
 import {
   validateId,
   validateNickname,
@@ -19,13 +20,6 @@ import {
 } from '@/utils/signUp/validation';
 
 import '@/index.css';
-
-interface FormDataType {
-  id: string;
-  password: string;
-  passwordCheck: string;
-  nickname: string;
-}
 
 interface isActivedType {
   id: boolean;
@@ -42,7 +36,7 @@ interface StatusMsgType {
 type InputIdType = (typeof INPUT_BAR_IN_SIGNUP)[number]['ID'];
 
 const SignUpPage = () => {
-  const [formData, setFormData] = useState<FormDataType>({
+  const [formData, setFormData] = useState<AuthFormData>({
     id: '',
     password: '',
     passwordCheck: '',
