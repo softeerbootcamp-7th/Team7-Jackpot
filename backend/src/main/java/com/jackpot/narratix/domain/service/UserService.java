@@ -29,11 +29,15 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 아이디");
         }
 
+        User user = createUser(request);
+        userRepository.save(user); // Cascade로 UserAuth도 자동 저장됨
+    }
+
+    private User createUser(JoinRequest request) {
         User user = User.builder()
                 .id(request.getUserId())
                 .nickname(request.getNickname())
                 .build();
-        userRepository.save(user);
 
         String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt(11));
 
@@ -41,7 +45,9 @@ public class UserService {
                 .userId(request.getUserId())
                 .password(hashedPassword)
                 .build();
-        userAuthRepository.save(auth);
+
+        user.setUserAuth(auth);
+        return user;
     }
 
     public void login(LoginRequest loginRequest) {
