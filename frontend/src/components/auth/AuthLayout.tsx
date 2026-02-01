@@ -19,7 +19,7 @@ const AuthLayout = ({
       <img
         className='w-[65.5rem] h-auto rounded-[2.5rem]'
         src={loginBackground}
-        aria-label='백그라운드 이미지'
+        alt='백그라운드 이미지'
       />
       <div className='w-[24.5rem] h-[24.5rem] flex flex-col justify-center items-center gap-6'>
         <LogoAndSubTitle
