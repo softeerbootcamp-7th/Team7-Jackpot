@@ -36,12 +36,6 @@ interface StatusMsgType {
 type InputIdType = (typeof INPUT_BAR_IN_SIGNUP)[number]['ID'];
 
 const SignUpPage = () => {
-  const [formData, setFormData] = useState<AuthFormData>({
-    id: '',
-    password: '',
-    passwordCheck: '',
-    nickname: '',
-  });
 
   const [statusMsg, setStatusMsg] = useState<StatusMsgType>({
     id: '',
@@ -52,83 +46,6 @@ const SignUpPage = () => {
 
   const [isPasswordMatched, setIsPasswordMatched] = useState<boolean>(false);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: InputIdType,
-  ) => {
-    let value = e.target.value;
-
-    switch (key) {
-      case 'id':
-        value = value.toLowerCase().replace(/[^a-z0-9]/g, '');
-        break;
-      case 'password':
-      case 'passwordCheck':
-        value = value.replace(/\s/g, '');
-        break;
-      case 'nickname':
-        value = value.replace(/[0-9!@#$%^&*()_+={}[\]:;"'<>,.?/\\|`~\s]/g, '');
-        break;
-      default:
-        break;
-    }
-
-    setFormData((prev) => ({ ...prev, [key]: value }));
-  };
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      const newMsg = { ...statusMsg };
-      let isMatch = false;
-
-      if (formData.id) {
-        if (!validateId(formData.id)) {
-          newMsg.id = '6~12자의 영문 소문자, 숫자만 사용 가능합니다.';
-        } else {
-          newMsg.id = '';
-        }
-      } else {
-        newMsg.id = '';
-      }
-
-      if (formData.password) {
-        newMsg.password = validatePassword(formData.password)
-          ? ''
-          : '비밀번호 형식이 올바르지 않습니다. (영문, 숫자 조합 8자 이상)';
-      } else {
-        newMsg.password = '';
-      }
-
-      if (formData.passwordCheck) {
-        isMatch = formData.password === formData.passwordCheck;
-
-        newMsg.passwordCheck = isMatch
-          ? '비밀번호가 일치합니다.'
-          : '비밀번호가 일치하지 않습니다.';
-      } else {
-        newMsg.passwordCheck = '';
-        isMatch = false;
-      }
-
-      const name = formData.nickname;
-      if (name) {
-        if (name.length < 2) {
-          newMsg.nickname = '2자 이상 입력해주세요';
-        } else if (!validateNickname(name)) {
-          newMsg.nickname = '형식이 올바르지 않습니다';
-        } else {
-          newMsg.nickname = '';
-        }
-      } else {
-        newMsg.nickname = '';
-      }
-
-      setStatusMsg(newMsg);
-      setIsPasswordMatched(isMatch);
-    }, 1000);
-
-    return () => clearTimeout(debounceTimer);
-  }, [formData, statusMsg]);
 
   const isActived: isActivedType = {
     id: validateId(formData.id),

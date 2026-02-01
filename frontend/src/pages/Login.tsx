@@ -25,39 +25,12 @@ interface isActivedType {
 }
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState<AuthFormData>({
-    id: '',
-    password: '',
-  });
 
   const navigate = useNavigate();
 
   const isActived: isActivedType = {
     id: validateId(formData.id),
     submit: validateId(formData.id) && formData.password.length >= 8,
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: InputIdType,
-  ) => {
-    let value = e.target.value;
-
-    switch (key) {
-      case 'id':
-        value = value.toLowerCase().replace(/[^a-z0-9]/g, '');
-        break;
-      case 'password':
-        value = value.replace(/\s/g, '');
-        break;
-      default:
-        break;
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
   };
 
   return (
