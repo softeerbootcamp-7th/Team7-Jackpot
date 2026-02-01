@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.entity;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.AccessLevel;
@@ -15,6 +16,7 @@ public class UserAuth {
     @Id
     private String userId;
 
+    @Column(length = 60, nullable = false)
     private String password;
 
     @Builder

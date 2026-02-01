@@ -7,6 +7,7 @@ import com.jackpot.narratix.domain.entity.UserAuth;
 import com.jackpot.narratix.domain.repository.UserAuthRepository;
 import com.jackpot.narratix.domain.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,18 +35,21 @@ public class UserService {
                 .build();
         userRepository.save(user);
 
+        String hashedPassword = BCrypt.hashpw(request.getPassword(), BCrypt.gensalt(11));
+
         UserAuth auth = UserAuth.builder()
                 .userId(request.getUserId())
-                .password(request.getPassword())
+                .password(hashedPassword)
                 .build();
         userAuthRepository.save(auth);
     }
 
     public void login(LoginRequest loginRequest) {
         UserAuth auth = userAuthRepository.findById(loginRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디"));
-        if (!auth.getPassword().equals(loginRequest.getPassword())) {
-            throw new IllegalArgumentException("비밀번호 틀림");
+                .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다"));
+
+        if (!BCrypt.checkpw(loginRequest.getPassword(), auth.getPassword())) {
+            throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다");
         }
     }
 }
