@@ -5,6 +5,7 @@ import loginBackground from '/images/loginBackgroundImage.png';
 import TitleLogo from '@/components/common/icons/TitleLogo';
 import LogoAndSubTitle from '@/components/common/LogoAndSubTitle';
 import SubmitButton from '@/components/common/SubmitButton';
+import CheckDuplicationButton from '@/components/signUp/CheckDuplicationButton';
 import InputBarInSignUp from '@/components/signUp/InputBarInSignUp';
 
 import {
@@ -20,6 +21,11 @@ interface FormDataType {
   passwordCheck: string;
   nickname: string;
 }
+
+interface isActivedType {
+  id: boolean;
+  submit: boolean;
+}
 const SignUpPage = () => {
   const [formData, setFormData] = useState<FormDataType>({
     id: '',
@@ -28,9 +34,10 @@ const SignUpPage = () => {
     nickname: '',
   });
 
-  const isActived: boolean = Object.values(formData).every(
-    (each) => each !== '',
-  );
+  const isActived: isActivedType = {
+    id: formData.id.length >= 6,
+    submit: Object.values(formData).every((each) => each !== ''),
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -61,10 +68,15 @@ const SignUpPage = () => {
                 type={each.TYPE}
                 placeholder={each.PLACEHOLDER}
                 onChange={(e) => handleInputChange(e, each.ID)}
+                rightElement={
+                  each.ID === 'id' && (
+                    <CheckDuplicationButton isActived={isActived.id} />
+                  )
+                }
               />
             ))}
           </div>
-          <SubmitButton isActived={isActived} value='회원가입' />
+          <SubmitButton isActived={isActived.submit} value='회원가입' />
         </form>
       </div>
     </div>
