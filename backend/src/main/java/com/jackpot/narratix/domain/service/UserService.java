@@ -25,9 +25,14 @@ public class UserService {
 
     @Transactional
     public void join(JoinRequest request) {
+        if (!request.getPassword().equals(request.getPasswordConfirm())) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다");
+        }
+
         if (isIdDuplicated(request.getUserId())) {
             throw new IllegalArgumentException("이미 존재하는 아이디");
         }
+
         try {
             User user = createUser(request);
             userRepository.save(user);
