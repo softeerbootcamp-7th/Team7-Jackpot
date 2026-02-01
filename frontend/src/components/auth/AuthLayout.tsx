@@ -1,7 +1,7 @@
 import loginBackground from '/images/loginBackgroundImage.png';
 
+import LogoAndSubTitle from '@/components/auth/LogoAndSubTitle';
 import TitleLogo from '@/components/common/icons/TitleLogo';
-import LogoAndSubTitle from '@/components/common/LogoAndSubTitle';
 
 interface AuthLayoutProps {
   children: React.ReactNode;

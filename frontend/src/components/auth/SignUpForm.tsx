@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import SubmitButton from '@/components/common/SubmitButton';
-import CheckDuplicationButton from '@/components/signUp/CheckDuplicationButton';
-import InputBarInSignUp from '@/components/signUp/InputBarInSignUp';
+import CheckDuplicationButton from '@/components/auth/CheckDuplicationButton';
+import InputBarInSignUp from '@/components/auth/InputBarInSignUp';
+import SubmitButton from '@/components/auth/SubmitButton';
 import useAuthForm from '@/hooks/auth/useAuthForm';
 
 import { INPUT_BAR_IN_SIGNUP } from '@/constants/constantsInSignUpPage';

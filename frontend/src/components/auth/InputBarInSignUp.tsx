@@ -1,5 +1,5 @@
-import type { InputBarProps } from '@/components/common/InputBar';
-import InputBar from '@/components/common/InputBar';
+import type { InputBarProps } from '@/components/auth/InputBar';
+import InputBar from '@/components/auth/InputBar';
 
 interface InputBarInSignUpProps extends InputBarProps {
   hintText: string;

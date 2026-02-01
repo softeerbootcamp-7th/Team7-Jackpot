@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 
-import InputBar from '@/components/common/InputBar';
-import SubmitButton from '@/components/common/SubmitButton';
+import InputBar from '@/components/auth/InputBar';
+import SubmitButton from '@/components/auth/SubmitButton';
 import useAuthForm from '@/hooks/auth/useAuthForm';
 
 import { INPUT_BAR_IN_LOGIN } from '@/constants/constantsInLoginPage';
