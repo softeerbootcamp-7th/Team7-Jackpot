@@ -59,7 +59,7 @@ const SignUpPage = () => {
           subTitle={SUB_TITLE}
           subTitleColor='text-gray-950'
         />
-        <form className='flex flex-col justify-center items-center gap-[60px]'>
+        <form className='flex flex-col justify-center items-center gap-[3.75rem]'>
           <div className='w-[24.5rem] flex flex-col justify-center items-center gap-[1.125rem]'>
             {INPUT_BAR_IN_SIGNUP.map((each) => (
               <InputBarInSignUp
