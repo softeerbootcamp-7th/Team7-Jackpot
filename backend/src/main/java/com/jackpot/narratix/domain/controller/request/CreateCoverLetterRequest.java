@@ -16,7 +16,7 @@ public record CreateCoverLetterRequest(
         @NotNull(message = "직무명은 필수 입력 항목입니다.") String jobPosition,
         @Nullable LocalDate deadline,
         @NotNull(message = "질문은 필수 입력 항목입니다.")
-        @Size(min = 1, max = 3, message = "질문은 최소 1개에서 최대 3개까지 입력할 수 있습니다.")
+        @Size(min = 1, max = 10, message = "질문은 최소 1개에서 최대 10개까지 입력할 수 있습니다.")
         @Valid List<CreateQuestionRequest> questions
 ) {
 }
