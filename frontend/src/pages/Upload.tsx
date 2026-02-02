@@ -1,8 +1,8 @@
-import AddFileItem from '@/components/upload/AddFileItem';
 import DocumentBoxIcon from '@/components/upload/icons/DocumentBoxIcon';
 import FileUploadIcon from '@/components/upload/icons/FileUploadIcon';
 import TextUploadIcon from '@/components/upload/icons/TextUploadIcon';
 import StepItem from '@/components/upload/StepItem';
+import UploadAreaLayout from '@/components/upload/UploadFileArea';
 
 const UploadPage = () => {
   return (
@@ -45,11 +45,6 @@ const UploadPage = () => {
                 <div className='text-lg text-gray-400'>AI 라벨링 시작</div>
               </button>
             </div>
-          </div>
-          <div className='flex justify-between'>
-            {[0, 1, 2].map((i) => (
-              <AddFileItem key={i} />
-            ))}
           </div>
         </div>
       </div>
