@@ -1,13 +1,9 @@
 package com.jackpot.narratix.domain.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,12 +15,26 @@ import lombok.NoArgsConstructor;
 public class User extends BaseTimeEntity {
 
     @Id
-    @Column(name = "id")
+    @Column(length = 12, nullable = false)
     private String id;
 
-    @NotNull
-    @NotBlank
-    @Column(name = "nickname", nullable = false)
+    @Column(length = 15, nullable = false)
     private String nickname;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private UserAuth userAuth;
+
+    @Builder
+    public User(String id, String nickname) {
+        this.id = id;
+        this.nickname = nickname;
+    }
+
+    public void addAuth(String password) {
+        this.userAuth = UserAuth.builder()
+                .user(this)
+                .password(password)
+                .build();
+    }
 
 }

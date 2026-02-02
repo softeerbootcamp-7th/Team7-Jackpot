@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +17,18 @@ public class UserAuth extends BaseTimeEntity {
     @Column(name = "user_id")
     private String userId;
 
-    @MapsId
+    @Column(length = 60, nullable = false)
+    @NotNull
+    private String password;
+
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @MapsId
+    @JoinColumn(name = "user_id")
     private User user;
 
-    @NotNull
-    @Column(name = "password", nullable = false)
-    private String password;
+    @Builder
+    public UserAuth(User user, String password) {
+        this.user = user;
+        this.password = password;
+    }
 }
