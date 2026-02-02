@@ -23,9 +23,7 @@ public class UserController {
 
     @PostMapping("/auth")
     public ResponseEntity<Void> checkId(@Valid @RequestBody CheckIdRequest request) {
-        if (userService.isIdDuplicated(request.getUserId())) {
-            throw new IllegalArgumentException("이미 사용 중인 아이디입니다");
-        }
+        userService.checkIdAvailable(request.getUserId());
         return ResponseEntity.noContent().build();
     }
 

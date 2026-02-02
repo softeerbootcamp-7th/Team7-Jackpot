@@ -23,6 +23,12 @@ public class UserService {
         return userAuthRepository.existsById(id);
     }
 
+    public void checkIdAvailable(String userId) {
+        if (isIdDuplicated(userId)) {
+            throw new IllegalArgumentException("이미 사용 중인 아이디입니다");
+        }
+    }
+
     @Transactional
     public void join(JoinRequest request) {
         if (!request.getPassword().equals(request.getPasswordConfirm())) {
