@@ -42,8 +42,7 @@ public class CoverLetter extends BaseTimeEntity{
     @Column(name = "job_position", nullable = false)
     private String jobPosition;
 
-    @NotNull
-    @Column(name = "deadline", nullable = false)
+    @Column(name = "deadline", nullable = true)
     private LocalDate deadline;
 
     public static CoverLetter from(User user, CreateCoverLetterRequest request){
