@@ -1,4 +1,4 @@
-import AddFileIcon from '@/components/upload/icons/AddFileIcon';
+import AddFileItem from '@/components/upload/AddFileItem';
 import AILabelingIcon from '@/components/upload/icons/AILabelingIcon';
 import CompleteSavedIcon from '@/components/upload/icons/CompleteSavedIcon';
 import DocumentBoxIcon from '@/components/upload/icons/DocumentBoxIcon';
@@ -9,7 +9,7 @@ import UploadIcon from '@/components/upload/icons/UploadIcon';
 
 const UploadPage = () => {
   return (
-    <div className=''>
+    <div>
       <div className='w-full h-[5rem]'>헤더</div>
       <div className='px-[13.125rem]'>
         <div>
@@ -83,45 +83,9 @@ const UploadPage = () => {
             </div>
           </div>
           <div className='flex justify-between'>
-            <div className='w-[25.5rem] h-[23.5rem] flex flex-col justify-center items-center rounded-lg bg-gray-50 gap-5'>
-              <AddFileIcon />
-              <div className='flex flex-col text-center text-gray-400 gap-2 select-none'>
-                <div className='font-bold text-2xl'>
-                  이곳을 클릭하시거나,
-                  <br />
-                  영역 내로 파일을 드래그해주세요
-                </div>
-                <div className='font-normal text-[0.9375rem]'>
-                  pdf, docs 파일을 지원해요
-                </div>
-              </div>
-            </div>
-            <div className='w-[25.5rem] h-[23.5rem] flex flex-col justify-center items-center rounded-lg bg-gray-50 gap-5'>
-              <AddFileIcon />
-              <div className='flex flex-col text-center text-gray-400 gap-2 select-none'>
-                <div className='font-bold text-2xl'>
-                  이곳을 클릭하시거나,
-                  <br />
-                  영역 내로 파일을 드래그해주세요
-                </div>
-                <div className='font-normal text-[0.9375rem]'>
-                  pdf, docs 파일을 지원해요
-                </div>
-              </div>
-            </div>
-            <div className='w-[25.5rem] h-[23.5rem] flex flex-col justify-center items-center rounded-lg bg-gray-50 gap-5'>
-              <AddFileIcon />
-              <div className='flex flex-col text-center text-gray-400 gap-2 select-none'>
-                <div className='font-bold text-2xl'>
-                  이곳을 클릭하시거나,
-                  <br />
-                  영역 내로 파일을 드래그해주세요
-                </div>
-                <div className='font-normal text-[0.9375rem]'>
-                  pdf, docs 파일을 지원해요
-                </div>
-              </div>
-            </div>
+            {[0, 1, 2].map((i) => (
+              <AddFileItem key={i} />
+            ))}
           </div>
         </div>
       </div>
