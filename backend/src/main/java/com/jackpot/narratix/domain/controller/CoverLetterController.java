@@ -6,6 +6,7 @@ import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse
 import com.jackpot.narratix.domain.service.CoverLetterService;
 import com.jackpot.narratix.global.auth.UserId;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class CoverLetterController {
     @GetMapping
     public ResponseEntity<CoverLetterResponse> findCoverLetterById(
             @UserId String userId,
-            @RequestParam Long coverLetterId
+            @RequestParam @Valid @NotNull Long coverLetterId
     ) {
         return ResponseEntity.ok(coverLetterService.findCoverLetterById(userId, coverLetterId));
     }
