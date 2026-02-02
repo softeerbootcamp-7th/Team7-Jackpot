@@ -1,5 +1,7 @@
 package com.jackpot.narratix.domain.entity.enums;
 
+import java.util.Arrays;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,4 +24,11 @@ public enum QuestionCategoryType {
     OTHER("기타");
 
     private final String description;
+
+    public static QuestionCategoryType fromDescription(String description) {
+        return Arrays.stream(values())
+                .filter(type -> type.description.equals(description))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Invalid description: " + description));
+    }
 }
