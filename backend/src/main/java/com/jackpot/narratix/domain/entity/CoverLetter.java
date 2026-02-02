@@ -55,4 +55,8 @@ public class CoverLetter extends BaseTimeEntity{
         coverLetter.deadline = request.deadline();
         return coverLetter;
     }
+
+    public boolean isOwner(String userId){
+        return this.user.getId().equals(userId);
+    }
 }
