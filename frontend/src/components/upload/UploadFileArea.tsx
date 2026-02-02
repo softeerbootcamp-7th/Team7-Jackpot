@@ -1,6 +1,6 @@
 import AddFileItem from '@/components/upload/AddFileItem';
 
-const UploadContentsLayout = () => {
+const UploadFileLayout = () => {
   return (
     <div className='flex justify-between'>
       {[0, 1, 2].map((i) => (
@@ -10,4 +10,4 @@ const UploadContentsLayout = () => {
   );
 };
 
-export default UploadContentsLayout;
+export default UploadFileLayout;

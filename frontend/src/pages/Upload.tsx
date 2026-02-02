@@ -5,7 +5,7 @@ import FileUploadIcon from '@/components/upload/icons/FileUploadIcon';
 import TextUploadIcon from '@/components/upload/icons/TextUploadIcon';
 import StepItem from '@/components/upload/StepItem';
 import TabButton from '@/components/upload/TabButton';
-import UploadAreaLayout from '@/components/upload/UploadFileArea';
+import UploadFileArea from '@/components/upload/UploadFileArea';
 
 const UploadPage = () => {
   const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');
@@ -57,7 +57,7 @@ const UploadPage = () => {
               </button>
             </div>
           </div>
-          {uploadTab === 'file' ? <UploadAreaLayout /> : <></>}
+          {uploadTab === 'file' ? <UploadFileArea /> : <></>}
         </div>
       </div>
     </div>
