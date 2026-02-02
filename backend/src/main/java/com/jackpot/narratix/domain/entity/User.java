@@ -18,7 +18,7 @@ public class User {
     @Column(length = 15, nullable = false)
     private String nickname;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private UserAuth userAuth;
 
     @Builder
