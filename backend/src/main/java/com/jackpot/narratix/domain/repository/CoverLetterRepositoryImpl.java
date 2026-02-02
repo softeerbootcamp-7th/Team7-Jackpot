@@ -4,6 +4,8 @@ import com.jackpot.narratix.domain.entity.CoverLetter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 @RequiredArgsConstructor
 public class CoverLetterRepositoryImpl implements CoverLetterRepository{
@@ -13,5 +15,10 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository{
     @Override
     public CoverLetter save(CoverLetter coverLetter) {
         return coverLetterJpaRepository.save(coverLetter);
+    }
+
+    @Override
+    public Optional<CoverLetter> findById(Long id) {
+        return coverLetterJpaRepository.findById(id);
     }
 }
