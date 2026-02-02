@@ -10,7 +10,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QnARepositoryImpl implements QnARepository {
 
-    private QnAJpaRepository qnAJpaRepository;
+    private final QnAJpaRepository qnAJpaRepository;
 
     @Override
     public void saveAll(List<QnA> qnAs) {
