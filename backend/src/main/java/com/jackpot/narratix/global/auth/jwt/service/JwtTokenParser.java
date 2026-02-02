@@ -5,7 +5,6 @@ import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import com.jackpot.narratix.global.auth.jwt.exception.JwtError;
 import com.jackpot.narratix.global.auth.jwt.exception.JwtException;
 import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -36,7 +35,7 @@ public class JwtTokenParser {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             throw new JwtException(JwtError.EXPIRED_TOKEN, e);
-        } catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException | SignatureException e) {
+        } catch (io.jsonwebtoken.JwtException e) {
             throw new JwtException(JwtError.INVALID_TOKEN, e);
         } catch (Exception e) {
             throw new JwtException(JwtError.MALFORMED_TOKEN, e);
