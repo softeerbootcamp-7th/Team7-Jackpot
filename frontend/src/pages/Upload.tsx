@@ -6,6 +6,7 @@ import TextUploadIcon from '@/components/upload/icons/TextUploadIcon';
 import StepItem from '@/components/upload/StepItem';
 import TabButton from '@/components/upload/TabButton';
 import UploadFileArea from '@/components/upload/UploadFileArea';
+import UploadTextArea from '@/components/upload/UploadTextArea';
 
 const UploadPage = () => {
   const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');
@@ -13,7 +14,7 @@ const UploadPage = () => {
   return (
     <div>
       <div className='w-full h-[5rem]'>헤더</div>
-      <div className='px-[13.125rem]'>
+      <div className='px-[13.125rem] mb-12'>
         <div className='mb-12'>
           <div className='mb-12 select-none'>
             <div className='flex w-full items-center gap-[0.625rem]'>
@@ -22,13 +23,13 @@ const UploadPage = () => {
                 자료 업로드
               </div>
             </div>
-            <div className='font-normal text-gray-600 px-[2.875remx] text-lg'>
+            <div className='font-normal text-gray-600 px-[2.875rem] text-lg'>
               회사별, 문항별로 나만의 자기소개서를 작성하고 관리할 수 있어요
             </div>
           </div>
           <StepItem />
         </div>
-        <div className='flex flex-col gap-4 p-4 border border-gray-100 rounded-2xl'>
+        <div className='flex flex-col gap-4 p-6 border border-gray-100 rounded-2xl'>
           <div className='flex items-center justify-between'>
             <div className='flex items-center'>
               <TabButton
@@ -57,7 +58,7 @@ const UploadPage = () => {
               </button>
             </div>
           </div>
-          {uploadTab === 'file' ? <UploadFileArea /> : <></>}
+          {uploadTab === 'file' ? <UploadFileArea /> : <UploadTextArea />}
         </div>
       </div>
     </div>
