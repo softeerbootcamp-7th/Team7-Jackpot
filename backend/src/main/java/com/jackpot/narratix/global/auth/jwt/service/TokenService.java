@@ -1,7 +1,6 @@
 package com.jackpot.narratix.global.auth.jwt.service;
 
 import com.jackpot.narratix.global.auth.jwt.domain.AccessToken;
-import com.jackpot.narratix.global.auth.jwt.domain.RefreshToken;
 import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import com.jackpot.narratix.global.auth.jwt.service.dto.TokenResponse;
 import lombok.RequiredArgsConstructor;
