@@ -2,7 +2,9 @@ package com.jackpot.narratix.global.exception;
 
 import org.springframework.http.HttpStatus;
 
-public interface ErrorCode {
+import java.io.Serializable;
+
+public interface ErrorCode extends Serializable {
 
     HttpStatus getStatus();
 
