@@ -25,6 +25,7 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -287,6 +288,28 @@ class CoverLetterControllerTest {
                         .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 삭제 성공")
+    void deleteCoverLetterById_Success() throws Exception {
+        // given
+        Long coverLetterId = 1L;
+
+        // when & then
+        mockMvc.perform(delete("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .param("coverLetterId", String.valueOf(coverLetterId)))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @DisplayName("자기소개서 삭제 시 coverLetterId가 null이면 400 Bad Request 반환")
+    void deleteCoverLetterById_CoverLetterIdNull_BadRequest() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN))
                 .andExpect(status().isBadRequest());
     }
 }
