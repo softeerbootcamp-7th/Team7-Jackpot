@@ -26,6 +26,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -326,5 +327,29 @@ class CoverLetterControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 단건 조회시 id가 null이면 400 Bad Request 반환")
+    void findCoverLetterById_idIsNull_BadRequest() throws Exception {
+        mockMvc.perform(get("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 단건 조회 성공")
+    void findCoverLetterById() throws Exception {
+        // given
+        given(coverLetterService.findCoverLetterById(any(), any()))
+                .willReturn(null);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("coverLetterId", "1"))
+                .andExpect(status().isOk());
     }
 }
