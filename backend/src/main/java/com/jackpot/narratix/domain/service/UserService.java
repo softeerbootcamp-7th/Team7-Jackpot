@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class UserService {
 
-    private final UserRepository userRepository;
     private final UserAuthRepository userAuthRepository;
     private final TokenService tokenService;
     private final EntityManager entityManager;
