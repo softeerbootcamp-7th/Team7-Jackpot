@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.controller.request;
 
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import jakarta.annotation.Nullable;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
@@ -16,6 +17,6 @@ public record CreateCoverLetterRequest(
         @Nullable LocalDate deadline,
         @NotNull(message = "질문은 필수 입력 항목입니다.")
         @Size(min = 1, max = 3, message = "질문은 최소 1개에서 최대 3개까지 입력할 수 있습니다.")
-        List<CreateQuestionRequest> questions
+        @Valid List<CreateQuestionRequest> questions
 ) {
 }
