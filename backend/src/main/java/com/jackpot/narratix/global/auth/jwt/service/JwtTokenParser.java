@@ -35,8 +35,10 @@ public class JwtTokenParser {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             throw new JwtException(JwtError.EXPIRED_TOKEN, e);
-        } catch (MalformedJwtException | UnsupportedJwtException | IllegalArgumentException e) {
+        } catch (io.jsonwebtoken.JwtException e) {
             throw new JwtException(JwtError.INVALID_TOKEN, e);
+        } catch (Exception e) {
+            throw new JwtException(JwtError.MALFORMED_TOKEN, e);
         }
     }
 

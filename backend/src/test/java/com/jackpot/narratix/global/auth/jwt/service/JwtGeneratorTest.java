@@ -3,11 +3,14 @@ package com.jackpot.narratix.global.auth.jwt.service;
 import com.jackpot.narratix.global.auth.jwt.domain.AccessToken;
 import com.jackpot.narratix.global.auth.jwt.domain.RefreshToken;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Encoders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import javax.crypto.SecretKey;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
@@ -17,14 +20,18 @@ class JwtGeneratorTest {
 
     private JwtGenerator jwtGenerator;
 
-    private static final String TEST_SECRET = Jwts.SIG.HS256.key().build().toString();
+    private static final String TEST_SECRET;
     private static final Long ACCESS_TOKEN_EXPIRATION = 3600000L; // 1 hour
     private static final Long REFRESH_TOKEN_EXPIRATION = 604800000L; // 7 days
 
+    static {
+        SecretKey key = Jwts.SIG.HS512.key().build();
+        TEST_SECRET = Encoders.BASE64.encode(key.getEncoded());
+    }
+
     @BeforeEach
     void setUp() {
-        jwtGenerator = new JwtGenerator();
-        ReflectionTestUtils.setField(jwtGenerator, "JWT_SECRET", TEST_SECRET);
+        jwtGenerator = new JwtGenerator(new JwtKeyProvider(TEST_SECRET));
         ReflectionTestUtils.setField(jwtGenerator, "ACCESS_TOKEN_EXPIRATION_TIME", ACCESS_TOKEN_EXPIRATION);
         ReflectionTestUtils.setField(jwtGenerator, "REFRESH_TOKEN_EXPIRATION_TIME", REFRESH_TOKEN_EXPIRATION);
     }

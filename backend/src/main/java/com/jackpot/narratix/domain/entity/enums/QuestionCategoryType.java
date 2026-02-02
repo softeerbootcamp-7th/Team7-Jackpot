@@ -1,5 +1,13 @@
 package com.jackpot.narratix.domain.entity.enums;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.jackpot.narratix.global.exception.BaseException;
+import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,5 +29,18 @@ public enum QuestionCategoryType {
     SOCIAL_TOPIC("사회이슈"),
     OTHER("기타");
 
+    @JsonValue
     private final String description;
+
+    private static final Map<String, QuestionCategoryType> CATEGORY_TYPE_MAP =
+            Arrays.stream(values())
+                    .collect(Collectors.toUnmodifiableMap(QuestionCategoryType::getDescription, Function.identity()));
+
+    public static QuestionCategoryType fromDescription(String description) {
+        QuestionCategoryType type = CATEGORY_TYPE_MAP.get(description);
+        if (type == null) {
+            throw new BaseException(GlobalErrorCode.INVALID_INPUT_VALUE);
+        }
+        return type;
+    }
 }
