@@ -47,7 +47,7 @@ public class CoverLetter extends BaseTimeEntity{
     @Column(name = "deadline", nullable = true)
     private LocalDate deadline;
 
-    @OneToMany(mappedBy = "coverletter", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "coverLetter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QnA> qnAs = new ArrayList<>();
 
     public static CoverLetter from(User user, CreateCoverLetterRequest request){
