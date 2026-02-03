@@ -27,18 +27,12 @@ public class UserAuth extends BaseTimeEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public static UserAuth joinNewUser(JoinRequest request) {
-        User user = User.builder()
-                .id(request.getUserId())
-                .nickname(request.getNickname())
-                .build();
-        return UserAuth.builder()
-                .user(user)
-                .password(PasswordHashUtil.hashPassword(request.getPassword()))
-                .build();
+    public static UserAuth joinNewUser(String userId, String nickname, String password) {
+        User user = User.builder().id(userId).nickname(nickname).build();
+        return UserAuth.builder().user(user).password(PasswordHashUtil.hashPassword(password)).build();
     }
 
-    public boolean checkPassword(String password){
+    public boolean checkPassword(String password) {
         return PasswordHashUtil.checkPassword(this.password, password);
     }
 }
