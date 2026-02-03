@@ -44,6 +44,7 @@ public class UserAuthService {
         return tokenService.issueToken(request.getUserId());
     }
 
+    @Transactional(readOnly = true)
     public void checkIdAvailable(String userId) {
         if (isIdDuplicated(userId)) {
             throw new BaseException(UserErrorCode.DUPLICATE_USER_ID);
