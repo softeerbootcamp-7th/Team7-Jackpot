@@ -7,6 +7,7 @@ import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
+import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
