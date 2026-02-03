@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.controller;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.CreateQuestionRequest;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
+import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.service.CoverLetterService;
@@ -27,8 +28,8 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -364,6 +365,39 @@ class CoverLetterControllerTest {
     void deleteCoverLetterById_CoverLetterIdNull_BadRequest() throws Exception {
         // when & then
         mockMvc.perform(delete("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 총 개수 조회 성공")
+    void getTotalCoverLetterCount_Success() throws Exception {
+        // given
+        LocalDate date = LocalDate.of(2024, 12, 31);
+        TotalCoverLetterCountResponse response = TotalCoverLetterCountResponse.builder()
+                .coverLetterCount(5)
+                .qnaCount(12)
+                .seasonCoverLetterCount(3)
+                .build();
+
+        given(coverLetterService.getTotalCoverLetterCount(any(), any(LocalDate.class)))
+                .willReturn(response);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/coverletter/count")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .param("date", date.toString()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.coverLetterCount").value(5))
+                .andExpect(jsonPath("$.qnaCount").value(12))
+                .andExpect(jsonPath("$.seasonCoverLetterCount").value(3));
+    }
+
+    @Test
+    @DisplayName("자기소개서 총 개수 조회 시 date가 없으면 400 Bad Request 반환")
+    void getTotalCoverLetterCount_DateMissing_BadRequest() throws Exception {
+        // when & then
+        mockMvc.perform(get("/api/v1/coverletter/count")
                         .header(AuthConstants.AUTHORIZATION, TEST_TOKEN))
                 .andExpect(status().isBadRequest());
     }

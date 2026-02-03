@@ -3,9 +3,11 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
+import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.User;
+import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
 import com.jackpot.narratix.domain.repository.QnARepository;
@@ -16,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,5 +64,16 @@ public class CoverLetterService {
         }
 
         coverLetterRepository.deleteById(coverLetterId);
+    }
+    @Transactional(readOnly = true)
+    public TotalCoverLetterCountResponse getTotalCoverLetterCount(String userId, LocalDate date) {
+        ApplyHalfType applyHalf = ApplyHalfType.calculateApplyHalfType(date);
+        int applyYear = date.getYear();
+
+        return TotalCoverLetterCountResponse.builder()
+                .coverLetterCount(coverLetterRepository.countByUserId(userId))
+                .qnaCount(qnARepository.countByUserId(userId))
+                .seasonCoverLetterCount(coverLetterRepository.countByUserIdAndApplyYearAndApplyHalf(userId, applyYear, applyHalf))
+                .build();
     }
 }

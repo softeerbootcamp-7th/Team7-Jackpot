@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.CreateQuestionRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
+import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.User;
@@ -18,6 +19,9 @@ import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -27,6 +31,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -302,5 +307,44 @@ class CoverLetterServiceTest {
 
         verify(coverLetterRepository, times(1)).findById(coverLetterId);
         verify(coverLetterRepository, never()).deleteById(anyLong());
+    }
+
+    @ParameterizedTest
+    @DisplayName("자기소개서 총 개수 조회 - repository 메서드 호출 검증")
+    @MethodSource("provideDateAndHalfType")
+    void getTotalCoverLetterCount_RepositoryMethodCalls(String dateStr, ApplyHalfType applyHalfType) {
+        // given
+        String userId = "testUser123";
+        LocalDate date = LocalDate.parse(dateStr);
+        int expectedYear = date.getYear();
+        int expectedCoverLetterCount = 10;
+        int expectedQnaCount = 25;
+        int expectedSeasonCount = 5;
+
+        given(coverLetterRepository.countByUserId(userId)).willReturn(expectedCoverLetterCount);
+        given(qnARepository.countByUserId(userId)).willReturn(expectedQnaCount);
+        given(coverLetterRepository.countByUserIdAndApplyYearAndApplyHalf(userId, expectedYear, applyHalfType))
+                .willReturn(expectedSeasonCount);
+
+        // when
+        TotalCoverLetterCountResponse response = coverLetterService.getTotalCoverLetterCount(userId, date);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.coverLetterCount()).isEqualTo(expectedCoverLetterCount);
+        assertThat(response.qnaCount()).isEqualTo(expectedQnaCount);
+        assertThat(response.seasonCoverLetterCount()).isEqualTo(expectedSeasonCount);
+
+        verify(coverLetterRepository, times(1)).countByUserId(userId);
+        verify(qnARepository, times(1)).countByUserId(userId);
+        verify(coverLetterRepository, times(1))
+                .countByUserIdAndApplyYearAndApplyHalf(userId, expectedYear, applyHalfType);
+    }
+
+    static Stream<Arguments> provideDateAndHalfType() {
+        return Stream.of(
+                Arguments.of("2026-06-30", ApplyHalfType.FIRST_HALF),
+                Arguments.of("2024-07-01", ApplyHalfType.SECOND_HALF)
+        );
     }
 }

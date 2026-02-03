@@ -7,4 +7,6 @@ import java.util.List;
 public interface QnARepository {
 
     void saveAll(List<QnA> qnAs);
+
+    Integer countByUserId(String userId);
 }
