@@ -33,4 +33,13 @@ public class CoverLetterController {
     ) {
         return ResponseEntity.ok(coverLetterService.findCoverLetterById(userId, coverLetterId));
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteCoverLetterById(
+            @UserId String userId,
+            @RequestParam Long coverLetterId
+    ) {
+        coverLetterService.deleteCoverLetterById(userId, coverLetterId);
+        return ResponseEntity.noContent().build();
+    }
 }

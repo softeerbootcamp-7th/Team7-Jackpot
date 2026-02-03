@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,5 +51,15 @@ public class CoverLetterService {
         if(!coverLetter.isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
 
         return CoverLetterResponse.of(coverLetter);
+    }
+    @Transactional
+    public void deleteCoverLetterById(String userId, Long coverLetterId) {
+        Optional<CoverLetter> coverLetterOptional = coverLetterRepository.findById(coverLetterId);
+        if(coverLetterOptional.isEmpty()) return;
+        if(!coverLetterOptional.get().getUser().getId().equals(userId)){
+            throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        }
+
+        coverLetterRepository.deleteById(coverLetterId);
     }
 }

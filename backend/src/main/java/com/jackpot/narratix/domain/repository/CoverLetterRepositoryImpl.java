@@ -18,7 +18,12 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository{
     }
 
     @Override
-    public Optional<CoverLetter> findById(Long id) {
-        return coverLetterJpaRepository.findById(id);
+    public Optional<CoverLetter> findById(Long coverLetterId) {
+        return coverLetterJpaRepository.findById(coverLetterId);
+    }
+
+    @Override
+    public void deleteById(Long coverLetterId) {
+        coverLetterJpaRepository.deleteById(coverLetterId);
     }
 }

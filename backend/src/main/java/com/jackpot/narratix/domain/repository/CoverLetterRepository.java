@@ -8,5 +8,8 @@ public interface CoverLetterRepository {
 
     CoverLetter save(CoverLetter coverLetter);
 
-    Optional<CoverLetter> findById(Long id);
+    Optional<CoverLetter> findById(Long coverLetterId);
+
+    void deleteById(Long coverLetterId);
+
 }
