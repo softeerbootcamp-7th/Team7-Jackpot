@@ -1,10 +1,9 @@
 import FirstContentAreaHeader from '@/components/upload/FirstContentAreaHeader';
+import SecondContentArea from '@/components/upload/SecondContentArea';
 import UploadFileArea from '@/components/upload/UploadFileArea';
 import UploadTextArea from '@/components/upload/UploadTextArea';
 
 import type { FirstContentAreaHeaderProps } from '@/types/upload';
-
-import SecondContentAreaHeader from './SecondContentAreaHeader';
 
 const ContentArea = ({
   uploadTab,
@@ -24,7 +23,11 @@ const ContentArea = ({
           {uploadTab === 'file' ? <UploadFileArea /> : <UploadTextArea />}
         </>
       )}
-      {step === '2' && <SecondContentAreaHeader />}
+      {step === '2' && (
+        <>
+          <SecondContentArea />
+        </>
+      )}
       {step === '3' && <>3</>}
     </div>
   );
