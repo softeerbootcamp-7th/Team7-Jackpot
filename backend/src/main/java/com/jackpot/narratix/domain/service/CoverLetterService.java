@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
+import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
@@ -75,5 +76,10 @@ public class CoverLetterService {
                 .qnaCount(qnARepository.countByUserId(userId))
                 .seasonCoverLetterCount(coverLetterRepository.countByUserIdAndApplyYearAndApplyHalf(userId, applyYear, applyHalf))
                 .build();
+    }
+
+    public void editCoverLetter(String userId, EditCoverLetterRequest editCoverLetterRequest) {
+        CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(editCoverLetterRequest.coverLetterId());
+        coverLetter.edit(userId, editCoverLetterRequest);
     }
 }
