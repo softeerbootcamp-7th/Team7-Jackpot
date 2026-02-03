@@ -13,7 +13,7 @@ public class PasswordHashUtil {
         return BCrypt.hashpw(password, BCrypt.gensalt(BCRYPT_SALT_ROUNDS));
     }
 
-    public static boolean checkPassword(String password, String expectedPassword){
-        return BCrypt.checkpw(password, expectedPassword);
+    public static boolean checkPassword(String plaintext, String hashed){
+        return BCrypt.checkpw(plaintext, hashed);
     }
 }
