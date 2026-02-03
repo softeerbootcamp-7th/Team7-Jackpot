@@ -47,7 +47,7 @@ public class CoverLetterService {
     public void deleteCoverLetterById(String userId, Long coverLetterId) {
         Optional<CoverLetter> coverLetterOptional = coverLetterRepository.findById(coverLetterId);
         if(coverLetterOptional.isEmpty()) return;
-        if(!coverLetterOptional.get().getUserId().equals(userId)){
+        if(!coverLetterOptional.get().isOwner(userId)){
             throw new BaseException(GlobalErrorCode.FORBIDDEN);
         }
 
