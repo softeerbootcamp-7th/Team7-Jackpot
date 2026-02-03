@@ -203,7 +203,7 @@ class CoverLetterServiceTest {
 
         CoverLetter mockCoverLetter = mock(CoverLetter.class);
 
-        given(mockCoverLetter.getUserId()).willReturn(userId);
+        given(mockCoverLetter.isOwner(any())).willReturn(true);
         given(coverLetterRepository.findById(coverLetterId)).willReturn(Optional.of(mockCoverLetter));
 
         // when
@@ -236,11 +236,10 @@ class CoverLetterServiceTest {
     void deleteCoverLetterById_Forbidden() {
         // given
         String userId = "testUser123";
-        String otherUserId = "otherTestUser123";
         Long coverLetterId = 1L;
 
         CoverLetter mockCoverLetter = mock(CoverLetter.class);
-        given(mockCoverLetter.getUserId()).willReturn(otherUserId);
+        given(mockCoverLetter.isOwner(any())).willReturn(false);
         given(coverLetterRepository.findById(coverLetterId)).willReturn(Optional.of(mockCoverLetter));
 
         // when & then
