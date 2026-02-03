@@ -4,3 +4,8 @@ export interface FirstContentAreaHeaderProps {
   step?: string;
   nextStep?: (step: string) => void;
 }
+
+export interface CoverLetterListProps {
+  tabState: 1 | 2 | 3;
+  setTabState: (newValue: 1 | 2 | 3) => void;
+}
