@@ -2,12 +2,13 @@ package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.controller.request.GetLibraryListRequest;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
+import com.jackpot.narratix.domain.exception.LibraryErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
 import com.jackpot.narratix.domain.repository.QnARepository;
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -21,6 +22,7 @@ public class LibraryService {
         return switch (request.type()) {
             case COMPANY -> getCompanyName(userId);
             case QUESTION -> getQuestionCategory(userId);
+            default -> throw new BaseException(LibraryErrorCode.INVALID_LIBRARY_TYPE);
         };
     }
 
