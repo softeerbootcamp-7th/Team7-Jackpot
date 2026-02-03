@@ -32,7 +32,7 @@ public class UserAuth extends BaseTimeEntity {
         return UserAuth.builder().user(user).password(PasswordHashUtil.hashPassword(password)).build();
     }
 
-    public boolean checkPassword(String password) {
-        return PasswordHashUtil.checkPassword(this.password, password);
+    public boolean checkPassword(String plainPassword) {
+        return PasswordHashUtil.checkPassword(plainPassword, this.password);
     }
 }
