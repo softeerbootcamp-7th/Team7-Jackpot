@@ -39,7 +39,11 @@ public class UserAuthService {
             throw new BaseException(UserErrorCode.DUPLICATE_USER_ID);
         }
 
-        userAuthRepository.save(UserAuth.joinNewUser(request));
+        userAuthRepository.save(UserAuth.joinNewUser(
+                request.getUserId(),
+                request.getNickname(),
+                request.getPassword()
+        ));
 
         return tokenService.issueToken(request.getUserId());
     }
