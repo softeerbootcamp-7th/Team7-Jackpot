@@ -1,13 +1,19 @@
 interface AILabelingIconProps {
   color: string;
+  width?: string;
+  height?: string;
 }
 
-const AILabelingIcon = ({ color }: AILabelingIconProps) => {
+const AILabelingIcon = ({
+  color,
+  width = '56',
+  height = '56',
+}: AILabelingIconProps) => {
   return (
     <svg
-      width='56'
-      height='56'
-      viewBox='0 0 56 56'
+      width={width}
+      height={height}
+      viewBox={`0 0 ${width} ${height}`}
       fill='none'
       xmlns='http://www.w3.org/2000/svg'
     >
