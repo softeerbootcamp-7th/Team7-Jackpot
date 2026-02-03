@@ -22,7 +22,7 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository{
     }
 
     @Override
-    public Integer countByUserIdAndApplyYearAndApplyHalf(String userId, int year, ApplyHalfType applyHalfType) {
-        return coverLetterJpaRepository.countByUserIdAndApplyYearAndApplyHalf(userId, year, applyHalfType);
+    public Integer countByUserIdAndApplyYearAndApplyHalf(String userId, int applyYear, ApplyHalfType applyHalfType) {
+        return coverLetterJpaRepository.countByUserIdAndApplyYearAndApplyHalf(userId, applyYear, applyHalfType);
     }
 }
