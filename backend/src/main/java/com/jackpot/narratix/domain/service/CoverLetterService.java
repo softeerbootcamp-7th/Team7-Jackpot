@@ -43,7 +43,7 @@ public class CoverLetterService {
 
     @Transactional(readOnly = true)
     public TotalCoverLetterCountResponse getTotalCoverLetterCount(String userId, LocalDate date) {
-        ApplyHalfType applyHalf = ApplyHalfType.caculateApplyHalfType(date);
+        ApplyHalfType applyHalf = ApplyHalfType.calculateApplyHalfType(date);
         int applyYear = date.getYear();
 
         return TotalCoverLetterCountResponse.builder()

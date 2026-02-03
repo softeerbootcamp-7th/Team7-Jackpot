@@ -7,7 +7,7 @@ public enum ApplyHalfType {
 
     private static final int HALF_YEAR_BOUNDARY_MONTH = 6;
 
-    public static ApplyHalfType caculateApplyHalfType(LocalDate date) {
+    public static ApplyHalfType calculateApplyHalfType(LocalDate date) {
         if (date.getMonthValue() <= HALF_YEAR_BOUNDARY_MONTH) return FIRST_HALF;
         return SECOND_HALF;
     }
