@@ -70,7 +70,7 @@ public class CoverLetter extends BaseTimeEntity{
     }
 
     public void edit(String userId, EditCoverLetterRequest request){
-        if(isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        if(!isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
 
         this.companyName = request.companyName();
         this.applyYear = request.applyYear();
