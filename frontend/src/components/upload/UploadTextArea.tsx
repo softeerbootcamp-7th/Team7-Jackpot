@@ -5,6 +5,7 @@ import { UploadPageIcons } from '@/components/upload/icons/index';
 
 const UploadTextArea = () => {
   const [tabState, setTabState] = useState<1 | 2 | 3>(1);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [contents, setContents] = useState<{ [key: number]: string }>({
     1: '',
@@ -40,8 +41,10 @@ const UploadTextArea = () => {
         </div>
         <div>
           <div className='relative w-full'>
-            {!contents[tabState] && (
-              <div className='absolute inset-0 px-5 py-[0.875rem] flex flex-col gap-1 text-gray-400 text-sm select-none pointer-events-none'>
+            {
+              <div
+                className={`absolute inset-0 px-5 py-[0.875rem] flex flex-col gap-1 text-gray-400 text-sm select-none pointer-events-none ${!contents[tabState] && !isFocused ? 'opacity-100' : 'opacity-0'}`}
+              >
                 <div className='font-bold'>
                   보유하고 계신 자기소개서 전체, 혹은 경험의 일부를
                   붙여넣어주세요
@@ -57,13 +60,15 @@ const UploadTextArea = () => {
                   </div>
                 </div>
               </div>
-            )}
+            }
           </div>
           <textarea
             id='text'
-            className='w-full min-h-64 resize-none outline-none bg-gray-50 rounded-lg'
+            className='w-full min-h-64 px-5 py-3 resize-none outline-none bg-gray-50 rounded-lg'
             value={contents[tabState]}
             onChange={handleContents}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
           ></textarea>
         </div>
       </div>
