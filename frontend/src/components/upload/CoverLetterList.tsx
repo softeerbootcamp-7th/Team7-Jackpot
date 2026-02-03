@@ -1,13 +1,10 @@
 import CoverLetterItem from '@/components/upload/CoverLetterItem';
 
+import type { CoverLetterListProps } from '@/types/upload';
+
 interface TabDataType {
   tabName: string;
   tabNumber: 1 | 2 | 3;
-}
-
-interface CoverLetterListProps {
-  tabState: 1 | 2 | 3;
-  setTabState: (newValue: 1 | 2 | 3) => void;
 }
 
 const CoverLetterList = ({ tabState, setTabState }: CoverLetterListProps) => {
