@@ -17,4 +17,5 @@ public interface CoverLetterRepository {
 
     void deleteById(Long coverLetterId);
 
+    CoverLetter findByIdOrElseThrow(Long coverLetterId);
 }
