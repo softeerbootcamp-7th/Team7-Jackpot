@@ -272,7 +272,7 @@ class CoverLetterControllerTest {
 
     @Test
     @DisplayName("질문이 10개 이상일 때 400 Bad Request 반환")
-    void createCoverLetter_FourQuestions_BadRequest() throws Exception {
+    void createCoverLetter_MoreThanTenQuestions_BadRequest() throws Exception {
         // Given: 질문이 11개
         List<CreateQuestionRequest> requests = new ArrayList<>();
         for (int i = 1; i <= 11; i++) {
