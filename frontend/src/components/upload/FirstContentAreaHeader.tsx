@@ -1,4 +1,4 @@
-import { UploadPageIcons } from '@/components/upload/icons/index';
+import { UploadPageIcons } from '@/components/upload/icons';
 import TabButton from '@/components/upload/TabButton';
 
 import type { FirstContentAreaHeaderProps } from '@/types/upload';
