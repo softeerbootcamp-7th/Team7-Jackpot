@@ -29,7 +29,7 @@ public class CoverLetterController {
     @DeleteMapping
     public ResponseEntity<Void> deleteCoverLetterById(
             @UserId String userId,
-            @RequestParam @Validated @NotNull Long coverLetterId
+            @RequestParam Long coverLetterId
     ) {
         coverLetterService.deleteCoverLetterById(userId, coverLetterId);
         return ResponseEntity.noContent().build();
