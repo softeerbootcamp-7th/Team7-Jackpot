@@ -5,8 +5,10 @@ import java.time.LocalDate;
 public enum ApplyHalfType {
     FIRST_HALF, SECOND_HALF;
 
+    private static final int HALF_YEAR_BOUNDARY_MONTH = 6;
+
     public static ApplyHalfType caculateApplyHalfType(LocalDate date) {
-        if (date.getMonthValue() <= 6) return FIRST_HALF;
+        if (date.getMonthValue() <= HALF_YEAR_BOUNDARY_MONTH) return FIRST_HALF;
         return SECOND_HALF;
     }
 }
