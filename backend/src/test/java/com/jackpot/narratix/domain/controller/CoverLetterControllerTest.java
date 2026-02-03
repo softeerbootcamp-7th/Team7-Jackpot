@@ -21,11 +21,13 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -270,25 +272,16 @@ class CoverLetterControllerTest {
     }
 
     @Test
-    @DisplayName("질문이 4개일 때 400 Bad Request 반환")
+    @DisplayName("질문이 10개 이상일 때 400 Bad Request 반환")
     void createCoverLetter_FourQuestions_BadRequest() throws Exception {
-        // Given: 질문이 4개
-        CreateQuestionRequest question1 = new CreateQuestionRequest(
-                "지원동기를 작성해주세요.",
-                QuestionCategoryType.MOTIVATION.getDescription()
-        );
-        CreateQuestionRequest question2 = new CreateQuestionRequest(
-                "협업 경험을 작성해주세요.",
-                QuestionCategoryType.TEAMWORK_EXPERIENCE.getDescription()
-        );
-        CreateQuestionRequest question3 = new CreateQuestionRequest(
-                "가치관을 작성해주세요.",
-                QuestionCategoryType.VALUES.getDescription()
-        );
-        CreateQuestionRequest question4 = new CreateQuestionRequest(
-                "직무역량을 작성해주세요.",
-                QuestionCategoryType.JOB_SKILL.getDescription()
-        );
+        // Given: 질문이 11개
+        List<CreateQuestionRequest> requests = new ArrayList<>();
+        for (int i = 1; i <= 11; i++) {
+            requests.add(new CreateQuestionRequest(
+                    "지원동기를 작성해주세요.",
+                    QuestionCategoryType.MOTIVATION.getDescription()
+            ));
+        }
 
         CreateCoverLetterRequest request = new CreateCoverLetterRequest(
                 "현대자동차",
@@ -296,7 +289,7 @@ class CoverLetterControllerTest {
                 ApplyHalfType.FIRST_HALF,
                 "백엔드 개발자",
                 LocalDate.of(2024, 12, 31),
-                List.of(question1, question2, question3, question4)  // 4개
+                requests
         );
 
         // When & Then
@@ -326,5 +319,29 @@ class CoverLetterControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 단건 조회시 id가 null이면 400 Bad Request 반환")
+    void findCoverLetterById_idIsNull_BadRequest() throws Exception {
+        mockMvc.perform(get("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("자기소개서 단건 조회 성공")
+    void findCoverLetterById() throws Exception {
+        // given
+        given(coverLetterService.findCoverLetterById(any(), any()))
+                .willReturn(null);
+
+        // when & then
+        mockMvc.perform(get("/api/v1/coverletter")
+                        .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("coverLetterId", "1"))
+                .andExpect(status().isOk());
     }
 }
