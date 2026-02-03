@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.CreateQuestionRequest;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
+import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.User;
@@ -157,5 +158,38 @@ class CoverLetterServiceTest {
         assertThat(response.coverLetterId()).isEqualTo(1L);
 
         verify(coverLetterRepository, times(1)).save(any(CoverLetter.class));
+    }
+
+    @Test
+    @DisplayName("자기소개서 총 개수 조회 - repository 메서드 호출 검증")
+    void getTotalCoverLetterCount_RepositoryMethodCalls() {
+        // given
+        String userId = "testUser123";
+        LocalDate date = LocalDate.of(2024, 7, 15); // 하반기
+        int expectedCoverLetterCount = 10;
+        int expectedQnaCount = 25;
+        int expectedSeasonCount = 5;
+
+        ApplyHalfType expectedApplyHalf = ApplyHalfType.SECOND_HALF;
+        int expectedYear = 2024;
+
+        given(coverLetterRepository.countByUserId(userId)).willReturn(expectedCoverLetterCount);
+        given(qnARepository.countByUserId(userId)).willReturn(expectedQnaCount);
+        given(coverLetterRepository.countByUserIdAndApplyYearAndApplyHalf(userId, expectedYear, expectedApplyHalf))
+                .willReturn(expectedSeasonCount);
+
+        // when
+        TotalCoverLetterCountResponse response = coverLetterService.getTotalCoverLetterCount(userId, date);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.coverLetterCount()).isEqualTo(expectedCoverLetterCount);
+        assertThat(response.qnaCount()).isEqualTo(expectedQnaCount);
+        assertThat(response.seasonCoverLetterCount()).isEqualTo(expectedSeasonCount);
+
+        verify(coverLetterRepository, times(1)).countByUserId(userId);
+        verify(qnARepository, times(1)).countByUserId(userId);
+        verify(coverLetterRepository, times(1))
+                .countByUserIdAndApplyYearAndApplyHalf(userId, expectedYear, expectedApplyHalf);
     }
 }
