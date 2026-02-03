@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
+import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
@@ -28,6 +29,15 @@ public class CoverLetterController {
             @RequestBody @Valid CreateCoverLetterRequest createCoverLetterRequest
     ) {
         return ResponseEntity.ok(coverLetterService.createNewCoverLetter(userId, createCoverLetterRequest));
+    }
+
+    @PatchMapping
+    public ResponseEntity<Void> editCoverLetter(
+            @UserId String userId,
+            @RequestBody @Valid EditCoverLetterRequest editCoverLetterRequest
+    ) {
+        coverLetterService.editCoverLetter(userId, editCoverLetterRequest);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping
