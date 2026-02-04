@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.controller;
 
+import com.jackpot.narratix.domain.controller.response.CompanyLibraryResponse;
 import com.jackpot.narratix.domain.controller.response.LibraryListResponse;
 import com.jackpot.narratix.domain.entity.enums.LibraryType;
 import com.jackpot.narratix.domain.service.LibraryService;
@@ -25,7 +26,17 @@ public class LibraryController {
             @UserId String userId,
             @RequestParam LibraryType libraryType
     ) {
-        List<String> libraryList = libraryService.getLibraryList(userId, libraryType);
-        return ResponseEntity.ok(new LibraryListResponse(libraryList));
+        List<String> libraries = libraryService.getLibraryList(userId, libraryType);
+        return ResponseEntity.ok(new LibraryListResponse(libraries));
+    }
+
+    @GetMapping("/company/all")
+    public ResponseEntity<CompanyLibraryResponse> getCompanyLibraries(
+            @UserId String userId,
+            @RequestParam String companyName,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) Long lastCoverLetterId
+    ) {
+        return ResponseEntity.ok(libraryService.getCompanyLibraries(userId, companyName, size, lastCoverLetterId));
     }
 }
