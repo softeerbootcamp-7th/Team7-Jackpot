@@ -2,7 +2,10 @@ package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
+import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface CoverLetterRepository {
@@ -17,4 +20,9 @@ public interface CoverLetterRepository {
 
     void deleteById(Long coverLetterId);
 
+    List<CoverLetter> findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+            String userId, LocalDate startDate, LocalDate endDate, Pageable pageable
+    );
+
+    Integer countByUserIdAndDeadlineBetween(String userId, LocalDate startDate, LocalDate endDate);
 }
