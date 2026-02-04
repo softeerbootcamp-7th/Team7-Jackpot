@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.entity.CoverLetter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 public record CompanyLibraryResponse(
         List<CoverLetterItem> coverLetters,
@@ -19,16 +20,15 @@ public record CompanyLibraryResponse(
     ) {
     }
 
-    public static CompanyLibraryResponse of(List<CoverLetter> coverLetters, boolean hasNext) {
+    public static CompanyLibraryResponse of(List<CoverLetter> coverLetters, Map<Long, Long> countMap, boolean hasNext) {
+
         List<CoverLetterItem> items = coverLetters.stream()
                 .map(coverLetter -> new CoverLetterItem(
                         coverLetter.getId(),
-                        String.format("%d년 %s",
-                                coverLetter.getApplyYear(),
-                                coverLetter.getApplyHalf().getDescription()),
+                        String.format("%d년 %s", coverLetter.getApplyYear(), coverLetter.getApplyHalf().getDescription()),
                         coverLetter.getCompanyName(),
                         coverLetter.getJobPosition(),
-                        coverLetter.getQuestionCount(),
+                        countMap.getOrDefault(coverLetter.getId(), 0L).intValue(),
                         coverLetter.getModifiedAt()
                 ))
                 .toList();

@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,4 +13,6 @@ public interface QnARepository {
     Integer countByUserId(String userId);
 
     List<QuestionCategoryType> findQuestionCategoryByUserId(String userId);
+
+    List<QnACountProjection> countByCoverLetterIdIn(@Param("coverLetterIds") List<Long> coverLetterIds);
 }

@@ -16,4 +16,10 @@ public interface QnAJpaRepository extends JpaRepository<QnA, Long> {
 
     @Query("SELECT DISTINCT q.questionCategory FROM QnA q WHERE q.userId = :userId")
     List<QuestionCategoryType> findDistinctByQuestionCategory(@Param("userId") String userId);
+
+    @Query("SELECT q.coverLetter.id AS coverLetterId, COUNT(q) AS count " +
+            "FROM QnA q " +
+            "WHERE q.coverLetter.id IN :coverLetterIds " +
+            "GROUP BY q.coverLetter.id")
+    List<QnACountProjection> countByCoverLetterIdIn(@Param("coverLetterIds") List<Long> coverLetterIds);
 }

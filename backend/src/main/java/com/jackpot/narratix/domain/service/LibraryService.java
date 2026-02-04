@@ -7,6 +7,7 @@ import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
 import com.jackpot.narratix.domain.exception.LibraryErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
+import com.jackpot.narratix.domain.repository.QnACountProjection;
 import com.jackpot.narratix.domain.repository.QnARepository;
 import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,8 +71,28 @@ public class LibraryService {
         }
 
         List<CoverLetter> coverLetters = coverLetterSlice.getContent();
+
+        List<Long> coverLetterIds = coverLetters.stream()
+                .map(CoverLetter::getId)
+                .toList();
+
+        Map<Long, Long> qnaCountMap = new HashMap<>();
+        if (!coverLetterIds.isEmpty()) {
+            List<QnACountProjection> counts = qnARepository.countByCoverLetterIdIn(coverLetterIds);
+
+            qnaCountMap = counts.stream()
+                    .collect(Collectors.toMap(
+                            QnACountProjection::getCoverLetterId,
+                            QnACountProjection::getCount
+                    ));
+        }
+
         boolean hasNext = coverLetterSlice.hasNext();
 
-        return CompanyLibraryResponse.of(coverLetters, hasNext);
+        return CompanyLibraryResponse.of(
+                coverLetters,
+                qnaCountMap,
+                hasNext
+        );
     }
 }
