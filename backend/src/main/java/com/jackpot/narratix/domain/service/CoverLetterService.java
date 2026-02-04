@@ -5,6 +5,7 @@ import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
+import com.jackpot.narratix.domain.controller.response.UpcomingCoverLetterResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -71,5 +73,12 @@ public class CoverLetterService {
     public void editCoverLetter(String userId, EditCoverLetterRequest editCoverLetterRequest) {
         CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(editCoverLetterRequest.coverLetterId());
         coverLetter.edit(userId, editCoverLetterRequest);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UpcomingCoverLetterResponse> getUpcomingCoverLetters(String userId, LocalDate date, Integer size) {
+        return coverLetterRepository.findUpcomingCoverLettersByUserId(userId, date, size).stream()
+                .map(UpcomingCoverLetterResponse::of)
+                .toList();
     }
 }
