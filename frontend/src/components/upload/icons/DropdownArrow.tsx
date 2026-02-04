@@ -12,7 +12,7 @@ const DropdownArrow = ({ isOpen }: DropdownArrowProps) => {
       xmlns='http://www.w3.org/2000/svg'
       style={{
         transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-        transition: 'transform 0.3s ease-in-out',
+        transition: 'transform 0.15s ease-in-out',
       }}
     >
       <path
