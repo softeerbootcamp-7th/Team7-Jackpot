@@ -1,5 +1,5 @@
-import type { InputBarProps } from '@/components/auth/InputBar';
-import InputBar from '@/components/auth/InputBar';
+import type { InputBarProps } from './InputBar';
+import InputBar from './InputBar';
 
 interface InputBarInSignUpProps extends InputBarProps {
   label: string;
@@ -16,9 +16,9 @@ const InputBarInSignUp = ({
   const isError = helpMessage && !isSuccess;
 
   return (
-    <div className='flex flex-col w-full gap-3'>
+    <div className='flex w-full flex-col gap-3'>
       <div className='flex gap-[0.125rem]'>
-        <div className='text-gray-950 font-bold text-lg'>{label}</div>
+        <div className='text-lg font-bold text-gray-950'>{label}</div>
         <div className='text-red-600'>*</div>
       </div>
 
@@ -31,7 +31,7 @@ const InputBarInSignUp = ({
 
       {helpMessage && (
         <p
-          className={`text-xs mt-1 ps-1 ${
+          className={`mt-1 ps-1 text-xs ${
             isSuccess ? 'text-blue-500' : 'text-red-500'
           }`}
         >

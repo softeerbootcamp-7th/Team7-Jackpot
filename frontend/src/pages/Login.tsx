@@ -1,7 +1,6 @@
-import AuthLayout from '@/components/auth/AuthLayout';
-import LoginForm from '@/components/auth/LoginForm';
-
-import { SUB_TITLE } from '@/constants/constantsInLoginPage';
+import AuthLayout from '@/features/auth/components/AuthLayout';
+import LoginForm from '@/features/auth/components/LoginForm';
+import { SUB_TITLE } from '@/features/auth/constants/constantsInLoginPage';
 
 const LoginPage = () => {
   return (

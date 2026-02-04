@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router';
 
-import InputBar from '@/components/auth/InputBar';
-import SubmitButton from '@/components/auth/SubmitButton';
-import useAuthForm from '@/hooks/auth/useAuthForm';
+import InputBar from './InputBar';
+import SubmitButton from './SubmitButton';
 
-import { INPUT_BAR_IN_LOGIN } from '@/constants/constantsInLoginPage';
-import { validateId } from '@/utils/auth/validation';
+import { INPUT_BAR_IN_LOGIN } from '@/features/auth/constants/constantsInLoginPage';
+import useAuthForm from '@/features/auth/hooks/useAuthForm';
+import { validateId } from '@/shared/utils/validation';
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -15,8 +15,8 @@ const LoginForm = () => {
 
   return (
     <>
-      <form className='flex flex-col justify-center items-center gap-6'>
-        <div className='w-[24.5rem] flex flex-col justify-center items-center gap-3'>
+      <form className='flex flex-col items-center justify-center gap-6'>
+        <div className='flex w-[24.5rem] flex-col items-center justify-center gap-3'>
           {INPUT_BAR_IN_LOGIN.map((each) => (
             <InputBar
               key={each.ID}
@@ -33,7 +33,7 @@ const LoginForm = () => {
       <button
         type='button'
         onClick={() => navigate('/signup')}
-        className='text-gray-600 font-medium text-base cursor-pointer'
+        className='cursor-pointer text-base font-medium text-gray-600'
       >
         회원가입
       </button>

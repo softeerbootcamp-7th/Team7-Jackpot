@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { AuthFormData, AuthInputKey } from '@/types/auth';
+import type { AuthFormData, AuthInputKey } from '@/features/auth/types/auth';
 
 const useAuthForm = <T extends AuthFormData>(initialState: T) => {
   const [formData, setFormData] = useState<T>(initialState);

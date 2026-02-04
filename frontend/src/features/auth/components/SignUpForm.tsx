@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
 
-import CheckDuplicationButton from '@/components/auth/CheckDuplicationButton';
-import InputBarInSignUp from '@/components/auth/InputBarInSignUp';
-import SubmitButton from '@/components/auth/SubmitButton';
-import useAuthForm from '@/hooks/auth/useAuthForm';
+import CheckDuplicationButton from './CheckDuplicationButton';
+import InputBarInSignUp from './InputBarInSignUp';
+import SubmitButton from './SubmitButton';
 
-import { INPUT_BAR_IN_SIGNUP } from '@/constants/constantsInSignUpPage';
-import type { AuthFormData } from '@/types/auth';
+import { INPUT_BAR_IN_SIGNUP } from '@/features/auth/constants/constantsInSignUpPage';
+import useAuthForm from '@/features/auth/hooks/useAuthForm';
+import type { AuthFormData } from '@/features/auth/types/auth';
 import {
   validateId,
   validateNickname,
   validatePassword,
-} from '@/utils/auth/validation';
+} from '@/shared/utils/validation';
 
 interface isActivedType {
   id: boolean;
@@ -105,8 +105,8 @@ const SignUpForm = () => {
   };
 
   return (
-    <form className='flex flex-col justify-center items-center gap-[3.75rem]'>
-      <div className='w-[24.5rem] flex flex-col justify-center items-center gap-[1.125rem]'>
+    <form className='flex flex-col items-center justify-center gap-[3.75rem]'>
+      <div className='flex w-[24.5rem] flex-col items-center justify-center gap-[1.125rem]'>
         {INPUT_BAR_IN_SIGNUP.map((each) => {
           const currentMsg = statusMsg[each.ID];
 
