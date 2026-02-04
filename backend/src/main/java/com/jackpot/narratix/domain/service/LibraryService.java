@@ -14,8 +14,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -43,6 +44,7 @@ public class LibraryService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public CompanyLibraryResponse getCompanyLibraries(String userId, String companyName, int size, Long lastCoverLetterId) {
 
         Pageable pageable = PageRequest.of(0, size);
@@ -58,7 +60,7 @@ public class LibraryService {
             coverLetterSlice = coverLetterRepository.findByUserIdAndCompanyNameOrderByModifiedAtDesc(
                     userId,
                     companyName,
-                    LocalDate.from(lastCoverLetter.getModifiedAt()),
+                    LocalDateTime.from(lastCoverLetter.getModifiedAt()),
                     pageable
             );
 

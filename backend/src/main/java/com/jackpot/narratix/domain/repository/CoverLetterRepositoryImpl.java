@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,8 +57,8 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
     }
 
     @Override
-    public Slice<CoverLetter> findByUserIdAndCompanyNameOrderByModifiedAtDesc(String userId, String companyName, LocalDate localDate, Pageable pageable) {
-        return coverLetterJpaRepository.findByUserIdAndCompanyNameOrderByModifiedAtDesc(
+    public Slice<CoverLetter> findByUserIdAndCompanyNameOrderByModifiedAtDesc(String userId, String companyName, LocalDateTime localDate, Pageable pageable) {
+        return coverLetterJpaRepository.findNextPageByCompany(
                 userId,
                 companyName,
                 localDate,

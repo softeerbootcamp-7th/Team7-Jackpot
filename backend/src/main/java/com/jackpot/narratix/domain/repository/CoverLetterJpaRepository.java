@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface CoverLetterJpaRepository extends JpaRepository<CoverLetter, Long> {
@@ -31,10 +31,10 @@ public interface CoverLetterJpaRepository extends JpaRepository<CoverLetter, Lon
             "AND c.companyName = :companyName " +
             "AND c.modifiedAt < :lastModifiedAt " +
             "ORDER BY c.modifiedAt DESC")
-    Slice<CoverLetter> findByUserIdAndCompanyNameOrderByModifiedAtDesc(
+    Slice<CoverLetter> findNextPageByCompany(
             @Param("userId") String userId,
             @Param("companyName") String companyName,
-            @Param("lastModifiedAt") LocalDate lastModifiedAt,
+            @Param("lastModifiedAt") LocalDateTime lastModifiedAt,
             Pageable pageable
     );
 }
