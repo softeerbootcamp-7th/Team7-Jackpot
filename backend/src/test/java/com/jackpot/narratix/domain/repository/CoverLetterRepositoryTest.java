@@ -108,7 +108,7 @@ class CoverLetterRepositoryTest {
 
     @Test
     @DisplayName("날짜 범위로 자기소개서 조회 시 해당 범위 내의 자기소개서만 조회된다")
-    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_WithinDateRange() {
+    void findInPeriod_WithinDateRange() {
         // given
         User user = saveUser("testUser789", "테스터3");
         String userId = user.getId();
@@ -129,7 +129,7 @@ class CoverLetterRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByDeadlineAscModifiedAtDesc(
                 userId, startDate, endDate, pageable
         );
 
@@ -138,15 +138,15 @@ class CoverLetterRepositoryTest {
         assertThat(result)
                 .extracting(CoverLetter::getDeadline)
                 .containsExactly(
-                        LocalDate.of(2024, 12, 31),
+                        LocalDate.of(2024, 6, 15),
                         LocalDate.of(2024, 8, 20),
-                        LocalDate.of(2024, 6, 15)
+                        LocalDate.of(2024, 12, 31)
                 );
     }
 
     @Test
     @DisplayName("하루의 날짜 범위로 자기소개서 조회 시 그 날의 자기소개서만 조회된다")
-    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_WithOneDateRange() {
+    void findInPeriod_WithOneDateRange() {
         // given
         User user = saveUser("testUser789", "테스터3");
         String userId = user.getId();
@@ -167,7 +167,7 @@ class CoverLetterRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByDeadlineAscModifiedAtDesc(
                 userId, targetDate, targetDate, pageable
         );
 
@@ -182,15 +182,22 @@ class CoverLetterRepositoryTest {
     }
 
     @Test
-    @DisplayName("날짜 범위로 자기소개서 조회 시 수정일(modifiedAt) 기준 내림차순으로 정렬된다")
-    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_OrderedByModifiedAtDesc() {
+    @DisplayName("날짜 범위로 자기소개서 조회 시 deadline 오름차순, 같은 deadline 내에서는 modifiedAt 내림차순으로 정렬된다")
+    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_OrderedByDeadlineAscAndModifiedAtDesc() {
         // given
         User user = saveUser("testUser101", "테스터4");
         String userId = user.getId();
 
-        CoverLetter coverLetter1 = createCoverLetterWithDeadline(userId, LocalDate.of(2024, 6, 15));
-        CoverLetter coverLetter2 = createCoverLetterWithDeadline(userId, LocalDate.of(2024, 8, 20));
-        CoverLetter coverLetter3 = createCoverLetterWithDeadline(userId, LocalDate.of(2024, 12, 31));
+        LocalDate sameDeadline = LocalDate.of(2024, 6, 15);
+        LocalDateTime olderTime = LocalDateTime.of(2024, 6, 10, 10, 0);
+        LocalDateTime newerTime = LocalDateTime.of(2024, 6, 10, 12, 0);
+
+        // 같은 deadline을 가진 자기소개서 2개 (modifiedAt 다르게 설정)
+        CoverLetter coverLetter1 = createCoverLetterWithDeadlineAndModifiedAt(userId, sameDeadline, olderTime);
+        CoverLetter coverLetter2 = createCoverLetterWithDeadlineAndModifiedAt(userId, sameDeadline, newerTime);
+
+        // 다른 deadline을 가진 자기소개서
+        CoverLetter coverLetter3 = createCoverLetterWithDeadline(userId, LocalDate.of(2024, 8, 20));
 
         coverLetterJpaRepository.save(coverLetter1);
         coverLetterJpaRepository.save(coverLetter2);
@@ -202,19 +209,26 @@ class CoverLetterRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByDeadlineAscModifiedAtDesc(
                 userId, startDate, endDate, pageable
         );
 
         // then
         assertThat(result).hasSize(3);
-        assertThat(result.get(0).getModifiedAt()).isAfterOrEqualTo(result.get(1).getModifiedAt());
-        assertThat(result.get(1).getModifiedAt()).isAfterOrEqualTo(result.get(2).getModifiedAt());
+
+        // deadline 오름차순 검증
+        assertThat(result.get(0).getDeadline()).isEqualTo(sameDeadline);
+        assertThat(result.get(1).getDeadline()).isEqualTo(sameDeadline);
+        assertThat(result.get(2).getDeadline()).isEqualTo(LocalDate.of(2024, 8, 20));
+
+        // 같은 deadline 내에서 modifiedAt 내림차순 검증 (최신 수정된 것이 먼저)
+        assertThat(result.get(0).getModifiedAt()).isEqualTo(newerTime);
+        assertThat(result.get(1).getModifiedAt()).isEqualTo(olderTime);
     }
 
     @Test
     @DisplayName("날짜 범위로 자기소개서 조회 시 Pageable의 size에 따라 결과 개수가 제한된다")
-    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_LimitedByPageableSize() {
+    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_LimitedByDeadlineAscAndPageableSize() {
         // given
         User user = saveUser("testUser202", "테스터5");
         String userId = user.getId();
@@ -230,7 +244,7 @@ class CoverLetterRepositoryTest {
         Pageable pageable = PageRequest.of(0, 3);
 
         // when
-        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        List<CoverLetter> result = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByDeadlineAscModifiedAtDesc(
                 userId, startDate, endDate, pageable
         );
 
@@ -240,7 +254,7 @@ class CoverLetterRepositoryTest {
 
     @Test
     @DisplayName("날짜 범위로 자기소개서 조회 시 다른 사용자의 자기소개서는 조회되지 않는다")
-    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_FiltersByUserId() {
+    void findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc_FiltersByUserIdDeadlineAscAnd() {
         // given
         User user1 = saveUser("testUser303", "테스터6");
         User user2 = saveUser("testUser404", "테스터7");
@@ -257,7 +271,7 @@ class CoverLetterRepositoryTest {
         Pageable pageable = PageRequest.of(0, 10);
 
         // when
-        List<CoverLetter> resultUser1 = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        List<CoverLetter> resultUser1 = coverLetterJpaRepository.findByUserIdAndDeadlineBetweenOrderByDeadlineAscModifiedAtDesc(
                 user1.getId(), startDate, endDate, pageable
         );
 
@@ -382,6 +396,19 @@ class CoverLetterRepositoryTest {
         ReflectionTestUtils.setField(coverLetter, "jobPosition", "백엔드 개발자");
         ReflectionTestUtils.setField(coverLetter, "deadline", deadline);
         setAuditFields(coverLetter);
+        return coverLetter;
+    }
+
+    private CoverLetter createCoverLetterWithDeadlineAndModifiedAt(String userId, LocalDate deadline, LocalDateTime modifiedAt) {
+        CoverLetter coverLetter = new CoverLetter();
+        ReflectionTestUtils.setField(coverLetter, "userId", userId);
+        ReflectionTestUtils.setField(coverLetter, "companyName", "테스트기업");
+        ReflectionTestUtils.setField(coverLetter, "applyYear", deadline.getYear());
+        ReflectionTestUtils.setField(coverLetter, "applyHalf", ApplyHalfType.FIRST_HALF);
+        ReflectionTestUtils.setField(coverLetter, "jobPosition", "백엔드 개발자");
+        ReflectionTestUtils.setField(coverLetter, "deadline", deadline);
+        ReflectionTestUtils.setField(coverLetter, "createdAt", modifiedAt);
+        ReflectionTestUtils.setField(coverLetter, "modifiedAt", modifiedAt);
         return coverLetter;
     }
 

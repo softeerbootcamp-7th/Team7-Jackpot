@@ -462,7 +462,7 @@ class CoverLetterServiceTest {
                 new QnACountProjection(2L, 5)
         );
 
-        given(coverLetterRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        given(coverLetterRepository.findInPeriod(
                 eq(userId), eq(startDate), eq(endDate), any(Pageable.class)
         )).willReturn(coverLetters);
         given(qnARepository.countByCoverLetterIdIn(List.of(1L, 2L))).willReturn(qnaCounts);
@@ -485,7 +485,7 @@ class CoverLetterServiceTest {
         assertThat(response.coverLetters().get(1).questionCount()).isEqualTo(5);
 
         verify(coverLetterRepository, times(1))
-                .findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
+                .findInPeriod(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
         verify(qnARepository, times(1)).countByCoverLetterIdIn(List.of(1L, 2L));
         verify(coverLetterRepository, times(1)).countByUserIdAndDeadlineBetween(userId, startDate, endDate);
     }
@@ -499,7 +499,7 @@ class CoverLetterServiceTest {
         LocalDate endDate = LocalDate.of(2024, 12, 31);
         Integer size = 10;
 
-        given(coverLetterRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        given(coverLetterRepository.findInPeriod(
                 eq(userId), eq(startDate), eq(endDate), any(Pageable.class)
         )).willReturn(List.of());
 
@@ -514,7 +514,7 @@ class CoverLetterServiceTest {
         assertThat(response.coverLetters()).isEmpty();
 
         verify(coverLetterRepository, times(1))
-                .findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
+                .findInPeriod(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
         verify(qnARepository, never()).countByCoverLetterIdIn(any());
         verify(coverLetterRepository, never()).countByUserIdAndDeadlineBetween(any(), any(), any());
     }
@@ -531,7 +531,7 @@ class CoverLetterServiceTest {
         CoverLetter coverLetter = createMockCoverLetter(1L, userId, "네이버", LocalDate.of(2024, 5, 10));
         List<CoverLetter> coverLetters = List.of(coverLetter);
 
-        given(coverLetterRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        given(coverLetterRepository.findInPeriod(
                 eq(userId), eq(startDate), eq(endDate), any(Pageable.class)
         )).willReturn(coverLetters);
         given(qnARepository.countByCoverLetterIdIn(List.of(1L))).willReturn(List.of());
@@ -549,7 +549,7 @@ class CoverLetterServiceTest {
         assertThat(response.coverLetters().get(0).questionCount()).isZero();
 
         verify(coverLetterRepository, times(1))
-                .findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
+                .findInPeriod(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
         verify(qnARepository, times(1)).countByCoverLetterIdIn(List.of(1L));
         verify(coverLetterRepository, times(1)).countByUserIdAndDeadlineBetween(userId, startDate, endDate);
     }
@@ -565,7 +565,7 @@ class CoverLetterServiceTest {
 
         ArgumentCaptor<Pageable> pageableCaptor = ArgumentCaptor.forClass(Pageable.class);
 
-        given(coverLetterRepository.findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(
+        given(coverLetterRepository.findInPeriod(
                 eq(userId), eq(startDate), eq(endDate), pageableCaptor.capture()
         )).willReturn(List.of());
 
@@ -577,7 +577,7 @@ class CoverLetterServiceTest {
         assertThat(capturedPageable.getPageSize()).isEqualTo(5);
 
         verify(coverLetterRepository, times(1))
-                .findByUserIdAndDeadlineBetweenOrderByModifiedAtDesc(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
+                .findInPeriod(eq(userId), eq(startDate), eq(endDate), any(Pageable.class));
     }
 
     private CoverLetter createMockCoverLetter(Long id, String userId, String companyName, LocalDate deadline) {
