@@ -1,0 +1,70 @@
+import { useState } from 'react';
+
+import ChevronIcon from '@/features/review/components/icons/ChevronIcon';
+import ActionButtons from '@/features/review/components/review/ActionButtons';
+import CardContentSection from '@/features/review/components/review/CardContentSection';
+import CardUserInfo from '@/features/review/components/review/CardUerinfo';
+import ChipRow from '@/features/review/components/review/ChipRow';
+import type { Review } from '@/features/review/types/review';
+
+interface ReviewCardProps {
+  review: Review;
+  editingReview: Review | null;
+  handleEditReview: (id: string) => void;
+}
+
+const ReviewCard = ({
+  review,
+  editingReview,
+  handleEditReview,
+}: ReviewCardProps) => {
+  const [isDetail, setIsDetail] = useState(false);
+  const hasEdit = !!review.revision;
+  const hasComment = !!review.comment;
+
+  return (
+    <div
+      className={`flex w-96 flex-col gap-3 border-b border-gray-100 p-5 transition-opacity duration-200 ${
+        editingReview?.id === review.id || editingReview === null
+          ? 'opacity-100'
+          : 'opacity-30'
+      }`}
+    >
+      <div className='flex w-full flex-col gap-4'>
+        <div className='flex w-full items-start justify-between gap-5'>
+          <div className='flex flex-1 items-center gap-3'>
+            <CardUserInfo
+              name='귀여운 캥거루'
+              date='01월 15일'
+              time='오후 5:30'
+            />
+          </div>
+          <div className='py-0.5'>
+            <ChevronIcon
+              isDetail={isDetail}
+              handleShowDetail={() => setIsDetail((prev) => !prev)}
+            />
+          </div>
+        </div>
+
+        <div className='flex w-full flex-col gap-4'>
+          <CardContentSection
+            text={review.selectedText}
+            review={review}
+            isDetail={isDetail}
+          />
+
+          <div className='flex w-full items-center justify-between'>
+            <ChipRow hasEdit={hasEdit} hasComment={hasComment} />
+            <ActionButtons
+              reviewId={review.id}
+              handleEditReview={handleEditReview}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ReviewCard;
