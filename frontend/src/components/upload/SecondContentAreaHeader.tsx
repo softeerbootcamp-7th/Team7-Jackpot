@@ -1,11 +1,11 @@
-import { UploadPageIcons } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/components/upload/icons';
 
 const SecondContentAreaHeader = () => {
   return (
     <div>
       <div className='flex justify-between items-center select-none'>
         <div className='flex gap-[0.625rem]'>
-          <UploadPageIcons.AILabelingIcon size='32' />
+          <I.AILabelingIcon size='32' />
           <div className='font-bold text-2xl'>
             <span className='text-purple-500'>두 번째</span> 자기소개서는 총
             <span className='text-purple-500'> 3개</span>의 문항으로

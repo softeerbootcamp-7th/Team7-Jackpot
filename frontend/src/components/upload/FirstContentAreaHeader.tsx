@@ -1,4 +1,4 @@
-import { UploadPageIcons } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/components/upload/icons';
 import TabButton from '@/components/upload/TabButton';
 
 import { UPLOAD_TAB_DATA } from '@/constants/constantsInUploadPage';
@@ -34,10 +34,7 @@ const FirstContentAreaHeader = ({
           className='flex bg-gray-50 px-[1.125rem] py-3 gap-[0.375rem] rounded-lg cursor-pointer'
           onClick={() => nextStep?.('2')}
         >
-          <UploadPageIcons.AILabelingIcon
-            color='var(--color-gray-300)'
-            size='24'
-          />
+          <I.AILabelingIcon color='var(--color-gray-300)' size='24' />
           <div className='text-lg font-bold text-gray-400'>AI 라벨링 시작</div>
         </button>
       </div>

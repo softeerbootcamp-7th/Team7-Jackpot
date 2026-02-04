@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import CoverLetterList from '@/components/upload/CoverLetterList';
-import { UploadPageIcons } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/components/upload/icons';
 
 import { RECRUIT_SEASON_LIST } from '@/constants/constantsInUploadPage';
 import type {
@@ -232,9 +232,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
                     <div className='font-medium'>
                       {contents[tabState].recruitPeriod.year}
                     </div>
-                    <UploadPageIcons.DropdownArrow
-                      isOpen={isDropdownOpen.yearDropdown}
-                    />
+                    <I.DropdownArrow isOpen={isDropdownOpen.yearDropdown} />
                   </button>
 
                   {isDropdownOpen.yearDropdown && (
@@ -374,7 +372,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
           </div>
           <div className='flex gap-5 justify-self-center'>
             <button className='rounded-[7px] bg-gray-50 p-2 cursor-pointer'>
-              <UploadPageIcons.LeftPaginationButtonIcon color='#D9D9D9' />
+              <I.LeftPaginationButtonIcon color='#D9D9D9' />
             </button>
             <div className='flex gap-[10px] font-bold text-lg select-none'>
               <div className='text-purple-500'>1</div>
@@ -382,7 +380,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               <div className='text-gray-400'>3</div>
             </div>
             <button className='rounded-[7px] bg-purple-50 p-2 cursor-pointer'>
-              <UploadPageIcons.RightPaginationButtonIcon color='var(--color-purple-200)' />
+              <I.RightPaginationButtonIcon color='var(--color-purple-200)' />
             </button>
           </div>
         </div>

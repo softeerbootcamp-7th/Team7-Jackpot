@@ -1,11 +1,16 @@
-import { UploadPageIcons } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/components/upload/icons';
 
-import type { RecruitSeasonType, StepInformationProps, TabDataType, UploadTabDataType } from '@/types/upload';
+import type {
+  RecruitSeasonType,
+  StepInformationProps,
+  TabDataType,
+  UploadTabDataType,
+} from '@/types/upload';
 
 export const STEP_DATA: Record<string, StepInformationProps> = {
   '1': {
     className: 'left-[4.6875rem]',
-    Icon: UploadPageIcons.UploadIcon,
+    Icon: I.UploadIcon,
     step: 'step 01',
     name: '자료 업로드',
     loadingTitle:
@@ -15,7 +20,7 @@ export const STEP_DATA: Record<string, StepInformationProps> = {
   },
   '2': {
     className: 'left-[242px]',
-    Icon: UploadPageIcons.AILabelingIcon,
+    Icon: I.AILabelingIcon,
     step: 'step 02',
     name: 'AI 라벨링',
     loadingTitle: '업로드해주신 자료를 분석하는 중이에요...',
@@ -24,7 +29,7 @@ export const STEP_DATA: Record<string, StepInformationProps> = {
   },
   '3': {
     className: 'left-[408px]',
-    Icon: UploadPageIcons.CompleteSavedIcon,
+    Icon: I.CompleteSavedIcon,
     step: 'step 03',
     name: '저장 완료',
     loadingTitle: '저장이 완료되었어요!',
@@ -50,14 +55,14 @@ export const TAB_DATA: TabDataType[] = [
 ];
 
 export const UPLOAD_TAB_DATA: UploadTabDataType[] = [
-    {
-      label: '파일 업로드하기',
-      targetTab: 'file',
-      icon: <UploadPageIcons.FileUploadIcon />,
-    },
-    {
-      label: '텍스트 붙여넣기',
-      targetTab: 'text',
-      icon: <UploadPageIcons.TextUploadIcon />,
-    },
-  ];
+  {
+    label: '파일 업로드하기',
+    targetTab: 'file',
+    icon: <I.FileUploadIcon />,
+  },
+  {
+    label: '텍스트 붙여넣기',
+    targetTab: 'text',
+    icon: <I.TextUploadIcon />,
+  },
+];

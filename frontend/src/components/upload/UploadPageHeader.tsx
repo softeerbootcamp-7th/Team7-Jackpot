@@ -4,7 +4,7 @@ const UploadPageHeader = () => {
   return (
     <div className='mb-12 select-none'>
       <div className='flex w-full items-center gap-[0.625rem]'>
-        <UploadPageIcons.DocumentBoxIcon />
+        <I.DocumentBoxIcon />
         <div className='font-bold text-gray-950 text-[1.75rem]'>
           자료 업로드
         </div>

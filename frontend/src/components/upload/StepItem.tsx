@@ -1,4 +1,4 @@
-import { UploadPageIcons } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/components/upload/icons';
 import StepInformation from '@/components/upload/StepInformation';
 
 import { STEP_DATA } from '@/constants/constantsInUploadPage';
@@ -9,8 +9,8 @@ interface StepItemProps {
 
 const StepItem = ({ step }: StepItemProps) => {
   const generateStepIcon = () => {
-    if (step === '1') return <UploadPageIcons.FirstStepIcon />;
-    else if (step === '2') return <UploadPageIcons.SecondStepIcon />;
+    if (step === '1') return <I.FirstStepIcon />;
+    else if (step === '2') return <I.SecondStepIcon />;
   };
 
   return (
