@@ -3,8 +3,11 @@ package com.jackpot.narratix.domain.repository;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,5 +45,24 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
     @Override
     public List<String> findCompanyNamesByUserId(String userId) {
         return coverLetterJpaRepository.findDistinctCompanyNamesByUserId(userId);
+    }
+
+    @Override
+    public Slice<CoverLetter> findByUserIdAndCompanyNameOrderByModifiedAtDesc(String userId, String companyName, Pageable pageable) {
+        return coverLetterJpaRepository.findByUserIdAndCompanyNameOrderByModifiedAtDesc(
+                userId,
+                companyName,
+                pageable
+        );
+    }
+
+    @Override
+    public Slice<CoverLetter> findByUserIdAndCompanyNameOrderByModifiedAtDesc(String userId, String companyName, LocalDate localDate, Pageable pageable) {
+        return coverLetterJpaRepository.findByUserIdAndCompanyNameOrderByModifiedAtDesc(
+                userId,
+                companyName,
+                localDate,
+                pageable
+        );
     }
 }
