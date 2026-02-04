@@ -1,7 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
-import LibraryPage from '@/pages/LibraryPage';
 import HomePage from '@/pages/HomePage';
+import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/Login';
 import SignUpPage from '@/pages/SignUp';
 
