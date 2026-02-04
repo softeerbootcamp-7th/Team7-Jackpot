@@ -28,12 +28,21 @@ const SideBar = ({
   const handleSearch = () => {};
 
   return (
-    <div className='h-full w-107 flex-col items-center justify-center pt-7.5 pr-5'>
-      {currentTab === 'QUESTIONS' && <SearchInput onSearch={handleSearch} />}
+    <div className='flex h-full w-107 flex-col overflow-hidden pt-7.5 pr-5'>
+      {currentTab === 'QUESTIONS' && (
+        <div className='flex-none shrink-0'>
+          <SearchInput onSearch={handleSearch} />
+        </div>
+      )}
       {folderId === null ? (
-        <FolderList folderList={folderList} handleFolderId={handleFolderId} />
+        <FolderList
+          className='flex-1 overflow-y-auto'
+          folderList={folderList}
+          handleFolderId={handleFolderId}
+        />
       ) : (
         <DocumentList
+          className='flex-1 overflow-y-auto'
           selectedDocumentId={selectedDocumentId}
           selectedDocumentList={selectedDocumentList}
           handleFolderId={handleFolderId}

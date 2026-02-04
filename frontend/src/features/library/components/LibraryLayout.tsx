@@ -1,15 +1,21 @@
 interface LibraryLayoutProps {
+  headerSlot: React.ReactNode;
   sidebarSlot: React.ReactNode;
   children: React.ReactNode;
 }
 
-const LibraryLayout = ({ sidebarSlot, children }: LibraryLayoutProps) => {
+const LibraryLayout = ({
+  headerSlot,
+  sidebarSlot,
+  children,
+}: LibraryLayoutProps) => {
   return (
-    <div className='flex h-full w-full flex-row overflow-hidden'>
-      <aside className='w-[427px] overflow-hidden pt-0'>{sidebarSlot}</aside>
-      <main>
-        <div className='flex-1 overflow-hidden'>{children}</div>
-      </main>
+    <div className='flex h-screen w-full max-w-screen min-w-[1700px] flex-col overflow-hidden px-75'>
+      <div className='flex-none'>{headerSlot}</div>
+      <div className='flex min-h-0 w-full flex-1 flex-row'>
+        <aside className='h-full w-[427px] flex-none'>{sidebarSlot}</aside>
+        <main className='h-full flex-1'>{children}</main>
+      </div>
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { FolderIcon } from '../icons/Folder';
 import Document from './Document';
 
 type DocumentListProps = {
+  className: string;
   selectedDocumentId: number | null;
   selectedDocumentList: object[];
   handleFolderId: (id: number | null) => void;
@@ -10,13 +11,14 @@ type DocumentListProps = {
 };
 
 const DocumentList = ({
+  className,
   selectedDocumentId,
   selectedDocumentList,
   handleFolderId,
   handleDocumentId,
 }: DocumentListProps) => {
   return (
-    <div className='w-full'>
+    <div className={`w-full ${className}`}>
       <div className='inline-flex items-center justify-start gap-1 self-stretch px-3'>
         <button onClick={() => handleFolderId(null)}>
           <ChevronLeftIcon />

@@ -38,27 +38,34 @@ const LibraryPage = () => {
     handleDocumentId: actions.setSelectedDocumentId,
   };
 
+  const tabProps = {
+    content: libraryContent,
+    handleTabChange: actions.handleTabChange,
+    currentTab: state.currentTab,
+  };
+
+  const hasData = folderList.length > 0;
+
   return (
-    <div className='h-screen w-full max-w-screen min-w-[1700px] overflow-hidden px-75'>
-      {/* <Header /> 수정 */}
-      <ContentHeader {...libraryHeaderText} />
-      <div className='flex flex-row items-center justify-between'>
-        <TabBar
-          content={libraryContent}
-          handleTabChange={actions.handleTabChange}
-          currentTab={state.currentTab}
-        />
-        <ScrapNum value={scrabNum} />
-      </div>
+    <LibraryLayout
+      headerSlot={
+        <>
+          <ContentHeader {...libraryHeaderText} />
+          <div className='flex flex-row items-center justify-between'>
+            <TabBar {...tabProps} />
+            <ScrapNum value={scrabNum} />
+          </div>
+        </>
+      }
+      sidebarSlot={hasData && <SideBar {...sideBarContent} />}
+    >
       <DataGuard
-        data={folderList.length > 0}
+        data={hasData}
         fallback={<EmptyCase {...emptyCaseText.overview} />}
       >
-        <LibraryLayout sidebarSlot={<SideBar {...sideBarContent} />}>
-          <DetailView />
-        </LibraryLayout>
+        <DetailView />
       </DataGuard>
-    </div>
+    </LibraryLayout>
   );
 };
 
