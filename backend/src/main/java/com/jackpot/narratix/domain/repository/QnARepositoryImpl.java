@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.repository.dto.QnACountProjection;
+import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -20,5 +21,10 @@ public class QnARepositoryImpl implements QnARepository {
     @Override
     public List<QnACountProjection> countByCoverLetterIdIn(List<Long> coverLetterIds) {
         return qnAJpaRepository.countByCoverLetterIdIn(coverLetterIds);
+    }
+
+    @Override
+    public List<QuestionCategoryType> findQuestionCategoryByUserId(String userId) {
+        return qnAJpaRepository.findDistinctByQuestionCategory(userId);
     }
 }
