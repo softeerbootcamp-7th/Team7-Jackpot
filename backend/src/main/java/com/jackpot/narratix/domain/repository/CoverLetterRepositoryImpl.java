@@ -7,11 +7,12 @@ import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class CoverLetterRepositoryImpl implements CoverLetterRepository{
+public class CoverLetterRepositoryImpl implements CoverLetterRepository {
 
     private final CoverLetterJpaRepository coverLetterJpaRepository;
 
@@ -44,5 +45,10 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository{
     @Override
     public Integer countByUserIdAndApplyYearAndApplyHalf(String userId, int applyYear, ApplyHalfType applyHalfType) {
         return coverLetterJpaRepository.countByUserIdAndApplyYearAndApplyHalf(userId, applyYear, applyHalfType);
+    }
+
+    @Override
+    public List<String> findCompanyNamesByUserId(String userId) {
+        return coverLetterJpaRepository.findDistinctCompanyNamesByUserId(userId);
     }
 }
