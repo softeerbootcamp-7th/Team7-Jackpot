@@ -5,7 +5,10 @@ const ScrapNum = ({ value }: { value: number }) => {
         지금까지 스크랩된 문항 수
       </p>
       <div className='inline-flex items-center justify-center gap-1 rounded-[100px] bg-purple-500 px-1.5 pt-px outline outline-2 outline-white'>
-        <div className='text-caption-s justify-start text-center font-bold text-white'>
+        <div
+          aria-live='polite'
+          className='text-caption-s justify-start text-center font-bold text-white'
+        >
           {value}
         </div>
       </div>
