@@ -13,3 +13,13 @@ export interface CoverLetterListProps {
 export interface PaginationButtonIconProps {
   color: string;
 }
+
+export interface StepInformationProps {
+  className: string;
+  Icon?: React.ComponentType<{ color: string }>;
+  icon?: React.ReactNode;
+  step: string;
+  name: string;
+  loadingTitle?: string;
+  loadingSubTitle?: string;
+}
