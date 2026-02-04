@@ -1,21 +1,33 @@
 import { useState } from 'react';
 
+import { useSearchParams } from 'react-router';
+
 import ContentArea from '@/components/upload/ContentArea';
 import StepItem from '@/components/upload/StepItem';
 import UploadPageHeader from '@/components/upload/UploadPageHeader';
 
 const UploadPage = () => {
   const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentStep: string = searchParams.get('step') || '1';
+  const nextStep = (step: string) => {
+    setSearchParams({ step: step });
+  };
   return (
     <div>
       <div className='w-full h-[5rem]'>헤더</div>
       <div className='px-[13.125rem] mb-12'>
         <div className='mb-12'>
           <UploadPageHeader />
-          <StepItem />
+          <StepItem step={currentStep} />
         </div>
-        <ContentArea uploadTab={uploadTab} setUploadTab={setUploadTab} />
+
+        <ContentArea
+          uploadTab={uploadTab}
+          setUploadTab={setUploadTab}
+          step={currentStep}
+          nextStep={nextStep}
+        />
       </div>
     </div>
   );
