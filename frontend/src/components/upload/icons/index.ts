@@ -7,6 +7,7 @@ import FileUploadIcon from '@/components/upload/icons/FileUploadIcon';
 import FirstStepIcon from '@/components/upload/icons/FirstStepIcon';
 import LeftPaginationButtonIcon from '@/components/upload/icons/LeftPaginationButtonIcon';
 import RightPaginationButtonIcon from '@/components/upload/icons/RightPaginationButtonIcon';
+import SecondStepIcon from '@/components/upload/icons/SecondStepIcon';
 import TextDocumentIcon from '@/components/upload/icons/TextDocumentIcon';
 import TextUploadIcon from '@/components/upload/icons/TextUploadIcon';
 import UploadIcon from '@/components/upload/icons/UploadIcon';
@@ -18,6 +19,7 @@ export const UploadPageIcons = {
   DocumentBoxIcon: DocumentBoxIcon,
   FileUploadIcon: FileUploadIcon,
   FirstStepIcon: FirstStepIcon,
+  SecondStepIcon: SecondStepIcon,
   TextDocumentIcon: TextDocumentIcon,
   TextUploadIcon: TextUploadIcon,
   UploadIcon: UploadIcon,
