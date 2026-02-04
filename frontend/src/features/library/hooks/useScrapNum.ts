@@ -1,21 +1,21 @@
 import { useState } from 'react';
 
 const useScrapNum = () => {
-  const [scrabNum, setScrabNum] = useState(0);
+  const [scrapNum, setScrapNum] = useState(0);
 
-  const addScrab = () => {
-    setScrabNum((num) => num + 1);
+  const addScrap = () => {
+    setScrapNum((num) => num + 1);
   };
 
-  const deleteScrab = () => {
-    if (scrabNum < 0) return;
-    setScrabNum((num) => num - 1);
+  const deleteScrap = () => {
+    if (scrapNum < 0) return;
+    setScrapNum((num) => num - 1);
   };
 
   return {
-    scrabNum,
-    addScrab,
-    deleteScrab,
+    scrapNum,
+    addScrap,
+    deleteScrap,
   };
 };
 

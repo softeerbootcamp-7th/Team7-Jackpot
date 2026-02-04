@@ -18,8 +18,8 @@ import TabBar from '@/shared/components/TabBar';
 const LibraryPage = () => {
   const { state, actions } = useLibraryParams();
 
-  // addScrab, deleteScrab 기능 추후에 추가
-  const { scrabNum } = useScrapNum();
+  // addScrap, deleteScrap 기능 추후에 추가
+  const { scrapNum } = useScrapNum();
 
   // selectedDocument는 기업 라이브러리 자기소개서 API 명세를 BE와 확인한 후에 다시 수정
   const { folderList, selectedDocumentList } = useLibraryData({
@@ -53,7 +53,7 @@ const LibraryPage = () => {
           <ContentHeader {...libraryHeaderText} />
           <div className='flex flex-row items-center justify-between'>
             <TabBar {...tabProps} />
-            <ScrapNum value={scrabNum} />
+            <ScrapNum value={scrapNum} />
           </div>
         </>
       }
