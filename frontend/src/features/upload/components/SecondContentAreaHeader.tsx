@@ -1,4 +1,4 @@
-import { UploadPageIcons as I } from '@/components/upload/icons';
+import { UploadPageIcons as I } from '@/features/upload/icons';
 
 const SecondContentAreaHeader = () => {
   return (

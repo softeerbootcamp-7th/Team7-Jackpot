@@ -1,4 +1,4 @@
-import type { StepInformationProps } from '@/types/upload';
+import type { StepInformationProps } from '@/features/upload/types/upload';
 
 const StepInformation = ({
   className,

@@ -1,8 +1,7 @@
-import { UploadPageIcons as I } from '@/components/upload/icons';
-import TabButton from '@/components/upload/TabButton';
-
-import { UPLOAD_TAB_DATA } from '@/constants/constantsInUploadPage';
-import type { FirstContentAreaHeaderProps } from '@/types/upload';
+import TabButton from '@/features/upload/components/TabButton';
+import { UPLOAD_TAB_DATA } from '@/features/upload/constants/constantsInUploadPage';
+import { UploadPageIcons as I } from '@/features/upload/icons';
+import type { FirstContentAreaHeaderProps } from '@/features/upload/types/upload';
 
 const FirstContentAreaHeader = ({
   uploadTab,

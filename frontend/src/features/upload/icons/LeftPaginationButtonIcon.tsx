@@ -1,4 +1,4 @@
-import type { PaginationButtonIconProps } from '@/types/upload';
+import type { PaginationButtonIconProps } from '@/features/upload/types/upload';
 
 const LeftPaginationButtonIcon = ({ color }: PaginationButtonIconProps) => {
   return (

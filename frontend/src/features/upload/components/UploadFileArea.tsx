@@ -1,4 +1,4 @@
-import AddFileItem from '@/components/upload/AddFileItem';
+import AddFileItem from '@/features/upload/components/AddFileItem';
 
 const UploadFileLayout = () => {
   return (

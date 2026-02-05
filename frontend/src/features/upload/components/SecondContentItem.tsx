@@ -1,14 +1,16 @@
 import { useState } from 'react';
 
-import CoverLetterContentArea from '@/components/upload/CoverLetterContentArea';
-import CoverLetterList from '@/components/upload/CoverLetterList';
-import { UploadPageIcons as I } from '@/components/upload/icons';
-import LabeledSelectInput from '@/components/upload/LabeledSelectInput';
-import RecruitPeriodSelectInput from '@/components/upload/RecruitPeriodSelectInput';
-import useCoverLetterState from '@/hooks/useCoverLetterState';
-
-import type { CoverLetterListProps, DropdownStateType } from '@/types/upload';
-import { yearList } from '@/utils/upload/generateYearList';
+import CoverLetterContentArea from '@/features/upload/components/CoverLetterContentArea';
+import CoverLetterList from '@/features/upload/components/CoverLetterList';
+import LabeledSelectInput from '@/features/upload/components/LabeledSelectInput';
+import RecruitPeriodSelectInput from '@/features/upload/components/RecruitPeriodSelectInput';
+import useCoverLetterState from '@/features/upload/hooks/useCoverLetterState';
+import { UploadPageIcons as I } from '@/features/upload/icons';
+import type {
+  CoverLetterListProps,
+  DropdownStateType,
+} from '@/features/upload/types/upload';
+import { yearList } from '@/features/upload/utils/generateYearList';
 
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
 const COMPANY_NAME_LIST: string[] = ['현대자동차', '현대오토에버', '현대카드'];

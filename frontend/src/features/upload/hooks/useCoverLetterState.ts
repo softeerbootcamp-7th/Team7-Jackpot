@@ -1,6 +1,9 @@
 import { useState } from 'react';
 
-import type { ContentItemType, ContentStateType } from '@/types/upload';
+import type {
+  ContentItemType,
+  ContentStateType,
+} from '@/features/upload/types/upload';
 
 const useCoverLetterState = () => {
   const [contents, setContents] = useState<ContentStateType>(

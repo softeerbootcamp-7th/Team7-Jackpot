@@ -1,11 +1,10 @@
-import { UploadPageIcons as I } from '@/components/upload/icons';
-
+import { UploadPageIcons as I } from '@/features/upload/icons';
 import type {
   RecruitSeasonType,
   StepInformationProps,
   TabDataType,
   UploadTabDataType,
-} from '@/types/upload';
+} from '@/features/upload/types/upload';
 
 export const STEP_DATA: Record<string, StepInformationProps> = {
   '1': {

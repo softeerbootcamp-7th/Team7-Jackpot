@@ -1,8 +1,7 @@
 import { useNavigate } from 'react-router';
 
-import { CommonIcon as I } from '@/components/common/icons';
-
-import { NAV_ITEMS } from '@/constants/constantsInGlobalHeader';
+import { NAV_ITEMS } from '@/shared/constants/constantsInGlobalHeader';
+import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
   const nav = useNavigate();

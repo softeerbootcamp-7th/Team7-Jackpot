@@ -1,4 +1,4 @@
-import { RECRUIT_SEASON_LIST } from '@/constants/constantsInUploadPage';
+import { RECRUIT_SEASON_LIST } from '@/features/upload/constants/constantsInUploadPage';
 
 interface RecruitPeriodSelectInputProps {
   label: string;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import SecondContentAreaHeader from '@/components/upload/SecondContentAreaHeader';
-import SecondContentItem from '@/components/upload/SecondContentItem';
+import SecondContentAreaHeader from '@/features/upload/components/SecondContentAreaHeader';
+import SecondContentItem from '@/features/upload/components/SecondContentItem';
 
 const SecondContentArea = () => {
   const [tabState, setTabState] = useState<1 | 2 | 3>(1);

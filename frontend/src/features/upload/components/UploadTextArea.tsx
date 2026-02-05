@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import CoverLetterList from '@/components/upload/CoverLetterList';
-import { UploadPageIcons as I } from '@/components/upload/icons';
+import CoverLetterList from '@/features/upload/components/CoverLetterList';
+import { UploadPageIcons as I } from '@/features/upload/icons';
 
 const UploadTextArea = () => {
   const [tabState, setTabState] = useState<1 | 2 | 3>(1);

@@ -2,10 +2,10 @@ import { useState } from 'react';
 
 import { useSearchParams } from 'react-router';
 
-import PageGlobalHeader from '@/components/common/PageGlobalHeader';
-import ContentArea from '@/components/upload/ContentArea';
-import StepItem from '@/components/upload/StepItem';
-import UploadPageHeader from '@/components/upload/UploadPageHeader';
+import ContentArea from '@/features/upload/components/ContentArea';
+import StepItem from '@/features/upload/components/StepItem';
+import UploadPageHeader from '@/features/upload/components/UploadPageHeader';
+import PageGlobalHeader from '@/shared/components/PageGlobalHeader';
 
 const UploadPage = () => {
   const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');

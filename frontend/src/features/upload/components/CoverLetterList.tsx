@@ -1,7 +1,6 @@
-import CoverLetterItem from '@/components/upload/CoverLetterItem';
-
-import { TAB_DATA } from '@/constants/constantsInUploadPage';
-import type { CoverLetterListProps } from '@/types/upload';
+import CoverLetterItem from '@/features/upload/components/CoverLetterItem';
+import { TAB_DATA } from '@/features/upload/constants/constantsInUploadPage';
+import type { CoverLetterListProps } from '@/features/upload/types/upload';
 
 const CoverLetterList = ({ tabState, setTabState }: CoverLetterListProps) => {
   return (

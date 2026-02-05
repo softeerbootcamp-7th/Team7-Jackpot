@@ -1,9 +1,8 @@
-import FirstContentAreaHeader from '@/components/upload/FirstContentAreaHeader';
-import SecondContentArea from '@/components/upload/SecondContentArea';
-import UploadFileArea from '@/components/upload/UploadFileArea';
-import UploadTextArea from '@/components/upload/UploadTextArea';
-
-import type { FirstContentAreaHeaderProps } from '@/types/upload';
+import FirstContentAreaHeader from '@/features/upload/components/FirstContentAreaHeader';
+import SecondContentArea from '@/features/upload/components/SecondContentArea';
+import UploadFileArea from '@/features/upload/components/UploadFileArea';
+import UploadTextArea from '@/features/upload/components/UploadTextArea';
+import type { FirstContentAreaHeaderProps } from '@/features/upload/types/upload';
 
 const ContentArea = ({
   uploadTab,

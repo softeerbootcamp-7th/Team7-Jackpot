@@ -26,4 +26,4 @@ const NotificationIcon = () => {
   );
 };
 
-export default NotificationIcon
+export default NotificationIcon;
