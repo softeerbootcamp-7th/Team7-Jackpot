@@ -52,7 +52,7 @@ const LabeledSelectInput = ({
                         handleDropdown?.(false);
                       }}
                       key={index}
-                      className='w-full text-left px-4 py-[14px] text-[13px] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
+                      className='w-full text-left px-4 py-[0.875rem] text-[0.813rem] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
                     >
                       {name}
                     </button>

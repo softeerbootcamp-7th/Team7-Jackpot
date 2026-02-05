@@ -7,7 +7,7 @@ const PageGlobalHeader = () => {
   const nav = useNavigate();
 
   return (
-    <header className='w-full h-[60px] flex items-center justify-between px-[210px] bg-white mb-[30px]'>
+    <header className='w-full h-[3.75rem] flex items-center justify-between px-[13.125rem] bg-white mb-[1.875rem]'>
       <div className='flex items-center gap-20'>
         <div className='flex items-center text-2xl font-bold text-blue-300'>
           Narratix

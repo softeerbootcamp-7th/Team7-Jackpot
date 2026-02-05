@@ -36,7 +36,7 @@ const RecruitPeriodSelectInput = ({
         <div className='relative inline-block'>
           <button
             type='button'
-            className={`flex-1 flex items-center justify-between gap-6 bg-gray-50 px-5 py-[14px] relative ${isOpen ? 'z-20' : 'z-0'} rounded-lg cursor-pointer`}
+            className={`flex-1 flex items-center justify-between gap-6 bg-gray-50 px-5 py-[0.875rem] relative ${isOpen ? 'z-20' : 'z-0'} rounded-lg cursor-pointer`}
             onClick={() => handleDropdown?.(!isOpen)}
           >
             <div className='font-medium'>{yearValue}</div>
@@ -62,7 +62,7 @@ const RecruitPeriodSelectInput = ({
                           handleDropdown?.(false);
                         }}
                         key={year}
-                        className='w-full text-left px-4 py-[14px] text-[13px] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
+                        className='w-full text-left px-4 py-[0.875rem] text-[0.813rem] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
                       >
                         {year}
                       </button>
@@ -83,7 +83,7 @@ const RecruitPeriodSelectInput = ({
                   onChange={() => handleSeasonChange(each.season)}
                 />
                 <div
-                  className={`flex justify-center rounded-md ${seasonValue === each.season ? 'bg-white' : ''} px-8 py-[10px]`}
+                  className={`flex justify-center rounded-md ${seasonValue === each.season ? 'bg-white' : ''} px-8 py-[0.625rem]`}
                 >
                   <span
                     className={`${seasonValue === each.season ? 'font-bold text-gray-950' : 'text-gray-400'}`}

@@ -18,7 +18,7 @@ export const STEP_DATA: Record<string, StepInformationProps> = {
       'AI 라벨링을 거쳐 라이브러리에 저장되며, 언제든 다시 꺼내볼 수 있어요.',
   },
   '2': {
-    className: 'left-[242px]',
+    className: 'left-[15.125rem]',
     Icon: I.AILabelingIcon,
     step: 'step 02',
     name: 'AI 라벨링',
@@ -27,7 +27,7 @@ export const STEP_DATA: Record<string, StepInformationProps> = {
       '잠시만 기다려주세요.\nAI가 분석을 마치면 알림을 전송해드릴게요!',
   },
   '3': {
-    className: 'left-[408px]',
+    className: 'left-[25.5rem]',
     Icon: I.CompleteSavedIcon,
     step: 'step 03',
     name: '저장 완료',
