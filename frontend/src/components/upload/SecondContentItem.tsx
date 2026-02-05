@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import CoverLetterList from '@/components/upload/CoverLetterList';
 import { UploadPageIcons as I } from '@/components/upload/icons';
+import LabeledSelectInput from '@/components/upload/LabeledSelectInput';
 
 import { RECRUIT_SEASON_LIST } from '@/constants/constantsInUploadPage';
 import type {
@@ -130,75 +131,6 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
           <div className='flex flex-col gap-5 '>
             <div className='flex flex-col gap-3'>
               <div className='font-bold text-lg'>
-                기업명 <span className='text-red-600'>*</span>
-              </div>
-
-              <div className='relative inline-block'>
-                <input
-                  type='text'
-                  value={currentData.companyName}
-                  onChange={(e) => handleContentsCompanyName(e, tabState)}
-                  className={`w-full bg-gray-50 px-5 py-[0.875rem] rounded-lg focus:outline-none relative ${isDropdownOpen.companyNameDropdown ? 'z-20' : 'z-0'}`}
-                  onClick={() =>
-                    setIsDropdownOpen((prev) => ({
-                      ...prev,
-                      companyNameDropdown: !prev.companyNameDropdown,
-                    }))
-                  }
-                />
-
-                {isDropdownOpen.companyNameDropdown && (
-                  <>
-                    <div
-                      className='fixed inset-0 z-10 cursor-default'
-                      onClick={() =>
-                        setIsDropdownOpen((prev) => ({
-                          ...prev,
-                          companyNameDropdown: false,
-                        }))
-                      }
-                    />
-                    <div className='absolute z-20 w-full max-h-48 mt-2 rounded-lg bg-white shadow-lg overflow-y-scroll select-none'>
-                      <div className='flex flex-col p-1 gap-1'>
-                        {COMPANY_NAME_LIST.map((name, index) => (
-                          <button
-                            type='button'
-                            onClick={() => {
-                              handleContentChange(
-                                tabState,
-                                'companyName',
-                                name,
-                              );
-                              setIsDropdownOpen((prev) => ({
-                                ...prev,
-                                companyNameDropdown: false,
-                              }));
-                            }}
-                            key={index}
-                            className='w-full text-left px-4 py-[14px] text-[13px] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
-                          >
-                            {name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-            <div className='flex flex-col gap-3'>
-              <div className='font-bold text-lg'>
-                직무명 <span className='text-red-600'>*</span>
-              </div>
-              <input
-                type='text'
-                value={currentData.jobPosition}
-                onChange={(e) => handleContentsJobPosition(e, tabState)}
-                className='w-full bg-gray-50 px-5 py-[0.875rem] rounded-lg text-[15px] focus:outline-none'
-              />
-            </div>
-            <div className='flex flex-col gap-3'>
-              <div className='font-bold text-lg'>
                 채용 시기 <span className='text-red-600'>*</span>
               </div>
               <div className='flex gap-2 items-center'>
@@ -282,63 +214,45 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col gap-3'>
-              <div className='font-bold text-lg'>
-                문항 유형 <span className='text-red-600'>*</span>
-              </div>
-              <div className='relative inline-block'>
-                <input
-                  type='text'
-                  value={currentData.questionType}
-                  onChange={(e) => handleContentsQuestionType(e, tabState)}
-                  className={`w-full bg-gray-50 px-5 py-[0.875rem] rounded-lg focus:outline-none relative ${isDropdownOpen.questionTypeDropdown ? 'z-20' : 'z-0'}`}
-                  onClick={() =>
-                    setIsDropdownOpen((prev) => ({
-                      ...prev,
-                      questionTypeDropdown: !prev.questionTypeDropdown,
-                    }))
-                  }
-                />
-
-                {isDropdownOpen.questionTypeDropdown && (
-                  <>
-                    <div
-                      className='fixed inset-0 z-10 cursor-default'
-                      onClick={() =>
-                        setIsDropdownOpen((prev) => ({
-                          ...prev,
-                          questionTypeDropdown: false,
-                        }))
-                      }
-                    />
-                    <div className='absolute z-20 w-full max-h-48 mb-2 bottom-full rounded-lg bg-white shadow-lg overflow-y-scroll select-none'>
-                      <div className='flex flex-col p-1 gap-1'>
-                        {QUESTION_TYPE_LIST.map((name, index) => (
-                          <button
-                            type='button'
-                            onClick={() => {
-                              handleContentChange(
-                                tabState,
-                                'questionType',
-                                name,
-                              );
-                              setIsDropdownOpen((prev) => ({
-                                ...prev,
-                                questionTypeDropdown: false,
-                              }));
-                            }}
-                            key={index}
-                            className='w-full text-left px-4 py-[14px] text-[13px] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
-                          >
-                            {name}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
+            <LabeledSelectInput
+              label='기업명'
+              value={currentData.companyName}
+              constantData={COMPANY_NAME_LIST}
+              handleChange={(value) =>
+                handleContentChange(tabState, 'companyName', value)
+              }
+              handleDropdown={(isOpen) =>
+                setIsDropdownOpen((prev) => ({
+                  ...prev,
+                  companyNameDropdown: isOpen,
+                }))
+              }
+              isOpen={isDropdownOpen.companyNameDropdown}
+              dropdownDirection='bottom'
+            />
+            <LabeledSelectInput
+              label='직무명'
+              value={currentData.jobPosition}
+              handleChange={(value) =>
+                handleContentChange(tabState, 'jobPosition', value)
+              }
+            />
+            <LabeledSelectInput
+              label='문항 유형'
+              value={currentData.questionType}
+              constantData={QUESTION_TYPE_LIST}
+              handleChange={(value) =>
+                handleContentChange(tabState, 'questionType', value)
+              }
+              handleDropdown={(isOpen) =>
+                setIsDropdownOpen((prev) => ({
+                  ...prev,
+                  questionTypeDropdown: isOpen,
+                }))
+              }
+              isOpen={isDropdownOpen.questionTypeDropdown}
+              dropdownDirection='top'
+            />
           </div>
         </div>
         <div className='flex-2'>
