@@ -50,7 +50,7 @@ const RecruitPeriodSelectInput = ({
                 onClick={() => handleDropdown?.(false)}
               />
               <div
-                className={`absolute z-20 w-56 max-h-32 mt-2 rounded-lg bg-white shadow-lg overflow-y-scroll select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
+                className={`absolute z-20 w-56 max-h-40 mt-2 rounded-lg bg-white shadow-lg overflow-y-scroll select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
               >
                 <div className='flex flex-col p-1 gap-1'>
                   {constantData &&
