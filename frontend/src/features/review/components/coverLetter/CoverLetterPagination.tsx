@@ -15,9 +15,11 @@ const CoverLetterPagination = ({
   return (
     <div className='flex w-full shrink-0 items-center justify-center gap-[1.25rem]'>
       <button
+        type='button'
         onClick={() => onChange(current - 1)}
         disabled={isFirst}
         className='disabled:opacity-40'
+        aria-label='이전 자기소개서'
       >
         <svg
           width='28'
@@ -25,6 +27,7 @@ const CoverLetterPagination = ({
           viewBox='0 0 28 28'
           fill='none'
           xmlns='http://www.w3.org/2000/svg'
+          aria-hidden='true'
         >
           <rect
             width='28'
@@ -51,9 +54,11 @@ const CoverLetterPagination = ({
         </div>
       </div>
       <button
+        type='button'
         onClick={() => onChange(current + 1)}
         disabled={isLast}
         className='disabled:opacity-40'
+        aria-label='다음 자기소개서'
       >
         <svg
           width='28'
@@ -61,6 +66,7 @@ const CoverLetterPagination = ({
           viewBox='0 0 28 28'
           fill='none'
           xmlns='http://www.w3.org/2000/svg'
+          aria-hidden='true'
         >
           <rect width='28' height='28' rx='7' fill='#F0F2FD' />
           <path
