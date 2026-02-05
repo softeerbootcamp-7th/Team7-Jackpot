@@ -1,4 +1,4 @@
-const MAX_COMMENT_LENGTH = 200;
+import { REVIEW_CONSTRAINTS } from '@/features/review/constants/review';
 
 interface CommentTabProps {
   displayText: string;
@@ -18,18 +18,17 @@ const CommentTab = ({
           {displayText}
         </div>
       </div>
-
       <div className='flex w-full flex-col items-start gap-2 rounded-2xl bg-gray-100 px-5 py-4'>
         <textarea
           value={comment}
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder='첨삭하신 내용에 덧붙일 코멘트가 있다면 알려주세요'
-          className='min-h-11 w-full resize-none text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none'
+          className='min-h-11 w-full resize-none bg-transparent text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none'
         />
         <div className='flex w-full items-center justify-end gap-0.5'>
           <span
             className={`text-xs leading-5 ${
-              comment.length > MAX_COMMENT_LENGTH
+              comment.length > REVIEW_CONSTRAINTS.MAX_COMMENT_LENGTH
                 ? 'text-red-500'
                 : 'text-gray-400'
             }`}
@@ -38,7 +37,7 @@ const CommentTab = ({
           </span>
           <span className='text-xs leading-5 text-gray-400'>/</span>
           <span className='text-xs leading-5 text-gray-400'>
-            {MAX_COMMENT_LENGTH}
+            {REVIEW_CONSTRAINTS.MAX_COMMENT_LENGTH}
           </span>
         </div>
       </div>

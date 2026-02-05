@@ -8,6 +8,9 @@ export const getKoreanDate = (datetime: string) => {
   if (!datetime) return '';
 
   const date = new Date(datetime);
+
+  if (isNaN(date.getTime())) return '';
+
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
 
@@ -18,6 +21,9 @@ export const getKoreanTime = (datetime: string) => {
   if (!datetime) return '';
 
   const date = new Date(datetime);
+
+  if (isNaN(date.getTime())) return '';
+
   let hours = date.getHours();
   const minutes = date.getMinutes();
 
@@ -29,5 +35,5 @@ export const getKoreanTime = (datetime: string) => {
     hours = 12;
   }
 
-  return `${period} ${hours}시 ${minutes}분`;
+  return `${period} ${String(hours).padStart(2, '0')}시 ${String(minutes).padStart(2, '0')}분`;
 };

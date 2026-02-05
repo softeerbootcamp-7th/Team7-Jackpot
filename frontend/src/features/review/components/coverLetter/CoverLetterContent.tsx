@@ -29,9 +29,7 @@ const CoverLetterContent = ({
     <div
       ref={containerRef}
       onMouseUp={handleMouseUp}
-      role='document'
       aria-label='자기소개서 본문'
-      tabIndex={0}
       className='relative min-h-0 w-full flex-1 overflow-y-auto pr-[2rem] pb-68 pl-[3rem]'
       style={{
         whiteSpace: 'pre-wrap',
@@ -50,7 +48,7 @@ const CoverLetterContent = ({
 
         {selection && after.length > 0 && (
           <>
-            <div style={{ height: '10px' }} />
+            <div className='h-2.5' />
             <span className='opacity-30'>
               {after.map((chunk, i) => (
                 <span

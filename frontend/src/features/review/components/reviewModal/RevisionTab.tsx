@@ -10,7 +10,7 @@ const RevisionTab = ({ revision, onRevisionChange }: RevisionTabProps) => {
         value={revision}
         onChange={(e) => onRevisionChange(e.target.value)}
         placeholder='첨삭하실 내용을 적어주세요'
-        className='min-h-20 w-full resize-none text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none'
+        className='min-h-20 w-full resize-none bg-transparent text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none'
       />
     </div>
   );
