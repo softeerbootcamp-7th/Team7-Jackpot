@@ -17,8 +17,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -64,7 +63,7 @@ public class LibraryService {
             coverLetterSlice = coverLetterRepository.findByUserIdAndCompanyNameOrderByModifiedAtDesc(
                     userId,
                     companyName,
-                    LocalDateTime.from(lastCoverLetter.getModifiedAt()),
+                    lastCoverLetter.getModifiedAt(),
                     pageable
             );
 
@@ -76,16 +75,21 @@ public class LibraryService {
                 .map(CoverLetter::getId)
                 .toList();
 
-        Map<Long, Long> qnaCountMap = new HashMap<>();
-        if (!coverLetterIds.isEmpty()) {
-            List<QnACountProjection> counts = qnARepository.countByCoverLetterIdIn(coverLetterIds);
-
-            qnaCountMap = counts.stream()
-                    .collect(Collectors.toMap(
-                            QnACountProjection::getCoverLetterId,
-                            QnACountProjection::getCount
-                    ));
+        if (coverLetterIds.isEmpty()) {
+            return CompanyLibraryResponse.of(
+                    Collections.EMPTY_LIST,
+                    Collections.EMPTY_MAP,
+                    false
+            );
         }
+
+        List<QnACountProjection> counts = qnARepository.countByCoverLetterIdIn(coverLetterIds);
+
+        Map<Long, Long> qnaCountMap = counts.stream()
+                .collect(Collectors.toMap(
+                        QnACountProjection::getCoverLetterId,
+                        QnACountProjection::getCount
+                ));
 
         boolean hasNext = coverLetterSlice.hasNext();
 
