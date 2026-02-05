@@ -1,10 +1,14 @@
 package com.jackpot.narratix.domain.repository;
 
+import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.repository.dto.QnACountProjection;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -31,4 +35,20 @@ public class QnARepositoryImpl implements QnARepository {
         }
         return qnAJpaRepository.countByCoverLetterIdIn(coverLetterIds);
     }
+
+    @Override
+    public Slice<QnA> findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(String userId,
+                                                                               QuestionCategoryType category,
+                                                                               LocalDateTime localDateTime,
+                                                                               Pageable pageable) {
+        return qnAJpaRepository.findByUserIdAndQuestionCategoryOrderByModifiedAtDesc(userId, category, localDateTime, pageable);
+    }
+
+    @Override
+    public Slice<QnA> findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(String userId,
+                                                                               QuestionCategoryType category,
+                                                                               Pageable pageable) {
+        return qnAJpaRepository.findByUserIdAndQuestionCategoryOrderByModifiedAtDesc(userId, category, pageable);
+    }
+
 }
