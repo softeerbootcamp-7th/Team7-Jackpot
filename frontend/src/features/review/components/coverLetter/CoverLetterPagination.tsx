@@ -13,10 +13,7 @@ const CoverLetterPagination = ({
   const isLast = current === total - 1;
 
   return (
-    <div
-      data-속성-1='first page'
-      className='shrink-0 w-full flex justify-center items-center gap-[1.25rem]'
-    >
+    <div className='flex w-full shrink-0 items-center justify-center gap-[1.25rem]'>
       <button
         onClick={() => onChange(current - 1)}
         disabled={isFirst}
@@ -43,13 +40,13 @@ const CoverLetterPagination = ({
         </svg>
       </button>
       <div className='flex items-center gap-2.5'>
-        <div className='text-purple-500 text-lg font-bold leading-7 line-clamp-1'>
+        <div className='line-clamp-1 text-lg leading-7 font-bold text-purple-500'>
           {current + 1}
         </div>
-        <div className='text-gray-400 text-lg font-bold leading-7 line-clamp-1'>
+        <div className='line-clamp-1 text-lg leading-7 font-bold text-gray-400'>
           /
         </div>
-        <div className='text-gray-400 text-lg font-bold leading-7 line-clamp-1'>
+        <div className='line-clamp-1 text-lg leading-7 font-bold text-gray-400'>
           {total}
         </div>
       </div>
