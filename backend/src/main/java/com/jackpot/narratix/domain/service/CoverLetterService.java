@@ -131,4 +131,8 @@ public class CoverLetterService {
                 .map(UpcomingCoverLetterResponse::of)
                 .toList();
     }
+
+    public List<String> findDeadlineByDateRange(String userId, LocalDate startDate, LocalDate endDate) {
+        return null;
+    }
 }
