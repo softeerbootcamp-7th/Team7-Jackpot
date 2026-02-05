@@ -70,4 +70,11 @@ public interface CoverLetterJpaRepository extends JpaRepository<CoverLetter, Lon
             @Param("maxDeadLineSize") int maxDeadLineSize,
             @Param("maxCoverLetterSizePerDeadLine") int maxCoverLetterSizePerDeadLine
     );
+
+    @Query("SELECT DISTINCT c.deadline FROM CoverLetter c " +
+            "WHERE c.userId = :userId " +
+            "AND c.deadline >= :startDate " +
+            "AND c.deadline <= :endDate " +
+            "ORDER BY c.deadline ASC")
+    List<LocalDate> findDeadlineByUserIdBetweenDeadline(String userId, LocalDate startDate, LocalDate endDate);
 }
