@@ -113,7 +113,6 @@ const CoverLetterSection = ({
             left: selection.modalLeft,
           }}
           onMouseDown={(e) => {
-            e.preventDefault();
             e.stopPropagation();
           }}
         >
