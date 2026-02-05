@@ -15,7 +15,7 @@ const TabItem = <T extends string>({
 
   return (
     <button
-      onClick={() => handleTabChange && handleTabChange(name)}
+      onClick={() => handleTabChange?.(name)}
       className={`flex h-13 items-center justify-start rounded-lg py-3 ${currentTab === name ? 'w-45 bg-purple-50 pr-5 pl-4' : 'w-39 px-5'} `}
     >
       {currentTab === name ? (
