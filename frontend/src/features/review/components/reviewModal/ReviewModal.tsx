@@ -38,8 +38,8 @@ const ReviewModal = ({
   const displayText = revision.trim().length > 0 ? revision : selectedText;
 
   return (
-    <div className='w-96 p-5 bg-white rounded-[32px] shadow-[0px_0px_30px_0px_rgba(41,41,41,0.06)] flex flex-col items-end gap-4'>
-      <div className='w-full flex flex-col items-start gap-2'>
+    <div className='flex w-96 flex-col items-end gap-4 rounded-[32px] bg-white p-5 shadow-[0px_0px_30px_0px_rgba(41,41,41,0.06)]'>
+      <div className='flex w-full flex-col items-start gap-2'>
         <TabSelector tab={tab} onTabChange={setTab} />
 
         {tab === 'revision' && (
@@ -57,15 +57,17 @@ const ReviewModal = ({
 
       <div className='flex items-start gap-2.5'>
         <button
+          type='button'
           onClick={onCancel}
-          className='px-4 py-2 text-gray-600 text-sm font-normal leading-6 font-["Pretendard"] rounded-xl hover:bg-gray-50'
+          className='rounded-xl px-4 py-2 text-sm leading-6 font-normal text-gray-600 hover:bg-gray-50'
         >
           취소
         </button>
         <button
+          type='button'
           onClick={handleSubmit}
           disabled={!isSubmitEnabled || comment.length > MAX_COMMENT_LENGTH}
-          className={`px-4 py-2 rounded-xl text-base font-bold leading-6 font-["Pretendard"] ${
+          className={`rounded-xl px-4 py-2 text-base leading-6 font-bold ${
             isSubmitEnabled && comment.length <= MAX_COMMENT_LENGTH
               ? 'bg-gray-950 text-white'
               : 'bg-gray-200 text-gray-400'

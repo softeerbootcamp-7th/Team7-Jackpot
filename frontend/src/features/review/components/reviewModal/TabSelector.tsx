@@ -11,6 +11,7 @@ const TabSelector = ({ tab, onTabChange }: TabSelectorProps) => {
   return (
     <div className='flex h-12 w-full items-center rounded-2xl bg-gray-100 p-1'>
       <button
+        type='button'
         onClick={() => onTabChange('revision')}
         className={`flex h-10 w-1/2 items-center justify-center gap-1.5 rounded-xl transition-all ${
           tab === 'revision'
