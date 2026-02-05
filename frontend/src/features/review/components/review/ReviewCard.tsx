@@ -3,7 +3,7 @@ import { useState } from 'react';
 import ChevronIcon from '@/features/review/components/icons/ChevronIcon';
 import ActionButtons from '@/features/review/components/review/ActionButtons';
 import CardContentSection from '@/features/review/components/review/CardContentSection';
-import CardUserInfo from '@/features/review/components/review/CardUerinfo';
+import CardUserInfo from '@/features/review/components/review/CardUserInfo';
 import ChipRow from '@/features/review/components/review/ChipRow';
 import type { Review } from '@/features/review/types/review';
 
