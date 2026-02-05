@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public record UpcomingCoverLetterResponse(
-        LocalDate deadLine,
+        LocalDate deadline,
         List<UpcomingCoverLetter> coverLetters
 ) {
 

@@ -483,7 +483,7 @@ class CoverLetterServiceTest {
         assertThat(result).hasSize(3);
 
         // 첫 번째 deadline (2024-06-15)
-        assertThat(result.get(0).deadLine()).isEqualTo(deadline1);
+        assertThat(result.get(0).deadline()).isEqualTo(deadline1);
         assertThat(result.get(0).coverLetters()).hasSize(2);
 
         // 가장 최근에 수정한 자기소개서부터 반환 (modified_at desc)
@@ -491,11 +491,11 @@ class CoverLetterServiceTest {
         assertThat(result.get(0).coverLetters().get(1).coverLetterId()).isEqualTo(1L);
 
         // 두 번째 deadline (2024-06-20)
-        assertThat(result.get(1).deadLine()).isEqualTo(deadline2);
+        assertThat(result.get(1).deadline()).isEqualTo(deadline2);
         assertThat(result.get(1).coverLetters()).hasSize(2);
 
         // 세 번째 deadline (2024-06-25)
-        assertThat(result.get(2).deadLine()).isEqualTo(deadline3);
+        assertThat(result.get(2).deadline()).isEqualTo(deadline3);
         assertThat(result.get(2).coverLetters()).hasSize(1);
 
         verify(coverLetterRepository, times(1)).findUpcomingCoverLettersGroupedByDeadline(userId, queryDate, 3, 2);
