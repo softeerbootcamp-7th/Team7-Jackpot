@@ -9,6 +9,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Getter
 @Table(name = "qna")
@@ -49,5 +51,14 @@ public class QnA extends BaseTimeEntity {
         qna.question = request.question();
         qna.userId = coverLetter.getUserId();
         return qna;
+    }
+
+    public void editAnswer(String answer) {
+        this.answer = answer;
+        updateModifiedAt();
+    }
+
+    public boolean isOwner(String userId) {
+        return Objects.equals(this.userId, userId);
     }
 }
