@@ -21,6 +21,7 @@ export interface Review extends ReviewBase {
   originText?: string;
   suggest?: string | null;
   createdAt?: string;
+  isValid?: boolean;
 }
 
 export type TabType = 'revision' | 'comment';

@@ -21,8 +21,11 @@ export const mockCoverLetterApi: {
       question:
         '본인의 성장과정, 성격의 장단점, 핵심 역량 및 지원 동기와 입사 후 포부를 구체적인 사례를 바탕으로 기술해 주십시오. (공백 포함 3,000자 이내)',
       answer:
-        "저의 <c1>성장 과정을</c1> 관통하는 핵심 키워드는 '분석을 통한 개선'입니다. 학창 시절부터 단순히 주어진 과제를 수행하는 것에 그치지 않고, \"왜 이 방식이어야 하는가?\"라는 핵심 의문을 던지며 프로세스를 효율화하는 데 흥미를 느꼈습니다.\n대학 시절, 교내 동아리의 운영진으로 활동하며 고질적인 문제를 분석했습니다. 당시 단순 친목 도모 위주의 활동이 고학년 학생들에게는 매력적이지 않다는 점을 발견했고, 이를 보완하기 위해 '직무 스터디 세션'을 도입했습니다. 그 결과, 직전 학기 대비 이탈률을 40% 이상 감소시켰고, 이는 제가 <c2>성장 과정을</c2> 통해 문제를 정의하고 데이터를 기반으로 대안을 제시하는 기획자로서의 자질을 확인하는 계기가 되었습니다.\n저의 <c3>성장 과정을</c3> 관통하는 핵심 키워드는 '분석을 통한 개선'입니다. 학창 시절부터 단순히 주어진 과제를 수행하는 것에 그치지 않고, \"왜 이 방식이어야 하는가?\"라는 핵심 의문을 던지며 프로세스를 효율화하는 데 흥미를 느꼈습니다.\n대학 시절, 교내 동아리의 운영진으로 활동하며 고질적인 문제를 분석했습니다. 당시 단순 친목 도모 위주의 활동이 고학년 학생들에게는 매력적이지 않다는 점을 발견했고, 이를 보완하기 위해 '직무 스터디 세션'을 도입했습니다. 그 결과, 직전 학기 대비 이탈률을 40% 이상 감소시켰고, 이는 제가 <c4>성장 과정을</c4> 통해 문제를 정의하고 데이터를 기반으로 대안을 제시하는 기획자로서의 자질을 확인하는 계기가 되었습니다.",
-      answerSize: 1233,
+        '저의 <c1>성장 과정을 통해 <c2>논리적 사고력</c2>을 키웠습니다</c1>. ' +
+        '대학 시절 <c3>팀 프로젝트를 <c4>주도하며</c4> 협업의 중요성</c3>을 깨달았습니다. ' +
+        '특히 <c5>정량적 분석과 <c6>사용자 조사</c6>를 통한 의사결정</c5> 과정에서 ' +
+        '많은 것을 배웠습니다.',
+      answerSize: 800,
       modifiedAt: '2026-02-12T18:00:00',
     },
     {
@@ -30,14 +33,15 @@ export const mockCoverLetterApi: {
       question:
         '삼성전자에 지원한 이유와 해당 직무에 필요한 역량에 대해 설명해 주십시오. (공백 포함 1,500자 이내)',
       answer:
-        '삼성전자의 <c5>혁신적인 기술력</c5>과 글로벌 영향력에 매료되어 지원하게 되었습니다. 특히 사용자 경험을 중시하는 디자인 철학이 저의 가치관과 부합합니다.\n비주얼 인터랙션 디자이너로서 필요한 <c6>공감 능력과 창의성</c6>은 제 강점입니다. 사용자의 니즈를 깊이 있게 이해하고, 이를 직관적이고 아름다운 인터페이스로 구현하는 능력을 갖추고 있습니다.\n입사 후에는 글로벌 제품의 사용자 경험을 개선하는 데 기여하고 싶습니다.',
+        '삼성전자의 <c7>혁신적인 <c8>기술력과 글로벌 영향력</c8>에 매료</c7>되어 ' +
+        '지원하게 되었습니다. <c9>사용자 경험을 중시하는</c9> 디자인 철학이 ' +
+        '<c10>저의 가치관과</c10> 부합합니다.',
       answerSize: 650,
       modifiedAt: '2026-02-12T18:00:00',
     },
   ],
 };
 
-// TODO: 실제 API와 연동하는 로직으로 대체 필요
 export const mockFetchReviewsByQnaId = (qnaId: number) => {
   if (qnaId === 1) {
     return {
@@ -45,65 +49,100 @@ export const mockFetchReviewsByQnaId = (qnaId: number) => {
         {
           id: 1,
           sender: { id: 'user-1', nickname: '귀여운 캥거루' },
-          originText: '성장 과정을',
-          suggest: '저의 성장 과정을 관통하는 핵심 키워드로... ',
-          comment:
-            '첫 번째 성장 과정 부분을 더 구체적으로 서술하면 좋겠습니다.',
-          createdAt: '2025-01-25T09:41:00Z',
+          originText: '성장 과정을 통해 논리적 사고력을 키웠습니다',
+          suggest:
+            '성장 과정에서 논리적 사고 역량을 지속적으로 발전시켜 왔습니다',
+          comment: '전체적인 문맥을 좀 더 구체적으로 풀어주면 좋겠습니다.',
+          createdAt: '2025-01-26T10:00:00Z',
         },
+
         {
           id: 2,
           sender: { id: 'user-2', nickname: '멋진 사자' },
-          originText: '성장 과정을',
-          suggest: '두 번째 성장 과정에서는 학습 포인트를 강조하면... ',
-          comment: '이 부분은 더 깊이 있게 설명해야 할 것 같습니다.',
-          createdAt: '2025-01-25T09:45:00Z',
+          originText: '문제 해결 능력',
+          suggest: '논리적 문제 해결 능력',
+          comment:
+            '어떤 종류의 문제 해결 능력인지 구체화하면 더 좋을 것 같아요.',
+          createdAt: '2025-01-20T09:45:00Z',
         },
         {
           id: 3,
-          sender: { id: 'user-3', nickname: '귀여운 캥거루' },
-          originText: '성장 과정을',
-          suggest: '저의 성장 과정을 관통하는 핵심 키워드로... ',
-          comment:
-            '첫 번째 성장 과정 부분을 더 구체적으로 서술하면 좋겠습니다.',
-          createdAt: '2025-01-25T09:41:00Z',
+          sender: { id: 'user-3', nickname: '똑똑한 올빼미' },
+          originText: '팀 프로젝트를 주도하며 협업의 중요성',
+          suggest: '팀 프로젝트에서 리더십을 발휘하며 협업의 가치',
+          comment: '주도한 경험을 좀 더 강조하면 좋겠습니다.',
+          createdAt: '2025-01-25T10:00:00Z',
         },
         {
           id: 4,
-          sender: { id: 'user-4', nickname: '멋진 사자' },
-          originText: '성장 과정을',
-          suggest: '두 번째 성장 과정에서는 학습 포인트를 강조하면... ',
-          comment: '이 부분은 더 깊이 있게 설명해야 할 것 같습니다.',
-          createdAt: '2025-01-25T09:45:00Z',
+          sender: { id: 'user-5', nickname: '지혜로운 부엉이' },
+          originText: '데이터 분석과 사용자 리서치를 통한 의사결정',
+          suggest:
+            '정량적 데이터 분석과 정성적 사용자 리서치를 결합한 의사결정',
+          comment: '분석 방법을 좀 더 구체화하면 설득력이 높아집니다.',
+          createdAt: '2025-01-22T10:10:00Z',
+        },
+        {
+          id: 5,
+          sender: { id: 'user-6', nickname: '친절한 펭귄' },
+          originText: '사용자 리서치',
+          suggest: '심층 사용자 인터뷰 및 관찰 조사',
+          comment: '구체적인 리서치 방법론을 언급하면 좋겠어요.',
+          createdAt: '2025-01-22T10:15:00Z',
+        },
+        {
+          id: 99,
+          sender: { id: 'user-99', nickname: '과거의 리뷰어' },
+          originText: '체계적인 분석 프로세스',
+          suggest: '보다 구조화된 분석 방법론',
+          comment: '이 부분은 원문에서 완전히 삭제되었습니다.',
+          createdAt: '2025-01-18T15:30:00Z',
         },
       ],
       hasNext: false,
     };
   }
+
   if (qnaId === 2) {
     return {
       reviews: [
         {
-          id: 5,
-          sender: { id: 'user-1', nickname: '귀여운 캥거루' },
-          originText: '혁신적인 기술력',
-          suggest: '삼성의 혁신적이고 선도적인 기술력',
-          comment: '구체적인 제품 사례가 있으면 더 설득력 있을 것 같습니다.',
-          createdAt: '2025-01-25T10:00:00Z',
+          id: 7,
+          sender: { id: 'user-7', nickname: '활발한 토끼' },
+          originText: '혁신적인 기술력과 글로벌 영향력에 매료',
+          suggest: '혁신을 선도하는 기술력과 세계적 영향력에 깊은 감명',
+          comment: '좀 더 감정이 실린 표현으로 바꿔보세요.',
+          createdAt: '2025-01-25T10:20:00Z',
         },
         {
-          id: 6,
-          sender: { id: 'user-3', nickname: '똑똑한 올빼미' },
-          originText: '공감 능력과 창의성',
-          suggest: '사용자 중심의 공감 능력과 혁신적 창의성',
-          comment:
-            '이런 역량을 실제로 어떻게 발휘했는지 구체적인 예시가 있으면 좋습니다.',
-          createdAt: '2025-01-25T10:05:00Z',
+          id: 8,
+          sender: { id: 'user-8', nickname: '성실한 개미' },
+          originText: '세계 최고 수준의 기술력과 글로벌 영향력',
+          suggest: '기술력과 글로벌 리더십',
+          comment: '수식어를 줄이면 좋을 것 같습니다.',
+          createdAt: '2025-01-25T10:25:00Z',
+        },
+        {
+          id: 9,
+          sender: { id: 'user-9', nickname: '조용한 고양이' },
+          originText: '사용자 경험을 중시하는',
+          suggest: 'UX를 최우선으로 고려하는',
+          comment: '업계 용어를 사용하면 전문성이 느껴집니다.',
+          createdAt: '2025-01-25T10:30:00Z',
+        },
+        {
+          id: 10,
+          sender: { id: 'user-10', nickname: '빠른 치타' },
+          originText: '저의 가치관과',
+          suggest: '제가 추구하는 가치와',
+          comment: '조금 더 자연스러운 표현으로 바꿔보세요.',
+          createdAt: '2025-01-25T10:35:00Z',
         },
       ],
       hasNext: false,
     };
   }
+
   return { reviews: [], hasNext: false };
 };
 
@@ -118,37 +157,91 @@ export const mockFetchCoverLetterById = (
 };
 
 export const parseTaggedText = (raw: string) => {
-  const tagRegex = /<c(\d+)>([\s\S]*?)<\/c\1>/g;
+  const openTagRegex = /<c(\d+)>/g;
+  const closeTagRegex = /<\/c(\d+)>/g;
+
+  const tags: Array<{
+    id: string;
+    type: 'open' | 'close';
+    position: number;
+    matchLength: number;
+  }> = [];
+
+  // 여는 태그 수집
+  let match: RegExpExecArray | null;
+  while ((match = openTagRegex.exec(raw)) !== null) {
+    tags.push({
+      id: match[1],
+      type: 'open',
+      position: match.index,
+      matchLength: match[0].length,
+    });
+  }
+
+  // 닫는 태그 수집
+  while ((match = closeTagRegex.exec(raw)) !== null) {
+    tags.push({
+      id: match[1],
+      type: 'close',
+      position: match.index,
+      matchLength: match[0].length,
+    });
+  }
+
+  // 위치순 정렬
+  tags.sort((a, b) => a.position - b.position);
+
+  // 태그 제거하면서 실제 텍스트 위치 계산
   const taggedRanges: Array<{ id: string; start: number; end: number }> = [];
+  const stack: Array<{ id: string; start: number }> = [];
 
   let cleaned = '';
   let lastIndex = 0;
-  let match: RegExpExecArray | null;
 
-  while ((match = tagRegex.exec(raw)) !== null) {
-    const [fullMatch, idStr, inner] = match;
-    const matchStart = match.index;
+  for (const tag of tags) {
+    // 태그 이전의 텍스트 추가
+    cleaned += raw.slice(lastIndex, tag.position);
 
-    cleaned += raw.slice(lastIndex, matchStart);
-    const startPos = cleaned.length;
-    cleaned += inner;
-    const endPos = cleaned.length;
+    if (tag.type === 'open') {
+      // 여는 태그: 스택에 추가
+      stack.push({ id: tag.id, start: cleaned.length });
+    } else {
+      // 닫는 태그: 스택에서 매칭되는 여는 태그 찾기
+      const openIndex = stack.findIndex((t) => t.id === tag.id);
 
-    taggedRanges.push({
-      id: String(parseInt(idStr, 10)),
-      start: startPos,
-      end: endPos,
-    });
+      if (openIndex !== -1) {
+        const open = stack[openIndex];
+        taggedRanges.push({
+          id: tag.id,
+          start: open.start,
+          end: cleaned.length,
+        });
+        stack.splice(openIndex, 1);
+      } else {
+        console.warn(`Closing tag </c${tag.id}> without matching opening tag`);
+      }
+    }
 
-    lastIndex = matchStart + fullMatch.length;
+    lastIndex = tag.position + tag.matchLength;
   }
 
+  // 남은 텍스트 추가
   cleaned += raw.slice(lastIndex);
+
+  // 매칭되지 않은 여는 태그 경고
+  if (stack.length > 0) {
+    console.warn(
+      'Unclosed tags:',
+      stack.map((t) => t.id),
+    );
+  }
 
   return { cleaned, taggedRanges };
 };
 
+// TODO: 자신이 작성한 리뷰인지 여부도 함께 처리 필요
 export const buildReviewsFromApi = (
+  cleanedText: string,
   taggedRanges: Array<{ id: string; start: number; end: number }>,
   apiReviews: Array<{
     id: number;
@@ -159,25 +252,40 @@ export const buildReviewsFromApi = (
     createdAt: string;
   }>,
 ) => {
-  return taggedRanges
-    .map((tagged) => {
-      const api = apiReviews.find((r) => String(r.id) === tagged.id);
+  return apiReviews.map((api) => {
+    const tagged = taggedRanges.find((t) => t.id === String(api.id));
 
-      if (!api) return null;
-
+    if (!tagged) {
       return {
-        id: tagged.id,
+        id: String(api.id),
         selectedText: api.originText,
         revision: api.suggest || '',
-        comment: api?.comment || '',
-        range: { start: tagged.start, end: tagged.end },
+        comment: api.comment,
+        range: { start: -1, end: -1 },
         sender: api.sender,
         originText: api.originText,
-        suggest: api?.suggest ?? null,
+        suggest: api.suggest,
         createdAt: api.createdAt,
+        isValid: false,
       } as Review;
-    })
-    .filter((review): review is Review => review !== null);
+    }
+
+    const actualText = cleanedText.slice(tagged.start, tagged.end);
+    const isTextMatching = actualText === api.originText;
+
+    return {
+      id: String(api.id),
+      selectedText: api.originText,
+      revision: api.suggest || '',
+      comment: api.comment,
+      range: { start: tagged.start, end: tagged.end },
+      sender: api.sender,
+      originText: api.originText,
+      suggest: api.suggest,
+      createdAt: api.createdAt,
+      isValid: isTextMatching,
+    } as Review;
+  });
 };
 
 let internalReviewAutoId = 1000;

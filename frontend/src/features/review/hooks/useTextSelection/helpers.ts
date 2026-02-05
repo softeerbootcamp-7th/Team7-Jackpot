@@ -1,3 +1,5 @@
+import type { Review } from '@/features/review/types/review';
+
 export interface TextChunk {
   text: string;
   isHighlighted: boolean;
@@ -14,14 +16,22 @@ export const buildTextChunks = (
     return [{ text, isHighlighted: false }];
   }
 
-  const sortedHighlights = [...highlights].sort((a, b) => a.start - b.start);
+  const sortedHighlights = [...highlights]
+    .map((h) => ({
+      start: Math.max(0, Math.min(h.start, text.length)),
+      end: Math.max(0, Math.min(h.end, text.length)),
+    }))
+    .filter((h) => h.end > h.start)
+    .sort((a, b) => a.start - b.start);
+
   const chunks: TextChunk[] = [];
   let cursor = 0;
 
   for (const highlight of sortedHighlights) {
-    if (cursor < highlight.start) {
+    const start = Math.max(cursor, highlight.start);
+    if (cursor < start) {
       chunks.push({
-        text: text.slice(cursor, highlight.start),
+        text: text.slice(cursor, start),
         isHighlighted: false,
       });
     }
@@ -156,7 +166,12 @@ export const splitChunksAtIndex = (chunks: TextChunk[], splitIndex: number) => {
 export const isRangeOverlapping = (
   rangeStart: number,
   rangeEnd: number,
-  highlights: { start: number; end: number }[],
+  reviews: Review[],
 ): boolean => {
-  return highlights.some((h) => !(rangeEnd <= h.start || rangeStart >= h.end));
+  return reviews.some((review) => {
+    const h = review.range;
+    return (
+      !(rangeEnd <= h.start || rangeStart >= h.end) && review.isValid !== false
+    );
+  });
 };

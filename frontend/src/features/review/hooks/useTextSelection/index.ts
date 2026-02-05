@@ -132,7 +132,9 @@ export const useTextSelection = ({
   // 하이라이트 적용
   const highlights = useMemo(
     () => [
-      ...reviews.map((r) => r.range),
+      ...reviews
+        .filter((r) => r.isValid !== false) // 유효한 리뷰만
+        .map((r) => r.range),
       ...(selection && !editingReview ? [selection.range] : []),
     ],
     [reviews, selection, editingReview],
@@ -155,13 +157,7 @@ export const useTextSelection = ({
 
     let timeoutId: number | undefined;
 
-    if (
-      isRangeOverlapping(
-        start,
-        end,
-        reviews.map((r) => r.range),
-      )
-    ) {
+    if (isRangeOverlapping(start, end, reviews)) {
       sel.removeAllRanges();
       alert('이미 첨삭이 등록된 영역입니다.');
       return;
