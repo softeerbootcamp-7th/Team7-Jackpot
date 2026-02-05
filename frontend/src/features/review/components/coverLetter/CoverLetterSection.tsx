@@ -109,6 +109,7 @@ const CoverLetterSection = ({
         <div
           data-modal='review'
           className='fixed z-50'
+          role='presentation'
           style={{
             top: selection.modalTop + SPACER_HEIGHT,
             left: selection.modalLeft,
