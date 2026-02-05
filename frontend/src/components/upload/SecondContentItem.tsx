@@ -5,13 +5,9 @@ import CoverLetterList from '@/components/upload/CoverLetterList';
 import { UploadPageIcons as I } from '@/components/upload/icons';
 import LabeledSelectInput from '@/components/upload/LabeledSelectInput';
 import RecruitPeriodSelectInput from '@/components/upload/RecruitPeriodSelectInput';
+import useCoverLetterState from '@/hooks/useCoverLetterState';
 
-import type {
-  ContentItemType,
-  ContentStateType,
-  CoverLetterListProps,
-  DropdownStateType,
-} from '@/types/upload';
+import type { CoverLetterListProps, DropdownStateType } from '@/types/upload';
 import { yearList } from '@/utils/upload/generateYearList';
 
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
@@ -25,60 +21,12 @@ const QUESTION_TYPE_LIST: string[] = [
 ];
 
 const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
-  const [contents, setContents] = useState<ContentStateType>(
-    [1, 2, 3].reduce(
-      (acc, key) => ({
-        ...acc,
-        [key]: {
-          companyName: '',
-          jobPosition: '',
-          recruitPeriod: {
-            year: 2026,
-            season: 'first',
-          },
-          questionType: '',
-        },
-      }),
-      {},
-    ),
-  );
-
   const [isDropdownOpen, setIsDropdownOpen] = useState<DropdownStateType>({
     companyNameDropdown: false,
     yearDropdown: false,
     questionTypeDropdown: false,
   });
-
-  const handleContentChange = (
-    key: number,
-    field: keyof ContentItemType | 'year' | 'season',
-    value: string | number,
-  ) => {
-    setContents((prev) => {
-      const currentItem = prev[key];
-
-      if (field === 'year' || field === 'season') {
-        return {
-          ...prev,
-          [key]: {
-            ...currentItem,
-            recruitPeriod: {
-              ...currentItem.recruitPeriod,
-              [field]: value,
-            },
-          },
-        };
-      }
-      return {
-        ...prev,
-        [key]: {
-          ...currentItem,
-          [field]: value,
-        },
-      };
-    });
-  };
-
+  const { contents, updateContents } = useCoverLetterState();
   const currentData = contents[tabState];
 
   return (
@@ -92,7 +40,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               value={currentData.companyName}
               constantData={COMPANY_NAME_LIST}
               handleChange={(value) =>
-                handleContentChange(tabState, 'companyName', value)
+                updateContents(tabState, 'companyName', value)
               }
               handleDropdown={(isOpen) =>
                 setIsDropdownOpen((prev) => ({
@@ -107,7 +55,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               label='직무명'
               value={currentData.jobPosition}
               handleChange={(value) =>
-                handleContentChange(tabState, 'jobPosition', value)
+                updateContents(tabState, 'jobPosition', value)
               }
             />
             <RecruitPeriodSelectInput
@@ -116,10 +64,10 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               seasonValue={currentData.recruitPeriod.season}
               constantData={yearList}
               handleYearChange={(value) =>
-                handleContentChange(tabState, 'year', value)
+                updateContents(tabState, 'year', value)
               }
               handleSeasonChange={(value) =>
-                handleContentChange(tabState, 'season', value)
+                updateContents(tabState, 'season', value)
               }
               handleDropdown={(isOpen) => {
                 setIsDropdownOpen((prev) => ({
@@ -137,7 +85,7 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               value={currentData.questionType}
               constantData={QUESTION_TYPE_LIST}
               handleChange={(value) =>
-                handleContentChange(tabState, 'questionType', value)
+                updateContents(tabState, 'questionType', value)
               }
               handleDropdown={(isOpen) =>
                 setIsDropdownOpen((prev) => ({
