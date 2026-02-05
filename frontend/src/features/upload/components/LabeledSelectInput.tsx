@@ -3,9 +3,9 @@ interface LabeledSelectInputProps {
   value: string | number;
   constantData?: string[];
   handleChange: (value: string | number) => void;
-  handleDropdown?: (isOpen: boolean) => void;
-  isOpen?: boolean;
-  dropdownDirection?: 'top' | 'bottom';
+  handleDropdown: (isOpen: boolean) => void;
+  isOpen: boolean;
+  dropdownDirection: 'top' | 'bottom';
 }
 
 const LabeledSelectInput = ({
@@ -37,7 +37,7 @@ const LabeledSelectInput = ({
           <>
             <div
               className='fixed inset-0 z-10 cursor-default'
-              onClick={() => handleDropdown?.(false)}
+              onClick={() => handleDropdown(false)}
             />
             <div
               className={`absolute z-20 w-full max-h-48 rounded-lg bg-white shadow-lg overflow-y-scroll select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
@@ -49,7 +49,7 @@ const LabeledSelectInput = ({
                       type='button'
                       onClick={() => {
                         handleChange(name);
-                        handleDropdown?.(false);
+                        handleDropdown(false);
                       }}
                       key={index}
                       className='w-full text-left px-4 py-[0.875rem] text-[0.813rem] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'

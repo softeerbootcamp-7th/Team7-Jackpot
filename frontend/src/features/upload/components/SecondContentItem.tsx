@@ -16,6 +16,8 @@ import { yearList } from '@/features/upload/utils/generateYearList';
 const COMPANY_NAME_LIST: string[] = ['현대자동차', '현대오토에버', '현대카드'];
 
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
+const JOB_POSITION_LIST: string[] = ['프론트엔드 개발', '프론트엔드', 'FE'];
+// [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
 const QUESTION_TYPE_LIST: string[] = [
   '성장과정',
   '성장경험',
@@ -25,6 +27,7 @@ const QUESTION_TYPE_LIST: string[] = [
 const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<DropdownStateType>({
     companyNameDropdown: false,
+    jobPositionDropdown: false,
     yearDropdown: false,
     questionTypeDropdown: false,
   });
@@ -53,12 +56,22 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
               isOpen={isDropdownOpen.companyNameDropdown}
               dropdownDirection='bottom'
             />
-            <LabeledSelectInput
+        
+             <LabeledSelectInput
               label='직무명'
               value={currentData.jobPosition}
+              constantData={JOB_POSITION_LIST}
               handleChange={(value) =>
                 updateContents(tabState, 'jobPosition', value)
               }
+              handleDropdown={(isOpen) =>
+                setIsDropdownOpen((prev) => ({
+                  ...prev,
+                  jobPositionDropdown: isOpen,
+                }))
+              }
+              isOpen={isDropdownOpen.jobPositionDropdown}
+              dropdownDirection='bottom'
             />
             <RecruitPeriodSelectInput
               label='채용 시기'
