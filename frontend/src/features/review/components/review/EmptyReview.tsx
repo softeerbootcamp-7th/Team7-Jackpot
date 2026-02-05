@@ -7,7 +7,10 @@ const EmptyReview = () => {
         viewBox='0 0 400 396'
         fill='none'
         xmlns='http://www.w3.org/2000/svg'
+        role='img'
+        aria-label='리뷰 없음 일러스트'
       >
+        <title>리뷰 없음</title>
         <circle
           opacity='0.7'
           cx='200'
