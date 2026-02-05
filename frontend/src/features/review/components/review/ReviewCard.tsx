@@ -5,6 +5,7 @@ import ActionButtons from '@/features/review/components/review/ActionButtons';
 import CardContentSection from '@/features/review/components/review/CardContentSection';
 import CardUserInfo from '@/features/review/components/review/CardUserInfo';
 import ChipRow from '@/features/review/components/review/ChipRow';
+import InvalidReviewBanner from '@/features/review/components/review/InvalidReviewBanner';
 import type { Review } from '@/features/review/types/review';
 
 interface ReviewCardProps {
@@ -21,6 +22,7 @@ const ReviewCard = ({
   const [isDetail, setIsDetail] = useState(false);
   const hasEdit = !!review.revision;
   const hasComment = !!review.comment;
+  const isInVlid = review.isValid === false;
 
   return (
     <div
@@ -47,6 +49,12 @@ const ReviewCard = ({
         </div>
 
         <div className='flex w-full flex-col gap-4'>
+          {isInVlid && (
+            <InvalidReviewBanner
+              isExpanded={isDetail}
+              originText={review.selectedText}
+            />
+          )}
           <CardContentSection
             text={review.selectedText}
             review={review}
@@ -55,10 +63,12 @@ const ReviewCard = ({
 
           <div className='flex w-full items-center justify-between'>
             <ChipRow hasEdit={hasEdit} hasComment={hasComment} />
-            <ActionButtons
-              reviewId={review.id}
-              handleEditReview={handleEditReview}
-            />
+            {!isInVlid && (
+              <ActionButtons
+                reviewId={review.id}
+                handleEditReview={handleEditReview}
+              />
+            )}
           </div>
         </div>
       </div>

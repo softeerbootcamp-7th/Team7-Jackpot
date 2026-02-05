@@ -29,7 +29,7 @@ const CoverLetterContent = ({
     <div
       ref={containerRef}
       onMouseUp={handleMouseUp}
-      className='relative min-h-0 w-full flex-1 overflow-y-auto pr-[2rem] pb-68 pl-[3rem]'
+      className='relative min-h-0 w-full flex-1 overflow-y-auto pr-[2rem] pb-88 pl-[3rem]'
       style={{
         whiteSpace: 'pre-wrap',
         overflowY: selection ? 'hidden' : 'auto',
