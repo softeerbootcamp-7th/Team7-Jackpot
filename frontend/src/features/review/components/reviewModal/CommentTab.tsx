@@ -13,23 +13,23 @@ const CommentTab = ({
 }: CommentTabProps) => {
   return (
     <>
-      <div className='w-full px-5 py-4 rounded-2xl border border-gray-200 flex items-center'>
-        <div className='w-full text-gray-600 text-sm font-normal leading-6 font-["Pretendard"]'>
+      <div className='flex w-full items-center rounded-2xl border border-gray-200 px-5 py-4'>
+        <div className='w-full text-sm leading-6 font-normal text-gray-600'>
           {displayText}
         </div>
       </div>
 
-      <div className='w-full px-5 py-4 bg-gray-100 rounded-2xl flex flex-col items-start gap-2'>
+      <div className='flex w-full flex-col items-start gap-2 rounded-2xl bg-gray-100 px-5 py-4'>
         <textarea
           autoFocus
           value={comment}
           onChange={(e) => onCommentChange(e.target.value)}
           placeholder='첨삭하신 내용에 덧붙일 코멘트가 있다면 알려주세요'
-          className='w-full min-h-11 resize-none outline-none text-sm leading-6 font-["Pretendard"] text-gray-900 placeholder-gray-400'
+          className='min-h-11 w-full resize-none text-sm leading-6 text-gray-900 placeholder-gray-400 outline-none'
         />
-        <div className='w-full flex justify-end items-center gap-0.5'>
+        <div className='flex w-full items-center justify-end gap-0.5'>
           <span
-            className={`text-xs leading-5 font-["Pretendard"] ${
+            className={`text-xs leading-5 ${
               comment.length > MAX_COMMENT_LENGTH
                 ? 'text-red-500'
                 : 'text-gray-400'
@@ -37,10 +37,8 @@ const CommentTab = ({
           >
             {comment.length}
           </span>
-          <span className='text-gray-400 text-xs leading-5 font-["Pretendard"]'>
-            /
-          </span>
-          <span className='text-gray-400 text-xs leading-5 font-["Pretendard"]'>
+          <span className='text-xs leading-5 text-gray-400'>/</span>
+          <span className='text-xs leading-5 text-gray-400'>
             {MAX_COMMENT_LENGTH}
           </span>
         </div>
