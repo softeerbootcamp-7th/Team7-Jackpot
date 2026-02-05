@@ -132,7 +132,7 @@ public class CoverLetterService {
                 .toList();
     }
 
-    public List<String> findDeadlineByDateRange(String userId, LocalDate startDate, LocalDate endDate) {
-        return null;
+    public List<LocalDate> findDeadlineByDateRange(String userId, LocalDate startDate, LocalDate endDate) {
+        return coverLetterRepository.findDeadlineByUserIdBetweenDeadline(userId, startDate, endDate);
     }
 }

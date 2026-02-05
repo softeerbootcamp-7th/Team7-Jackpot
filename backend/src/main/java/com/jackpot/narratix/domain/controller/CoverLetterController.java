@@ -90,7 +90,7 @@ public class CoverLetterController {
     }
 
     @GetMapping("/calendar")
-    public ResponseEntity<List<String>> findDeadlineByDateRange(
+    public ResponseEntity<List<LocalDate>> findDeadlineByDateRange(
             @UserId String userId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate
