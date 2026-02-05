@@ -3,8 +3,8 @@ import { useState } from 'react';
 import CoverLetterList from '@/components/upload/CoverLetterList';
 import { UploadPageIcons as I } from '@/components/upload/icons';
 import LabeledSelectInput from '@/components/upload/LabeledSelectInput';
+import RecruitPeriodSelectInput from '@/components/upload/RecruitPeriodSelectInput';
 
-import { RECRUIT_SEASON_LIST } from '@/constants/constantsInUploadPage';
 import type {
   ContentItemType,
   ContentStateType,
@@ -47,49 +47,6 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterListProps) => {
     yearDropdown: false,
     questionTypeDropdown: false,
   });
-
-  const handleContentsCompanyName = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: number,
-  ) => {
-    const newValue = e.target.value;
-
-    setContents((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        companyName: newValue,
-      },
-    }));
-  };
-  const handleContentsJobPosition = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: number,
-  ) => {
-    const newValue = e.target.value;
-
-    setContents((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        jobPosition: newValue,
-      },
-    }));
-  };
-  const handleContentsQuestionType = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    key: number,
-  ) => {
-    const newValue = e.target.value;
-
-    setContents((prev) => ({
-      ...prev,
-      [key]: {
-        ...prev[key],
-        jobPosition: newValue,
-      },
-    }));
-  };
 
   const handleContentChange = (
     key: number,
