@@ -64,22 +64,15 @@ export const findNodeAtIndex = (
  * DOM Range를 텍스트 인덱스로 변환
  */
 export const rangeToTextIndices = (container: HTMLElement, range: Range) => {
-  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT);
-  let accumulated = 0;
-  let start = 0;
-  let end = 0;
-  let node: Text | null;
+  const startRange = document.createRange();
+  startRange.setStart(container, 0);
+  startRange.setEnd(range.startContainer, range.startOffset);
+  const start = startRange.toString().length;
 
-  while ((node = walker.nextNode() as Text | null)) {
-    if (node === range.startContainer) {
-      start = accumulated + range.startOffset;
-    }
-    if (node === range.endContainer) {
-      end = accumulated + range.endOffset;
-      break;
-    }
-    accumulated += node.length;
-  }
+  const endRange = document.createRange();
+  endRange.setStart(container, 0);
+  endRange.setEnd(range.endContainer, range.endOffset);
+  const end = endRange.toString().length;
 
   return { start, end };
 };
