@@ -20,7 +20,7 @@ export const WritingCoverLetterIcon = (props: SVGProps<SVGSVGElement>) => {
       height='28'
       fill='none'
       viewBox='0 0 28 28'
-      {...props}
+      {...props} // 3. 확장성: 외부에서 className이나 style을 주입받을 수 있게 합니다.
     >
       {/* 주의: 원본 코드에서 clipPath도 url(#a)를 보고 있고, 
         첫 번째 path의 fill도 url(#a)를 보고 있습니다.
@@ -63,8 +63,20 @@ export const WritingCoverLetterIcon = (props: SVGProps<SVGSVGElement>) => {
           fill='#fff'
           d='M17.888 16.334c.858 0 1.555.697 1.555 1.555v3.889c0 .859-.697 1.556-1.555 1.556H10.11a1.556 1.556 0 0 1-1.555-1.556v-3.889c0-.858.697-1.555 1.555-1.555zm-7 1.555a.777.777 0 0 0-.778.777V21c0 .43.349.778.778.778h6.222c.43 0 .777-.348.778-.777v-2.335a.777.777 0 0 0-.778-.777z'
         />
+        {/* 중간 path 생략 (단색 채우기는 ID가 필요 없으므로 그대로 둡니다) */}
+        <path fill='#DCDCDC' d='...' />
+        <path fill='#EFEFEF' d='...' />
+        <path fill='#fff' d='...' />
+
+        <path fill={`url(#${gradientBId})`} d='M27.222 24.111a3.11 3.11...' />
       </g>
+
+      {/* Definitions: 그래픽 리소스 정의 구간 */}
       <defs>
+        <clipPath id={clipPathId}>
+          <rect width='28' height='28' fill='#fff' />
+        </clipPath>
+
         <linearGradient
           id={gradAId}
           x1='14'
@@ -76,6 +88,7 @@ export const WritingCoverLetterIcon = (props: SVGProps<SVGSVGElement>) => {
           <stop stopColor='#AEB7F3' />
           <stop offset='1' stopColor='#7371E3' />
         </linearGradient>
+
         <linearGradient
           id={gradBId}
           x1='14'
