@@ -10,11 +10,11 @@ const useAuthForm = <T extends AuthFormData>(initialState: T) => {
       let value = e.target.value;
 
       switch (key) {
-        case 'id':
+        case 'userId':
           value = value.toLowerCase().replace(/[^a-z0-9]/g, '');
           break;
         case 'password':
-        case 'passwordCheck':
+        case 'passwordConfirm':
           value = value.replace(/\s/g, '');
           break;
         case 'nickname':

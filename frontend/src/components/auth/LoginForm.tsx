@@ -9,9 +9,13 @@ import { validateId } from '@/utils/auth/validation';
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { formData, handleInputChange } = useAuthForm({ id: '', password: '' });
+  const { formData, handleInputChange } = useAuthForm({
+    userId: '',
+    password: '',
+  });
 
-  const isActived = validateId(formData.id) && formData.password.length >= 8;
+  const isActived =
+    validateId(formData.userId) && formData.password.length >= 8;
 
   return (
     <>

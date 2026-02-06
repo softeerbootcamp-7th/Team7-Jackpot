@@ -20,16 +20,16 @@ interface isActivedType {
 
 const SignUpForm = () => {
   const { formData, handleInputChange } = useAuthForm({
-    id: '',
+    userId: '',
     password: '',
-    passwordCheck: '',
+    passwordConfirm: '',
     nickname: '',
   });
 
   const [statusMsg, setStatusMsg] = useState<AuthFormData>({
-    id: '',
+    userId: '',
     password: '',
-    passwordCheck: '',
+    passwordConfirm: '',
     nickname: '',
   });
 
@@ -38,21 +38,23 @@ const SignUpForm = () => {
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
       const newMsg: AuthFormData = {
-        id: '',
+        userId: '',
         password: '',
-        passwordCheck: '',
+        passwordConfirm: '',
         nickname: '',
       };
       let isMatch = false;
 
-      if (formData.id) {
-        if (!validateId(formData.id)) {
-          newMsg.id = '6~12자의 영문 소문자, 숫자만 사용 가능합니다.';
+      if (formData.userId) {
+        if (!validateId(formData.userId)) {
+          newMsg.userId = '6~12자의 영문 소문자, 숫자만 사용 가능합니다.';
         } else {
-          newMsg.id = '';
+          if (isIdDuplicationVerified) {
+            newMsg.userId = '사용 가능한 아이디입니다.';
+          }
         }
       } else {
-        newMsg.id = '';
+        newMsg.userId = '중복 확인이 필요합니다.';
       }
 
       if (formData.password) {
@@ -63,13 +65,13 @@ const SignUpForm = () => {
         newMsg.password = '';
       }
 
-      if (formData.passwordCheck) {
-        isMatch = formData.password === formData.passwordCheck;
-        newMsg.passwordCheck = isMatch
+      if (formData.passwordConfirm) {
+        isMatch = formData.password === formData.passwordConfirm;
+        newMsg.passwordConfirm = isMatch
           ? '비밀번호가 일치합니다.'
           : '비밀번호가 일치하지 않습니다.';
       } else {
-        newMsg.passwordCheck = '';
+        newMsg.passwordConfirm = '';
         isMatch = false;
       }
 
@@ -97,9 +99,9 @@ const SignUpForm = () => {
     id: validateId(formData.id),
 
     submit:
-      validateId(formData.id) &&
+      validateId(formData.userId) &&
       validatePassword(formData.password) &&
-      formData.password === formData.passwordCheck &&
+      formData.password === formData.passwordConfirm &&
       (formData.nickname || '').length >= 2 &&
       validateNickname(formData.nickname || ''),
   };
@@ -111,7 +113,7 @@ const SignUpForm = () => {
           const currentMsg = statusMsg[each.ID];
 
           const isPasswordMatchSuccess =
-            each.ID === 'passwordCheck' && isPasswordMatched;
+            each.ID === 'passwordConfirm' && isPasswordMatched;
 
           return (
             <InputBarInSignUp
@@ -125,8 +127,8 @@ const SignUpForm = () => {
               helpMessage={currentMsg}
               isSuccess={isPasswordMatchSuccess}
               rightElement={
-                each.ID === 'id' && (
                   <CheckDuplicationButton isActived={isActived.id} />
+                each.ID === 'userId' && (
                 )
               }
             />
