@@ -2,7 +2,7 @@ name: be-cd.yml
 
 on:
   push:
-    branches: [ "be" ]
+    branches: [ "main", "be" ]
     paths:
       - 'backend/**'
       - '.github/workflows/be-cd.yml'
