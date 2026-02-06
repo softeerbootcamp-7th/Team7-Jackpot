@@ -13,7 +13,7 @@ function TabBar<T extends string>({
   handleTabChange,
 }: TabBarProps<T>) {
   return (
-    <nav className='flex items-center justify-start pt-7.5'>
+    <nav className='flex items-center justify-start'>
       {content.map((tab) => (
         <div key={tab.name} className='flex items-center justify-start'>
           <TabItem
