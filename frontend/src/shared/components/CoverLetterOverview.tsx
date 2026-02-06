@@ -1,26 +1,38 @@
-import RightArrow from '../icons/RightArrow';
+import type { ReactNode } from 'react';
+
 import { WritingCoverLetterIcon } from '../icons/WritingCoverLetter';
 import CoverLetterPreview from './CoverLetterPreview';
 
-const previews = Array.from({ length: 6 });
+interface CoverLetterOverviewProps {
+  button?: ReactNode;
+  len: number;
+  isCoverLetter?: boolean;
+}
 
-const CoverLetterOverview = () => {
+//  w-[82.5rem]
+const CoverLetterOverview = ({
+  button,
+  len,
+  isCoverLetter = false,
+}: CoverLetterOverviewProps) => {
+  const previews = Array.from({ length: len });
+
   return (
-    <div className='inline-flex w-[82.5rem] flex-col items-start justify-start gap-6'>
+    <div className='inline-flex w-full flex-col items-start justify-start gap-6'>
       <div className='inline-flex items-center justify-between self-stretch'>
         <div className='flex items-center justify-start gap-2.5'>
-          <div className='relative h-7 w-7'>
+          <div className='h-7 w-7'>
             <WritingCoverLetterIcon />
           </div>
-          <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
+          <div className='text-title-l justify-start font-bold text-gray-950'>
             작성 중인 자기소개서
           </div>
         </div>
-        <RightArrow size='lg' />
+        {button}
       </div>
-      <div className='grid w-[82.5rem] grid-cols-3 gap-3'>
+      <div className='grid w-full grid-cols-3 gap-3'>
         {previews.map((_, idx) => (
-          <CoverLetterPreview key={idx} />
+          <CoverLetterPreview isCoverLetter={isCoverLetter} key={idx} />
         ))}
       </div>
     </div>
