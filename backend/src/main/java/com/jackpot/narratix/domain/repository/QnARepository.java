@@ -14,5 +14,5 @@ public interface QnARepository {
 
     List<QuestionCategoryType> findQuestionCategoryByUserId(String userId);
 
-    QnA findByIdOrElseThrow(Long qnaId);
+    QnA findByIdOrElseThrow(Long qnAId);
 }
