@@ -129,6 +129,7 @@ public class CoverLetterService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public QnAResponse getQnAById(String userId, Long qnaId) {
         QnA qnA = qnARepository.findByIdOrElseThrow(qnaId);
 
