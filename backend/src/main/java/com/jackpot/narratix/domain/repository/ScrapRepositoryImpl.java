@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.Scrap;
+import com.jackpot.narratix.domain.entity.ScrapId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +19,11 @@ public class ScrapRepositoryImpl implements ScrapRepository {
     @Override
     public Long countByUserId(String userId) {
         return scrapJpaRepository.countByUserId(userId);
+    }
+
+    @Override
+    public boolean existsById(ScrapId scrapId) {
+        return scrapJpaRepository.existsById(scrapId);
     }
 }
 
