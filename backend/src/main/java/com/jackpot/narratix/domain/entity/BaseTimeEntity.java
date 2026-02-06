@@ -23,7 +23,7 @@ public class BaseTimeEntity {
     @Column(nullable = false)
     private LocalDateTime modifiedAt;
 
-    protected void updateModifiedAt() {
-        this.modifiedAt = LocalDateTime.now();
+    protected void updateModifiedAt(LocalDateTime now) {
+        this.modifiedAt = now;
     }
 }
