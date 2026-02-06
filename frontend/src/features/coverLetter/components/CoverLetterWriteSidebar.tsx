@@ -11,7 +11,7 @@ const CoverLetterWriteSidebar = () => {
   const deleteScrap = () => {};
 
   return (
-    <div className='inline-flex h-full w-107 flex-col items-start justify-start gap-3 self-stretch'>
+    <div className='inline-flex h-full w-[26.75rem] flex-col items-start justify-start gap-3 self-stretch'>
       <div className='flex flex-col items-center justify-start gap-3 self-stretch'>
         <div className='flex flex-col items-start justify-start gap-2.5 self-stretch px-3'>
           <div className='inline-flex h-12 items-center justify-start self-stretch overflow-hidden rounded-lg bg-gray-50 p-1'>
