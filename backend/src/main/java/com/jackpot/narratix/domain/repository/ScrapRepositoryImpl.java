@@ -14,5 +14,10 @@ public class ScrapRepositoryImpl implements ScrapRepository {
     public Scrap save(Scrap scrap) {
         return scrapJpaRepository.save(scrap);
     }
+
+    @Override
+    public Long countByUserId(String userId) {
+        return scrapJpaRepository.countByUserId(userId);
+    }
 }
 

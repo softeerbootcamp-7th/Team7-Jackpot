@@ -4,4 +4,6 @@ import com.jackpot.narratix.domain.entity.Scrap;
 
 public interface ScrapRepository {
     Scrap save(Scrap scrap);
+
+    Long countByUserId(String userId);
 }
