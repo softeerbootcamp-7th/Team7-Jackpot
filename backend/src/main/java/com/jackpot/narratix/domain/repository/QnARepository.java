@@ -16,7 +16,7 @@ public interface QnARepository {
     List<QnACountProjection> countByCoverLetterIdIn(List<Long> coverLetterIds);
 
     List<QuestionCategoryType> findQuestionCategoryByUserId(String userId);
-                                                                Pageable pageable);
+  
     Slice<QnA> findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(String userId,
                                                                         QuestionCategoryType category,
                                                                         LocalDateTime localDateTime,
@@ -26,5 +26,5 @@ public interface QnARepository {
                                                                         QuestionCategoryType category,
                                                                         Pageable pageable);
 
-    QnA findByIdOrElseThrow(Long qnaId);
+    QnA findByIdOrElseThrow(Long qnAId);
 }
