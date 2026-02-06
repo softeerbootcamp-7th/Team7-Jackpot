@@ -17,6 +17,7 @@ public interface QnARepository {
 
     List<QuestionCategoryType> findQuestionCategoryByUserId(String userId);
 
+    QnA findByIdOrElseThrow(Long qnAId);
     Slice<QnA> findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(String userId,
                                                                         QuestionCategoryType category,
                                                                         LocalDateTime localDateTime,
@@ -25,6 +26,4 @@ public interface QnARepository {
     Slice<QnA> findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(String userId,
                                                                         QuestionCategoryType category,
                                                                         Pageable pageable);
-
-    QnA findByIdOrElseThrow(Long qnaId);
 }
