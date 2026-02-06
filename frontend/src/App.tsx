@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router';
 
+import CoverLetterPage from '@/pages/CoverLetterPage';
 import HomePage from '@/pages/HomePage';
 import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/Login';
@@ -19,6 +20,7 @@ function App() {
         {/* <Route path="/upload" element={<UploadPage />}/> */}
         <Route path='/library' element={<LibraryPage />} />
         {/* <Route path='/library?id:' element={<LibraryPage />} /> */}
+        <Route path='/coverLetter' element={<CoverLetterPage />} />
         {/* <Route path="/coverLetter/:id" element={<CoverLetterPage />}/> */}
         {/* <Route path="/review/:id" element={<ReviewPage />}/> */}
         {/* <Route path="/recruit" element={<RecruitPage />}/> */}
