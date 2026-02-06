@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 
-import { NAV_ITEMS } from '@/shared/constants/constantsInGlobalHeader';
+import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {

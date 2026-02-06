@@ -1,5 +1,5 @@
 import TabButton from '@/features/upload/components/TabButton';
-import { UPLOAD_TAB_DATA } from '@/features/upload/constants/constantsInUploadPage';
+import { UPLOAD_TAB_DATA } from '@/features/upload/constants/uploadPage';
 import { UploadPageIcons as I } from '@/features/upload/icons';
 import type { FirstContentAreaHeaderProps } from '@/features/upload/types/upload';
 
@@ -23,14 +23,14 @@ const FirstContentAreaHeader = ({
       </div>
       <div className='flex items-center gap-6'>
         {uploadTab === 'file' && (
-          <div className='flex items-center text-gray-400 gap-1 select-none'>
+          <div className='flex items-center gap-1 text-gray-400 select-none'>
             <div>0</div>
             <div>/</div>
             <div>10MB</div>
           </div>
         )}
         <button
-          className='flex bg-gray-50 px-[1.125rem] py-3 gap-[0.375rem] rounded-lg cursor-pointer'
+          className='flex cursor-pointer gap-[0.375rem] rounded-lg bg-gray-50 px-[1.125rem] py-3'
           onClick={() => nextStep?.('2')}
         >
           <I.AILabelingIcon color='var(--color-gray-300)' size='24' />

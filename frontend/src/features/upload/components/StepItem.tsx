@@ -1,5 +1,5 @@
 import StepInformation from '@/features/upload/components/StepInformation';
-import { STEP_DATA } from '@/features/upload/constants/constantsInUploadPage';
+import { STEP_DATA } from '@/features/upload/constants/uploadPage';
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
 interface StepItemProps {
@@ -13,8 +13,8 @@ const StepItem = ({ step }: StepItemProps) => {
   };
 
   return (
-    <div className='flex flex-col justify-center items-center gap-7 select-none'>
-      <div className='relative w-[30.25rem] h-[9.375rem]'>
+    <div className='flex flex-col items-center justify-center gap-7 select-none'>
+      <div className='relative h-[9.375rem] w-[30.25rem]'>
         <div className='absolute inset-0 z-0'>{generateStepIcon()}</div>
         <div className='absolute inset-0 z-10 flex select-none'>
           {['1', '2', '3'].map((each) => {
@@ -38,11 +38,11 @@ const StepItem = ({ step }: StepItemProps) => {
           })}
         </div>
       </div>
-      <div className='flex flex-col text-center gap-1'>
-        <div className='font-bold text-xl text-gray-600'>
+      <div className='flex flex-col gap-1 text-center'>
+        <div className='text-xl font-bold text-gray-600'>
           {STEP_DATA[step].loadingTitle}
         </div>
-        <div className='font-normal text-base text-gray-400'>
+        <div className='text-base font-normal text-gray-400'>
           {STEP_DATA[step].loadingSubTitle}
         </div>
       </div>

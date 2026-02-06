@@ -1,4 +1,4 @@
-import { RECRUIT_SEASON_LIST } from '@/features/upload/constants/constantsInUploadPage';
+import { RECRUIT_SEASON_LIST } from '@/features/upload/constants/uploadPage';
 
 interface RecruitPeriodSelectInputProps {
   label: string;
@@ -29,14 +29,14 @@ const RecruitPeriodSelectInput = ({
 
   return (
     <div className='flex flex-col gap-3'>
-      <div className='font-bold text-lg'>
+      <div className='text-lg font-bold'>
         {label} <span className='text-red-600'>*</span>
       </div>
-      <div className='flex gap-2 items-center'>
+      <div className='flex items-center gap-2'>
         <div className='relative inline-block'>
           <button
             type='button'
-            className={`flex-1 flex items-center justify-between gap-6 bg-gray-50 px-5 py-[0.875rem] relative ${isOpen ? 'z-20' : 'z-0'} rounded-lg cursor-pointer`}
+            className={`relative flex flex-1 items-center justify-between gap-6 bg-gray-50 px-5 py-[0.875rem] ${isOpen ? 'z-20' : 'z-0'} cursor-pointer rounded-lg`}
             onClick={() => handleDropdown?.(!isOpen)}
           >
             <div className='font-medium'>{yearValue}</div>
@@ -50,9 +50,9 @@ const RecruitPeriodSelectInput = ({
                 onClick={() => handleDropdown?.(false)}
               />
               <div
-                className={`absolute z-20 w-56 max-h-40 mt-2 rounded-lg bg-white shadow-lg overflow-y-scroll select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
+                className={`absolute z-20 mt-2 max-h-40 w-56 overflow-y-scroll rounded-lg bg-white shadow-lg select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
               >
-                <div className='flex flex-col p-1 gap-1'>
+                <div className='flex flex-col gap-1 p-1'>
                   {constantData &&
                     constantData.map((year) => (
                       <button
@@ -62,7 +62,7 @@ const RecruitPeriodSelectInput = ({
                           handleDropdown?.(false);
                         }}
                         key={year}
-                        className='w-full text-left px-4 py-[0.875rem] text-[0.813rem] rounded-md text-gray-700 cursor-pointer font-medium hover:bg-gray-50 hover:text-gray-950 hover:font-bold focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
+                        className='w-full cursor-pointer rounded-md px-4 py-[0.875rem] text-left text-[0.813rem] font-medium text-gray-700 hover:bg-gray-50 hover:font-bold hover:text-gray-950 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
                       >
                         {year}
                       </button>
@@ -72,13 +72,13 @@ const RecruitPeriodSelectInput = ({
             </>
           )}
         </div>
-        <div className='flex-3 flex justify-between px-1 py-1 bg-gray-50 rounded-lg'>
+        <div className='flex flex-3 justify-between rounded-lg bg-gray-50 px-1 py-1'>
           {RECRUIT_SEASON_LIST.map((each) => (
             <div key={each.season} className='flex-grow'>
-              <label className='items-center cursor-pointer select-none'>
+              <label className='cursor-pointer items-center select-none'>
                 <input
                   type='radio'
-                  className='sr-only peer'
+                  className='peer sr-only'
                   checked={seasonValue === each.season}
                   onChange={() => handleSeasonChange(each.season)}
                 />
