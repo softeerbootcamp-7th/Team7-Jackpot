@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.controller;
 
+import com.jackpot.narratix.domain.controller.request.CreateScrapRequest;
 import com.jackpot.narratix.domain.controller.response.CreateScrapResponse;
 import com.jackpot.narratix.domain.service.ScrapService;
 import com.jackpot.narratix.global.auth.UserId;
@@ -13,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/scrap")
+@RequestMapping("/api/v1/scraps")
 public class ScrapController {
 
     private final ScrapService scrapService;
 
     @PostMapping
-    public ResponseEntity<CreateScrapResponse> createCoverLetter(
+    public ResponseEntity<CreateScrapResponse> createScrap(
             @UserId String userId,
-            @RequestBody @Valid Long questionId
+            @RequestBody @Valid CreateScrapRequest request
     ) {
-        return ResponseEntity.ok(scrapService.createScrap(userId, questionId));
+        return ResponseEntity.ok(scrapService.createScrap(userId, request));
     }
 }

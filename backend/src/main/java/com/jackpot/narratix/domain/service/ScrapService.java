@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.service;
 
+import com.jackpot.narratix.domain.controller.request.CreateScrapRequest;
 import com.jackpot.narratix.domain.controller.response.CreateScrapResponse;
 import com.jackpot.narratix.domain.entity.Scrap;
 import com.jackpot.narratix.domain.entity.ScrapId;
@@ -18,12 +19,12 @@ public class ScrapService {
     private final ScrapRepository scrapRepository;
 
     @Transactional
-    public CreateScrapResponse createScrap(String userId, Long questionId) {
-        ScrapId scrapId = new ScrapId(userId, questionId);
+    public CreateScrapResponse createScrap(String userId, CreateScrapRequest request) {
+        ScrapId scrapId = new ScrapId(userId, request.questionId());
         if (isIdDuplicated(scrapId)) {
             throw new BaseException(ScrapErrorCode.DUPLICATE_SCRAP);
         }
-        Scrap scrap = Scrap.of(userId, questionId);
+        Scrap scrap = Scrap.of(userId, request.questionId());
         scrapRepository.save(scrap);
 
         return new CreateScrapResponse(scrap.getId().getQnaId(), scrapRepository.countByUserId(userId));
