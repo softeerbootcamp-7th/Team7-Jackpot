@@ -20,11 +20,11 @@ public class ScrapService {
 
     @Transactional
     public CreateScrapResponse createScrap(String userId, CreateScrapRequest request) {
-        ScrapId scrapId = new ScrapId(userId, request.questionId());
+        ScrapId scrapId = new ScrapId(userId, request.qnaId());
         if (isIdDuplicated(scrapId)) {
             throw new BaseException(ScrapErrorCode.DUPLICATE_SCRAP);
         }
-        Scrap scrap = Scrap.of(userId, request.questionId());
+        Scrap scrap = Scrap.of(userId, request.qnaId());
         scrapRepository.save(scrap);
 
         return new CreateScrapResponse(scrap.getId().getQnaId(), scrapRepository.countByUserId(userId));

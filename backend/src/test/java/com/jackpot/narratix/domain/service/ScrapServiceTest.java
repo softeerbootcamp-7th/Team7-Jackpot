@@ -10,6 +10,7 @@ import com.jackpot.narratix.global.exception.BaseException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,8 +48,11 @@ class ScrapServiceTest {
         // then
         assertThat(response.qnaId()).isEqualTo(qnaId);
         assertThat(response.scrapCount()).isEqualTo(1L);
+        
 
-        verify(scrapRepository, times(1)).save(any(Scrap.class));
+        InOrder inOrder = inOrder(scrapRepository);
+        inOrder.verify(scrapRepository).save(any(Scrap.class));
+        inOrder.verify(scrapRepository).countByUserId(userId);
     }
 
     @Test
