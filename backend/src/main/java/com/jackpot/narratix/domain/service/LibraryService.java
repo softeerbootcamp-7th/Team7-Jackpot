@@ -72,12 +72,12 @@ public class LibraryService {
             return CompanyLibraryResponse.of(Collections.emptyList(), Collections.emptyMap(), false);
         }
 
-        Map<Long, Long> qnaCountMap = fetchQnaCountMap(coverLetters);
+        Map<Long, Long> qnaCountMap = getQnaCountMap(coverLetters);
 
         return CompanyLibraryResponse.of(coverLetters, qnaCountMap, coverLetterSlice.hasNext());
     }
 
-    private Map<Long, Long> fetchQnaCountMap(List<CoverLetter> coverLetters) {
+    private Map<Long, Long> getQnaCountMap(List<CoverLetter> coverLetters) {
         List<Long> ids = coverLetters.stream().map(CoverLetter::getId).toList();
         return qnARepository.countByCoverLetterIdIn(ids).stream()
                 .collect(Collectors.toMap(
@@ -91,7 +91,7 @@ public class LibraryService {
 
         Pageable pageable = PageRequest.ofSize(size);
 
-        Slice<QnA> qnAsSlice = lastQuestionId
+        Slice<QnA> qnASlice = lastQuestionId
                 .map(id -> {
                     QnA lastQnA = qnARepository.findByIdOrElseThrow(id);
                     return qnARepository.findByUserIdAndQuestionCategoryTypeOrderByModifiedAtDesc(
@@ -104,16 +104,14 @@ public class LibraryService {
                         )
                 );
 
-        if (qnAsSlice.isEmpty()) {
+        if (qnASlice.isEmpty()) {
             return QuestionLibraryResponse.of(Collections.emptyList(), false);
         }
 
-        List<QuestionLibraryResponse.QnAItem> items = qnAsSlice.getContent().stream()
+        List<QuestionLibraryResponse.QnAItem> items = qnASlice.getContent().stream()
                 .map(QuestionLibraryResponse.QnAItem::from)
                 .toList();
 
-        return QuestionLibraryResponse.of(items, qnAsSlice.hasNext());
-
-
+        return QuestionLibraryResponse.of(items, qnASlice.hasNext());
     }
 }
