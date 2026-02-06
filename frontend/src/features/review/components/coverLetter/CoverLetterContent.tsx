@@ -33,14 +33,19 @@ const CoverLetterContent = ({
 
     const container = containerRef.current;
 
-    const containerHeight = container.clientHeight;
+    const updatePadding = () => {
+      const containerHeight = container.clientHeight;
+      const computedStyle = window.getComputedStyle(container);
+      const lineHeight = parseFloat(computedStyle.lineHeight) || 28;
+      setBottomPadding(containerHeight - lineHeight);
+    };
 
-    // 실제 line-height 계산
-    const computedStyle = window.getComputedStyle(container);
-    const lineHeight = parseFloat(computedStyle.lineHeight);
+    updatePadding();
 
-    // 마지막 줄이 맨 위로 올라갈 수 있게
-    setBottomPadding(containerHeight - lineHeight);
+    const resizeObserver = new ResizeObserver(updatePadding);
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
   }, [text, containerRef]);
 
   return (

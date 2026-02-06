@@ -13,7 +13,7 @@ const ReviewPage = () => {
   // 수정된 자기소개서 정보 받기
 
   return (
-    <div className='flex h-screen w-full min-w-[1700px] flex-col overflow-hidden pb-30'>
+    <div className='flex h-screen w-full max-w-screen min-w-[1700px] flex-col overflow-hidden pb-30'>
       <PageGlobalHeader />
       <div className='flex flex-1 flex-col overflow-hidden px-75'>
         <div className='mb-7.5 flex-none'>
