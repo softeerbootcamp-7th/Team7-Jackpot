@@ -1,5 +1,5 @@
-import MyApplicationCalendar from './MyApplicationCalendar';
-import UpcomingSchedules from './UpcomingSchedules';
+import MyApplicationCalendar from '@/features/home/components/MyApplicationCalendar';
+import UpcomingSchedules from '@/features/home/components/UpcomingSchedules';
 
 const ScheduleOverview = () => {
   return (

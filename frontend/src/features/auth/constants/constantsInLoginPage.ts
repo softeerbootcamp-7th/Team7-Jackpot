@@ -1,6 +1,6 @@
 export const INPUT_BAR_IN_LOGIN = [
   {
-    ID: 'id',
+    ID: 'userId',
     TYPE: 'text',
     PLACEHOLDER: '아이디를 입력해주세요',
     MAX_LENGTH: 12,

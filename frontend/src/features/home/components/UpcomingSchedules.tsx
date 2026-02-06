@@ -1,7 +1,6 @@
-import AlarmIcon from '../icons/AlarmClockIcon';
-import UpcomingSchedule from './UpcomingSchedule';
-
-import RightArrow from '@/shared/icons/RightArrow';
+import AlarmIcon from '@/features/home/components/icons/AlarmClockIcon';
+import RightArrow from '@/features/home/components/icons/RightArrow';
+import UpcomingSchedule from '@/features/home/components/UpcomingSchedule';
 
 const UpcomingSchedules = () => {
   return (

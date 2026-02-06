@@ -1,6 +1,5 @@
-import CalendarIcon from '../icons/CalendarIcon';
-
-import RightArrow from '@/shared/icons/RightArrow';
+import CalendarIcon from '@/features/home/components/icons/CalendarIcon';
+import RightArrow from '@/features/home/components/icons/RightArrow';
 
 const MyApplicationCalendar = () => {
   return (
@@ -10,7 +9,7 @@ const MyApplicationCalendar = () => {
           <div className='relative h-7 w-7'>
             <CalendarIcon />
           </div>
-          <div className='text-title-l justify-start font-bold text-gray-950'>
+          <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
             나의 지원 캘린더
           </div>
         </div>

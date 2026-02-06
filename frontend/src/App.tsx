@@ -4,7 +4,9 @@ import CoverLetterPage from '@/pages/CoverLetterPage';
 import HomePage from '@/pages/HomePage';
 import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/Login';
+import ReviewPage from '@/pages/ReviewPage';
 import SignUpPage from '@/pages/SignUp';
+import UploadPage from '@/pages/Upload';
 
 function App() {
   return (
@@ -13,16 +15,13 @@ function App() {
         {/* <Route path="/" element={<LandingPage />}/> */}
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
-        {/* <Route path="/home" element={<HomePage />}/> */}
-        {/* <Route path="/login" element={<LoginPage />}/> */}
-        {/* <Route path="/signup" element={<SignUpPage />}/> */}
         <Route path='/home' element={<HomePage />} />
-        {/* <Route path="/upload" element={<UploadPage />}/> */}
+        <Route path='/upload' element={<UploadPage />} />
         <Route path='/library' element={<LibraryPage />} />
         {/* <Route path='/library?id:' element={<LibraryPage />} /> */}
         <Route path='/coverLetter' element={<CoverLetterPage />} />
         {/* <Route path="/coverLetter/:id" element={<CoverLetterPage />}/> */}
-        {/* <Route path="/review/:id" element={<ReviewPage />}/> */}
+        <Route path='/review/:id' element={<ReviewPage />} />
         {/* <Route path="/recruit" element={<RecruitPage />}/> */}
       </Routes>
     </BrowserRouter>

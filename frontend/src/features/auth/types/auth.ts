@@ -1,7 +1,7 @@
 export interface AuthFormData {
-  id: string;
+  userId: string;
   password: string;
-  passwordCheck?: string;
+  passwordConfirm?: string;
   nickname?: string;
 }
 

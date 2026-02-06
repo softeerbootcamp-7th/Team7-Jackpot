@@ -1,6 +1,6 @@
 export const INPUT_BAR_IN_SIGNUP = [
   {
-    ID: 'id',
+    ID: 'userId',
     LABEL: '아이디',
     TYPE: 'text',
     PLACEHOLDER: '아이디를 입력해주세요',
@@ -14,7 +14,7 @@ export const INPUT_BAR_IN_SIGNUP = [
     MAX_LENGTH: 20,
   },
   {
-    ID: 'passwordCheck',
+    ID: 'passwordConfirm',
     LABEL: '비밀번호 확인',
     TYPE: 'password',
     PLACEHOLDER: '설정하신 비밀번호를 입력해주세요',
