@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { useNavigate } from 'react-router';
+
 import CheckDuplicationButton from '@/components/auth/CheckDuplicationButton';
 import InputBarInSignUp from '@/components/auth/InputBarInSignUp';
 import SubmitButton from '@/components/auth/SubmitButton';
@@ -21,6 +23,7 @@ interface isActivedType {
 }
 
 const SignUpForm = () => {
+  const navigate = useNavigate();
   const { formData, handleInputChange } = useAuthForm({
     userId: '',
     password: '',
@@ -56,6 +59,36 @@ const SignUpForm = () => {
         ...prev,
         userId: '이미 사용 중인 아이디입니다.',
       }));
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isIdDuplicationVerified) {
+      alert('아이디 중복 확인을 해주세요.');
+      return;
+    }
+
+    try {
+      await authClient.signUp({
+        userId: formData.userId,
+        password: formData.password,
+        passwordConfirm: formData.passwordConfirm,
+        nickname: formData.nickname,
+      });
+
+      await authClient.login({
+        userId: formData.userId,
+        password: formData.password,
+      });
+
+      // [윤종근] TODO: 추후 토스트 메시지로 변경 필요
+      alert('회원가입이 완료되었습니다.');
+      navigate('/home');
+    } catch (error) {
+      console.error('SignUp or Auto-Login Error', error);
+      alert('회원가입 또는 로그인 중 오류가 발생했습니다.');
     }
   };
 
@@ -123,6 +156,7 @@ const SignUpForm = () => {
     id: validateId(formData.userId) && !isIdDuplicationVerified,
 
     submit:
+      isIdDuplicationVerified &&
       validateId(formData.userId) &&
       validatePassword(formData.password) &&
       formData.password === formData.passwordConfirm &&
@@ -131,8 +165,11 @@ const SignUpForm = () => {
   };
 
   return (
-    <form className='flex flex-col justify-center items-center gap-[3.75rem]'>
-      <div className='w-[24.5rem] flex flex-col justify-center items-center gap-[1.125rem]'>
+    <form
+      className='flex flex-col items-center justify-center gap-[3.75rem]'
+      onSubmit={handleSignUp}
+    >
+      <div className='flex w-[24.5rem] flex-col items-center justify-center gap-[1.125rem]'>
         {INPUT_BAR_IN_SIGNUP.map((each) => {
           const currentMsg = statusMsg[each.ID];
 
