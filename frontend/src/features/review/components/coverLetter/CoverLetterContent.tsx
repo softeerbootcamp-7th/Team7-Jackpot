@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { useTextSelection } from '@/features/review/hooks/useTextSelection';
 import type { Review } from '@/features/review/types/review';
 import type { SelectionInfo } from '@/features/review/types/selectionInfo';
@@ -24,15 +26,32 @@ const CoverLetterContent = ({
     selection,
     onSelectionChange,
   });
+  const [bottomPadding, setBottomPadding] = useState<number>(0);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const container = containerRef.current;
+
+    const containerHeight = container.clientHeight;
+
+    // 실제 line-height 계산
+    const computedStyle = window.getComputedStyle(container);
+    const lineHeight = parseFloat(computedStyle.lineHeight);
+
+    // 마지막 줄이 맨 위로 올라갈 수 있게
+    setBottomPadding(containerHeight - lineHeight);
+  }, [text, containerRef]);
 
   return (
     <div
       ref={containerRef}
       onMouseUp={handleMouseUp}
-      className='relative min-h-0 w-full flex-1 overflow-y-auto pr-[2rem] pb-88 pl-[3rem]'
+      className='relative min-h-0 w-full flex-1 overflow-y-auto pr-[2rem] pl-[3rem]'
       style={{
         whiteSpace: 'pre-wrap',
         overflowY: selection ? 'hidden' : 'auto',
+        paddingBottom: bottomPadding,
       }}
     >
       <div className='w-full py-[0.5rem] text-base leading-7 font-normal text-gray-800'>
