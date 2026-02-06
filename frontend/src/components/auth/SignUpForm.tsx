@@ -108,10 +108,10 @@ const SignUpForm = () => {
         } else {
           if (isIdDuplicationVerified) {
             newMsg.userId = '사용 가능한 아이디입니다.';
+          } else {
+            newMsg.userId = '중복 확인이 필요합니다.';
           }
         }
-      } else {
-        newMsg.userId = '중복 확인이 필요합니다.';
       }
 
       if (formData.password) {
@@ -137,7 +137,7 @@ const SignUpForm = () => {
         if (name.length < 2) {
           newMsg.nickname = '2자 이상 입력해주세요';
         } else if (!validateNickname(name)) {
-          newMsg.nickname = '형식이 올바르지 않습니다';
+          newMsg.nickname = '형식이 올바르지 않습니다 (자/모음, 숫자, 특수문자, 공백 입력 불가)';
         } else {
           newMsg.nickname = '';
         }
