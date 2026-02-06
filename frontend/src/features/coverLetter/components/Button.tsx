@@ -4,7 +4,7 @@
 import { PlusIcon } from '../icons/Plus';
 
 interface ButtonProps {
-  handleClick: (click: boolean) => void;
+  handleClick: (isLanding: boolean) => void;
 }
 
 const Button = ({ handleClick }: ButtonProps) => {
