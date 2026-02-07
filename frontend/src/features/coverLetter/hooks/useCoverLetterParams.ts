@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import type { CoverLetterView } from '../types';
+import type { CoverLetterView } from '@/features/coverLetter/types';
 
 const useCoverLetterParams = () => {
   const [currentTab, setCurrentTab] =

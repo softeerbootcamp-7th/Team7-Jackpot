@@ -1,5 +1,4 @@
-import Scrap from './Scrap';
-
+import Scrap from '@/features/coverLetter/components/Scrap';
 import SearchInput from '@/shared/components/SearchInput';
 
 const scrabList = Array.from({ length: 3 });

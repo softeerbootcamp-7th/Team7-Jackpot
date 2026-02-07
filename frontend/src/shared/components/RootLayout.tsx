@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router';
 
-import PageGlobalHeader from './PageGlobalHeader';
+import PageGlobalHeader from '@/shared/components/PageGlobalHeader';
 
 const RootLayout = () => {
   return (

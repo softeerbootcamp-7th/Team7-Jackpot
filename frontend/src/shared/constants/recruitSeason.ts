@@ -1,4 +1,4 @@
-import type { RecruitSeasonType } from '../types/recruitSeason';
+import type { RecruitSeasonType } from '@/shared/types/recruitSeason';
 
 export const RECRUIT_SEASON_LIST: RecruitSeasonType[] = [
   {

@@ -2,11 +2,10 @@ import { useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import CheckDuplicationButton from './CheckDuplicationButton';
-import InputBarInSignUp from './InputBarInSignUp';
-import SubmitButton from './SubmitButton';
-
 import { authClient } from '@/features/auth/api/auth';
+import CheckDuplicationButton from '@/features/auth/components/CheckDuplicationButton';
+import InputBarInSignUp from '@/features/auth/components/InputBarInSignUp';
+import SubmitButton from '@/features/auth/components/SubmitButton';
 import { INPUT_BAR_IN_SIGNUP } from '@/features/auth/constants/constantsInSignUpPage';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
 import type { AuthFormData } from '@/features/auth/types/auth';

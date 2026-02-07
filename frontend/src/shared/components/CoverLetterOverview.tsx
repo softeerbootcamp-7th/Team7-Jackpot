@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
-import { WritingCoverLetterIcon } from '../icons/WritingCoverLetter';
-import CoverLetterPreview from './CoverLetterPreview';
+import CoverLetterPreview from '@/shared/components/CoverLetterPreview';
+import WritingCoverLetterIcon from '@/shared/icons/WritingCoverLetter';
 
 interface CoverLetterOverviewProps {
   button?: ReactNode;

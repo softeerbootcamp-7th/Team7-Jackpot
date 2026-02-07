@@ -1,5 +1,5 @@
-import type { TabContentType } from '../types/tab';
-import TabItem from './TabItem';
+import TabItem from '@/shared/components/TabItem';
+import type { TabContentType } from '@/shared/types/tab';
 
 interface TabBarProps<T> {
   content: TabContentType<T>[];

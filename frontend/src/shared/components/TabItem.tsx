@@ -1,4 +1,4 @@
-import type { TabContentType } from '../types/tab';
+import type { TabContentType } from '@/shared/types/tab';
 
 interface TabProps<T> {
   currentTab: T;

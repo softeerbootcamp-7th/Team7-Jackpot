@@ -1,4 +1,4 @@
-import { DeleteIcon } from '../icons/Delete';
+import { DeleteIcon } from '@/features/coverLetter/icons/Delete';
 
 interface ScrapProps {
   deleteScrap: (id: number) => void;

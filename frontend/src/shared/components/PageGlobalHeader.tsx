@@ -1,5 +1,4 @@
-import NavItem from './NavItem';
-
+import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { CommonIcon as I } from '@/shared/icons';
 

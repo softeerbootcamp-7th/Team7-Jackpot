@@ -1,9 +1,9 @@
 // import { useState } from 'react';
 
-import { ChevronDownIcon } from '../../icons/ChevronDown';
-import { NewCoverLetterIcon } from '../../icons/NewCoverLetter';
-import InputField from './InputField';
-import QuestionsSection from './QuestionsSection';
+import InputField from '@/features/coverLetter/components/newCoverLetter/InputField';
+import QuestionsSection from '@/features/coverLetter/components/newCoverLetter/QuestionsSection';
+import { ChevronDownIcon } from '@/features/coverLetter/icons/ChevronDown';
+import { NewCoverLetterIcon } from '@/features/coverLetter/icons/NewCoverLetter';
 
 const NewCoverLetter = () => {
   // const [newDisable, setNewDisable] = useState(true);

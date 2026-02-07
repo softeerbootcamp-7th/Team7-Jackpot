@@ -1,8 +1,7 @@
-import { CoverLetterIcon } from '../icons/CoverLetter';
-import { NewCoverLetterTabIcon } from '../icons/NewCoverLetterTab';
-import { ReviewWithFriendIcon } from '../icons/ReviewWithFriend';
-import type { CoverLetterView } from '../types';
-
+import { CoverLetterIcon } from '@/features/coverLetter/icons/CoverLetter';
+import { NewCoverLetterTabIcon } from '@/features/coverLetter/icons/NewCoverLetterTab';
+import { ReviewWithFriendIcon } from '@/features/coverLetter/icons/ReviewWithFriend';
+import type { CoverLetterView } from '@/features/coverLetter/types';
 import type { TabContentType } from '@/shared/types/tab';
 
 export const coverLetterHeaderText = {

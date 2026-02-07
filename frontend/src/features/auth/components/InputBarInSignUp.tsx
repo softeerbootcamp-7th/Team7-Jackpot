@@ -1,5 +1,6 @@
-import type { InputBarProps } from './InputBar';
-import InputBar from './InputBar';
+import InputBar, {
+  type InputBarProps,
+} from '@/features/auth/components/InputBar';
 
 interface InputBarInSignUpProps extends InputBarProps {
   label: string;

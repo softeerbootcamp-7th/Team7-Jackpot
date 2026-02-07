@@ -1,7 +1,6 @@
 import loginBackground from '/images/loginBackgroundImage.png';
 
-import LogoAndSubTitle from './LogoAndSubTitle';
-
+import LogoAndSubTitle from '@/features/auth/components/LogoAndSubTitle';
 import TitleLogo from '@/shared/icons/TitleLogo';
 
 interface AuthLayoutProps {

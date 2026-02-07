@@ -8,6 +8,8 @@ export const NewCoverLetterTabIcon = (props: SVGProps<SVGSVGElement>) => {
       height='24'
       fill='none'
       viewBox='0 0 24 24'
+      role='img'
+      aria-label='새 자기소개서 탭'
       {...props}
     >
       <g stroke='#5B4DD3' strokeWidth='2'>

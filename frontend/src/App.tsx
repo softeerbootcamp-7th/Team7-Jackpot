@@ -9,7 +9,7 @@ import ReviewPage from '@/pages/ReviewPage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
-import RootLayout from './shared/components/RootLayout';
+import RootLayout from '@/shared/components/RootLayout';
 
 function App() {
   return (
