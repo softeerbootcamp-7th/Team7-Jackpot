@@ -26,7 +26,7 @@ public interface ScrapApi {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "스크랩 성공",
                     content = @Content(schema = @Schema(implementation = CreateScrapResponse.class))),
-            @ApiResponse(responseCode = "401", description = "인증 실패")
+            @ApiResponse(responseCode = "401", description = "인증 실패"),
             @ApiResponse(responseCode = "409", description = "이미 스크랩한 문항"),
     })
     @PostMapping
