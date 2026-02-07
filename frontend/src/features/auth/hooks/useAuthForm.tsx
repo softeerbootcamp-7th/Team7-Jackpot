@@ -9,6 +9,14 @@ const useAuthForm = <T extends AuthFormData>(initialState: T) => {
     (e: React.ChangeEvent<HTMLInputElement>, key: AuthInputKey) => {
       const value = e.target.value;
 
+      switch (key) {
+        case 'userId':
+          value = value.toLowerCase();
+          break;
+
+        default:
+          break;
+      }
       setFormData((prev) => ({ ...prev, [key]: value }));
     },
     [],
