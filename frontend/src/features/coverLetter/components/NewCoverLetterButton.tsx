@@ -1,18 +1,15 @@
 // 나중에 이름 변경 라우팅 할 예정
 // 자기소개서 등록하기 버튼입니다
 
+import { Link } from 'react-router';
+
 import { PlusIcon } from '../icons/Plus';
 
-interface ButtonProps {
-  handleClick: (isLanding: boolean) => void;
-}
-
-const NewCoverLetterButton = ({ handleClick }: ButtonProps) => {
+const NewCoverLetterButton = () => {
   return (
-    <button
-      type='button'
+    <Link
+      to='./new'
       className='inline-flex cursor-pointer items-center justify-start gap-6'
-      onClick={() => handleClick(false)}
     >
       <div className='flex items-center justify-center gap-1.5 rounded-lg bg-gray-900 py-3 pr-5 pl-4'>
         <div className='h-6 w-6'>
@@ -22,7 +19,7 @@ const NewCoverLetterButton = ({ handleClick }: ButtonProps) => {
           자기소개서 추가하기
         </div>
       </div>
-    </button>
+    </Link>
   );
 };
 

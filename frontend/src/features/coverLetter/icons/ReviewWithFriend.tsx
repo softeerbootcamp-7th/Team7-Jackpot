@@ -1,6 +1,6 @@
 import { type SVGProps } from 'react';
 
-export const QnAWithFriendIcon = (props: SVGProps<SVGSVGElement>) => {
+export const ReviewWithFriendIcon = (props: SVGProps<SVGSVGElement>) => {
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
