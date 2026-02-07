@@ -30,7 +30,7 @@ const SideBar = ({
   const handleSearch = () => {};
 
   return (
-    <div className='flex h-full w-107 flex-col overflow-hidden pt-7.5 pr-5'>
+    <div className='flex h-full w-107 flex-col overflow-hidden pr-5'>
       {currentTab === 'QUESTIONS' && (
         <div className='flex-none shrink-0'>
           <SearchInput

@@ -58,7 +58,7 @@ const LoginForm = () => {
       <button
         type='button'
         onClick={() => navigate('/signup')}
-        className='cursor-pointer text-base font-medium text-gray-600'
+        className='text-body-m cursor-pointer font-medium text-gray-600'
       >
         회원가입
       </button>

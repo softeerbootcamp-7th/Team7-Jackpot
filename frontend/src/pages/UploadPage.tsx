@@ -15,7 +15,7 @@ const UploadPage = () => {
   };
   return (
     <div>
-      <div className='mb-12 px-[13.125rem]'>
+      <div className='mb-12 px-75'>
         <div className='mb-12'>
           <UploadPageHeader />
           <StepItem step={currentStep} />
