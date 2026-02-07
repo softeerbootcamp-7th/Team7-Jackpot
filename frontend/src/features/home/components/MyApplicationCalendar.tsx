@@ -1,5 +1,6 @@
-import CalendarIcon from '@/features/home/components/icons/CalendarIcon';
-import RightArrow from '@/features/home/components/icons/RightArrow';
+import CalendarIcon from '../icons/CalendarIcon';
+
+import RightArrow from '@/shared/icons/RightArrow';
 
 const MyApplicationCalendar = () => {
   return (
