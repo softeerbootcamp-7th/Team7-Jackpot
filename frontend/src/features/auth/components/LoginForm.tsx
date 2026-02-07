@@ -39,7 +39,10 @@ const LoginForm = () => {
   };
   return (
     <>
-      <form className='flex flex-col items-center justify-center gap-6'>
+      <form
+        className='flex flex-col items-center justify-center gap-6'
+        onSubmit={handleLogin}
+      >
         <div className='flex w-[24.5rem] flex-col items-center justify-center gap-3'>
           {INPUT_BAR_IN_LOGIN.map((each) => (
             <InputBar
