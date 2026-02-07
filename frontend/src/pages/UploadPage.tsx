@@ -5,7 +5,6 @@ import { useSearchParams } from 'react-router';
 import ContentArea from '@/features/upload/components/ContentArea';
 import StepItem from '@/features/upload/components/StepItem';
 import UploadPageHeader from '@/features/upload/components/UploadPageHeader';
-import PageGlobalHeader from '@/shared/components/PageGlobalHeader';
 
 const UploadPage = () => {
   const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');
@@ -16,8 +15,7 @@ const UploadPage = () => {
   };
   return (
     <div>
-      <PageGlobalHeader />
-      <div className='px-[13.125rem] mb-12'>
+      <div className='mb-12 px-[13.125rem]'>
         <div className='mb-12'>
           <UploadPageHeader />
           <StepItem step={currentStep} />
