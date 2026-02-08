@@ -21,11 +21,7 @@ import useReviewState from '@/shared/hooks/useReviewState';
 const CoverLetterPage = () => {
   const { state, actions } = useCoverLetterParams();
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
-  const reviewState = useReviewState(state.selectedDocumentId || 0);
-
-  const { currentReviews, currentPageIndex } = useReviewState(
-    state.selectedDocumentId ?? 1,
-  );
+  const reviewState = useReviewState(state.selectedDocumentId || 1);
 
   const isWriteTab = state.currentTab === 'COVERLETTER_WRITE';
   const hasSelectedCoverLetter = state.selectedDocumentId !== null;
@@ -41,7 +37,7 @@ const CoverLetterPage = () => {
   }, []);
 
   // 페이지가 바뀌면 선택 초기화 - key를 사용하여 컴포넌트 리마운트
-  const pageKey = `${state.selectedDocumentId}-${currentPageIndex}`;
+  const pageKey = `${state.selectedDocumentId}-${reviewState.currentPageIndex}`;
 
   return (
     <SidebarLayout
@@ -95,7 +91,7 @@ const CoverLetterPage = () => {
             {state.isReviewOpen && (
               <aside className='w-[248px] border-l border-gray-100'>
                 <ReviewCardList
-                  reviews={currentReviews}
+                  reviews={reviewState.currentReviews}
                   selectedReviewId={selectedReviewId}
                   onReviewClick={handleReviewClick}
                 />
