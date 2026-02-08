@@ -1,5 +1,6 @@
 import FirstContentAreaHeader from '@/features/upload/components/FirstContentAreaHeader';
 import SecondContentArea from '@/features/upload/components/SecondContentArea';
+import ThirdContentArea from '@/features/upload/components/ThirdContentArea';
 import UploadFileArea from '@/features/upload/components/UploadFileArea';
 import UploadTextArea from '@/features/upload/components/UploadTextArea';
 import type { FirstContentAreaHeaderProps } from '@/features/upload/types/upload';
@@ -11,7 +12,7 @@ const ContentArea = ({
   nextStep,
 }: FirstContentAreaHeaderProps) => {
   return (
-    <div className='flex flex-col gap-4 p-6 border border-gray-100 rounded-2xl'>
+    <div className='flex flex-col gap-4 rounded-2xl border border-gray-100 p-6'>
       {step === '1' && (
         <>
           <FirstContentAreaHeader
@@ -27,7 +28,11 @@ const ContentArea = ({
           <SecondContentArea />
         </>
       )}
-      {step === '3' && <>3</>}
+      {step === '3' && (
+        <>
+          <ThirdContentArea />
+        </>
+      )}
     </div>
   );
 };
