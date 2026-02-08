@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -33,5 +34,13 @@ public class ScrapController implements ScrapApi {
             @UserId String userId
     ) {
         return ResponseEntity.ok(scrapService.getScrapCount(userId));
+    }
+
+    @Override
+    public ResponseEntity<ScrapCountResponse> deleteScrapById(
+            @UserId String userId,
+            @RequestParam Long qnaId
+    ) {
+        return ResponseEntity.ok(scrapService.deleteById(userId, qnaId));
     }
 }
