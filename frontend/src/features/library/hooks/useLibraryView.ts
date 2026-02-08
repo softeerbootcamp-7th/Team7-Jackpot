@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import type { LibraryView } from '@/features/library/types';
 
-const useLibraryParams = () => {
+const useLibraryView = () => {
   const [currentTab, setCurrentTab] = useState<LibraryView>('COMPANY');
 
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
@@ -13,6 +13,7 @@ const useLibraryParams = () => {
   const handleTabChange = (tab: LibraryView) => {
     setCurrentTab(tab);
     setSelectedFolderId(null);
+    setSelectedDocumentId(null);
   };
 
   return {
@@ -29,4 +30,4 @@ const useLibraryParams = () => {
   };
 };
 
-export default useLibraryParams;
+export default useLibraryView;
