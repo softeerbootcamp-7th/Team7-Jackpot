@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(
         name = "notification",
-        indexes = @Index(name = "idx_user_id_created_at_desc", columnList = "user_id, created_at")
+        indexes = @Index(name = "idx_user_id_created_at_desc", columnList = "user_id, created_at DESC")
 )
 @Getter
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
@@ -61,6 +61,8 @@ public class Notification extends BaseTimeEntity {
     private void serializeMeta() {
         if (meta != null) {
             this.metaJson = NotificationMetaConverter.serialize(meta);
+        }else {
+            this.metaJson = null;
         }
     }
 }
