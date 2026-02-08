@@ -25,12 +25,18 @@ const CoverLetterMenu = ({
         <button
           type='button'
           onClick={() => {
-            const url = `https://www.narratix.site/review/${documentId}`;
+            const url = `${import.meta.env.VITE_SERVICE_BASE_URL}/review/${documentId}`;
 
-            navigator.clipboard.writeText(url).then(() => {
-              // TODO: 나중에 토스트로 교체 가능
-              alert('첨삭 링크가 복사되었습니다.');
-            });
+            navigator.clipboard
+              .writeText(url)
+              .then(() => {
+                // TODO: 나중에 토스트로 교체 가능
+                alert('첨삭 링크가 복사되었습니다.');
+              })
+              .catch(() => {
+                // TODO: 토스트로 교체 시 에러 메시지도 함께 처리
+                alert('링크 복사에 실패했습니다. 직접 복사해주세요: ' + url);
+              });
           }}
           className='flex h-11 w-full cursor-pointer items-center gap-2 rounded-xl px-3'
         >
