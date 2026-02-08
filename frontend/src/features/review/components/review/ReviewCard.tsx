@@ -5,8 +5,8 @@ import ActionButtons from '@/features/review/components/review/ActionButtons';
 import CardContentSection from '@/features/review/components/review/CardContentSection';
 import CardUserInfo from '@/features/review/components/review/CardUserInfo';
 import ChipRow from '@/features/review/components/review/ChipRow';
-import InvalidReviewBanner from '@/features/review/components/review/InvalidReviewBanner';
 import type { Review } from '@/features/review/types/review';
+import InvalidReviewBanner from '@/shared/components/InvalidReviewBanner';
 
 interface ReviewCardProps {
   review: Review;

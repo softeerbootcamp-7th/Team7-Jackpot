@@ -1,5 +1,6 @@
-import { ReviewPageIcons } from '@/features/review/components/icons';
 import type { TabType } from '@/features/review/types/review';
+import PaperChipIcon from '@/shared/icons/PaperChipIcon';
+import PenToolIcon from '@/shared/icons/PenToolIcon';
 
 interface TabSelectorProps {
   tab: TabType;
@@ -18,7 +19,7 @@ const TabSelector = ({ tab, onTabChange }: TabSelectorProps) => {
             : ''
         }`}
       >
-        <ReviewPageIcons.PaperChipIcon active={tab === 'revision'} />
+        <PaperChipIcon active={tab === 'revision'} />
         <span
           className={`text-body-l ${
             tab === 'revision'
@@ -38,7 +39,7 @@ const TabSelector = ({ tab, onTabChange }: TabSelectorProps) => {
             : ''
         }`}
       >
-        <ReviewPageIcons.PenToolIcon active={tab === 'comment'} />
+        <PenToolIcon active={tab === 'comment'} />
         <span
           className={`text-body-l ${
             tab === 'comment'

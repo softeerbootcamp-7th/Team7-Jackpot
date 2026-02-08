@@ -15,12 +15,12 @@ const Pagination = ({
   const isLast = current === total - 1;
 
   return (
-    <div className='flex w-full shrink-0 items-center justify-center gap-[1.25rem]'>
+    <div className='inline-flex shrink-0 items-center gap-[1.25rem]'>
       <button
         type='button'
         onClick={() => onChange(current - 1)}
         disabled={isFirst}
-        className='disabled:opacity-40'
+        className='cursor-pointer disabled:cursor-default disabled:opacity-40'
         aria-label={`이전 ${ariaLabel}`}
       >
         <svg
@@ -61,7 +61,7 @@ const Pagination = ({
         type='button'
         onClick={() => onChange(current + 1)}
         disabled={isLast}
-        className='disabled:opacity-40'
+        className='cursor-pointer disabled:cursor-default disabled:opacity-40'
         aria-label={`다음 ${ariaLabel}`}
       >
         <svg
