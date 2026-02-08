@@ -9,9 +9,11 @@ import SubmitButton from '@/features/auth/components/SubmitButton';
 import { INPUT_BAR_IN_LOGIN } from '@/features/auth/constants/constantsInLoginPage';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
 import type { AuthInputKey } from '@/features/auth/types/auth';
+import { useToastMessageContext } from '@/shared/context/ToastMessageContext';
 import { validateId } from '@/shared/utils/validation';
 
 const LoginForm = () => {
+  const { showToast } = useToastMessageContext();
   const navigate = useNavigate();
   // 로그인 실패 시를 위한 상태
   const [isLoginFailed, setIsLoginFailed] = useState<boolean>(false);
@@ -45,15 +47,14 @@ const LoginForm = () => {
         password: formData.password,
       });
 
-      // [윤종근] TODO: 추후 토스트 메시지로 변경 필요
-      alert('로그인 되었습니다.');
+      showToast('로그인 되었습니다.', true);
       navigate('/home');
     } catch (error) {
       console.error('Login Failed:', error);
       if (error instanceof Error) {
         setIsLoginFailed(true);
       } else {
-        alert('로그인에 실패했습니다.');
+        showToast('로그인에 실패했습니다.', false);
       }
     }
   };
