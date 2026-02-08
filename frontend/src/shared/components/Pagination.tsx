@@ -22,7 +22,7 @@ const Pagination = ({
         type='button'
         onClick={() => onChange(current - 1)}
         disabled={isFirst}
-        className='disabled:opacity-40'
+        className='cursor-pointer disabled:cursor-default disabled:opacity-40'
         aria-label={`이전 ${ariaLabel}`}
       >
         <svg
@@ -63,7 +63,7 @@ const Pagination = ({
         type='button'
         onClick={() => onChange(current + 1)}
         disabled={isLast}
-        className='disabled:opacity-40'
+        className='cursor-pointer disabled:cursor-default disabled:opacity-40'
         aria-label={`다음 ${ariaLabel}`}
       >
         <svg
