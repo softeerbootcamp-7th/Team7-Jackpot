@@ -123,13 +123,20 @@ class ScrapServiceTest {
         String userId = "user123";
         Long qnaId = 1L;
         QnA qna = QnAFixture.createQnA(null, userId, "question", MOTIVATION);
-        when(qnARepository.findByIdOrElseThrow(qnaId)).thenReturn(qna);
-        when(scrapRepository.countByUserId(userId)).thenReturn(0L);
 
-        //when
+        ScrapId scrapId = new ScrapId(userId, qnaId);
+
+        when(qnARepository.findByIdOrElseThrow(qnaId)).thenReturn(qna);
+        when(scrapRepository.existsById(scrapId)).thenReturn(true);
+        when(scrapRepository.countByUserId(userId)).thenReturn(5L);
+
+        // when
         ScrapCountResponse response = scrapService.deleteScrapById(userId, qnaId);
-        assertThat(response.scrapCount()).isEqualTo(0L);
-        verify(scrapRepository).deleteById(any(ScrapId.class));
+
+        // then
+        assertThat(response.scrapCount()).isEqualTo(5L);
+        
+        verify(scrapRepository).deleteById(scrapId);
         verify(scrapRepository).countByUserId(userId);
     }
 

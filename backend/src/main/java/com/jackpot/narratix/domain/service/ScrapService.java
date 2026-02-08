@@ -52,7 +52,9 @@ public class ScrapService {
         if (!qnA.isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
 
         ScrapId scrapId = new ScrapId(userId, qnaId);
-        scrapRepository.deleteById(scrapId);
+        if (scrapRepository.existsById(scrapId)) {
+            scrapRepository.deleteById(scrapId);
+        }
 
         return new ScrapCountResponse(scrapRepository.countByUserId(userId));
     }
