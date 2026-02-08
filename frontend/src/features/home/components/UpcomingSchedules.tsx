@@ -2,16 +2,15 @@ import UpcomingSchedule from '@/features/home/components/UpcomingSchedule';
 import AlarmIcon from '@/features/home/icons/AlarmClockIcon';
 import RightArrow from '@/shared/icons/RightArrow';
 
-
 const UpcomingSchedules = () => {
   return (
-    <div className='flex-1 inline-flex flex-col justify-start items-start gap-6'>
-      <div className='w-full inline-flex justify-between items-center'>
-        <div className='flex justify-start items-center gap-2.5'>
-          <div className='w-7 h-7 relative'>
+    <div className='inline-flex flex-1 flex-col items-start justify-start gap-6'>
+      <div className='inline-flex w-full items-center justify-between'>
+        <div className='flex items-center justify-start gap-2.5'>
+          <div className='relative h-7 w-7'>
             <AlarmIcon />
           </div>
-          <div className='justify-start text-gray-950 text-xl font-bold leading-9'>
+          <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
             다가오는 일정
           </div>
         </div>

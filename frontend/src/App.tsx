@@ -15,10 +15,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/login' element={<LoginPage />} />
+        <Route path='/signup' element={<SignUpPage />} />
         <Route element={<RootLayout />}>
           {/* <Route path="/" element={<LandingPage />}/> */}
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
           <Route path='/home' element={<HomePage />} />
           <Route path='/upload' element={<UploadPage />} />
           <Route path='/cover-letter' element={<CoverLetterLandingPage />} />
