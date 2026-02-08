@@ -10,4 +10,6 @@ public interface NotificationRepository {
     Slice<Notification> findRecentByUserId(String userId, Integer limit);
 
     Notification findByIdOrElseThrow(Long notificationId);
+
+    void updateAllNotificationAsReadByUserId(String userId);
 }

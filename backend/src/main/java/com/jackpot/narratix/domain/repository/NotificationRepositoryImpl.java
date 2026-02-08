@@ -32,4 +32,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         return notificationJpaRepository.findById(notificationId)
                 .orElseThrow(() -> new BaseException(NotificationErrorCode.NOTIFICATION_NOT_FOUND));
     }
+
+    @Override
+    public void updateAllNotificationAsReadByUserId(String userId) {
+        notificationJpaRepository.updateAllAsReadByUserId(userId);
+    }
 }
