@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -50,7 +51,8 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(10);
-        List<Notification> results = notificationJpaRepository.findRecentByUserId(userId, pageable);
+        Slice<Notification> slice = notificationJpaRepository.findRecentByUserId(userId, pageable);
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(5);
@@ -79,7 +81,8 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(5);
-        List<Notification> results = notificationJpaRepository.findRecentByUserId(userId, pageable);
+        Slice<Notification> slice = notificationJpaRepository.findRecentByUserId(userId, pageable);
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(5); // size만큼만 조회
@@ -102,7 +105,8 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(10);
-        List<Notification> results = notificationJpaRepository.findRecentByUserId(user.getId(), pageable);
+        Slice<Notification> slice = notificationJpaRepository.findRecentByUserId(user.getId(), pageable);
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(2)
@@ -121,16 +125,17 @@ class NotificationJpaRepositoryTest {
         Notification old1 = createAndSaveNotification(userId, cursorTime.minusDays(2), "오래된 알림1");
         Notification old2 = createAndSaveNotification(userId, cursorTime.minusDays(1), "오래된 알림2");
         Notification cursor = createAndSaveNotification(userId, cursorTime, "커서 알림");
-        Notification recent1 = createAndSaveNotification(userId, cursorTime.plusDays(1), "최근 알림1");
-        Notification recent2 = createAndSaveNotification(userId, cursorTime.plusDays(2), "최근 알림2");
+        createAndSaveNotification(userId, cursorTime.plusDays(1), "최근 알림1"); // recent1
+        createAndSaveNotification(userId, cursorTime.plusDays(2), "최근 알림2"); // recent 2
 
         flushAndClear();
 
         // when - cursor를 기준으로 조회
         Pageable pageable = PageRequest.ofSize(10);
-        List<Notification> results = notificationJpaRepository.findAllByUserIdAfterCursor(
+        Slice<Notification> slice = notificationJpaRepository.findAllByUserIdAfterCursor(
                 userId, cursor.getId(), pageable
         );
+        List<Notification> results = slice.getContent();
 
         // then - cursor의 createdAt보다 이전 데이터만 조회 (old1, old2만 조회되어야 함)
         assertThat(results).hasSize(2);
@@ -160,9 +165,10 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(10);
-        List<Notification> results = notificationJpaRepository.findAllByUserIdAfterCursor(
+        Slice<Notification> slice = notificationJpaRepository.findAllByUserIdAfterCursor(
                 userId, cursor.getId(), pageable
         );
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(4);
@@ -191,9 +197,10 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(5);
-        List<Notification> results = notificationJpaRepository.findAllByUserIdAfterCursor(
+        Slice<Notification> slice = notificationJpaRepository.findAllByUserIdAfterCursor(
                 userId, cursor.getId(), pageable
         );
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(5); // size만큼만 조회
@@ -219,9 +226,10 @@ class NotificationJpaRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.ofSize(10);
-        List<Notification> results = notificationJpaRepository.findAllByUserIdAfterCursor(
+        Slice<Notification> slice = notificationJpaRepository.findAllByUserIdAfterCursor(
                 user.getId(), cursor.getId(), pageable
         );
+        List<Notification> results = slice.getContent();
 
         // then
         assertThat(results).hasSize(2)

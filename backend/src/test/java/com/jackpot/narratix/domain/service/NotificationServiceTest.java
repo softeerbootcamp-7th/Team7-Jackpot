@@ -9,6 +9,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +40,8 @@ class NotificationServiceTest {
         Optional<Long> lastNotificationId = Optional.empty();
 
         List<Notification> mockNotifications = createMockNotifications(5);
-        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockNotifications);
+        Slice<Notification> mockSlice = new SliceImpl<>(mockNotifications, PageRequest.ofSize(fetchLimit), false);
+        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockSlice);
 
         // when
         notificationService.getNotificationsByUserId(userId, lastNotificationId, size);
@@ -58,7 +62,8 @@ class NotificationServiceTest {
         Optional<Long> lastNotificationIdOptional = Optional.of(lastNotificationId);
 
         List<Notification> mockNotifications = createMockNotifications(5);
-        given(notificationRepository.findAllByUserId(userId, lastNotificationId, fetchLimit)).willReturn(mockNotifications);
+        Slice<Notification> mockSlice = new SliceImpl<>(mockNotifications, PageRequest.ofSize(fetchLimit), false);
+        given(notificationRepository.findAllByUserId(userId, lastNotificationId, fetchLimit)).willReturn(mockSlice);
 
         // when
         notificationService.getNotificationsByUserId(userId, lastNotificationIdOptional, size);
@@ -79,7 +84,8 @@ class NotificationServiceTest {
 
         // fetchLimit(11)개 조회됨 - 다음 페이지가 있음을 의미
         List<Notification> mockNotifications = createMockNotifications(fetchLimit);
-        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockNotifications);
+        Slice<Notification> mockSlice = new SliceImpl<>(mockNotifications, PageRequest.ofSize(fetchLimit), true);
+        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockSlice);
 
         // when
         NotificationsPaginationResponse response = notificationService.getNotificationsByUserId(
@@ -96,13 +102,14 @@ class NotificationServiceTest {
     void getNotificationsByUserId_resultSizeLessThanFetchLimit_hasNextIsFalse() {
         // given
         String userId = "testUser123";
-        Integer size = 10;
+        int size = 10;
         int fetchLimit = size + 1;
         Optional<Long> lastNotificationId = Optional.empty();
 
         // fetchLimit(11)보다 작은 5개만 조회됨 - 마지막 페이지임을 의미
         List<Notification> mockNotifications = createMockNotifications(5);
-        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockNotifications);
+        Slice<Notification> mockSlice = new SliceImpl<>(mockNotifications, PageRequest.ofSize(fetchLimit), false);
+        given(notificationRepository.findRecentByUserId(userId, fetchLimit)).willReturn(mockSlice);
 
         // when
         NotificationsPaginationResponse response = notificationService.getNotificationsByUserId(
@@ -126,8 +133,9 @@ class NotificationServiceTest {
 
         // fetchLimit(6)개 조회됨
         List<Notification> mockNotifications = createMockNotifications(fetchLimit);
+        Slice<Notification> mockSlice = new SliceImpl<>(mockNotifications, PageRequest.ofSize(fetchLimit), true);
         given(notificationRepository.findAllByUserId(userId, lastNotificationId, fetchLimit))
-                .willReturn(mockNotifications);
+                .willReturn(mockSlice);
 
         // when
         NotificationsPaginationResponse response = notificationService.getNotificationsByUserId(
