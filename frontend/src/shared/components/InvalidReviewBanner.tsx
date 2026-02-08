@@ -1,6 +1,5 @@
 import TrashCanIcon from '@/features/review/components/icons/TrashCanIcon';
 
-// InvalidReviewBanner.tsx (새 컴포넌트)
 const InvalidReviewBanner = ({
   originText,
   isExpanded,
