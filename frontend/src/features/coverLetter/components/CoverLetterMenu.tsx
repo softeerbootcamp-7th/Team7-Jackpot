@@ -28,7 +28,7 @@ const CoverLetterMenu = ({
               alert('첨삭 링크가 복사되었습니다.');
             });
           }}
-          className='flex h-11 w-full cursor-pointer items-center gap-2 rounded-xl px-3 hover:bg-gray-50'
+          className='flex h-11 w-full cursor-pointer items-center gap-2 rounded-xl px-3'
         >
           <LinkAngled />
           <span className='text-base font-semibold text-zinc-800'>
