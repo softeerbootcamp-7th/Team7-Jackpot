@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.response.NotificationsPaginationRe
 import com.jackpot.narratix.domain.entity.Notification;
 import com.jackpot.narratix.domain.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,17 +23,15 @@ public class NotificationService {
     ) {
         int fetchLimit = size + 1;
 
-        List<Notification> notifications = lastNotificationId
+        Slice<Notification> notifications = lastNotificationId
                 .map(notificationId -> notificationRepository.findAllByUserId(userId, notificationId, fetchLimit))
                 .orElseGet(() -> notificationRepository.findRecentByUserId(userId, fetchLimit));
-
-        boolean hasNext = notifications.size() >= fetchLimit;
 
         List<NotificationsPaginationResponse.NotificationsResponse> notificationsResponses = notifications.stream()
                 .limit(size)
                 .map(NotificationsPaginationResponse.NotificationsResponse::of)
                 .toList();
 
-        return new NotificationsPaginationResponse(notificationsResponses, hasNext);
+        return new NotificationsPaginationResponse(notificationsResponses, notifications.hasNext());
     }
 }
