@@ -29,7 +29,7 @@ public class NotificationMetaConverter {
     }
 
     public static NotificationMeta deserialize(String json, NotificationType type) {
-        if (json == null || json.isEmpty()) {
+        if (json == null || json.isBlank()) {
             return null;
         }
 
