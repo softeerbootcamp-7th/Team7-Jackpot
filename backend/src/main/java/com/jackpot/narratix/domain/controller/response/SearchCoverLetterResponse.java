@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.controller.response;
 
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -42,7 +43,17 @@ public record SearchCoverLetterResponse(
     ) {
     }
 
-    public static SearchCoverLetterResponse of(List<CoverLetterItem> coverLetters, PageInfo page) {
-        return new SearchCoverLetterResponse(coverLetters, page);
+    public static SearchCoverLetterResponse from(Page<CoverLetter> pageResult) {
+        List<CoverLetterItem> items = pageResult.getContent().stream()
+                .map(CoverLetterItem::from)
+                .toList();
+
+        PageInfo pageInfo = new PageInfo(
+                pageResult.getNumber() + 1,
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages()
+        );
+        return new SearchCoverLetterResponse(items, pageInfo);
     }
 }
