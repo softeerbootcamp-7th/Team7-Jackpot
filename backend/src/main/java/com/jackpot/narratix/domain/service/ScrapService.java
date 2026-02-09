@@ -46,15 +46,11 @@ public class ScrapService {
 
     @Transactional
     public ScrapCountResponse deleteScrapById(String userId, Long qnaId) {
-
         QnA qnA = qnARepository.findByIdOrElseThrow(qnaId);
-
         if (!qnA.isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
 
         ScrapId scrapId = new ScrapId(userId, qnaId);
-        if (scrapRepository.existsById(scrapId)) {
-            scrapRepository.deleteById(scrapId);
-        }
+        scrapRepository.deleteById(scrapId);
 
         return new ScrapCountResponse(scrapRepository.countByUserId(userId));
     }
