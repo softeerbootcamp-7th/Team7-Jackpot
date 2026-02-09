@@ -1,5 +1,6 @@
 import documentIcon from '@/assets/icons/documentIcon.svg';
 import { UploadPageIcons as I } from '@/features/upload/icons';
+import { formatFileSize } from '@/features/upload/utils/formatFileSize';
 
 export type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 
@@ -26,11 +27,6 @@ const AddFileItem = ({
     e.preventDefault();
     e.stopPropagation();
     onFileChange(null);
-  };
-
-  const formatFileSize = (bytes: number) => {
-    const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(2)}MB`;
   };
 
   const getStatusUI = () => {
