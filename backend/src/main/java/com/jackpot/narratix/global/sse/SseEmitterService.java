@@ -1,7 +1,9 @@
 package com.jackpot.narratix.global.sse;
 
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -13,15 +15,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class SseEmitterService {
 
+    private static final int MAX_CONNECTIONS_PER_USER = 5;
     private static final Long DEFAULT_TIMEOUT = 60 * 60 * 1000L; // 1시간
+
     private final SseEmitterRepository sseEmitterRepository;
 
     public SseEmitter init(String userId) {
+        int connectionCount = sseEmitterRepository.countByUserId(userId);
+        if(connectionCount >= MAX_CONNECTIONS_PER_USER) {
+            log.warn("Max SSE connections exceeded for user: {}", userId);
+            throw new BaseException(SseErrorCode.SSE_CONNECTION_LIMIT_EXCEEDED);
+        }
+
         String emitterId = generateRandomEmitterId();
         SseEmitter sseEmitter = new SseEmitter(DEFAULT_TIMEOUT);
         sseEmitterRepository.save(userId, emitterId, sseEmitter);
 
-        int connectionCount = sseEmitterRepository.countByUserId(userId);
         log.info("SSE connected: userId={}, emitterId={}, totalConnections={}", userId, emitterId, connectionCount);
 
         sseEmitter.onCompletion(() -> {
