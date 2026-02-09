@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { authClient } from '@/features/auth/api/auth';
 import CheckDuplicationButton from '@/features/auth/components/CheckDuplicationButton';
@@ -45,14 +45,12 @@ const SignUpForm = ({ handleSuccess }: SignUpFormProps) => {
   const [isIdDuplicationVerified, setIsIdDuplicationVerified] =
     useState<boolean>(false);
 
-  const handleInputChange = useCallback(
+  const handleInputChange =
     (key: AuthInputKey) => (e: React.ChangeEvent<HTMLInputElement>) => {
       if (isSignUpFailed) setIsSignUpFailed(false);
       originalHandleInputChange(key)(e);
       if (key === 'userId') setIsIdDuplicationVerified(false);
-    },
-    [isSignUpFailed, originalHandleInputChange],
-  );
+    };
 
   const handleCheckDuplicateId = async () => {
     if (!validateId(formData.userId)) return;
