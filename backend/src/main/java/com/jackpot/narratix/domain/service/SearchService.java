@@ -2,7 +2,9 @@ package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.controller.response.SearchScrapResponse;
 import com.jackpot.narratix.domain.entity.QnA;
+import com.jackpot.narratix.domain.exception.SearchErrorCode;
 import com.jackpot.narratix.domain.repository.ScrapRepository;
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,7 +22,14 @@ public class SearchService {
 
     public SearchScrapResponse searchScrap(String userId, String searchWord, Integer size, Long lastQnaId) {
 
-        String keyword = StringUtils.hasText(searchWord) ? searchWord.trim() : null;
+        String keyword = null;
+
+        if (StringUtils.hasText(searchWord)) {
+            keyword = searchWord.trim();
+            if (keyword.length() < 2) {
+                throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
+            }
+        }
 
         Pageable pageable = PageRequest.of(0, size);
 
