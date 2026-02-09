@@ -1,5 +1,7 @@
+import CoverLetterReviewContent from '@/features/coverLetter/components/CoverLetterReviewContent';
 import CoverLetterWriteSidebar from '@/features/coverLetter/components/CoverLetterWriteSidebar';
 import NewCoverLetter from '@/features/coverLetter/components/newCoverLetter/NewCoverLetter';
+import ReviewSidebar from '@/features/coverLetter/components/reviewWithFriend/ReviewSidebar';
 import {
   coverLetterContent,
   coverLetterHeaderText,
@@ -14,7 +16,9 @@ import TabBar from '@/shared/components/TabBar';
 
 const CoverLetterPage = () => {
   const { state, actions } = useCoverLetterParams();
-  const hasData = true;
+
+  const isWriteTab = state.currentTab === 'COVERLETTER_WRITE';
+  const hasSelectedCoverLetter = state.selectedDocumentId !== null;
 
   const tabProps = {
     content: coverLetterContent,
@@ -30,13 +34,39 @@ const CoverLetterPage = () => {
           <TabBar {...tabProps} />
         </>
       }
-      sidebarSlot={<CoverLetterWriteSidebar />}
+      sidebarSlot={
+        isWriteTab ? (
+          <CoverLetterWriteSidebar />
+        ) : (
+          <ReviewSidebar
+            selectedDocumentId={state.selectedDocumentId}
+            onSelectDocument={actions.setSelectedDocumentId}
+          />
+        )
+      }
+      isReviewOpen={state.isReviewOpen}
     >
       <DataGuard
-        data={hasData}
-        fallback={<EmptyCase {...emptyCaseText.overview} />}
+        data={hasSelectedCoverLetter}
+        fallback={
+          <EmptyCase
+            {...(isWriteTab
+              ? emptyCaseText.overview
+              : emptyCaseText.qnAwithFriend)}
+          />
+        }
+        className='h-full'
       >
-        {state.currentTab === 'COVERLETTER_WRITE' ? <NewCoverLetter /> : ''}
+        {isWriteTab ? (
+          <NewCoverLetter />
+        ) : (
+          <CoverLetterReviewContent
+            key={state.selectedDocumentId}
+            selectedDocumentId={state.selectedDocumentId!}
+            isReviewOpen={state.isReviewOpen}
+            setIsReviewOpen={actions.setIsReviewOpen}
+          />
+        )}
       </DataGuard>
     </SidebarLayout>
   );

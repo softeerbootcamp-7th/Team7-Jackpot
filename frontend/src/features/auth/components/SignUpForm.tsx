@@ -1,6 +1,4 @@
-import { useEffect, useState } from 'react';
-
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from 'react';
 
 import { authClient } from '@/features/auth/api/auth';
 import CheckDuplicationButton from '@/features/auth/components/CheckDuplicationButton';
@@ -8,7 +6,8 @@ import InputBarInSignUp from '@/features/auth/components/InputBarInSignUp';
 import SubmitButton from '@/features/auth/components/SubmitButton';
 import { INPUT_BAR_IN_SIGNUP } from '@/features/auth/constants/constantsInSignUpPage';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
-import type { AuthFormData } from '@/features/auth/types/auth';
+import type { AuthFormData, AuthInputKey } from '@/features/auth/types/auth';
+import { useToastMessageContext } from '@/shared/context/ToastMessageContext';
 import {
   validateId,
   validateNickname,
@@ -20,14 +19,20 @@ interface isActivedType {
   submit: boolean;
 }
 
-const SignUpForm = () => {
-  const navigate = useNavigate();
-  const { formData, handleInputChange } = useAuthForm({
-    userId: '',
-    password: '',
-    passwordConfirm: '',
-    nickname: '',
-  });
+interface SignUpFormProps {
+  handleSuccess: (state: boolean) => void;
+}
+
+const SignUpForm = ({ handleSuccess }: SignUpFormProps) => {
+  const [isSignUpFailed, setIsSignUpFailed] = useState<boolean>(false);
+  const { showToast } = useToastMessageContext();
+  const { formData, handleInputChange: originalHandleInputChange } =
+    useAuthForm({
+      userId: '',
+      password: '',
+      passwordConfirm: '',
+      nickname: '',
+    });
 
   const [statusMsg, setStatusMsg] = useState<AuthFormData>({
     userId: '',
@@ -39,6 +44,13 @@ const SignUpForm = () => {
   const [isPasswordMatched, setIsPasswordMatched] = useState<boolean>(false);
   const [isIdDuplicationVerified, setIsIdDuplicationVerified] =
     useState<boolean>(false);
+
+  const handleInputChange =
+    (key: AuthInputKey) => (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (isSignUpFailed) setIsSignUpFailed(false);
+      originalHandleInputChange(key)(e);
+      if (key === 'userId') setIsIdDuplicationVerified(false);
+    };
 
   const handleCheckDuplicateId = async () => {
     if (!validateId(formData.userId)) return;
@@ -64,7 +76,7 @@ const SignUpForm = () => {
     e.preventDefault();
 
     if (!isIdDuplicationVerified) {
-      alert('아이디 중복 확인을 해주세요.');
+      showToast('아이디 중복 확인을 해주세요.', false);
       return;
     }
 
@@ -81,12 +93,15 @@ const SignUpForm = () => {
         password: formData.password,
       });
 
-      // [윤종근] TODO: 추후 토스트 메시지로 변경 필요
-      alert('회원가입이 완료되었습니다.');
-      navigate('/home');
+      showToast('회원가입 및 로그인이 완료되었습니다.', true);
+      handleSuccess(true);
     } catch (error) {
-      console.error('SignUp or Auto-Login Error', error);
-      alert('회원가입 또는 로그인 중 오류가 발생했습니다.');
+      if (error instanceof Error) {
+        setIsSignUpFailed(true);
+      } else {
+        console.error('SignUp or Auto-Login Error', error);
+        showToast('회원가입 또는 로그인 중 오류가 발생했습니다.', false);
+      }
     }
   };
 
@@ -134,6 +149,8 @@ const SignUpForm = () => {
       if (name) {
         if (name.length < 2) {
           newMsg.nickname = '2자 이상 입력해주세요';
+        } else if (name.length > 15) {
+          newMsg.nickname = '15자 이하로 입력해주세요';
         } else if (!validateNickname(name)) {
           newMsg.nickname =
             '형식이 올바르지 않습니다 (자/모음, 숫자, 특수문자, 공백 입력 불가)';
@@ -172,34 +189,35 @@ const SignUpForm = () => {
         {INPUT_BAR_IN_SIGNUP.map((each) => {
           const currentMsg = statusMsg[each.ID];
 
+          const isIdDuplicationVerifiedSuccess =
+            each.ID === 'userId' && isIdDuplicationVerified;
           const isPasswordMatchSuccess =
             each.ID === 'passwordConfirm' && isPasswordMatched;
 
           return (
-            <InputBarInSignUp
-              key={each.ID}
-              label={each.LABEL}
-              type={each.TYPE}
-              placeholder={each.PLACEHOLDER}
-              maxLength={each.MAX_LENGTH}
-              onChange={(e) => {
-                handleInputChange(e, each.ID);
-                if (each.ID === 'userId') {
-                  setIsIdDuplicationVerified(false);
+            <React.Fragment key={each.ID}>
+              <InputBarInSignUp
+                label={each.LABEL}
+                isFail={isSignUpFailed}
+                type={each.TYPE}
+                placeholder={each.PLACEHOLDER}
+                maxLength={each.MAX_LENGTH}
+                onChange={handleInputChange(each.ID)}
+                value={formData[each.ID]}
+                helpMessage={currentMsg}
+                isSuccess={
+                  isIdDuplicationVerifiedSuccess || isPasswordMatchSuccess
                 }
-              }}
-              value={formData[each.ID]}
-              helpMessage={currentMsg}
-              isSuccess={isPasswordMatchSuccess}
-              rightElement={
-                each.ID === 'userId' && (
-                  <CheckDuplicationButton
-                    onClick={handleCheckDuplicateId}
-                    isActived={isActived.id}
-                  />
-                )
-              }
-            />
+                rightElement={
+                  each.ID === 'userId' && (
+                    <CheckDuplicationButton
+                      onClick={handleCheckDuplicateId}
+                      isActived={isActived.id}
+                    />
+                  )
+                }
+              />
+            </React.Fragment>
           );
         })}
       </div>
