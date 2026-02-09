@@ -1,4 +1,4 @@
-import TrashCanIcon from '@/features/review/components/icons/TrashCanIcon';
+import TrashCanIcon from '@/features/review/icons/TrashCanIcon';
 
 const InvalidReviewBanner = ({
   originText,
