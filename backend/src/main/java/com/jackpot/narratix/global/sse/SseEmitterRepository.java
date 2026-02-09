@@ -25,13 +25,13 @@ public class SseEmitterRepository {
     public void deleteByEmitterId(String userId, String emitterId) {
         emitters.remove(emitterId);
 
-        Set<String> emitterIds = userEmitterIds.get(userId);
-        if (emitterIds != null) {
-            emitterIds.remove(emitterId);
-            if (emitterIds.isEmpty()) {
-                userEmitterIds.remove(userId);
+        userEmitterIds.compute(userId, (key, emitterIds) -> {
+            if(emitterIds == null){
+                return null;
             }
-        }
+            emitterIds.remove(emitterId);
+            return emitterIds.isEmpty() ? null : emitterIds;
+        });
     }
 
     public int countByUserId(String userId) {
