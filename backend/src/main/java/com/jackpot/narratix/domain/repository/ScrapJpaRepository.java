@@ -27,7 +27,7 @@ public interface ScrapJpaRepository extends JpaRepository<Scrap, ScrapId> {
             "   q.question LIKE CONCAT('%', :searchWord, '%') OR " +
             "   q.answer LIKE CONCAT('%', :searchWord, '%')" +
             ") " +
-            "ORDER BY q.id DESC")
+            "ORDER BY s.createdAt DESC")
     Slice<QnA> searchScraps(
             @Param("userId") String userId,
             @Param("searchWord") String searchWord,
