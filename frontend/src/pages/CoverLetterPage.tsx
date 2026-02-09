@@ -1,9 +1,6 @@
-import { useCallback, useState } from 'react';
-
-import CoverLetter from '@/features/coverLetter/components/CoverLetter';
+import CoverLetterReviewContent from '@/features/coverLetter/components/CoverLetterReviewContent';
 import CoverLetterWriteSidebar from '@/features/coverLetter/components/CoverLetterWriteSidebar';
 import NewCoverLetter from '@/features/coverLetter/components/newCoverLetter/NewCoverLetter';
-import ReviewCardList from '@/features/coverLetter/components/reviewWithFriend/ReviewCardList';
 import ReviewSidebar from '@/features/coverLetter/components/reviewWithFriend/ReviewSidebar';
 import {
   coverLetterContent,
@@ -16,12 +13,9 @@ import DataGuard from '@/shared/components/DataGuard';
 import EmptyCase from '@/shared/components/EmptyCase';
 import SidebarLayout from '@/shared/components/SidebarLayout';
 import TabBar from '@/shared/components/TabBar';
-import useReviewState from '@/shared/hooks/useReviewState';
 
 const CoverLetterPage = () => {
   const { state, actions } = useCoverLetterParams();
-  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
-  const reviewState = useReviewState(state.selectedDocumentId || 1);
 
   const isWriteTab = state.currentTab === 'COVERLETTER_WRITE';
   const hasSelectedCoverLetter = state.selectedDocumentId !== null;
@@ -31,13 +25,6 @@ const CoverLetterPage = () => {
     handleTabChange: actions.handleTabChange,
     currentTab: state.currentTab,
   };
-
-  const handleReviewClick = useCallback((reviewId: string | null) => {
-    setSelectedReviewId(reviewId);
-  }, []);
-
-  // 페이지가 바뀌면 선택 초기화 - key를 사용하여 컴포넌트 리마운트
-  const pageKey = `${state.selectedDocumentId}-${reviewState.currentPageIndex}`;
 
   return (
     <SidebarLayout
@@ -73,31 +60,12 @@ const CoverLetterPage = () => {
         {isWriteTab ? (
           <NewCoverLetter />
         ) : (
-          <div
-            key={pageKey}
-            className='flex h-full w-full min-w-0 flex-row pb-39.5'
-          >
-            <div className='h-full min-w-0 flex-1'>
-              <CoverLetter
-                documentId={state.selectedDocumentId!}
-                openReview={actions.setIsReviewOpen}
-                isReviewOpen={state.isReviewOpen}
-                selectedReviewId={selectedReviewId}
-                onReviewClick={handleReviewClick}
-                reviewState={reviewState}
-              />
-            </div>
-
-            {state.isReviewOpen && (
-              <aside className='w-[248px] border-l border-gray-100'>
-                <ReviewCardList
-                  reviews={reviewState.currentReviews}
-                  selectedReviewId={selectedReviewId}
-                  onReviewClick={handleReviewClick}
-                />
-              </aside>
-            )}
-          </div>
+          <CoverLetterReviewContent
+            key={state.selectedDocumentId}
+            selectedDocumentId={state.selectedDocumentId!}
+            isReviewOpen={state.isReviewOpen}
+            setIsReviewOpen={actions.setIsReviewOpen}
+          />
         )}
       </DataGuard>
     </SidebarLayout>
