@@ -9,6 +9,7 @@ import ReviewPage from '@/pages/ReviewPage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
+import SignUpComplete from '@/features/auth/components/SignUpComplete';
 import RootLayout from '@/shared/components/RootLayout';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
         {/* <Route path="/" element={<LandingPage />}/> */}
         <Route path='/login' element={<LoginPage />} />
         <Route path='/signup' element={<SignUpPage />} />
+        <Route path='/signup/complete' element={<SignUpComplete />} />
       </Routes>
     </BrowserRouter>
   );
