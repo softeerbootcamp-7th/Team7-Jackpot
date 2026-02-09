@@ -3,12 +3,12 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import CoverLetterContent from '@/features/coverLetter/components/CoverLetterContent';
 import CoverLetterMenu from '@/features/coverLetter/components/CoverLetterMenu';
 import ReviewModal from '@/features/coverLetter/components/reviewWithFriend/ReviewModal';
-import type { Review } from '@/features/review/types/review';
-import type { SelectionInfo } from '@/features/review/types/selectionInfo';
 import Pagination from '@/shared/components/Pagination';
 import MoreVertIcon from '@/shared/icons/MoreVertIcon';
 import type { CoverLetter as CoverLetterType } from '@/shared/types/coverLetter';
 import type { QnA } from '@/shared/types/qna';
+import type { Review } from '@/shared/types/review';
+import type { SelectionInfo } from '@/shared/types/selectionInfo';
 
 const SPACER_HEIGHT = 10;
 

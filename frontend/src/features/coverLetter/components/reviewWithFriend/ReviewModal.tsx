@@ -1,7 +1,7 @@
-import type { Review } from '@/features/review/types/review';
 import InvalidReviewBanner from '@/shared/components/InvalidReviewBanner';
 import PaperChipIcon from '@/shared/icons/PaperChipIcon';
 import PenToolIcon from '@/shared/icons/PenToolIcon';
+import type { Review } from '@/shared/types/review';
 
 interface ReviewModalProps {
   review: Review | null;

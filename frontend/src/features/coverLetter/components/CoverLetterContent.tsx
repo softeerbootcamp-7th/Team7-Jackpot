@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
-import type { Review } from '@/features/review/types/review';
-import type { SelectionInfo } from '@/features/review/types/selectionInfo';
 import { useTextSelection } from '@/shared/hooks/useTextSelection';
 import type { TextChunk } from '@/shared/hooks/useTextSelection/helpers';
+import type { Review } from '@/shared/types/review';
+import type { SelectionInfo } from '@/shared/types/selectionInfo';
 
 interface CoverLetterContentProps {
   text: string;

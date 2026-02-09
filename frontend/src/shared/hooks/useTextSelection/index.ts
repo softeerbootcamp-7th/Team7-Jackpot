@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 
-import type { Review } from '@/features/review/types/review';
-import type { SelectionInfo } from '@/features/review/types/selectionInfo';
+import type { Review } from '@/shared/types/review';
+import type { SelectionInfo } from '@/shared/types/selectionInfo';
 import {
   buildTextChunks,
   findLineEndIndex,

@@ -1,6 +1,5 @@
-// features/coverLetter/components/reviewWithFriend/ReviewCardList.tsx
 import ReviewCard from '@/features/coverLetter/components/reviewWithFriend/ReviewCard';
-import type { Review } from '@/features/review/types/review';
+import type { Review } from '@/shared/types/review';
 
 interface ReviewCardListProps {
   reviews: Review[];
