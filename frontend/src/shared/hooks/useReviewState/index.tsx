@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import type { Review, ReviewBase } from '@/features/review/types/review';
+import type { Review, ReviewBase } from '@/shared/types/review';
 import {
   buildReviewsFromApi,
   generateInternalReviewId,
