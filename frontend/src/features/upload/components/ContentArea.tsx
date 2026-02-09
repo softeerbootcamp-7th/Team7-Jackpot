@@ -38,7 +38,7 @@ const ContentArea = ({
       )}
       {step === '2' && (
         <>
-          <SecondContentArea />
+          <SecondContentArea nextStep={nextStep} />
         </>
       )}
       {step === '3' && (
