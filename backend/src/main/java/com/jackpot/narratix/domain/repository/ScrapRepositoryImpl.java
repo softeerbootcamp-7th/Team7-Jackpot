@@ -1,8 +1,11 @@
 package com.jackpot.narratix.domain.repository;
 
+import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.Scrap;
 import com.jackpot.narratix.domain.entity.ScrapId;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,6 +32,11 @@ public class ScrapRepositoryImpl implements ScrapRepository {
     @Override
     public void deleteById(ScrapId scrapId) {
         scrapJpaRepository.deleteById(scrapId);
+    }
+
+    @Override
+    public Slice<QnA> searchScrapsByKeyword(String userId, String searchWord, Long lastQnaId, Pageable pageable) {
+        return scrapJpaRepository.searchScraps(userId, searchWord, lastQnaId, pageable);
     }
 }
 
