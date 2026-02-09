@@ -23,6 +23,7 @@ public interface ScrapJpaRepository extends JpaRepository<Scrap, ScrapId> {
             "AND s.id.qnaId = q.id " +
             "AND (:lastQnaId IS NULL OR q.id < :lastQnaId) " +
             "AND (" +
+            "   :searchWord Is NULL OR " +
             "   q.question LIKE CONCAT('%', :searchWord, '%') OR " +
             "   q.answer LIKE CONCAT('%', :searchWord, '%')" +
             ") " +
