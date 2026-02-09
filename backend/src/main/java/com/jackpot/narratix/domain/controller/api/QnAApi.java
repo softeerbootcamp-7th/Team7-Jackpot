@@ -14,7 +14,10 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -54,7 +57,7 @@ public interface QnAApi {
     @GetMapping
     ResponseEntity<QnAResponse> getQnAById(
             @Parameter(hidden = true) @UserId String userId,
-            @Parameter(description = "질문/답변 ID", required = true) @RequestParam Long qnaId
+            @Parameter(description = "질문/답변 ID") @RequestParam Long qnaId
     );
 
     @Operation(summary = "자기소개서의 질문 ID 목록 조회", description = "특정 자기소개서에 속한 모든 질문의 ID 목록을 조회합니다.")
@@ -71,6 +74,6 @@ public interface QnAApi {
     @GetMapping("/id/all")
     ResponseEntity<List<Long>> getQnAIdsByCoverLetterId(
             @Parameter(hidden = true) @UserId String userId,
-            @Parameter(description = "자기소개서 ID", required = true) @RequestParam Long coverLetterId
+            @Parameter(description = "자기소개서 ID") @RequestParam Long coverLetterId
     );
 }
