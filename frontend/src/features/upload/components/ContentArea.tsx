@@ -13,19 +13,24 @@ const ContentArea = ({
   nextStep,
 }: FirstContentAreaHeaderProps) => {
   const [isContent, setIsContent] = useState<boolean>(false);
+  const [totalSize, setTotalSize] = useState<number>(0);
   return (
     <div className='flex flex-col gap-4 rounded-2xl border border-gray-100 p-6'>
       {step === '1' && (
         <>
           <FirstContentAreaHeader
             isContent={isContent}
+            totalSize={totalSize}
             setIsContent={setIsContent}
             uploadTab={uploadTab}
             setUploadTab={setUploadTab}
             nextStep={nextStep}
           />
           {uploadTab === 'file' ? (
-            <UploadFileArea setIsContent={setIsContent} />
+            <UploadFileArea
+              setIsContent={setIsContent}
+              setTotalSize={setTotalSize}
+            />
           ) : (
             <UploadTextArea setIsContent={setIsContent} />
           )}
