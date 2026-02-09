@@ -127,7 +127,6 @@ class ScrapServiceTest {
         ScrapId scrapId = new ScrapId(userId, qnaId);
 
         when(qnARepository.findByIdOrElseThrow(qnaId)).thenReturn(qna);
-        when(scrapRepository.existsById(scrapId)).thenReturn(true);
         when(scrapRepository.countByUserId(userId)).thenReturn(5L);
 
         // when
