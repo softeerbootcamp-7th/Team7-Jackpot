@@ -10,3 +10,13 @@ const generateYearList = (year: number) => {
 const today = new Date();
 
 export const yearList = generateYearList(today.getFullYear());
+
+const generateHalfInfo = (month: number) => {
+  let halfInfo = null;
+
+  if (month <= 6) halfInfo = 'first';
+  else halfInfo = 'second';
+  return halfInfo;
+};
+
+export const halfInfo = generateHalfInfo(today.getMonth() + 1);
