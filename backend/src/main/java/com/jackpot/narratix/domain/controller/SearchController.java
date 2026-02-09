@@ -38,7 +38,7 @@ public class SearchController implements SearchApi {
             @UserId String userId,
             @RequestParam(required = false) String searchWord,
             @RequestParam(required = false, defaultValue = "10") Integer size,
-            @RequestParam(required = false) Integer page
+            @RequestParam(required = false, defaultValue = "1") Integer page
     ) {
         return ResponseEntity.ok(searchService.searchCoverLetter(userId, searchWord, size, page));
     }
