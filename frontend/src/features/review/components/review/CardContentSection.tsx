@@ -1,5 +1,6 @@
-import { ReviewPageIcons } from '@/features/review/components/icons';
 import type { Review } from '@/features/review/types/review';
+import PaperChipIcon from '@/shared/icons/PaperChipIcon';
+import PenToolIcon from '@/shared/icons/PenToolIcon';
 
 const CardContentSection = ({
   text,
@@ -23,7 +24,7 @@ const CardContentSection = ({
       {review.revision && (
         <div className='flex w-full flex-col gap-1'>
           <div className='flex items-center gap-1.5'>
-            <ReviewPageIcons.PaperChipIcon />
+            <PaperChipIcon />
             <span className='text-body-l font-bold text-gray-950'>첨삭</span>
           </div>
           <p className='text-body-s pl-6 font-normal text-gray-600'>
@@ -35,7 +36,7 @@ const CardContentSection = ({
       {review.comment && (
         <div className='flex w-full flex-col gap-1'>
           <div className='flex items-center gap-1.5'>
-            <ReviewPageIcons.PenToolIcon />
+            <PenToolIcon />
             <span className='text-body-l font-bold text-gray-950'>코멘트</span>
           </div>
           <p className='text-body-s pl-6 font-normal text-gray-600'>

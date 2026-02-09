@@ -7,7 +7,11 @@ interface CoverLetterPaginationProps {
 }
 
 const CoverLetterPagination = (props: CoverLetterPaginationProps) => {
-  return <Pagination {...props} ariaLabel='자기소개서' />;
+  return (
+    <div className='flex justify-center'>
+      <Pagination {...props} ariaLabel='자기소개서' />
+    </div>
+  );
 };
 
 export default CoverLetterPagination;
