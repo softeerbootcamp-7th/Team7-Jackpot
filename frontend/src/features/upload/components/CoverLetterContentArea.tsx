@@ -1,7 +1,7 @@
 // 페이지네이션 경로 추후에 shared로 변경 필요
 import CoverLetterPagination from '@/features/review/components/coverLetter/CoverLetterPagination';
-import useReviewState from '@/features/review/hooks/useReviewState';
 import { MOCK_COVER_LETTER } from '@/features/upload/constants/uploadPage';
+import useReviewState from '@/shared/hooks/useReviewState';
 
 const CoverLetterContentArea = () => {
   const { currentPageIndex, handlePageChange } = useReviewState();
@@ -22,16 +22,12 @@ const CoverLetterContentArea = () => {
           <div className='text-sm text-gray-400'>
             {`총 ${MOCK_COVER_LETTER[currentPageIndex].content.length.toLocaleString('ko-KR')}자`}
           </div>
-          <div className='h-96 overflow-y-auto text-body-s whitespace-pre-wrap text-gray-600 fixed-scroll-bar'>
+          <div className='text-body-s fixed-scroll-bar h-96 overflow-y-auto whitespace-pre-wrap text-gray-600'>
             {currentContent.split('\n').map((paragraph, index) => (
-              <p
-                key={index}
-                className='mb-2 min-h-[1rem] leading-relaxed'
-              >
+              <p key={index} className='mb-2 min-h-[1rem] leading-relaxed'>
                 {paragraph}
               </p>
             ))}
-            
           </div>
         </div>
       </div>
