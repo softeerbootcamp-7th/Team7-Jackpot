@@ -54,7 +54,7 @@ public interface ScrapApi {
     @DeleteMapping
     ResponseEntity<ScrapCountResponse> deleteScrapById(
             @Parameter(hidden = true) @UserId String userId,
-            @Parameter(description = "문항 ID", required = true) @RequestParam Long qnaId
+            @Parameter(description = "문항 ID", required = true, example = "1") @PathVariable Long qnaId
     );
 
 }
