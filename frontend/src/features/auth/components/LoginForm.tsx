@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 import React from 'react';
 
 import { useNavigate } from 'react-router';
@@ -27,16 +27,14 @@ const LoginForm = () => {
   const isActived =
     validateId(formData.userId) && formData.password.length >= 8;
 
-  const handleInputChange = useCallback(
+  const handleInputChange =
     (key: AuthInputKey) => (e: React.ChangeEvent<HTMLInputElement>) => {
       // 로그인 실패가 된 후 입력이 이루어질 때를 위한 함수 고도화
       if (isLoginFailed) setIsLoginFailed(false);
 
       // 고차함수 즉시 실행을 위한 문법
       originalHandleInputChange(key)(e);
-    },
-    [isLoginFailed, originalHandleInputChange],
-  );
+    };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
