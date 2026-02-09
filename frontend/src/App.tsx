@@ -5,6 +5,7 @@ import CoverLetterPage from '@/pages/CoverLetterPage';
 import HomePage from '@/pages/HomePage';
 import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/LoginPage';
+import RecruitPage from '@/pages/RecruitPage';
 import ReviewPage from '@/pages/ReviewPage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
@@ -27,7 +28,7 @@ function App() {
           {/* <Route path='/library?id:' element={<LibraryPage />} /> */}
           <Route path='/coverLetter' element={<CoverLetterPage />} />
           <Route path='/review/:id' element={<ReviewPage />} />
-          {/* <Route path="/recruit" element={<RecruitPage />}/> */}
+          <Route path='/recruit' element={<RecruitPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
