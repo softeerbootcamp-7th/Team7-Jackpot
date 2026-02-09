@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 
@@ -19,9 +20,11 @@ public class SearchService {
 
     public SearchScrapResponse searchScrap(String userId, String searchWord, Integer size, Long lastQnaId) {
 
+        String keyword = StringUtils.hasText(searchWord) ? searchWord.trim() : null;
+
         Pageable pageable = PageRequest.of(0, size);
 
-        Slice<QnA> qnaSlice = scrapRepository.searchScrapsByKeyword(userId, searchWord, lastQnaId, pageable);
+        Slice<QnA> qnaSlice = scrapRepository.searchScrapsByKeyword(userId, keyword, lastQnaId, pageable);
 
         List<SearchScrapResponse.QnAItem> qnaItems = qnaSlice.getContent().stream()
                 .map(SearchScrapResponse.QnAItem::from)
