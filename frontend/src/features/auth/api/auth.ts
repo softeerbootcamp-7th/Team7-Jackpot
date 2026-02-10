@@ -9,8 +9,7 @@ import type {
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 // 액세스 토큰의 인메모리 저장 방식 채택
-// [윤종근] - TODO: 최종 배포 이전에 인메모리 방식으로 변경
-// let ACCESS_TOKEN = '';
+let ACCESS_TOKEN = '';
 
 export const authClient = {
   // 아이디 중복확인을 위한 메서드
@@ -80,8 +79,7 @@ export const authClient = {
       const data: AuthResponse = await response.json();
 
       if (data.accessToken) {
-        // ACCESS_TOKEN = data.accessToken;
-        localStorage.setItem('accessToken', data.accessToken);
+        ACCESS_TOKEN = data.accessToken;
       }
 
       return data;
@@ -92,13 +90,36 @@ export const authClient = {
   },
 
   // 토큰 조회 메서드
-  getToken: () => {
-    // return ACCESS_TOKEN;
-    return localStorage.getItem('accessToken');
+  getToken: () => ACCESS_TOKEN,
+
+  // 액세스 토큰 리프레시를 위한 메서드
+  refresh: async (): Promise<AuthResponse> => {
+    try {
+      const response = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message);
+      }
+
+      const data: AuthResponse = await response.json();
+
+      if (data.accessToken) {
+        ACCESS_TOKEN = data.accessToken;
+      }
+
+      return data;
+    } catch (error) {
+      console.error(`Refresh Failed: ${error}`);
+      throw error;
+    }
   },
-  setToken: (token: string) => {
-    localStorage.setItem('accessToken', token);
-  },
+  getNickname: async () => {
+
+  }
 
   // [윤종근] - TODO: 추후에 로그아웃 구현 시 엑세스 토큰 비우는 메서드 추가 필요
 };
