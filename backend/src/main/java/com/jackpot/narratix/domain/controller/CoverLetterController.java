@@ -78,7 +78,7 @@ public class CoverLetterController implements CoverLetterApi {
     @GetMapping("/all")
     public ResponseEntity<FilteredCoverLettersResponse> getAllCoverLetterByFilter(
             @UserId String userId,
-            @ModelAttribute CoverLetterFilterRequest request
+            @Valid @ModelAttribute CoverLetterFilterRequest request
             ) {
         return ResponseEntity.ok(coverLetterService.getAllCoverLetterByFilter(userId, request));
     }
