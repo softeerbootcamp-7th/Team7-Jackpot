@@ -1,4 +1,11 @@
-export const NOTIFICATION_LIST = {
+import type { NotificationType } from '@/features/notification/types/notification';
+
+interface NotificationListResponse {
+  notifications: NotificationType[];
+  hasNext: boolean;
+}
+
+export const NOTIFICATION_LIST: NotificationListResponse = {
   notifications: [
     {
       id: 1,
@@ -33,6 +40,48 @@ export const NOTIFICATION_LIST = {
             questionIds: [4, 5, 6],
           },
         ],
+      },
+    },
+    {
+      id: 4,
+      type: 'FEEDBACK',
+      title: '토스 / 백엔드 개발자',
+      content: '현대자동차의 혁신적인 미래 모빌리티...',
+      isRead: false,
+      createdAt: '2025-01-25T09:41:00Z',
+      meta: {
+        sender: {
+          id: 'value',
+          nickname: '피곤한 바다악어',
+        },
+      },
+    },
+    {
+      id: 5,
+      type: 'FEEDBACK',
+      title: '토스 / 백엔드 개발자',
+      content: '현대자동차의 혁신적인 미래 모빌리티...',
+      isRead: false,
+      createdAt: '2025-01-25T09:41:00Z',
+      meta: {
+        sender: {
+          id: 'value',
+          nickname: '피곤한 바다악어',
+        },
+      },
+    },
+    {
+      id: 3,
+      type: 'FEEDBACK',
+      title: '토스 / 백엔드 개발자',
+      content: '현대자동차의 혁신적인 미래 모빌리티...',
+      isRead: false,
+      createdAt: '2025-01-25T09:41:00Z',
+      meta: {
+        sender: {
+          id: 'value',
+          nickname: '피곤한 바다악어',
+        },
       },
     },
   ],
