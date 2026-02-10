@@ -5,6 +5,7 @@ import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
+import com.jackpot.narratix.global.config.QueryDslConfig;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ import static com.jackpot.narratix.domain.fixture.CoverLetterFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-@Import(CoverLetterRepositoryImpl.class)
+@Import({CoverLetterRepositoryImpl.class, QueryDslConfig.class})
 class CoverLetterRepositoryTest {
 
     @Autowired
@@ -1031,25 +1032,36 @@ class CoverLetterRepositoryTest {
     }
 
     @Test
-    @DisplayName("필터로 자기소개서 조회 시 createdAt 내림차순, id 내림차순으로 정렬된다")
-    void findByFilter_OrderByCreatedAtDescAndIdDesc() {
+    @DisplayName("필터로 자기소개서 조회 시 deadline desc, modifiedAt desc로 정렬된다")
+    void findByFilter_OrderByDeadlineDescAndModifiedAtDesc() {
         // given
         User user = saveUser("testUser2525", "테스터28");
         String userId = user.getId();
 
-        LocalDateTime sameTime = LocalDateTime.of(2024, 6, 1, 10, 0);
-        LocalDateTime olderTime = LocalDateTime.of(2024, 6, 1, 9, 0);
+        LocalDate sameDeadLine = LocalDate.of(2024, 1, 1);
+        LocalDate oldDeadLine = LocalDate.of(2023, 1, 1);
 
-        // 같은 createdAt을 가진 자기소개서 2개 (id가 다름)
-        CoverLetter cl1 = builder().userId(userId).createdAt(sameTime).build();
-        CoverLetter cl2 = builder().userId(userId).createdAt(sameTime).build();
-        // 더 오래된 createdAt을 가진 자기소개서
-        CoverLetter cl3 = builder().userId(userId).createdAt(olderTime).build();
+        // 같은 deadline(sameTime)을 가진 자기소개서 2개 (id가 다름)
+        CoverLetter cl1 = builder().userId(userId).deadline(sameDeadLine).build();
+        CoverLetter cl2 = builder().userId(userId).deadline(sameDeadLine).build();
+        // 더 오래된 deadline을 가진 자기소개서
+        CoverLetter cl3 = builder().userId(userId).deadline(oldDeadLine).build();
 
-        coverLetterJpaRepository.save(cl1);
-        coverLetterJpaRepository.save(cl2);
-        coverLetterJpaRepository.save(cl3);
-        flushAndClear();
+        CoverLetter saved1 = coverLetterJpaRepository.save(cl1);
+        CoverLetter saved2 = coverLetterJpaRepository.save(cl2);
+        CoverLetter saved3 = coverLetterJpaRepository.save(cl3);
+
+        LocalDateTime sameModifiedAt = LocalDateTime.of(2024, 1, 1, 0, 0);
+        LocalDateTime oldModifiedAt = LocalDateTime.of(2023, 1, 1,0,0);
+
+        // Auditing으로 설정된 값을 명시적으로 변경
+        setAuditFields(saved1, sameModifiedAt, sameModifiedAt);
+        setAuditFields(saved2, oldModifiedAt, oldModifiedAt);
+        setAuditFields(saved3, oldModifiedAt, oldModifiedAt);
+
+        // 변경사항을 DB에 반영
+        entityManager.flush();
+        entityManager.clear();
 
         // when
         Slice<CoverLetter> result = coverLetterRepository.findByFilter(
@@ -1059,13 +1071,14 @@ class CoverLetterRepositoryTest {
         // then
         assertThat(result.getContent()).hasSize(3);
 
-        // createdAt 최신순 검증 (sameTime > olderTime)
-        assertThat(result.getContent().get(0).getCreatedAt()).isEqualTo(sameTime);
-        assertThat(result.getContent().get(1).getCreatedAt()).isEqualTo(sameTime);
-        assertThat(result.getContent().get(2).getCreatedAt()).isEqualTo(olderTime);
+        // deadline 최신순 검증
+        assertThat(result.getContent().get(0).getDeadline()).isEqualTo(sameDeadLine);
+        assertThat(result.getContent().get(1).getDeadline()).isEqualTo(sameDeadLine);
+        assertThat(result.getContent().get(2).getDeadline()).isEqualTo(oldDeadLine);
 
-        // 같은 createdAt 내에서 id 내림차순 검증 (큰 id가 먼저)
-        assertThat(result.getContent().get(0).getId()).isGreaterThan(result.getContent().get(1).getId());
+        // 같은 deadline 내에서 modifiedAt 최신순 검증
+        assertThat(result.getContent().get(0).getModifiedAt()).isEqualTo(sameModifiedAt);
+        assertThat(result.getContent().get(1).getModifiedAt()).isEqualTo(oldModifiedAt);
     }
 
     @Test

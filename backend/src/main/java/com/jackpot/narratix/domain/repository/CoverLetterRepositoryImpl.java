@@ -149,7 +149,7 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
                 .selectFrom(coverLetter)
                 .leftJoin(shareLink).on(coverLetter.id.eq(shareLink.coverLetterId))
                 .where(createFilterConditions(userId, startDate, endDate, isShared, lastCoverLetterId))
-                .orderBy(coverLetter.createdAt.desc(), coverLetter.id.desc())
+                .orderBy(coverLetter.deadline.desc(), coverLetter.modifiedAt.desc())
                 .limit(fetchSize)
                 .fetch();
 
