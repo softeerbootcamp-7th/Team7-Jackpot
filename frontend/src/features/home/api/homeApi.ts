@@ -3,6 +3,7 @@ import type {
   HomeCountResponse,
   UpcomingDeadlinesResponse,
 } from '@/features/home/types/home';
+import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -26,8 +27,7 @@ export const fetchHomeCount = async (
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch home count');
+    await parseErrorResponse(response);
   }
 
   return response.json();
@@ -60,8 +60,7 @@ export const fetchUpcomingDeadlines = async ({
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch upcoming deadlines');
+    await parseErrorResponse(response);
   }
 
   return response.json();
@@ -91,8 +90,7 @@ export const fetchCalendarDates = async ({
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch calendar dates');
+    await parseErrorResponse(response);
   }
 
   return response.json();
