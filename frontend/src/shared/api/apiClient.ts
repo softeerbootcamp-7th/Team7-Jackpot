@@ -8,25 +8,29 @@ export const apiClient = {
   get: async (endpoint: string, options: RequestInit = {}) => {
     return request(endpoint, { ...options, method: 'GET' });
   },
-  post: async (endpoint: string, body: unknown, options: RequestInit = {}) => {
+  post: async (endpoint: string, body?: unknown, options: RequestInit = {}) => {
     return request(endpoint, {
       ...options,
       method: 'POST',
-      body: JSON.stringify(body),
+      body: body ? JSON.stringify(body) : undefined,
     });
   },
-  put: async (endpoint: string, body: unknown, options: RequestInit = {}) => {
+  put: async (endpoint: string, body?: unknown, options: RequestInit = {}) => {
     return request(endpoint, {
       ...options,
       method: 'PUT',
-      body: JSON.stringify(body),
+      body: body ? JSON.stringify(body) : undefined,
     });
   },
-  patch: async (endpoint: string, body: unknown, options: RequestInit = {}) => {
+  patch: async (
+    endpoint: string,
+    body?: unknown,
+    options: RequestInit = {},
+  ) => {
     return request(endpoint, {
       ...options,
       method: 'PATCH',
-      body: JSON.stringify(body),
+      body: body ? JSON.stringify(body) : undefined,
     });
   },
   delete: async (endpoint: string, options: RequestInit = {}) => {
