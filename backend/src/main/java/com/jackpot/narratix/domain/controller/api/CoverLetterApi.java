@@ -4,7 +4,7 @@ import com.jackpot.narratix.domain.controller.request.CoverLetterFilterRequest;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
-import com.jackpot.narratix.domain.controller.response.CoverLettersDateRangeResponse;
+import com.jackpot.narratix.domain.controller.response.FilteredCoverLettersResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.controller.response.UpcomingCoverLetterResponse;
@@ -101,11 +101,11 @@ public interface CoverLetterApi {
             @ApiResponse(
                     responseCode = "200",
                     description = "조회 성공",
-                    content = @Content(schema = @Schema(implementation = CoverLettersDateRangeResponse.class))
+                    content = @Content(schema = @Schema(implementation = FilteredCoverLettersResponse.class))
             ),
             @ApiResponse(responseCode = "401", description = "인증 실패")
     })
-    ResponseEntity<CoverLettersDateRangeResponse> getAllCoverLetterByFilter(
+    ResponseEntity<FilteredCoverLettersResponse> getAllCoverLetterByFilter(
             @Parameter(hidden = true) @UserId String userId,
             @Parameter(description = "자기소개서 필터링 Request 정보", required = true)
             CoverLetterFilterRequest request

@@ -2,7 +2,7 @@ package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.api.CoverLetterApi;
 import com.jackpot.narratix.domain.controller.request.CoverLetterFilterRequest;
-import com.jackpot.narratix.domain.controller.response.CoverLettersDateRangeResponse;
+import com.jackpot.narratix.domain.controller.response.FilteredCoverLettersResponse;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
@@ -76,7 +76,7 @@ public class CoverLetterController implements CoverLetterApi {
 
     @Override
     @GetMapping("/all")
-    public ResponseEntity<CoverLettersDateRangeResponse> getAllCoverLetterByFilter(
+    public ResponseEntity<FilteredCoverLettersResponse> getAllCoverLetterByFilter(
             @UserId String userId,
             @ModelAttribute CoverLetterFilterRequest request
             ) {
