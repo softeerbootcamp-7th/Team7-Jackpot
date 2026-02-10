@@ -3,7 +3,7 @@
 
 import { Link } from 'react-router';
 
-import { PlusIcon } from '@/features/coverLetter/icons/Plus';
+import { PlusIcon } from '@/shared/icons/Plus';
 
 const NewCoverLetterButton = () => {
   return (
