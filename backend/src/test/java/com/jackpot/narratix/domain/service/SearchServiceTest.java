@@ -98,6 +98,7 @@ class SearchServiceTest {
                     assertThat(baseException.getErrorCode())
                             .isEqualTo(SearchErrorCode.INVALID_SEARCH_KEYWORD);
                 });
+        verifyNoInteractions(coverLetterRepository);
     }
 
     @Test
@@ -119,6 +120,7 @@ class SearchServiceTest {
                     assertThat(baseException.getErrorCode())
                             .isEqualTo(SearchErrorCode.INVALID_SEARCH_KEYWORD);
                 });
+        verifyNoInteractions(coverLetterRepository);
     }
 
     @Test
