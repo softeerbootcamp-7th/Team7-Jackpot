@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.entity;
 
+import com.github.f4b6a3.ulid.UlidCreator;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
@@ -8,7 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "share_link")
@@ -35,7 +35,7 @@ public class ShareLink {
     public static ShareLink newActivatedShareLink(Long coverLetterId){
         return new ShareLink(
                 coverLetterId,
-                UUID.randomUUID().toString(),
+                UlidCreator.getUlid().toString(),
                 true,
                 LocalDateTime.now().plusDays(14)
         );
@@ -43,7 +43,7 @@ public class ShareLink {
 
     public void activate(){
         this.isShared = true;
-        this.shareId = UUID.randomUUID().toString();
+        this.shareId = UlidCreator.getUlid().toString();
         this.expiresAt = LocalDateTime.now().plusDays(14);
     }
 
