@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
+import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import jakarta.persistence.EntityManager;
@@ -42,6 +43,9 @@ class CoverLetterRepositoryTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private ShareLinkRepository shareLinkRepository;
 
     @Test
     @DisplayName("CoverLetter 저장 시 연관관계로 설정된 QnA도 cascade로 저장된다")
@@ -625,7 +629,7 @@ class CoverLetterRepositoryTest {
         LocalDateTime t2 = LocalDateTime.of(2024, 6, 1, 11, 0);
         LocalDateTime t3 = LocalDateTime.of(2024, 6, 1, 12, 0);
 
-        CoverLetter old = saveCoverLetterWithAuditTime(userId, companyName, t1);
+        saveCoverLetterWithAuditTime(userId, companyName, t1); // old
         CoverLetter middle = saveCoverLetterWithAuditTime(userId, companyName, t2);
         CoverLetter latest = saveCoverLetterWithAuditTime(userId, companyName, t3);
 
@@ -857,5 +861,345 @@ class CoverLetterRepositoryTest {
         assertThat(resultUser1).hasSize(1)
                 .containsExactly(user1Date)
                 .doesNotContain(user2Date);
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 userId로만 필터링하면 모든 자기소개서가 조회된다")
+    void findByFilter_BasicQuery() {
+        // given
+        User user = saveUser("testUser2020", "테스터23");
+        String userId = user.getId();
+
+        LocalDateTime t1 = LocalDateTime.of(2024, 6, 1, 10, 0);
+        LocalDateTime t2 = LocalDateTime.of(2024, 6, 1, 11, 0);
+        LocalDateTime t3 = LocalDateTime.of(2024, 6, 1, 12, 0);
+
+        CoverLetter cl1 = builder().userId(userId).createdAt(t1).build();
+        CoverLetter cl2 = builder().userId(userId).createdAt(t2).build();
+        CoverLetter cl3 = builder().userId(userId).createdAt(t3).build();
+
+        coverLetterJpaRepository.save(cl1);
+        coverLetterJpaRepository.save(cl2);
+        coverLetterJpaRepository.save(cl3);
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, null, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(3);
+        assertThat(result.hasNext()).isFalse();
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 날짜 범위로 필터링된다")
+    void findByFilter_WithDateRange() {
+        // given
+        User user = saveUser("testUser2121", "테스터24");
+        String userId = user.getId();
+
+        LocalDate startDate = LocalDate.of(2024, 6, 1);
+        LocalDate inRangeDate1 = LocalDate.of(2024, 6, 15);
+        LocalDate inRangeDate2 = LocalDate.of(2024, 7, 20);
+        LocalDate endDate = LocalDate.of(2024, 7, 31);
+        LocalDate outOfRangeDate = LocalDate.of(2024, 8, 25);
+
+        CoverLetter cl1 = createCoverLetterWithDeadline(userId, inRangeDate1);
+        CoverLetter cl2 = createCoverLetterWithDeadline(userId, inRangeDate2);
+        CoverLetter cl3 = createCoverLetterWithDeadline(userId, outOfRangeDate);
+
+        coverLetterJpaRepository.save(cl1);
+        coverLetterJpaRepository.save(cl2);
+        coverLetterJpaRepository.save(cl3);
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, startDate, endDate, null, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent())
+                .extracting(CoverLetter::getDeadline)
+                .containsExactlyInAnyOrder(inRangeDate1, inRangeDate2);
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 isShared=true면 공유 활성화된 자기소개서만 조회된다")
+    void findByFilter_WithIsSharedTrue() {
+        // given
+        User user = saveUser("testUser2222", "테스터25");
+        String userId = user.getId();
+
+        CoverLetter sharedCl = builder().userId(userId).build();
+        CoverLetter notSharedCl = builder().userId(userId).build();
+        CoverLetter noLinkCl = builder().userId(userId).build();
+
+        CoverLetter savedShared = coverLetterJpaRepository.save(sharedCl);
+        CoverLetter savedNotShared = coverLetterJpaRepository.save(notSharedCl);
+        coverLetterJpaRepository.save(noLinkCl);
+
+        ShareLink activeLink = ShareLink.newActivatedShareLink(savedShared.getId());
+        shareLinkRepository.save(activeLink);
+
+        ShareLink inactiveLink = ShareLink.newActivatedShareLink(savedNotShared.getId());
+        inactiveLink.deactivate();
+        shareLinkRepository.save(inactiveLink);
+
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, true, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getId()).isEqualTo(savedShared.getId());
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 isShared=false면 공유 비활성화 또는 공유링크 없는 자기소개서만 조회된다")
+    void findByFilter_WithIsSharedFalse() {
+        // given
+        User user = saveUser("testUser2323", "테스터26");
+        String userId = user.getId();
+
+        CoverLetter sharedCl = builder().userId(userId).build();
+        CoverLetter notSharedCl = builder().userId(userId).build();
+        CoverLetter noLinkCl = builder().userId(userId).build();
+
+        CoverLetter savedShared = coverLetterJpaRepository.save(sharedCl);
+        CoverLetter savedNotShared = coverLetterJpaRepository.save(notSharedCl);
+        CoverLetter savedNoLink = coverLetterJpaRepository.save(noLinkCl);
+
+        ShareLink activeLink = ShareLink.newActivatedShareLink(savedShared.getId());
+        shareLinkRepository.save(activeLink);
+
+        ShareLink inactiveLink = ShareLink.newActivatedShareLink(savedNotShared.getId());
+        inactiveLink.deactivate();
+        shareLinkRepository.save(inactiveLink);
+
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, false, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.getContent())
+                .extracting(CoverLetter::getId)
+                .containsExactlyInAnyOrder(savedNotShared.getId(), savedNoLink.getId());
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 isShared=null이면 공유 상태와 무관하게 모든 자기소개서가 조회된다")
+    void findByFilter_WithIsSharedNull() {
+        // given
+        User user = saveUser("testUser2424", "테스터27");
+        String userId = user.getId();
+
+        CoverLetter sharedCl = builder().userId(userId).build();
+        CoverLetter notSharedCl = builder().userId(userId).build();
+        CoverLetter noLinkCl = builder().userId(userId).build();
+
+        CoverLetter savedShared = coverLetterJpaRepository.save(sharedCl);
+        CoverLetter savedNotShared = coverLetterJpaRepository.save(notSharedCl);
+        coverLetterJpaRepository.save(noLinkCl);
+
+        ShareLink activeLink = ShareLink.newActivatedShareLink(savedShared.getId());
+        shareLinkRepository.save(activeLink);
+
+        ShareLink inactiveLink = ShareLink.newActivatedShareLink(savedNotShared.getId());
+        inactiveLink.deactivate();
+        shareLinkRepository.save(inactiveLink);
+
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, null, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(3);
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 createdAt 내림차순, id 내림차순으로 정렬된다")
+    void findByFilter_OrderByCreatedAtDescAndIdDesc() {
+        // given
+        User user = saveUser("testUser2525", "테스터28");
+        String userId = user.getId();
+
+        LocalDateTime sameTime = LocalDateTime.of(2024, 6, 1, 10, 0);
+        LocalDateTime olderTime = LocalDateTime.of(2024, 6, 1, 9, 0);
+
+        // 같은 createdAt을 가진 자기소개서 2개 (id가 다름)
+        CoverLetter cl1 = builder().userId(userId).createdAt(sameTime).build();
+        CoverLetter cl2 = builder().userId(userId).createdAt(sameTime).build();
+        // 더 오래된 createdAt을 가진 자기소개서
+        CoverLetter cl3 = builder().userId(userId).createdAt(olderTime).build();
+
+        coverLetterJpaRepository.save(cl1);
+        coverLetterJpaRepository.save(cl2);
+        coverLetterJpaRepository.save(cl3);
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, null, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(3);
+
+        // createdAt 최신순 검증 (sameTime > olderTime)
+        assertThat(result.getContent().get(0).getCreatedAt()).isEqualTo(sameTime);
+        assertThat(result.getContent().get(1).getCreatedAt()).isEqualTo(sameTime);
+        assertThat(result.getContent().get(2).getCreatedAt()).isEqualTo(olderTime);
+
+        // 같은 createdAt 내에서 id 내림차순 검증 (큰 id가 먼저)
+        assertThat(result.getContent().get(0).getId()).isGreaterThan(result.getContent().get(1).getId());
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 커서 페이지네이션이 작동한다")
+    void findByFilter_WithCursorPagination() {
+        // given
+        User user = saveUser("testUser2626", "테스터29");
+        String userId = user.getId();
+
+        LocalDateTime t1 = LocalDateTime.of(2024, 6, 1, 10, 0);
+        LocalDateTime t2 = LocalDateTime.of(2024, 6, 1, 11, 0);
+        LocalDateTime t3 = LocalDateTime.of(2024, 6, 1, 12, 0);
+
+        CoverLetter cl1 = builder().userId(userId).createdAt(t1).build();
+        CoverLetter cl2 = builder().userId(userId).createdAt(t2).build();
+        CoverLetter cl3 = builder().userId(userId).createdAt(t3).build();
+
+        coverLetterJpaRepository.save(cl1);
+        coverLetterJpaRepository.save(cl2);
+        coverLetterJpaRepository.save(cl3);
+        flushAndClear();
+
+        // when - 첫 페이지 조회
+        Slice<CoverLetter> firstPage = coverLetterRepository.findByFilter(
+                userId, null, null, null, null, 2
+        );
+
+        // then
+        assertThat(firstPage.getContent()).hasSize(2);
+        assertThat(firstPage.hasNext()).isTrue();
+
+        // when - 두 번째 페이지 조회 (커서 사용)
+        Long lastCoverLetterId = firstPage.getContent().get(1).getId();
+        Slice<CoverLetter> secondPage = coverLetterRepository.findByFilter(
+                userId, null, null, null, lastCoverLetterId, 2
+        );
+
+        // then
+        assertThat(secondPage.getContent()).hasSize(1);
+        assertThat(secondPage.hasNext()).isFalse();
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 size+1 조회하여 hasNext를 정확히 판단한다")
+    void findByFilter_HasNextAccuracy() {
+        // given
+        User user = saveUser("testUser2727", "테스터30");
+        String userId = user.getId();
+
+        // 정확히 2개의 자기소개서
+        CoverLetter cl1 = builder().userId(userId).build();
+        CoverLetter cl2 = builder().userId(userId).build();
+
+        coverLetterJpaRepository.save(cl1);
+        coverLetterJpaRepository.save(cl2);
+        flushAndClear();
+
+        // when - size=2로 조회
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, null, null, null, null, 2
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(2);
+        assertThat(result.hasNext()).isFalse(); // 다음 페이지 없음
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 복합 필터링이 작동한다")
+    void findByFilter_WithCombinedFilters() {
+        // given
+        User user = saveUser("testUser2828", "테스터31");
+        String userId = user.getId();
+
+        LocalDate inRangeDate = LocalDate.of(2024, 6, 15);
+        LocalDate outOfRangeDate = LocalDate.of(2024, 8, 25);
+
+        // 날짜 범위 내 + 공유 활성화
+        CoverLetter inRangeShared = builder().userId(userId).deadline(inRangeDate).build();
+        // 날짜 범위 내 + 공유 비활성화
+        CoverLetter inRangeNotShared = builder().userId(userId).deadline(inRangeDate).build();
+        // 날짜 범위 밖 + 공유 활성화
+        CoverLetter outOfRangeShared = builder().userId(userId).deadline(outOfRangeDate).build();
+
+        CoverLetter saved1 = coverLetterJpaRepository.save(inRangeShared);
+        CoverLetter saved2 = coverLetterJpaRepository.save(inRangeNotShared);
+        CoverLetter saved3 = coverLetterJpaRepository.save(outOfRangeShared);
+
+        ShareLink link1 = ShareLink.newActivatedShareLink(saved1.getId());
+        shareLinkRepository.save(link1);
+
+        ShareLink link2 = ShareLink.newActivatedShareLink(saved2.getId());
+        link2.deactivate();
+        shareLinkRepository.save(link2);
+
+        ShareLink link3 = ShareLink.newActivatedShareLink(saved3.getId());
+        shareLinkRepository.save(link3);
+
+        flushAndClear();
+
+        LocalDate startDate = LocalDate.of(2024, 6, 1);
+        LocalDate endDate = LocalDate.of(2024, 7, 31);
+
+        // when - 날짜 범위 내 + 공유 활성화만 조회
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                userId, startDate, endDate, true, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getId()).isEqualTo(saved1.getId());
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 다른 사용자의 자기소개서는 조회되지 않는다")
+    void findByFilter_FiltersByUserId() {
+        // given
+        User user1 = saveUser("testUser2929", "테스터32");
+        User user2 = saveUser("testUser3030", "테스터33");
+
+        CoverLetter user1Cl = builder().userId(user1.getId()).build();
+        CoverLetter user2Cl = builder().userId(user2.getId()).build();
+
+        coverLetterJpaRepository.save(user1Cl);
+        coverLetterJpaRepository.save(user2Cl);
+        flushAndClear();
+
+        // when
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                user1.getId(), null, null, null, null, 10
+        );
+
+        // then
+        assertThat(result.getContent()).hasSize(1);
+        assertThat(result.getContent().get(0).getUserId()).isEqualTo(user1.getId());
     }
 }
