@@ -20,7 +20,9 @@ const HomePage = () => {
           alt='홈 화면 배너'
         />
 
-        <ErrorBoundary fallback={<HomeSectionError />}>
+        <ErrorBoundary
+          fallback={(reset) => <HomeSectionError onRetry={reset} />}
+        >
           <Suspense fallback={<SummaryOverviewSkeleton />}>
             <SummaryOverview />
           </Suspense>
