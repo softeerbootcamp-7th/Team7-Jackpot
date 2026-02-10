@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { useNavigate } from 'react-router';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -8,6 +10,7 @@ import { CommonIcon as I } from '@/shared/icons';
 const PageGlobalHeader = () => {
   const navigate = useNavigate();
   const { userInfo } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
     <header className='mb-[1.875rem] flex h-[3.75rem] w-full items-center justify-between bg-white px-75'>
@@ -37,9 +40,10 @@ const PageGlobalHeader = () => {
       </div>
 
       <div className='flex items-center gap-5'>
-        <button type='button' className='cursor-pointer p-1'>
-          <I.NotificationIcon />
-        </button>
+        <NotificationDropdown
+          isOpen={isDropdownOpen}
+          handleDropdown={setIsDropdownOpen}
+        />
         <div className='flex cursor-pointer items-center gap-2'>
           <I.UserAvatarIcon />
           <span className='text-base font-medium text-gray-600'>
