@@ -7,6 +7,7 @@ import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import com.jackpot.narratix.global.auth.jwt.service.JwtTokenParser;
 import com.jackpot.narratix.global.auth.jwt.service.JwtValidator;
 import com.jackpot.narratix.global.exception.BaseException;
+import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -41,26 +42,31 @@ public class StompChannelInterceptor implements ChannelInterceptor {
                 throw new IllegalStateException("Session attributes cannot be null during CONNECT");
             }
 
-            String shareId = accessor.getFirstNativeHeader("shareId");
-            if (shareId == null || shareId.isEmpty()) {
-                throw new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND);
-            }
+            String shareId = getShareId(accessor);
             String userId = extractUserId(accessor);
             ReviewRoleType role = shareLinkService.validateShareLinkAndGetRole(userId, shareId);
 
-            sessionAttributes.put("shareId", shareId);
-            sessionAttributes.put("userId", userId);
-            sessionAttributes.put("role", role);
+            WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
+            WebSocketSessionAttributes.setShareId(sessionAttributes, shareId);
+            WebSocketSessionAttributes.setRole(sessionAttributes, role);
 
-            // 접근 권한 최종 확인
+            log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
+
             if (!shareLinkService.accessShareLink(userId, role, shareId)) {
                 log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
                 throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
             }
-            log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
         }
 
         return message;
+    }
+
+    private String getShareId(StompHeaderAccessor accessor) {
+        String shareId = accessor.getFirstNativeHeader("shareId");
+        if (shareId == null || shareId.isEmpty()) {
+            throw new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND);
+        }
+        return shareId;
     }
 
     private String extractUserId(StompHeaderAccessor accessor) {
