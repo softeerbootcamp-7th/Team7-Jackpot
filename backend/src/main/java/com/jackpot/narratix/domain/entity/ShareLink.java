@@ -31,19 +31,22 @@ public class ShareLink {
     @Column(name = "expires_at", nullable = false)
     private LocalDateTime expiresAt;
 
+    private static final int DEFAULT_EXPIRATION_WEEKS = 2;
+
     public static ShareLink newActivatedShareLink(Long coverLetterId){
+
         return new ShareLink(
                 coverLetterId,
                 UlidCreator.getUlid().toString(),
                 true,
-                LocalDateTime.now().plusDays(14)
+                LocalDateTime.now().plusWeeks(DEFAULT_EXPIRATION_WEEKS)
         );
     }
 
     public void activate(){
         this.isShared = true;
         this.shareId = UlidCreator.getUlid().toString();
-        this.expiresAt = LocalDateTime.now().plusDays(14);
+        this.expiresAt = LocalDateTime.now().plusWeeks(DEFAULT_EXPIRATION_WEEKS);
     }
 
     public void deactivate(){
