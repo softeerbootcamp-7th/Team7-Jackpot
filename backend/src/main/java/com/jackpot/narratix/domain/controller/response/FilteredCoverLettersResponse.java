@@ -6,15 +6,16 @@ import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import java.time.LocalDate;
 import java.util.List;
 
-public record CoverLettersDateRangeResponse(
+public record FilteredCoverLettersResponse(
     Long totalCount,
-    List<CoverLetterResponse> coverLetters
+    List<CoverLetterResponse> coverLetters,
+    boolean hasNext
 ) {
 
-    public static CoverLettersDateRangeResponse of(
-            Long totalCoverLetterSize, List<CoverLetterResponse> coverLetters
+    public static FilteredCoverLettersResponse of(
+            Long totalCoverLetterSize, List<CoverLetterResponse> coverLetters, boolean hasNext
     ){
-        return new CoverLettersDateRangeResponse(totalCoverLetterSize, coverLetters);
+        return new FilteredCoverLettersResponse(totalCoverLetterSize, coverLetters, hasNext);
     }
 
     public record CoverLetterResponse(

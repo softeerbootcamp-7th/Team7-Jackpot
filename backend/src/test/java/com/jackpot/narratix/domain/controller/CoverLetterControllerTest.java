@@ -3,8 +3,8 @@ package com.jackpot.narratix.domain.controller;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.CreateQuestionRequest;
 import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
-import com.jackpot.narratix.domain.controller.response.CoverLettersDateRangeResponse;
 import com.jackpot.narratix.domain.controller.response.CreateCoverLetterResponse;
+import com.jackpot.narratix.domain.controller.response.FilteredCoverLettersResponse;
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
@@ -378,15 +378,15 @@ class CoverLetterControllerTest {
     }
 
     @Test
-    @DisplayName("날짜 범위로 자기소개서 리스트 조회 성공")
-    void getAllCoverLetterByDate_Success() throws Exception {
+    @DisplayName("필터링된 자기소개서 리스트 조회 성공")
+    void getAllCoverLetterByFilter_Success() throws Exception {
         // given
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 12, 31);
         Integer size = 10;
 
-        CoverLettersDateRangeResponse.CoverLetterResponse coverLetter1 =
-                new CoverLettersDateRangeResponse.CoverLetterResponse(
+        FilteredCoverLettersResponse.CoverLetterResponse coverLetter1 =
+                new FilteredCoverLettersResponse.CoverLetterResponse(
                         1L,
                         "현대자동차",
                         2024,
@@ -396,8 +396,8 @@ class CoverLetterControllerTest {
                         3L
                 );
 
-        CoverLettersDateRangeResponse.CoverLetterResponse coverLetter2 =
-                new CoverLettersDateRangeResponse.CoverLetterResponse(
+        FilteredCoverLettersResponse.CoverLetterResponse coverLetter2 =
+                new FilteredCoverLettersResponse.CoverLetterResponse(
                         2L,
                         "삼성전자",
                         2024,
@@ -407,12 +407,13 @@ class CoverLetterControllerTest {
                         5L
                 );
 
-        CoverLettersDateRangeResponse response = new CoverLettersDateRangeResponse(
+        FilteredCoverLettersResponse response = new FilteredCoverLettersResponse(
                 2L,
-                List.of(coverLetter1, coverLetter2)
+                List.of(coverLetter1, coverLetter2),
+                false
         );
 
-        given(coverLetterService.getAllCoverLetterByDate(any(), any(LocalDate.class), any(LocalDate.class), any(Integer.class)))
+        given(coverLetterService.getAllCoverLetterByFilter(any(), any()))
                 .willReturn(response);
 
         // when & then
@@ -433,20 +434,21 @@ class CoverLetterControllerTest {
                 .andExpect(jsonPath("$.coverLetters[0].questionCount").value(3))
                 .andExpect(jsonPath("$.coverLetters[1].coverLetterId").value(2))
                 .andExpect(jsonPath("$.coverLetters[1].companyName").value("삼성전자"))
-                .andExpect(jsonPath("$.coverLetters[1].questionCount").value(5));
+                .andExpect(jsonPath("$.coverLetters[1].questionCount").value(5))
+                .andExpect(jsonPath("$.hasNext").value(false));
     }
 
     @Test
-    @DisplayName("날짜 범위로 자기소개서 리스트 조회 시 결과가 없을 때 빈 리스트 반환")
-    void getAllCoverLetterByDate_EmptyResult_Success() throws Exception {
+    @DisplayName("필터링된 자기소개서 리스트 조회 시 결과가 없을 때 빈 리스트 반환")
+    void getAllCoverLetterByFilter_EmptyResult_Success() throws Exception {
         // given
         LocalDate startDate = LocalDate.of(2024, 1, 1);
         LocalDate endDate = LocalDate.of(2024, 12, 31);
         Integer size = 10;
 
-        CoverLettersDateRangeResponse response = new CoverLettersDateRangeResponse(0L, List.of());
+        FilteredCoverLettersResponse response = new FilteredCoverLettersResponse(0L, List.of(), false);
 
-        given(coverLetterService.getAllCoverLetterByDate(any(), any(LocalDate.class), any(LocalDate.class), any(Integer.class)))
+        given(coverLetterService.getAllCoverLetterByFilter(any(), any()))
                 .willReturn(response);
 
         // when & then
@@ -458,13 +460,14 @@ class CoverLetterControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalCount").value(0))
                 .andExpect(jsonPath("$.coverLetters").isArray())
-                .andExpect(jsonPath("$.coverLetters.length()").value(0));
+                .andExpect(jsonPath("$.coverLetters.length()").value(0))
+                .andExpect(jsonPath("$.hasNext").value(false));
     }
 
     @ParameterizedTest
-    @MethodSource("provideInvalidParametersForGetAllCoverLetterByDate")
-    @DisplayName("날짜 범위로 자기소개서 리스트 조회 시 필수 파라미터가 누락되거나 잘못되면 400 Bad Request 반환")
-    void getAllCoverLetterByDate_InvalidParameters_BadRequest(
+    @MethodSource("provideInvalidParametersForGetAllCoverLetterByFilter")
+    @DisplayName("필터링된 자기소개서 리스트 조회 시 필수 파라미터가 누락되거나 잘못되면 400 Bad Request 반환")
+    void getAllCoverLetterByFilter_InvalidParameters_BadRequest(
             String startDate, String endDate, String size
     ) throws Exception {
         // when & then
@@ -472,14 +475,12 @@ class CoverLetterControllerTest {
                         .header(AuthConstants.AUTHORIZATION, TEST_TOKEN)
                         .param("startDate", startDate != null ? startDate : "")
                         .param("endDate", endDate != null ? endDate : "")
-                        .param("size", size != null ? size : ""))
+                        .param("size", size))
                 .andExpect(status().isBadRequest());
     }
 
-    private static Stream<Arguments> provideInvalidParametersForGetAllCoverLetterByDate() {
+    private static Stream<Arguments> provideInvalidParametersForGetAllCoverLetterByFilter() {
         return Stream.of(
-                Arguments.of(null, "2024-12-31", "10"),  // startDate 누락
-                Arguments.of("2024-01-01", null, "10"),  // endDate 누락
                 Arguments.of("2024-01-01", "2024-12-31", null),  // size 누락
                 Arguments.of("2024/01/01", "2024-12-31", "10"),  // 잘못된 날짜 포맷 (startDate)
                 Arguments.of("2024-01-01", "2024/12/31", "10")   // 잘못된 날짜 포맷 (endDate)

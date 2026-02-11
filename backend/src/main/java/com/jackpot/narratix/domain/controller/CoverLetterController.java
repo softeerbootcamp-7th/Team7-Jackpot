@@ -1,7 +1,8 @@
 package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.api.CoverLetterApi;
-import com.jackpot.narratix.domain.controller.response.CoverLettersDateRangeResponse;
+import com.jackpot.narratix.domain.controller.request.CoverLetterFilterRequest;
+import com.jackpot.narratix.domain.controller.response.FilteredCoverLettersResponse;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.response.CoverLetterResponse;
@@ -27,6 +28,7 @@ public class CoverLetterController implements CoverLetterApi {
     private final CoverLetterService coverLetterService;
 
     @Override
+    @PostMapping
     public ResponseEntity<CreateCoverLetterResponse> createCoverLetter(
             @UserId String userId,
             @RequestBody @Valid CreateCoverLetterRequest createCoverLetterRequest
@@ -35,6 +37,7 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
+    @PutMapping
     public ResponseEntity<Void> editCoverLetter(
             @UserId String userId,
             @RequestBody @Valid EditCoverLetterRequest editCoverLetterRequest
@@ -44,6 +47,7 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
+    @GetMapping("/{coverLetterId}")
     public ResponseEntity<CoverLetterResponse> findCoverLetterById(
             @UserId String userId,
             @PathVariable Long coverLetterId
@@ -52,6 +56,7 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
+    @DeleteMapping("/{coverLetterId}")
     public ResponseEntity<Void> deleteCoverLetterById(
             @UserId String userId,
             @PathVariable Long coverLetterId
@@ -61,6 +66,7 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
+    @GetMapping("/count")
     public ResponseEntity<TotalCoverLetterCountResponse> getTotalCoverLetterCount(
             @UserId String userId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date
@@ -69,16 +75,16 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
-    public ResponseEntity<CoverLettersDateRangeResponse> getAllCoverLetterByDate(
+    @GetMapping("/all")
+    public ResponseEntity<FilteredCoverLettersResponse> getAllCoverLetterByFilter(
             @UserId String userId,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate endDate,
-            @RequestParam Integer size
-    ) {
-        return ResponseEntity.ok(coverLetterService.getAllCoverLetterByDate(userId, startDate, endDate, size));
+            @Valid @ModelAttribute CoverLetterFilterRequest request
+            ) {
+        return ResponseEntity.ok(coverLetterService.getAllCoverLetterByFilter(userId, request));
     }
 
     @Override
+    @GetMapping("/upcoming")
     public ResponseEntity<List<UpcomingCoverLetterResponse>> getUpcomingCoverLetters(
             @UserId String userId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate date,
@@ -91,6 +97,7 @@ public class CoverLetterController implements CoverLetterApi {
     }
 
     @Override
+    @GetMapping("/calendar")
     public ResponseEntity<List<LocalDate>> findDeadlineByDateRange(
             @UserId String userId,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate startDate,
