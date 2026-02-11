@@ -163,4 +163,103 @@ class ShareLinkServiceTest {
         verify(coverLetterRepository, times(1)).findByIdOrElseThrow(coverLetterId);
         verify(shareLinkRepository, never()).findById(any());
     }
+
+    @Test
+    @DisplayName("첨삭 링크 상태 조회 시 활성화되고 만료되지 않은 링크는 active=true를 반환한다")
+    void getShareLinkStatus_WhenActivatedAndNotExpired_ReturnsActiveTrue() {
+        // given
+        String userId = "testUser";
+        Long coverLetterId = 1L;
+
+        CoverLetter mockCoverLetter = mock(CoverLetter.class);
+        ShareLink mockShareLink = mock(ShareLink.class);
+        String expectedShareId = "test-share-id-123";
+
+        given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(mockCoverLetter);
+        given(mockCoverLetter.isOwner(userId)).willReturn(true);
+        given(shareLinkRepository.findById(coverLetterId)).willReturn(Optional.of(mockShareLink));
+        given(mockShareLink.isActive()).willReturn(true);
+        given(mockShareLink.getShareId()).willReturn(expectedShareId);
+
+        // when
+        ShareLinkActiveResponse response = shareLinkService.getShareLinkStatus(userId, coverLetterId);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.active()).isTrue();
+        assertThat(response.shareLinkId()).isEqualTo(expectedShareId);
+
+        verify(mockShareLink, times(1)).isActive();
+    }
+
+    @Test
+    @DisplayName("첨삭 링크 상태 조회 시 만료된 링크는 active=false를 반환한다")
+    void getShareLinkStatus_WhenExpired_ReturnsActiveFalse() {
+        // given
+        String userId = "testUser";
+        Long coverLetterId = 1L;
+
+        CoverLetter mockCoverLetter = mock(CoverLetter.class);
+        ShareLink mockShareLink = mock(ShareLink.class);
+
+        given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(mockCoverLetter);
+        given(mockCoverLetter.isOwner(userId)).willReturn(true);
+        given(shareLinkRepository.findById(coverLetterId)).willReturn(Optional.of(mockShareLink));
+        given(mockShareLink.isActive()).willReturn(false); // 만료됨
+
+        // when
+        ShareLinkActiveResponse response = shareLinkService.getShareLinkStatus(userId, coverLetterId);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.active()).isFalse();
+        assertThat(response.shareLinkId()).isNull();
+
+        verify(mockShareLink, times(1)).isActive();
+    }
+
+    @Test
+    @DisplayName("첨삭 링크 상태 조회 시 링크가 존재하지 않으면 active=false를 반환한다")
+    void getShareLinkStatus_WhenShareLinkNotExists_ReturnsActiveFalse() {
+        // given
+        String userId = "testUser";
+        Long coverLetterId = 1L;
+
+        CoverLetter mockCoverLetter = mock(CoverLetter.class);
+
+        given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(mockCoverLetter);
+        given(mockCoverLetter.isOwner(userId)).willReturn(true);
+        given(shareLinkRepository.findById(coverLetterId)).willReturn(Optional.empty());
+
+        // when
+        ShareLinkActiveResponse response = shareLinkService.getShareLinkStatus(userId, coverLetterId);
+
+        // then
+        assertThat(response).isNotNull();
+        assertThat(response.active()).isFalse();
+        assertThat(response.shareLinkId()).isNull();
+    }
+
+    @Test
+    @DisplayName("첨삭 링크 상태 조회 시 다른 사용자의 자기소개서라면 에러 발생")
+    void getShareLinkStatus_WhenUserIsNotOwner_ShouldThrowForbiddenException() {
+        // given
+        String userId = "testUser";
+        Long coverLetterId = 1L;
+
+        CoverLetter mockCoverLetter = mock(CoverLetter.class);
+
+        given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(mockCoverLetter);
+        given(mockCoverLetter.isOwner(userId)).willReturn(false);
+
+        // when & then
+        assertThatThrownBy(() -> shareLinkService.getShareLinkStatus(userId, coverLetterId))
+                .isInstanceOf(BaseException.class)
+                .hasMessage(GlobalErrorCode.FORBIDDEN.getMessage())
+                .extracting("errorCode")
+                .isEqualTo(GlobalErrorCode.FORBIDDEN);
+
+        verify(coverLetterRepository, times(1)).findByIdOrElseThrow(coverLetterId);
+        verify(shareLinkRepository, never()).findById(any());
+    }
 }
