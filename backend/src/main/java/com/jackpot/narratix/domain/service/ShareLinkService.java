@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.controller.response.ShareLinkActiveResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.ShareLink;
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.exception.ShareLinkErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
 import com.jackpot.narratix.domain.repository.ShareLinkRepository;
@@ -20,6 +21,7 @@ public class ShareLinkService {
 
     private final CoverLetterRepository coverLetterRepository;
     private final ShareLinkRepository shareLinkRepository;
+    private final ShareLinkLockManager shareLinkLockManager;
 
     @Transactional
     public ShareLinkActiveResponse updateShareLinkStatus(String userId, Long coverLetterId, boolean active) {
@@ -76,15 +78,20 @@ public class ShareLinkService {
         return shareLink.isValid();
     }
 
+    public boolean accessShareLink(String userId, ReviewRoleType role, String shareId) {
+        return shareLinkLockManager.tryLock(shareId, role, userId);
+    }
+
     @Transactional(readOnly = true)
-    public boolean accessShareLink(String userId, String shareId) {
+    public ReviewRoleType validateShareLinkAndGetRole(String userId, String shareId) {
         ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
                 .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
 
-        if (!shareLink.isValid()) return false;
+        if (!shareLink.isValid()) {
+            throw new BaseException(ShareLinkErrorCode.SHARE_LINK_EXPIRED);
+        }
 
-        // TODO: redis에서 링크 접속 유저 수 확인 및 락을 동시에 걸어야 한다.
-
-        return true; // TODO: 임시방편이니 절대절대 수정하기
+        CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(shareLink.getCoverLetterId());
+        return coverLetter.isOwner(userId) ? ReviewRoleType.WRITER : ReviewRoleType.REVIEWER;
     }
 }
