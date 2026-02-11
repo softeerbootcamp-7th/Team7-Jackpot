@@ -33,9 +33,10 @@ public class StompHandshakeInterceptor implements HandshakeInterceptor {
                 return false;
             }
 
+            attributes.put("shareId", shareId);
+
             return shareLinkService.validateShareLink(shareId); // 유효하지 않거나 만료된 링크면 연결 거부
         }
-
         return false;
     }
 
