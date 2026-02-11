@@ -216,11 +216,8 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
     }
 
     private void applyCursorPagination(BooleanBuilder builder, Long lastCoverLetterId) {
-        coverLetterJpaRepository.findById(lastCoverLetterId)
-                .ifPresent(lastCoverLetter -> {
-                    BooleanExpression cursorCondition = buildCursorCondition(lastCoverLetter);
-                    builder.and(cursorCondition);
-                });
+        CoverLetter lastCoverLetter = this.findByIdOrElseThrow(lastCoverLetterId);
+        builder.and(buildCursorCondition(lastCoverLetter));
     }
 
     private BooleanExpression buildCursorCondition(CoverLetter lastCoverLetter) {
