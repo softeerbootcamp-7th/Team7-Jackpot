@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 import CoverLetterQnAFriendsPage from '@/pages//CoverLetterQnAFriendsPage';
 import CoverLetterLandingPage from '@/pages/CoverLetterLandingPage';
 import HomePage from '@/pages/HomePage';
+import LandingPage from '@/pages/LandingPage';
 import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/LoginPage';
 import ReviewPage from '@/pages/ReviewPage';
@@ -52,10 +53,10 @@ function App() {
               />
             </Route>
           </Route>
+          <Route path='/' element={<LandingPage />} />
           <Route path='/review/:id' element={<ReviewPage />} />
           {/* <Route path='/library?id:' element={<LibraryPage />} /> */}
           {/* <Route path="/recruit" element={<RecruitPage />}/> */}
-          {/* <Route path="/" element={<LandingPage />}/> */}
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />
           <Route path='/signup/complete' element={<SignUpComplete />} />
