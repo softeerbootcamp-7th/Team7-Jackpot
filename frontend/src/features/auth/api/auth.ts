@@ -12,18 +12,22 @@ let ACCESS_TOKEN = '';
 export const authClient = {
   // 아이디 중복확인을 위한 메서드
   checkId: async (userData: CheckIdRequest): Promise<AuthResponse> => {
-    return await apiClient.post('/auth/checkid', userData);
+    return await apiClient.post({ endpoint: '/auth/checkid', body: userData });
   },
 
   // 회원가입을 위한 메서드
   signUp: async (userData: JoinRequest): Promise<AuthResponse> => {
-    return await apiClient.post('/auth/join', userData);
+    return await apiClient.post({ endpoint: '/auth/join', body: userData });
   },
 
   // 로그인을 위한 메서드
   login: async (userData: LoginRequest): Promise<AuthResponse> => {
-    const data: AuthResponse = await apiClient.post('/auth/login', userData, {
-      credentials: 'include',
+    const data: AuthResponse = await apiClient.post({
+      endpoint: '/auth/login',
+      body: userData,
+      options: {
+        credentials: 'include',
+      },
     });
     if (data.accessToken) {
       ACCESS_TOKEN = data.accessToken;
@@ -37,13 +41,15 @@ export const authClient = {
 
   // 액세스 토큰 리프레시를 위한 메서드
   refresh: async (): Promise<AuthResponse> => {
-    const data: AuthResponse = await apiClient.post('/auth/refresh', {
-      credential: 'include',
+    const data: AuthResponse = await apiClient.post({
+      endpoint: '/auth/refresh',
+      options: {
+        credentials: 'include',
+      },
     });
     if (data.accessToken) {
       ACCESS_TOKEN = data.accessToken;
     }
-
     return data;
   },
 
