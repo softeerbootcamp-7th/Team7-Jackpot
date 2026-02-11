@@ -83,12 +83,12 @@ public class SearchService {
 
         String keyword = searchWord.trim();
 
-        List<QuestionCategoryType> questionLibraies = qnARepository.searchQuestionCategory(userId, keyword);
+        List<QuestionCategoryType> questionLibraries = qnARepository.searchQuestionCategory(userId, keyword);
 
         Slice<QnA> qnAs = qnARepository.searchQnA(userId, keyword, size, lastQnAId);
 
         Long qnACount = qnARepository.countSearchQnA(userId, keyword);
-        return SearchLibraryAndQnAResponse.of(questionLibraies, qnACount, qnAs.getContent(), qnAs.hasNext());
+        return SearchLibraryAndQnAResponse.of(questionLibraries, qnACount, qnAs.getContent(), qnAs.hasNext());
     }
 
 }
