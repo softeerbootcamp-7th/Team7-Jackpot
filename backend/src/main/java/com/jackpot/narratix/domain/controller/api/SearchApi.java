@@ -71,7 +71,7 @@ public interface SearchApi {
     ResponseEntity<SearchLibraryAndQnAResponse> searchLibraryAndQnA(
             @Parameter(hidden = true) @UserId String userId,
             @Parameter(description = "검색 키워드") @RequestParam @NotBlank String searchWord,
-            @Parameter(description = "마지막 문항 아이디") @RequestParam(required = false) Integer lastQnaId,
+            @Parameter(description = "마지막 문항 아이디") @RequestParam(required = false) Long lastQnAId,
             @Parameter(description = "사이즈") @RequestParam(required = false, defaultValue = "10") Integer size
     );
 

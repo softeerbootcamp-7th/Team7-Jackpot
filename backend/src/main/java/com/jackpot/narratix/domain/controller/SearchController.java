@@ -48,12 +48,14 @@ public class SearchController implements SearchApi {
     }
 
     @Override
+    @GetMapping("/library")
     public ResponseEntity<SearchLibraryAndQnAResponse> searchLibraryAndQnA(
             @UserId String userId,
             @RequestParam @NotBlank String searchWord,
-            @RequestParam(required = false) Integer lastQnaId,
-            @RequestParam Integer size) {
-        return ResponseEntity.ok(libraryService.searchLibraryAndQnA(userId, searchWord, size, lastQnaId));
+            @RequestParam(required = false) Long lastQnAId,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return ResponseEntity.ok(searchService.searchLibraryAndQnA(userId, searchWord, size, lastQnAId));
     }
 
 }
