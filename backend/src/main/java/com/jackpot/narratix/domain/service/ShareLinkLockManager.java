@@ -3,9 +3,11 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -15,6 +17,15 @@ public class ShareLinkLockManager {
 
     private static final long LOCK_TIMEOUT = 60L * 60L;
     private static final String LOCK_FORMAT = "share-link:lock:%s:%s";
+    private static final String UNLOCK_SCRIPT
+            = """
+            if redis.call('get', KEYS[1]) == ARGV[1] then
+                return redis.call('del', KEYS[1])
+            else
+                return 0
+            end
+            """;
+
 
     public boolean tryLock(String shareId, ReviewRoleType role, String userId) {
         String lockKey = getLockKey(shareId, role);
@@ -27,11 +38,19 @@ public class ShareLinkLockManager {
 
     public void unlock(String shareId, ReviewRoleType role, String userId) {
         String lockKey = getLockKey(shareId, role);
-        String currentOwner = redisTemplate.opsForValue().get(lockKey);
 
-        if (userId.equals(currentOwner)) {
-            redisTemplate.delete(lockKey);
-        }
+        if(!isLockOwner(lockKey, userId)) throw new IllegalStateException("Not lock owner");
+
+        redisTemplate.execute(
+                new DefaultRedisScript<>(UNLOCK_SCRIPT, Long.class),
+                List.of(lockKey),
+                userId
+        );
+    }
+
+    public boolean isLockOwner(String lockKey, String userId) {
+        String currentOwner = redisTemplate.opsForValue().get(lockKey);
+        return userId.equals(currentOwner);
     }
 
     private String getLockKey(String shareId, ReviewRoleType role) {
