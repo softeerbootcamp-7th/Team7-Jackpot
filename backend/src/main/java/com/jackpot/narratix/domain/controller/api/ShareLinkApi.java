@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.request.ShareLinkActiveRequest;
 import com.jackpot.narratix.domain.controller.response.ShareLinkActiveResponse;
 import com.jackpot.narratix.global.auth.UserId;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,8 +31,8 @@ public interface ShareLinkApi {
             @ApiResponse(responseCode = "404", description = "자기소개서를 찾을 수 없음")
     })
     ResponseEntity<ShareLinkActiveResponse> updateShareLinkStatus(
-            @UserId String userId,
-            @PathVariable Long coverLetterId,
-            @Valid @RequestBody ShareLinkActiveRequest request
+            @Parameter(hidden = true) String userId,
+            Long coverLetterId,
+            ShareLinkActiveRequest request
     );
 }
