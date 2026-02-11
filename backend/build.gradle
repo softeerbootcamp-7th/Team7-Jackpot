@@ -32,7 +32,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     // ulid-creator for ULID
-    implementation group: 'com.github.f4b6a3', name: 'ulid-creator', version: '5.1.0'
+    implementation group: 'com.github.f4b6a3', name: 'ulid-creator', version: '5.2.3'
 
     // JWT
     implementation 'io.jsonwebtoken:jjwt-api:0.12.5'
