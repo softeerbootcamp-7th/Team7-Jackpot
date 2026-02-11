@@ -33,12 +33,9 @@ public class SearchService {
     public SearchScrapResponse searchScrap(
             String userId, String searchWord, Integer size, Long lastQnaId
     ) {
-        boolean hasKeyword = StringUtils.hasText(searchWord);
-        if (hasKeyword && searchWord.trim().length() < 2) {
-            throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
-        }
+        String keyword = processSearchWord(searchWord, false);
 
-        Slice<QnA> qnas = hasKeyword
+        Slice<QnA> qnas = (keyword != null)
                 ? getSearchScraps(userId, searchWord.trim(), lastQnaId, size)
                 : getAllScraps(userId, lastQnaId, size);
 
@@ -63,10 +60,7 @@ public class SearchService {
     public SearchCoverLetterResponse searchCoverLetter(
             String userId, String searchWord, Integer size, Integer page
     ) {
-        String keyword = StringUtils.hasText(searchWord) ? searchWord.trim() : null;
-        if (keyword != null && keyword.length() < 2) {
-            throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
-        }
+        String keyword = processSearchWord(searchWord, false);
 
         Pageable pageable = PageRequest.of(Math.max(0, page - 1), size);
 
@@ -77,11 +71,8 @@ public class SearchService {
 
     @Transactional(readOnly = true)
     public SearchLibraryAndQnAResponse searchLibraryAndQnA(String userId, String searchWord, Integer size, Long lastQnAId) {
-        if (!StringUtils.hasText(searchWord)) { //공백이거나,null이면 오류 반환
-            throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
-        }
 
-        String keyword = searchWord.trim();
+        String keyword = processSearchWord(searchWord, true);
 
         List<QuestionCategoryType> questionLibraries = qnARepository.searchQuestionCategory(userId, keyword);
 
@@ -89,6 +80,20 @@ public class SearchService {
 
         Long qnACount = qnARepository.countSearchQnA(userId, keyword);
         return SearchLibraryAndQnAResponse.of(questionLibraries, qnACount, qnAs.getContent(), qnAs.hasNext());
+    }
+
+    private String processSearchWord(String searchWord, boolean isRequired) {
+        if (!StringUtils.hasText(searchWord)) {
+            if (isRequired) {
+                throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
+            }
+            return null;
+        }
+        String keyword = searchWord.trim();
+        if (keyword.length() < 2) {
+            throw new BaseException(SearchErrorCode.INVALID_SEARCH_KEYWORD);
+        }
+        return keyword;
     }
 
 }
