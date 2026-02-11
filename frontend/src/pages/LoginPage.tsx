@@ -2,10 +2,10 @@ import { useEffect } from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '@/context/AuthContext';
 import AuthLayout from '@/features/auth/components/AuthLayout';
 import LoginForm from '@/features/auth/components/LoginForm';
 import { SUB_TITLE } from '@/features/auth/constants/constantsInLoginPage';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 const LoginPage = () => {
   const { isAuthenticated } = useAuth();

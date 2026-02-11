@@ -3,11 +3,11 @@ import React from 'react';
 
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '@/context/AuthContext';
 import { authClient } from '@/features/auth/api/auth';
 import InputBar from '@/features/auth/components/InputBar';
 import SubmitButton from '@/features/auth/components/SubmitButton';
 import { INPUT_BAR_IN_LOGIN } from '@/features/auth/constants/constantsInLoginPage';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
 import type { AuthInputKey } from '@/features/auth/types/auth';
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
