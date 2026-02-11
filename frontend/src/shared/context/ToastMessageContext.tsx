@@ -8,6 +8,7 @@ import {
 
 import ToastMessage from '@/shared/components/ToastMessage';
 import { useToastMessage } from '@/shared/hooks/toastMessage/useToastMessage';
+import { useToastTimer } from '@/shared/hooks/toastMessage/useToastTimer';
 
 interface ToastMessageContextType {
   showToast: (message: string, status?: boolean) => void;
@@ -49,16 +50,15 @@ export const ToastMessageProvider = ({
     setToastState((prev) => ({ ...prev, isVisible: false }));
   }, []);
 
-  // 토스트 메시지가 켜진 후 3초 뒤에 꺼지도록 타이머 시작
-  useEffect(() => {
-    if (toastState.isVisible) {
-      const timer = setTimeout(closeToast, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [toastState.isVisible, closeToast]);
 
   useToastMessage({ showToast: showToast });
 
+  // 토스트 메시지가 켜진 후 3초 뒤에 꺼지도록 타이머 시작
+  useToastTimer({
+    isVisible: toastState.isVisible,
+    closeToast: closeToast,
+    duration: 3000,
+  });
 
   return (
     <ToastMessageContext.Provider
