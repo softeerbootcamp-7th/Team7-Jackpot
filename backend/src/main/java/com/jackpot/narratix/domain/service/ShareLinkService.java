@@ -44,7 +44,7 @@ public class ShareLinkService {
     }
 
     private ShareLink updateExistingShareLink(ShareLink shareLink) {
-        shareLink.activate();
+        if (!shareLink.isShared()) shareLink.activate();
         return shareLink;
     }
 

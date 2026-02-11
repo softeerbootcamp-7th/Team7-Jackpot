@@ -24,7 +24,6 @@ public class ShareLink {
     @Column(name = "share_id", nullable = false)
     private String shareId;
 
-    @NotNull
     @Column(name = "is_shared", nullable = false)
     private boolean isShared;
 
