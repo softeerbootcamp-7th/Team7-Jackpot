@@ -1,5 +1,6 @@
 package com.jackpot.narratix.global.interceptor;
 
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.exception.ShareLinkErrorCode;
 import com.jackpot.narratix.domain.service.ShareLinkService;
 import com.jackpot.narratix.global.auth.jwt.domain.Token;
@@ -16,6 +17,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
 import java.util.Objects;
 
 import static org.springframework.messaging.support.MessageHeaderAccessor.getAccessor;
@@ -34,13 +36,30 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         StompHeaderAccessor accessor = getAccessor(message, StompHeaderAccessor.class);
 
         if (StompCommand.CONNECT.equals(Objects.requireNonNull(accessor).getCommand())) {
+            Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+            if (sessionAttributes == null) {
+                throw new IllegalStateException("Session attributes cannot be null during CONNECT");
+            }
+
+            String shareId = accessor.getFirstNativeHeader("shareId");
+            if (shareId == null || shareId.isEmpty()) {
+                throw new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND);
+            }
             String userId = extractUserId(accessor);
-            String shareId = Objects.requireNonNull(accessor.getSessionAttributes()).get("shareId").toString();
-            if (!shareLinkService.accessShareLink(userId, shareId)) {
+            ReviewRoleType role = shareLinkService.validateShareLinkAndGetRole(userId, shareId);
+
+            sessionAttributes.put("shareId", shareId);
+            sessionAttributes.put("userId", userId);
+            sessionAttributes.put("role", role);
+
+            // 접근 권한 최종 확인
+            if (!shareLinkService.accessShareLink(userId, role, shareId)) {
+                log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
                 throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
             }
-            return message;
+            log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
         }
+
         return message;
     }
 
