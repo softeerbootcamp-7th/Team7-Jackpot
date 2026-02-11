@@ -392,6 +392,19 @@ class CoverLetterRepositoryTest {
         entityManager.clear();
     }
 
+    /**
+     * 자기소개서를 생성하고 deadline과 modifiedAt을 설정하여 저장합니다.
+     */
+    private CoverLetter createAndSaveCoverLetterWith(String userId, LocalDate deadline, LocalDateTime modifiedAt) {
+        CoverLetter coverLetter = builder()
+                .userId(userId)
+                .deadline(deadline)
+                .build();
+        CoverLetter saved = coverLetterJpaRepository.save(coverLetter);
+        setAuditFields(saved, modifiedAt, modifiedAt);
+        return saved;
+    }
+
     @Test
     @DisplayName("다가오는 자기소개서 조회 시 최대 마감일 그룹 제한을 만족하여 반환한다.")
     void findUpcomingCoverLettersGroupedByDeadline_GroupedAndLimited() {
@@ -1085,30 +1098,33 @@ class CoverLetterRepositoryTest {
     @DisplayName("필터로 자기소개서 조회 시 커서 페이지네이션이 작동한다")
     void findByFilter_WithCursorPagination() {
         // given
-        User user = saveUser("testUser2626", "테스터29");
+        User user = saveUser("testUser2525", "테스터28");
         String userId = user.getId();
 
-        LocalDateTime t1 = LocalDateTime.of(2024, 6, 1, 10, 0);
-        LocalDateTime t2 = LocalDateTime.of(2024, 6, 1, 11, 0);
-        LocalDateTime t3 = LocalDateTime.of(2024, 6, 1, 12, 0);
+        LocalDate sameDeadLine = LocalDate.of(2024, 1, 1);
+        LocalDate oldDeadLine = LocalDate.of(2023, 1, 1);
 
-        CoverLetter cl1 = builder().userId(userId).createdAt(t1).build();
-        CoverLetter cl2 = builder().userId(userId).createdAt(t2).build();
-        CoverLetter cl3 = builder().userId(userId).createdAt(t3).build();
+        CoverLetter cl1 = builder().userId(userId).deadline(sameDeadLine).build();
+        CoverLetter cl2 = builder().userId(userId).deadline(sameDeadLine).build();
+        CoverLetter cl3 = builder().userId(userId).deadline(oldDeadLine).build();
 
-        coverLetterJpaRepository.save(cl1);
-        coverLetterJpaRepository.save(cl2);
-        coverLetterJpaRepository.save(cl3);
-        flushAndClear();
+        CoverLetter saved1 = coverLetterJpaRepository.save(cl1);
+        CoverLetter saved2 = coverLetterJpaRepository.save(cl2);
+        CoverLetter saved3 = coverLetterJpaRepository.save(cl3);
 
-        // when - 첫 페이지 조회
+        LocalDateTime sameModifiedAt = LocalDateTime.of(2024, 1, 1, 0, 0);
+        LocalDateTime oldModifiedAt = LocalDateTime.of(2023, 1, 1,0,0);
+
+        setAuditFields(saved1, sameModifiedAt, sameModifiedAt);
+        setAuditFields(saved2, oldModifiedAt, oldModifiedAt);
+        setAuditFields(saved3, oldModifiedAt, oldModifiedAt);
+
+        entityManager.flush();
+        entityManager.clear();
+
         Slice<CoverLetter> firstPage = coverLetterRepository.findByFilter(
                 userId, null, null, null, null, 2
         );
-
-        // then
-        assertThat(firstPage.getContent()).hasSize(2);
-        assertThat(firstPage.hasNext()).isTrue();
 
         // when - 두 번째 페이지 조회 (커서 사용)
         Long lastCoverLetterId = firstPage.getContent().get(1).getId();
@@ -1214,5 +1230,128 @@ class CoverLetterRepositoryTest {
         // then
         assertThat(result.getContent()).hasSize(1);
         assertThat(result.getContent().get(0).getUserId()).isEqualTo(user1.getId());
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 같은 deadline과 같은 modifiedAt을 가진 경우 id로 정렬되고 커서 페이지네이션이 정상 동작한다")
+    void findByFilter_CursorPaginationWithSameDeadlineAndModifiedAt() {
+        // given: 같은 deadline, 같은 modifiedAt을 가진 3개의 자기소개서
+        User user = saveUser("testUser3131", "테스터34");
+        LocalDate deadline = LocalDate.of(2024, 6, 15);
+        LocalDateTime modifiedAt = LocalDateTime.of(2024, 6, 10, 12, 0);
+
+        createAndSaveCoverLetterWith(user.getId(), deadline, modifiedAt);
+        createAndSaveCoverLetterWith(user.getId(), deadline, modifiedAt);
+        createAndSaveCoverLetterWith(user.getId(), deadline, modifiedAt);
+        flushAndClear();
+
+        // when: 첫 페이지 조회 (size=2)
+        Slice<CoverLetter> firstPage = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, null, 2
+        );
+
+        // then: id 내림차순 정렬 확인
+        assertThat(firstPage.getContent()).hasSize(2);
+        assertThat(firstPage.hasNext()).isTrue();
+        assertThat(firstPage.getContent().get(0).getId())
+                .isGreaterThan(firstPage.getContent().get(1).getId());
+
+        // when: 커서로 두 번째 페이지 조회
+        Long lastId = firstPage.getContent().get(1).getId();
+        Slice<CoverLetter> secondPage = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, lastId, 2
+        );
+
+        // then: 나머지 1개 조회되고, id가 계속 감소하는지 확인
+        assertThat(secondPage.getContent()).hasSize(1);
+        assertThat(secondPage.hasNext()).isFalse();
+        assertThat(secondPage.getContent().get(0).getId()).isLessThan(lastId);
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 같은 deadline을 가진 경우 modifiedAt desc, id desc로 정렬되고 커서 페이지네이션이 정상 동작한다")
+    void findByFilter_CursorPaginationWithSameDeadline() {
+        // given: 같은 deadline, 다른 modifiedAt (각각 2개씩)
+        User user = saveUser("testUser3232", "테스터35");
+        LocalDate deadline = LocalDate.of(2024, 6, 15);
+        LocalDateTime newerTime = LocalDateTime.of(2024, 6, 10, 14, 0);
+        LocalDateTime olderTime = LocalDateTime.of(2024, 6, 10, 12, 0);
+
+        createAndSaveCoverLetterWith(user.getId(), deadline, newerTime);
+        createAndSaveCoverLetterWith(user.getId(), deadline, newerTime);
+        createAndSaveCoverLetterWith(user.getId(), deadline, olderTime);
+        createAndSaveCoverLetterWith(user.getId(), deadline, olderTime);
+        flushAndClear();
+
+        // when: 전체 조회
+        Slice<CoverLetter> result = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, null, 10
+        );
+
+        // then: modifiedAt desc, id desc 순서 확인
+        assertThat(result.getContent()).hasSize(4);
+        List<CoverLetter> content = result.getContent();
+
+        // 앞 2개는 newerTime, id 내림차순
+        assertThat(content.get(0).getModifiedAt()).isEqualTo(newerTime);
+        assertThat(content.get(1).getModifiedAt()).isEqualTo(newerTime);
+        assertThat(content.get(0).getId()).isGreaterThan(content.get(1).getId());
+
+        // 뒤 2개는 olderTime, id 내림차순
+        assertThat(content.get(2).getModifiedAt()).isEqualTo(olderTime);
+        assertThat(content.get(3).getModifiedAt()).isEqualTo(olderTime);
+        assertThat(content.get(2).getId()).isGreaterThan(content.get(3).getId());
+
+        // when: 커서 페이지네이션으로 2개 조회 후 다음 페이지
+        Slice<CoverLetter> firstPage = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, null, 2
+        );
+        Slice<CoverLetter> secondPage = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, firstPage.getContent().get(1).getId(), 2
+        );
+
+        // then: 두 번째 페이지는 olderTime을 가진 항목들
+        assertThat(secondPage.getContent()).hasSize(2)
+                .allMatch(cl -> cl.getModifiedAt().equals(olderTime));
+    }
+
+    @Test
+    @DisplayName("필터로 자기소개서 조회 시 다양한 deadline과 modifiedAt 조합에서 커서 페이지네이션이 정상 동작한다")
+    void findByFilter_CursorPaginationWithMixedConditions() {
+        // given: deadline desc, modifiedAt desc 순서로 정렬되어야 하는 4개 항목
+        User user = saveUser("testUser3333", "테스터36");
+        LocalDate newerDeadline = LocalDate.of(2024, 6, 20);
+        LocalDate olderDeadline = LocalDate.of(2024, 6, 10);
+        LocalDateTime newerTime = LocalDateTime.of(2024, 6, 10, 14, 0);
+        LocalDateTime olderTime = LocalDateTime.of(2024, 6, 10, 12, 0);
+
+        CoverLetter cl1 = createAndSaveCoverLetterWith(user.getId(), newerDeadline, newerTime);
+        CoverLetter cl2 = createAndSaveCoverLetterWith(user.getId(), newerDeadline, olderTime);
+        CoverLetter cl3 = createAndSaveCoverLetterWith(user.getId(), olderDeadline, newerTime);
+        CoverLetter cl4 = createAndSaveCoverLetterWith(user.getId(), olderDeadline, olderTime);
+        flushAndClear();
+
+        // when: 전체 조회
+        List<CoverLetter> content = coverLetterRepository.findByFilter(
+                user.getId(), null, null, null, null, 10
+        ).getContent();
+
+        // then: deadline desc, modifiedAt desc 순서 확인
+        assertThat(content)
+                .extracting(CoverLetter::getId)
+                .containsExactly(cl1.getId(), cl2.getId(), cl3.getId(), cl4.getId());
+
+        // when: 한 페이지씩 커서 페이지네이션
+        Long cursor = null;
+        for (CoverLetter expected : List.of(cl1, cl2, cl3, cl4)) {
+            Slice<CoverLetter> page = coverLetterRepository.findByFilter(
+                    user.getId(), null, null, null, cursor, 1
+            );
+
+            // then: 올바른 순서로 조회
+            assertThat(page.getContent()).hasSize(1);
+            assertThat(page.getContent().get(0).getId()).isEqualTo(expected.getId());
+            cursor = page.getContent().get(0).getId();
+        }
     }
 }

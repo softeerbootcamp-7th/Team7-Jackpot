@@ -153,7 +153,7 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
         }
 
         List<CoverLetter> results = jpaQuery.where(createFilterConditions(userId, startDate, endDate, isShared, lastCoverLetterId))
-                .orderBy(coverLetter.deadline.desc(), coverLetter.modifiedAt.desc())
+                .orderBy(coverLetter.deadline.desc(), coverLetter.modifiedAt.desc(), coverLetter.id.desc())
                 .limit(fetchSize)
                 .fetch();
 
@@ -221,11 +221,17 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
     }
 
     private BooleanExpression buildCursorCondition(CoverLetter lastCoverLetter) {
+        // 정렬: deadline DESC, modifiedAt DESC, id DESC
         BooleanExpression isBeforeDeadline = coverLetter.deadline.lt(lastCoverLetter.getDeadline());
         BooleanExpression isSameDeadlineButBeforeModifiedAt = coverLetter.deadline.eq(lastCoverLetter.getDeadline())
-                .and(coverLetter.modifiedAt.lt(lastCoverLetter.getModifiedAt()))
+                .and(coverLetter.modifiedAt.lt(lastCoverLetter.getModifiedAt()));
+
+        BooleanExpression isSameDeadlineAndModifiedAtButSmallerId = coverLetter.deadline.eq(lastCoverLetter.getDeadline())
+                .and(coverLetter.modifiedAt.eq(lastCoverLetter.getModifiedAt()))
                 .and(coverLetter.id.lt(lastCoverLetter.getId()));
 
-        return isBeforeDeadline.or(isSameDeadlineButBeforeModifiedAt);
+        return isBeforeDeadline
+                .or(isSameDeadlineButBeforeModifiedAt)
+                .or(isSameDeadlineAndModifiedAtButSmallerId);
     }
 }
