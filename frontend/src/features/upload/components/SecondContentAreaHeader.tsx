@@ -1,7 +1,7 @@
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
 interface SecondContentAreaHeaderProps {
-    nextStep: (step: string) => void;
+    nextStep?: (step: string) => void;
 }
 
 const SecondContentAreaHeader = ({nextStep}: SecondContentAreaHeaderProps) => {
@@ -16,7 +16,7 @@ const SecondContentAreaHeader = ({nextStep}: SecondContentAreaHeaderProps) => {
             분류되었어요!
           </div>
         </div>
-        <button type='button' onClick={() => nextStep('3')} className='px-5 py-3 rounded-lg bg-gray-900 text-white font-bold text-lg cursor-pointer'>
+        <button type='button' onClick={() => nextStep?.('3')} className='px-5 py-3 rounded-lg bg-gray-900 text-white font-bold text-lg cursor-pointer'>
           저장하기
         </button>
       </div>
