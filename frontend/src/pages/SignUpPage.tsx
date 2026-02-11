@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router';
 
-import { useAuth } from '@/context/AuthContext';
 import AuthLayout from '@/features/auth/components/AuthLayout';
 import SignUpForm from '@/features/auth/components/SignUpForm';
 import { SUB_TITLE } from '@/features/auth/constants/constantsInSignUpPage';
+import { useAuth } from '@/features/auth/hooks/useAuth';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
