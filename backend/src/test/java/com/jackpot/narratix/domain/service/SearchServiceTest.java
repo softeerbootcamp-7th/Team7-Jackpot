@@ -256,7 +256,7 @@ class SearchServiceTest {
                 .map(QuestionCategoryType::getDescription)
                 .toList();
         assertThat(response.libraries()).isEqualTo(expectedDescriptions);
-        assertThat(response.totalQnACount()).isEqualTo(mockCount);
+        assertThat(response.qnACount()).isEqualTo(mockCount);
 
         assertThat(response.qnAs()).hasSize(2);
 
