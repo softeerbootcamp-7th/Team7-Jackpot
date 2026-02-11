@@ -39,18 +39,11 @@ public class ShareLinkLockManager {
     public void unlock(String shareId, ReviewRoleType role, String userId) {
         String lockKey = getLockKey(shareId, role);
 
-        if(!isLockOwner(lockKey, userId)) throw new IllegalStateException("Not lock owner");
-
         redisTemplate.execute(
                 new DefaultRedisScript<>(UNLOCK_SCRIPT, Long.class),
                 List.of(lockKey),
                 userId
         );
-    }
-
-    public boolean isLockOwner(String lockKey, String userId) {
-        String currentOwner = redisTemplate.opsForValue().get(lockKey);
-        return userId.equals(currentOwner);
     }
 
     private String getLockKey(String shareId, ReviewRoleType role) {
