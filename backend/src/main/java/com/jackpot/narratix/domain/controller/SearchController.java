@@ -7,7 +7,6 @@ import com.jackpot.narratix.domain.controller.response.SearchScrapResponse;
 import com.jackpot.narratix.domain.service.LibraryService;
 import com.jackpot.narratix.domain.service.SearchService;
 import com.jackpot.narratix.global.auth.UserId;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -51,7 +50,7 @@ public class SearchController implements SearchApi {
     @GetMapping("/library")
     public ResponseEntity<SearchLibraryAndQnAResponse> searchLibraryAndQnA(
             @UserId String userId,
-            @RequestParam @NotBlank String searchWord,
+            @RequestParam String searchWord,
             @RequestParam(required = false) Long lastQnAId,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
