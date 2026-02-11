@@ -71,5 +71,7 @@ public interface QnAJpaRepository extends JpaRepository<QnA, Long> {
                         OR q.answer LIKE CONCAT('%', :keyword, '%')
                   )
             """)
-    Long countSearchQnA(String userId, String keyword);
+    Long countSearchQnA(
+            @Param("userId") String userId,
+            @Param("keyword") String keyword);
 }
