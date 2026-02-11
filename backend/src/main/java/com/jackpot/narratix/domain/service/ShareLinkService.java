@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class ShareLinkService {
@@ -55,5 +57,14 @@ public class ShareLinkService {
     private ShareLinkActiveResponse deactivateShareLink(Long coverLetterId) {
         shareLinkRepository.findById(coverLetterId).ifPresent(ShareLink::deactivate);
         return ShareLinkActiveResponse.deactivate();
+    }
+
+    @Transactional(readOnly = true)
+    public ShareLinkActiveResponse getShareLinkStatus(String userId, Long coverLetterId) {
+        validateCoverLetterOwnership(userId, coverLetterId);
+        Optional<ShareLink> shareLinkOptional = shareLinkRepository.findById(coverLetterId);
+
+        return shareLinkOptional.map(ShareLinkActiveResponse::of)
+                .orElseGet(ShareLinkActiveResponse::deactivate);
     }
 }
