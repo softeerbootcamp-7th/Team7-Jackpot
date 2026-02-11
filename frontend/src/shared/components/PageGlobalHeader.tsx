@@ -1,11 +1,15 @@
+import { useState } from 'react';
+
 import { useNavigate } from 'react-router';
 
+import NotificationDropdown from '@/features/notification/components/NotificationDropdown';
 import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
   const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
     <header className='mb-[1.875rem] flex h-[3.75rem] w-full items-center justify-between bg-white px-75'>
@@ -34,11 +38,13 @@ const PageGlobalHeader = () => {
       </div>
 
       <div className='flex items-center gap-5'>
-        <button type='button' className='cursor-pointer p-1'>
-          <I.NotificationIcon />
-        </button>
+        <NotificationDropdown
+          isOpen={isDropdownOpen}
+          handleDropdown={setIsDropdownOpen}
+        />
         <div className='flex cursor-pointer items-center gap-2'>
           <I.UserAvatarIcon />
+          {/* [윤종근] - 졸린 경민 하드코딩 수정 */}
           <span className='text-base font-medium text-gray-600'>졸린 경민</span>
         </div>
       </div>
