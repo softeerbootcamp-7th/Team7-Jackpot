@@ -4,7 +4,7 @@ import SecondContentAreaHeader from '@/features/upload/components/SecondContentA
 import SecondContentItem from '@/features/upload/components/SecondContentItem';
 
 interface SecondContentAreaProps {
-  nextStep: (step: string) => void;
+  nextStep?: (step: string) => void;
 }
 const SecondContentArea = ({ nextStep }: SecondContentAreaProps) => {
   const [tabState, setTabState] = useState<1 | 2 | 3>(1);
