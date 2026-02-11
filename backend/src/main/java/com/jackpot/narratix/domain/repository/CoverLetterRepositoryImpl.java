@@ -221,10 +221,11 @@ public class CoverLetterRepositoryImpl implements CoverLetterRepository {
     }
 
     private BooleanExpression buildCursorCondition(CoverLetter lastCoverLetter) {
-        BooleanExpression isBeforeLastCreatedAt = coverLetter.createdAt.lt(lastCoverLetter.getCreatedAt());
-        BooleanExpression isSameCreatedAtButSmallerId = coverLetter.createdAt.eq(lastCoverLetter.getCreatedAt())
+        BooleanExpression isBeforeDeadline = coverLetter.deadline.lt(lastCoverLetter.getDeadline());
+        BooleanExpression isSameDeadlineButBeforeModifiedAt = coverLetter.deadline.eq(lastCoverLetter.getDeadline())
+                .and(coverLetter.modifiedAt.lt(lastCoverLetter.getModifiedAt()))
                 .and(coverLetter.id.lt(lastCoverLetter.getId()));
 
-        return isBeforeLastCreatedAt.or(isSameCreatedAtButSmallerId);
+        return isBeforeDeadline.or(isSameDeadlineButBeforeModifiedAt);
     }
 }
