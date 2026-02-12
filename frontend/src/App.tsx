@@ -1,10 +1,6 @@
-<<<<<<< HEAD
 import { QueryClientProvider } from '@tanstack/react-query';
-=======
->>>>>>> 4da9db3 ([feat] 사용성을 극대화하고자 중첩 라우팅 구현)
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
-import CoverLetterQnAFriendsPage from '@/pages//CoverLetterQnAFriendsPage';
 import CoverLetterLandingPage from '@/pages/CoverLetterLandingPage';
 import HomePage from '@/pages/HomePage';
 import LoginPage from '@/pages/LoginPage';
@@ -13,10 +9,6 @@ import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
-import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
-import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
-import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
-import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayout';
 import DetailView from '@/features/library/components/DetailView';
 import LibraryLayout from '@/features/library/components/LibraryLayout';
 import LibrarySidebarLayout from '@/features/library/components/LibrarySidebarLayout';
