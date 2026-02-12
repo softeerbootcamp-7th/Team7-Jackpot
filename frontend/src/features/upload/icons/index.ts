@@ -12,8 +12,10 @@ import LoadingSpinnerIcon from '@/features/upload/icons/LoadingSpinnerIcon';
 import RightPaginationButtonIcon from '@/features/upload/icons/RightPaginationButtonIcon';
 import TextDocumentIcon from '@/features/upload/icons/TextDocumentIcon';
 import TextUploadIcon from '@/features/upload/icons/TextUploadIcon';
+import UploadCompleteBackground from '@/features/upload/icons/UploadCompleteBackground';
 import UploadCompleteIcon from '@/features/upload/icons/UploadCompleteIcon';
 import UploadIcon from '@/features/upload/icons/UploadIcon';
+import UploadIconInButton from '@/features/upload/icons/UploadIconInButton';
 import UploadInputIcon from '@/features/upload/icons/UploadInputIcon';
 
 export const UploadPageIcons = {
@@ -34,4 +36,6 @@ export const UploadPageIcons = {
   FileRemoveIcon: FileRemoveIcon,
   LoadingSpinnerIcon: LoadingSpinnerIcon,
   UploadCompleteIcon: UploadCompleteIcon,
+  UploadCompleteBackground: UploadCompleteBackground,
+  UploadIconInButton: UploadIconInButton,
 };
