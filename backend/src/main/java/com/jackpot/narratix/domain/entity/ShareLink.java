@@ -11,7 +11,10 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "share_link")
+@Table(
+        name = "share_link",
+        indexes = @Index(name = "unique_idx_share_link", columnList = "share_link", unique = true)
+)
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
