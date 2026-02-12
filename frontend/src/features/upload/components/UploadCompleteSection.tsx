@@ -1,6 +1,6 @@
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
-const ThirdContentArea = () => {
+const UploadCompleteSection = () => {
   return (
     <div>
       <div className='flex flex-col gap-1'>
@@ -24,4 +24,4 @@ const ThirdContentArea = () => {
   );
 };
 
-export default ThirdContentArea;
+export default UploadCompleteSection;
