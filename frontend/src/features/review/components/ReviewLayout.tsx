@@ -1,10 +1,20 @@
+import { useParams } from 'react-router';
+
 import CoverLetterSection from '@/features/review/components/coverLetter/CoverLetterSection';
 import ReviewListSection from '@/features/review/components/review/ReviewListSection';
+import { useCoverLetter } from '@/shared/hooks/useCoverLetterQueries';
+import { useQnAIdList, useQnAList } from '@/shared/hooks/useQnAQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
 
 const ReviewLayout = () => {
+  const { id } = useParams();
+  const coverLetterId = Number(id);
+
+  const { data: coverLetter } = useCoverLetter(coverLetterId);
+  const { data: qnaIds } = useQnAIdList(coverLetterId);
+  const { data: qnas } = useQnAList(qnaIds);
+
   const {
-    coverLetter,
     currentPageIndex,
     currentQna,
     currentText,
@@ -17,7 +27,7 @@ const ReviewLayout = () => {
     handleEditReview,
     handleCancelEdit,
     handleDeleteReview,
-  } = useReviewState();
+  } = useReviewState(coverLetter, qnas);
 
   if (!currentQna) return <div>로딩 중...</div>;
 

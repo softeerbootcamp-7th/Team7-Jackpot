@@ -1,127 +1,4 @@
-import type { CoverLetter } from '@/shared/types/coverLetter';
-import type { QnA } from '@/shared/types/qna';
 import type { Review } from '@/shared/types/review';
-
-// Mock API
-export const mockCoverLetterApi: {
-  coverLetter: CoverLetter;
-  qnas: QnA[];
-} = {
-  coverLetter: {
-    coverLetterId: 1,
-    companyName: '삼성전자',
-    jobPosition: '비주얼 인터랙션 디자인',
-    applyYear: 2026,
-    applyHalf: '상반기',
-    deadline: '2025-01-25',
-  },
-  qnas: [
-    {
-      qnAId: 1,
-      question:
-        '본인의 성장과정, 성격의 장단점, 핵심 역량 및 지원 동기와 입사 후 포부를 구체적인 사례를 바탕으로 기술해 주십시오. (공백 포함 3,000자 이내)',
-      answer:
-        '저의 <c1>성장 과정을 통해 <c2>논리적 사고력</c2>을 키웠습니다</c1>. ' +
-        '대학 시절 <c3>팀 프로젝트를 <c4>주도하며</c4> 협업의 중요성</c3>을 깨달았습니다. ' +
-        '특히 <c5>정량적 분석과 <c6>사용자 조사</c6>를 통한 의사결정</c5> 과정에서 ' +
-        '많은 것을 배웠습니다.',
-      answerSize: 800,
-      modifiedAt: '2026-02-12T18:00:00',
-    },
-    {
-      qnAId: 2,
-      question:
-        '삼성전자에 지원한 이유와 해당 직무에 필요한 역량에 대해 설명해 주십시오. (공백 포함 1,500자 이내)',
-      answer:
-        '삼성전자의 <c7>혁신적인 <c8>기술력과 글로벌 영향력</c8>에 매료</c7>되어 ' +
-        '지원하게 되었습니다. <c9>사용자 경험을 중시하는</c9> 디자인 철학이 ' +
-        '<c10>저의 가치관과</c10> 부합합니다.',
-      answerSize: 650,
-      modifiedAt: '2026-02-12T18:00:00',
-    },
-  ],
-};
-
-export const mockFetchReviewsByQnaId = (qnAId: number) => {
-  if (qnAId === 1) {
-    return {
-      reviews: [
-        {
-          id: 1,
-          sender: { id: 'user-1', nickname: '귀여운 캥거루' },
-          originText: '성장 과정을 통해 논리적 사고력을 키웠습니다',
-          suggest:
-            '성장 과정에서 논리적 사고 역량을 지속적으로 발전시켜 왔습니다',
-          comment: '전체적인 문맥을 좀 더 구체적으로 풀어주면 좋겠습니다.',
-          createdAt: '2025-01-26T10:00:00Z',
-        },
-
-        {
-          id: 2,
-          sender: { id: 'user-2', nickname: '멋진 사자' },
-          originText: '문제 해결 능력',
-          suggest: '논리적 문제 해결 능력',
-          comment:
-            '어떤 종류의 문제 해결 능력인지 구체화하면 더 좋을 것 같아요.',
-          createdAt: '2025-01-20T09:45:00Z',
-        },
-        {
-          id: 3,
-          sender: { id: 'user-3', nickname: '똑똑한 올빼미' },
-          originText: '팀 프로젝트를 주도하며 협업의 중요성',
-          suggest: '팀 프로젝트에서 리더십을 발휘하며 협업의 가치',
-          comment: '주도한 경험을 좀 더 강조하면 좋겠습니다.',
-          createdAt: '2025-01-25T10:00:00Z',
-        },
-        {
-          id: 4,
-          sender: { id: 'user-5', nickname: '지혜로운 부엉이' },
-          originText: '데이터 분석과 사용자 리서치를 통한 의사결정',
-          suggest:
-            '정량적 데이터 분석과 정성적 사용자 리서치를 결합한 의사결정',
-          comment: '분석 방법을 좀 더 구체화하면 설득력이 높아집니다.',
-          createdAt: '2025-01-22T10:10:00Z',
-        },
-        {
-          id: 5,
-          sender: { id: 'user-6', nickname: '친절한 펭귄' },
-          originText: '사용자 리서치',
-          suggest: '심층 사용자 인터뷰 및 관찰 조사',
-          comment: '구체적인 리서치 방법론을 언급하면 좋겠어요.',
-          createdAt: '2025-01-22T10:15:00Z',
-        },
-        {
-          id: 99,
-          sender: { id: 'user-99', nickname: '과거의 리뷰어' },
-          originText: '체계적인 분석 프로세스',
-          suggest: '보다 구조화된 분석 방법론',
-          comment: '이 부분은 원문에서 완전히 삭제되었습니다.',
-          createdAt: '2025-01-18T15:30:00Z',
-        },
-      ],
-      hasNext: false,
-    };
-  }
-
-  if (qnAId === 2) {
-    return {
-      reviews: [],
-      hasNext: false,
-    };
-  }
-
-  return { reviews: [], hasNext: false };
-};
-
-// TODO: 실제 API와 연동하는 로직으로 대체 필요
-export const mockFetchCoverLetterById = (
-  coverLetterId: number,
-): { coverLetter: CoverLetter | null; qnas: QnA[] } => {
-  if (coverLetterId === mockCoverLetterApi.coverLetter.coverLetterId) {
-    return mockCoverLetterApi;
-  }
-  return { coverLetter: null, qnas: [] };
-};
 
 export const parseTaggedText = (raw: string) => {
   const openTagRegex = /<c(\d+)>/g;
@@ -257,3 +134,151 @@ export const buildReviewsFromApi = (
 
 let internalReviewAutoId = 1000;
 export const generateInternalReviewId = () => String(++internalReviewAutoId);
+
+// 두 문자열을 비교하여 변경된 위치와 길이를 계산
+export const calculateTextChange = (
+  oldText: string,
+  newText: string,
+): { changeStart: number; oldLength: number; newLength: number } => {
+  // 앞에서부터 같은 부분 찾기
+  let changeStart = 0;
+  while (
+    changeStart < oldText.length &&
+    changeStart < newText.length &&
+    oldText[changeStart] === newText[changeStart]
+  ) {
+    changeStart++;
+  }
+
+  // 뒤에서부터 같은 부분 찾기
+  let oldEnd = oldText.length;
+  let newEnd = newText.length;
+  while (
+    oldEnd > changeStart &&
+    newEnd > changeStart &&
+    oldText[oldEnd - 1] === newText[newEnd - 1]
+  ) {
+    oldEnd--;
+    newEnd--;
+  }
+
+  return {
+    changeStart,
+    oldLength: oldEnd - changeStart,
+    newLength: newEnd - changeStart,
+  };
+};
+
+// 텍스트 변경에 따라 리뷰 범위를 업데이트
+export const updateReviewRanges = <
+  T extends { range: { start: number; end: number } },
+>(
+  reviews: T[],
+  changeStart: number,
+  oldLength: number,
+  newLength: number,
+): T[] => {
+  const lengthDiff = newLength - oldLength;
+  const changeEnd = changeStart + oldLength;
+
+  return reviews.map((review) => {
+    const { start, end } = review.range;
+
+    // 변경 범위 이전의 리뷰: 영향 없음
+    if (end <= changeStart) {
+      return review;
+    }
+
+    // 변경 범위 이후의 리뷰: 전체 이동
+    if (start >= changeEnd) {
+      return {
+        ...review,
+        range: {
+          start: start + lengthDiff,
+          end: end + lengthDiff,
+        },
+      };
+    }
+
+    // 변경 범위와 겹치는 리뷰
+    // 1. 리뷰가 변경 범위에 완전히 포함되고, 모든 내용이 삭제된 경우만 무효화
+    if (start >= changeStart && end <= changeEnd && newLength === 0) {
+      return {
+        ...review,
+        range: {
+          start: -1,
+          end: -1,
+        },
+        isValid: false,
+      } as T;
+    }
+
+    // 2. 리뷰 시작 위치가 변경 범위 안에 있는 경우
+    if (start >= changeStart && start < changeEnd) {
+      // 리뷰 시작이 변경 범위 내부 → start는 변경 시작점으로, end는 길이 변화만큼 조정
+      const newStart = changeStart;
+      const newEnd = end + lengthDiff;
+      return {
+        ...review,
+        range: {
+          start: newStart,
+          end: Math.max(newStart, newEnd), // end가 start보다 작아지지 않도록
+        },
+      };
+    }
+
+    // 3. 리뷰 끝 위치가 변경 범위 안에 있는 경우
+    if (end > changeStart && end <= changeEnd) {
+      // 리뷰 끝이 변경 범위 내부 → end는 변경 시작점으로
+      return {
+        ...review,
+        range: {
+          start,
+          end: changeStart + newLength,
+        },
+      };
+    }
+
+    // 4. 리뷰가 변경 범위를 완전히 포함하는 경우
+    if (start < changeStart && end > changeEnd) {
+      // 리뷰 범위가 변경 범위보다 큼 → end만 길이 변화만큼 조정
+      return {
+        ...review,
+        range: {
+          start,
+          end: end + lengthDiff,
+        },
+      };
+    }
+
+    return review;
+  });
+};
+
+// 편집된 텍스트와 리뷰 범위 정보를 받아서 태그가 포함된 원본 형식으로 재구성
+export const reconstructTaggedText = (
+  cleanedText: string,
+  reviews: Array<{ id: string; range: { start: number; end: number } }>,
+): string => {
+  // 유효한 리뷰만 필터링 (start, end가 -1이 아닌 것)
+  const validReviews = reviews.filter(
+    (r) => r.range.start !== -1 && r.range.end !== -1,
+  );
+
+  // 뒤에서부터 삽입하기 위해 start 위치 기준 내림차순 정렬
+  const sorted = [...validReviews].sort(
+    (a, b) => b.range.start - a.range.start,
+  );
+
+  let result = cleanedText;
+
+  // 뒤에서부터 태그 삽입 (앞에서부터 하면 인덱스가 계속 변경됨)
+  for (const review of sorted) {
+    const before = result.slice(0, review.range.start);
+    const tagged = result.slice(review.range.start, review.range.end);
+    const after = result.slice(review.range.end);
+    result = `${before}<c${review.id}>${tagged}</c${review.id}>${after}`;
+  }
+
+  return result;
+};
