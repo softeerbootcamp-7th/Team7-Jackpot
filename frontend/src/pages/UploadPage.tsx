@@ -20,13 +20,6 @@ const UploadPage = () => {
           <UploadPageHeader />
           <StepItem step={currentStep} />
         </div>
-
-        <ContentArea
-          uploadTab={uploadTab}
-          setUploadTab={setUploadTab}
-          step={currentStep}
-          nextStep={nextStep}
-        />
       </div>
     </div>
   );
