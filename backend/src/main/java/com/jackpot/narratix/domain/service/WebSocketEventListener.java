@@ -37,6 +37,11 @@ public class WebSocketEventListener {
         log.info("웹소켓 연결 종료. UserId: {}, ShareId: {}, Role: {}", userId, shareId, role);
 
         // 락 해제
-        shareLinkLockManager.unlock(shareId, role, userId);
+        try {
+            shareLinkLockManager.unlock(shareId, role, userId);
+        } catch (Exception e) {
+            log.error("Failed to release lock on disconnect: shareId={}, role={}, userId={}", shareId, role, userId, e);
+        }
+
     }
 }
