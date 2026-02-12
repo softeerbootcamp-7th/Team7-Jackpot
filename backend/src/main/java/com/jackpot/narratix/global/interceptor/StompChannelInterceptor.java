@@ -46,16 +46,16 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             String userId = extractUserId(accessor);
             ReviewRoleType role = shareLinkService.validateShareLinkAndGetRole(userId, shareId);
 
+            if (!shareLinkService.accessShareLink(userId, role, shareId)) {
+                log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
+                throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
+            }
+
             WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
             WebSocketSessionAttributes.setShareId(sessionAttributes, shareId);
             WebSocketSessionAttributes.setRole(sessionAttributes, role);
 
             log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
-
-            if (!shareLinkService.accessShareLink(userId, role, shareId)) {
-                log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
-                throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
-            }
         }
 
         return message;
