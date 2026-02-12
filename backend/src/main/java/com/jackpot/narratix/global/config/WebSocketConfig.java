@@ -1,6 +1,7 @@
 package com.jackpot.narratix.global.config;
 
 import com.jackpot.narratix.global.interceptor.StompChannelInterceptor;
+import com.jackpot.narratix.global.websocket.GlobalStompErrorHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +10,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 @Configuration
 @EnableWebSocketMessageBroker
@@ -16,6 +18,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompChannelInterceptor stompChannelInterceptor;
+    private final GlobalStompErrorHandler globalStompErrorHandler;
 
     @Value("${cors.allowed-origins}")
     private String[] allowedOrigins;
@@ -33,10 +36,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 //                .setAllowedOrigins(allowedOrigins)
                 .setAllowedOriginPatterns("*") // TODO: 배포 전 테스트를 위해 모든 Origin 허용
                 .withSockJS();  // SockJS fallback 옵션 활성화 (웹소켓을 지원하지 않는 브라우저에 대한 대체 솔루션 제공)
+
+        registry.setErrorHandler(globalStompErrorHandler);
     }
 
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         registration.interceptors(stompChannelInterceptor);
+    }
+
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(128 * 1024); // 128KB
+        registration.setSendTimeLimit(20 * 1000); // 20초
+        registration.setSendBufferSizeLimit(512 * 1024); // 512KB
     }
 }
