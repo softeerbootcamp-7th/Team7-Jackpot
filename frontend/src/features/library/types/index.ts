@@ -5,7 +5,7 @@ export interface LibraryResponse {
 }
 
 export interface CoverLetterQnA {
-  qnaId: number;
+  qnAId: number;
   question: string;
   answer: string;
   answerSize: number;

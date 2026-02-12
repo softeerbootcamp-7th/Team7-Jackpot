@@ -28,6 +28,40 @@ function App() {
             {/* <Route path="/" element={<LandingPage />}/> */}
             <Route path='/home' element={<HomePage />} />
             <Route path='/upload' element={<UploadPage />} />
+            <Route path='/cover-letter' element={<CoverLetterLandingPage />} />
+            <Route path='/cover-letter/new' element={<CoverLetterPage />} />
+            <Route path='/library' element={<LibraryLayout />}>
+              <Route element={<LibrarySidebarLayout />}>
+                <Route path='company'>
+                  <Route
+                    index
+                    element={<EmptyCase {...emptyCaseText.folder} />}
+                  />
+                  <Route
+                    path=':companyName'
+                    element={<EmptyCase {...emptyCaseText.folder} />}
+                  />
+                  <Route
+                    path=':companyName/:coverLetterId'
+                    element={<DetailView />}
+                  />
+                </Route>
+                <Route path='qna'>
+                  <Route
+                    index
+                    element={<EmptyCase {...emptyCaseText.folder} />}
+                  />
+                  <Route
+                    path=':qnAName'
+                    element={<EmptyCase {...emptyCaseText.folder} />}
+                  />
+                  <Route path=':qnAName/:qnAId' element={<DetailView />} />
+                </Route>
+              </Route>
+            </Route>
+            <Route path='/review/:id' element={<ReviewPage />} />
+
+            {/* <Route path="/recruit" element={<RecruitPage />}/> */}
             <Route path='/library' element={<LibraryLayout />}>
               {/* [박소민] /library로 접속시 자동으로 /library/company로 이동 */}
               {/* TODO: 렌더링을 최소화할 수 있는 방법이 없는지 확인 (라우팅 변경해도 됨) */}

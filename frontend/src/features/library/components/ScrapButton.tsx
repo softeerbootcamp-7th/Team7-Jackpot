@@ -38,23 +38,26 @@ const ScrapButton = ({ initialIsScrapped = false }: ScrapButtonProps) => {
 
     const targetId = Number(qnAId); // API는 number를 원하므로 변환 필수!
 
+    if (Number.isNaN(targetId)) {
+      console.error('유효하지 않은 qnAId입니다:', qnAId);
+      return;
+    }
+
     if (isScrapped) {
-      // [CASE 1] 이미 스크랩됨 -> 삭제 요청
       if (!confirm('스크랩을 취소하시겠습니까?')) return;
 
-      // UI 먼저 변경 (사용자 경험 향상)
+      // 낙관적 업데이트
       setIsScrapped(false);
 
       deleteScrap(targetId, {
         onError: () => {
-          // 실패하면 원상복구 (롤백)
+          // 실패 시 롤백
           setIsScrapped(true);
           alert('스크랩 취소에 실패했습니다.');
         },
       });
     } else {
-      // [CASE 2] 스크랩 안 됨 -> 생성 요청
-      // UI 먼저 변경
+      // 낙관적 업데이트
       setIsScrapped(true);
 
       createScrap(

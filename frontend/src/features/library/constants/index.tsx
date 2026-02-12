@@ -23,7 +23,6 @@ export const emptyCaseText = {
   },
 };
 
-// [박소민] 합치는 방법 찾기
 export const libraryContent: TabContentType<LibraryView>[] = [
   {
     name: 'COMPANY',
@@ -38,3 +37,8 @@ export const libraryContent: TabContentType<LibraryView>[] = [
     path: '/library/qnA',
   },
 ];
+
+export const SITE_MAP: Record<LibraryView, string> = {
+  COMPANY: 'company',
+  QUESTION: 'qna',
+};

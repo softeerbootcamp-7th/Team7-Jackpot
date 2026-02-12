@@ -1,4 +1,4 @@
-import { NavLink, useParams } from 'react-router';
+import { generatePath, NavLink, useParams } from 'react-router';
 
 import type { CoverLetter } from '@/features/library/types';
 import { getDate } from '@/shared/utils/dates';
@@ -25,8 +25,11 @@ const CompanyDocument = ({ content }: CompanyDocumentProps) => {
 
   return (
     <NavLink
-      className={`w-full ${isSelected ? '' : 'opacity-30'}`}
-      to={`/library/company/${companyName}/${id}`}
+      className={`w-full ${isSelected ? 'opacity-0' : 'opacity-30'}`}
+      to={generatePath('/library/company/:companyName/:coverLetterId', {
+        companyName,
+        coverLetterId: String(id),
+      })}
     >
       <div className='inline-flex w-full flex-col items-start justify-start gap-1 border-b border-gray-100 px-3 py-5'>
         <div className='inline-flex items-center justify-start gap-1 self-stretch pr-1'>

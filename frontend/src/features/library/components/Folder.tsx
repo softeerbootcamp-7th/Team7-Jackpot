@@ -1,5 +1,6 @@
 import { NavLink } from 'react-router';
 
+import { SITE_MAP } from '@/features/library/constants';
 import { useLibraryTabs } from '@/features/library/hooks/useLibraryTabs';
 import { LibraryFolder } from '@/features/library/icons/LibraryFolder';
 
@@ -10,11 +11,11 @@ type FolderProps = {
 const Folder = ({ name }: FolderProps) => {
   const { currentTab } = useLibraryTabs();
 
-  const tab = currentTab === 'COMPANY' ? 'company' : 'qna';
+  const tab = SITE_MAP[currentTab];
 
   return (
     <NavLink
-      to={`./${tab}/${name}`}
+      to={`./${tab}/${encodeURIComponent(name)}`}
       className='inline-flex h-30 w-30 flex-col items-center justify-center gap-2.5 px-3 pt-5 pb-4'
     >
       <LibraryFolder />

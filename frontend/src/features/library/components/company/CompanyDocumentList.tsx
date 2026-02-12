@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { NavLink, useParams } from 'react-router';
 
 import { MOCK_COVER_LETTERS } from '@/features/library/api/mockData';
@@ -16,12 +14,9 @@ type Props = {
 
 const CompanyDocumentList = ({ className }: Props) => {
   const { companyName } = useParams<{ companyName?: string }>();
-  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
-    null,
-  );
   const { data } = useCompanyListQueries(companyName ?? null);
   const coverLetters =
-    data?.coverLetters ??
+    data?.pages.flatMap((page) => page.coverLetters) ??
     MOCK_COVER_LETTERS.filter((letter) => letter.companyName === companyName);
 
   return (
@@ -40,12 +35,7 @@ const CompanyDocumentList = ({ className }: Props) => {
         </div>
       </div>
       {coverLetters.map((document) => (
-        <CompanyDocument
-          key={document.id}
-          content={document}
-          selectedDocumentId={selectedDocumentId}
-          onSelect={() => setSelectedDocumentId(document.id)}
-        />
+        <CompanyDocument key={document.id} content={document} />
       ))}
     </div>
   );

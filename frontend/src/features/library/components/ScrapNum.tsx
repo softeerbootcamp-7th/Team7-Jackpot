@@ -13,7 +13,7 @@ const ScrapNum = () => {
           aria-live='polite'
           className='text-caption-s justify-start text-center font-bold text-white'
         >
-          {data?.scrapCount || '0'}
+          {data?.scrapCount ?? 0}
         </div>
       </div>
     </div>

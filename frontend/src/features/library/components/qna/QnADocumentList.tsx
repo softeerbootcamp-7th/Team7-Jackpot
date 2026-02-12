@@ -10,11 +10,14 @@ type Props = {
   className: string;
 };
 
+const isDev = import.meta.env.DEV;
+
 const QnADocumentList = ({ className }: Props) => {
   const { qnAName } = useParams<{ qnAName?: string }>();
   const { data } = useQnAListQueries(qnAName ?? null);
   const questions =
-    data?.questions ?? getMockQuestionsByQnAName(qnAName ?? null);
+    data?.pages.flatMap((page) => page.questions) ??
+    (isDev ? getMockQuestionsByQnAName(qnAName ?? null) : []);
 
   return (
     <div className={`w-full ${className}`}>

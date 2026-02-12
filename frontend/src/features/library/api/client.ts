@@ -1,5 +1,4 @@
-const BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'https://api.narratix.site';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function httpClient<T>(
   path: string,
@@ -21,8 +20,8 @@ export async function httpClient<T>(
     headers: {
       'Content-Type': 'application/json',
       Authorization: token,
+      ...config?.headers,
     },
-    ...config?.headers,
   });
 
   if (!response.ok) {

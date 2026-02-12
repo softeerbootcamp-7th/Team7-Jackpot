@@ -2,13 +2,8 @@ import { useMemo } from 'react';
 
 import { matchPath, useLocation, useNavigate } from 'react-router';
 
+import { SITE_MAP } from '@/features/library/constants';
 import type { LibraryView } from '@/features/library/types';
-
-// [박소민] TODO: URL과 탭을 관리하는 상수 값 한번에 관리 (이동)
-const SITE_MAP = {
-  COMPANY: 'company',
-  QUESTION: 'qna',
-};
 
 export const useLibraryTabs = () => {
   const navigate = useNavigate();
@@ -27,7 +22,7 @@ export const useLibraryTabs = () => {
 
     const newTabRoute = SITE_MAP[newTab] || 'company';
 
-    navigate(`./${newTabRoute}`);
+    navigate(`/library/${newTabRoute}`);
   };
 
   return {

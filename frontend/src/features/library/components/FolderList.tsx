@@ -12,8 +12,8 @@ const FolderList = ({ className, folderList }: FolderListProps) => {
     >
       <div className='grid grid-cols-3 gap-2.5 px-3'>
         {folderList &&
-          folderList.map((name, idx) => {
-            return <Folder name={name} key={idx} />;
+          folderList.map((name) => {
+            return <Folder name={name} key={name} />;
           })}
       </div>
     </div>

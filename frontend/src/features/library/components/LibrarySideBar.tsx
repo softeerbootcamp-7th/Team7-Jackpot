@@ -1,5 +1,3 @@
-// import useSearch from '../hooks/useSearch';
-// 나중에 placeholder 문구 다시 확인
 import { useParams } from 'react-router';
 
 import CompanyDocumentList from '@/features/library/components/company/CompanyDocumentList';
@@ -13,7 +11,9 @@ interface LibrarySideBarProps {
 }
 
 const LibrarySideBar = ({ folderList }: LibrarySideBarProps) => {
+  // [박소민] TODO: 검색 기능 구현 필요
   const handleSearch = () => {};
+
   const { currentTab } = useLibraryTabs();
   const { companyName, qnAName } = useParams<{
     companyName?: string;

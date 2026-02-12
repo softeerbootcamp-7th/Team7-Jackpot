@@ -20,9 +20,9 @@ const CompanyDetailView = () => {
   const currentQuestionIndex = currentPage - 1; // 0-based index
 
   const currentDocument: CoverLetter | undefined =
-    companyQuery.data?.coverLetters.find(
-      (doc) => doc.id === Number(coverLetterId),
-    ) ||
+    companyQuery.data?.pages
+      .flatMap((page) => page.coverLetters)
+      .find((doc) => doc.id === Number(coverLetterId)) ||
     MOCK_COVER_LETTERS.find(
       (doc) =>
         doc.companyName === companyName && doc.id === Number(coverLetterId),
@@ -33,6 +33,11 @@ const CompanyDetailView = () => {
   }
 
   const currentQuestion = currentDocument.question[currentQuestionIndex];
+
+  if (!currentQuestion) {
+    return <div>해당 페이지의 문항을 찾을 수 없습니다.</div>;
+  }
+
   const modifiedDate = getDate(currentDocument.modifiedAt);
 
   // 페이지 변경 핸들러

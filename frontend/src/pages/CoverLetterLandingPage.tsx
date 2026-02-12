@@ -6,7 +6,7 @@ import SearchInput from '@/shared/components/SearchInput';
 
 // [박소민] TODO: ContentHeader CoverLetterPage.tsx과 겹치는 문제 리렌더링 최소화할 방법 찾기
 const CoverLetterLandingPage = () => {
-  // const hasData = false;
+  const hasData = false; // [박소민] TODO: 데이터 유무에 따른 조건 처리
   const handleSearch = () => {};
 
   return (
@@ -20,7 +20,7 @@ const CoverLetterLandingPage = () => {
         {/* [박소민] TODO: Link로 변환 */}
         <NewCoverLetterButton />
       </div>
-      <CoverLetterOverview isCoverLetter={true} len={9} />
+      <CoverLetterOverview isCoverLetter={hasData} len={9} />
     </div>
   );
 };

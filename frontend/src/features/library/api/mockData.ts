@@ -19,7 +19,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '현대자동차 해당 직무 분야에 지원하게 된 이유와 선택 직무에 본인이 적합하다고 판단할 수 있는 근거를 기술해 주십시오.',
         answer:
@@ -28,7 +28,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '본인이 도전적인 목표를 세우고 이를 달성하기 위해 노력했던 경험에 대해 구체적으로 기술해 주십시오.',
         answer:
@@ -37,7 +37,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question:
           '타인과 협업하는 과정에서 갈등이 발생했을 때 이를 어떻게 해결했는지 구체적인 사례를 들어 기술해 주십시오.',
         answer:
@@ -56,7 +56,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date(Date.now() - 86400000).toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '본인이 회사를 선택할 때의 기준은 무엇이며, 왜 현대자동차 생가 그 기준에 적합한지를 기술해 주십시오.',
         answer:
@@ -65,7 +65,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '지원 직무와 관련하여 본인의 강점은 무엇이며, 이를 통해 어떻게 기여할 수 있는지 기술해 주십시오.',
         answer:
@@ -74,7 +74,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question:
           '가장 열정적으로 임했던 프로젝트 경험과 그 과정에서 배운 점을 기술해 주십시오.',
         answer:
@@ -83,7 +83,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 4,
+        qnAId: 4,
         question: '향후 현대자동차에서 이루고 싶은 커리어 목표는 무엇입니까?',
         answer:
           '입사 후 5년 내에 차체 설계 프로세스의 전문가가 되어, 전기차 특화 경량 차체 플랫폼 개발에 핵심적인 역할을 하고 싶습니다. 장기적으로는 친환경 소재를 활용한 차체 설계 기술을 선도하여, 현대자동차가 글로벌 친환경 기업으로 자리매김하는 데 이바지하고 싶습니다.',
@@ -101,7 +101,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date(Date.now() - 172800000).toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '생산관리 직무 수행 시 예상되는 어려움과 이를 극복하기 위한 본인만의 방안을 기술해 주십시오.',
         answer:
@@ -110,7 +110,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date(Date.now() - 172800000).toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question: '협업 시 본인이 주로 맡는 역할과 그 이유를 기술해 주십시오.',
         answer:
           '저는 주로 "중재자" 역할을 맡습니다. 팀 내에서 다양한 의견이 충돌할 때, 각 입장의 공통분모를 찾아 합의점을 도출하는 데 능숙하기 때문입니다. 생산 현장에서도 다양한 유관 부서와의 소통이 필수적인 만큼, 저의 소통 역량으로 원활한 생산 프로세스를 이끌겠습니다.',
@@ -128,7 +128,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date(Date.now() - 259200000).toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '본인의 성격의 장단점과 이를 통해 영업 직무에서 어떻게 성과를 낼 수 있는지 기술해 주십시오.',
         answer:
@@ -137,7 +137,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date(Date.now() - 259200000).toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '최근 자동차 시장의 트렌드 중 하나를 선택하여, 이에 대한 본인의 견해를 서술하시오.',
         answer:
@@ -146,7 +146,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date(Date.now() - 259200000).toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question: '입사 후 포부에 대해 기술해 주십시오.',
         answer:
           '지역 거점 판매왕이 되는 것이 1차 목표입니다. 해당 지역의 인구 통계학적 특성을 분석하여 타겟 마케팅을 진행하고, 출고 후 철저한 사후 관리를 통해 재구매율을 높이겠습니다. 나아가 영업 데이터를 분석하여 본사에 상품 개선 아이디어를 제안하는 영업 전문가로 성장하겠습니다.',
@@ -168,7 +168,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '지원 직무를 수행하기 위해 가장 중요하다고 생각하는 역량과 이를 갖추기 위해 노력한 경험을 기술하세요.',
         answer:
@@ -177,7 +177,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '도전적인 목표를 설정하고 열정을 가지고 달성한 사례를 기술해 주십시오.',
         answer:
@@ -186,7 +186,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question:
           '조직 내에서 갈등이나 어려운 상황을 극복한 경험을 기술해 주십시오.',
         answer:
@@ -195,7 +195,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 4,
+        qnAId: 4,
         question: '현대건설에 지원한 동기와 입사 후 포부를 기술해 주십시오.',
         answer:
           '대한민국의 랜드마크를 건설해온 현대건설의 역사와 함께하고 싶어 지원했습니다. 특히 중동 지역의 대규모 플랜트 사업 성공 신화는 저에게 큰 영감을 주었습니다. 입사 후 현장 경험을 착실히 쌓아 10년 뒤에는 해외 현장 소장으로서 글로벌 건설 시장을 누비는 리더가 되고 싶습니다.',
@@ -213,7 +213,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date(Date.now() - 604800000).toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question: '플랜트 산업에 관심을 갖게 된 계기와 관련 역량을 기술하시오.',
         answer:
           '화학공학을 전공하며 공정 설계 수업에서 HYSYS 프로그램을 다루며 흥미를 느꼈습니다. 복잡한 배관과 장치들이 유기적으로 연결되어 거대한 결과물을 만들어내는 과정에 매료되었습니다. 이후 화공기사를 취득하고 P&ID 해석 능력을 길렀으며, 3D CAD 툴 활용 능력을 갖추었습니다.',
@@ -221,7 +221,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date(Date.now() - 604800000).toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question: '본인의 책임감을 발휘하여 과업을 완수한 경험을 기술하시오.',
         answer:
           '팀 프로젝트 중 팀장이 개인 사정으로 중도 하차하는 위기가 있었습니다. 저는 남은 팀원들을 독려하며 제가 임시 팀장을 맡겠다고 자처했습니다. 매일 진행 상황을 체크하고 부족한 부분을 밤새워 보완했습니다. 포기하지 않는 책임감 덕분에 프로젝트를 기한 내에 제출하고 A+ 학점을 받을 수 있었습니다.',
@@ -229,7 +229,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date(Date.now() - 604800000).toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question: '글로벌 역량을 키우기 위해 노력한 경험이 있다면 기술하시오.',
         answer:
           '해외 플랜트 현장에서는 영어 소통 능력이 필수라고 생각합니다. 저는 교환학생 시절 다국적 친구들과 엔지니어링 동아리 활동을 하며 전공 영어를 익혔습니다. 또한, OPIc AL 등급을 취득하여 비즈니스 회화 능력을 검증받았습니다.',
@@ -251,7 +251,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '기아의 PBV(Purpose Built Vehicle) 사업 비전에 대해 본인의 생각을 기술하고, 기여할 수 있는 바를 작성하시오.',
         answer:
@@ -260,7 +260,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '새로운 관점으로 문제를 해결한 창의적인 경험을 기술해 주십시오.',
         answer:
@@ -269,7 +269,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question: '협업 시 가장 중요하게 생각하는 가치는 무엇입니까?',
         answer:
           '"신뢰"입니다. 각자가 맡은 바를 책임지고 수행할 것이라는 믿음이 있어야 시너지가 납니다. 팀 프로젝트에서 저는 약속된 마감 시간을 철저히 지키며 신뢰를 쌓았고, 이를 바탕으로 팀원들의 자발적인 참여를 이끌어냈습니다.',
@@ -287,7 +287,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '기아 브랜드가 글로벌 시장에서 나아가야 할 방향성을 제시하시오.',
         answer:
@@ -296,7 +296,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '타문화에 대한 이해와 소통 능력을 발휘한 경험을 기술해 주십시오.',
         answer:
@@ -315,7 +315,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '구매 직무에 필요한 핵심 역량은 무엇이며, 본인이 적임자인 이유를 서술하시오.',
         answer:
@@ -324,7 +324,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '예상치 못한 문제에 직면했을 때, 원칙을 준수하며 해결한 경험이 있습니까?',
         answer:
@@ -333,7 +333,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question:
           '자동차 산업의 공급망 이슈(Supply Chain Crisis)에 대한 대응 방안을 제안하시오.',
         answer:
@@ -342,7 +342,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 4,
+        qnAId: 4,
         question: '입사 후 이루고 싶은 목표는 무엇입니까?',
         answer:
           '글로벌 소싱 전문가로 성장하여, 전 세계 곳곳의 우수한 부품사를 발굴하고 기아의 품질 경쟁력을 높이는 것입니다. 특히 배터리 원자재 확보 분야에서 전문성을 키우고 싶습니다.',
@@ -360,7 +360,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '품질이란 무엇이라고 생각하며, 품질 확보를 위해 어떤 노력을 했는지 기술하시오.',
         answer:
@@ -369,7 +369,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '데이터를 활용하여 문제를 분석하고 개선안을 도출한 경험을 서술하시오.',
         answer:
@@ -378,7 +378,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 3,
+        qnAId: 3,
         question: '본인의 꼼꼼함이나 세심함이 돋보였던 사례를 기술하시오.',
         answer:
           '회계 동아리 총무를 맡아 1원 단위의 오차도 허용하지 않고 장부를 관리했습니다. 영수증 하나하나를 대조하며 누락된 내역을 찾아내 동아리 재정의 투명성을 확보했습니다.',
@@ -396,7 +396,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
     modifiedAt: new Date().toISOString(),
     question: [
       {
-        qnaId: 1,
+        qnAId: 1,
         question:
           '데이터 분석 역량을 키우기 위해 수행한 프로젝트와 본인의 역할을 구체적으로 기술하시오.',
         answer:
@@ -405,7 +405,7 @@ export const MOCK_COVER_LETTERS: CoverLetter[] = [
         modifiedAt: new Date().toISOString(),
       },
       {
-        qnaId: 2,
+        qnAId: 2,
         question:
           '기아의 데이터 자산을 활용하여 창출할 수 있는 새로운 가치는 무엇이라 생각합니까?',
         answer:

@@ -58,8 +58,8 @@ export const createScrap = (payload: CreateScrapRequest) => {
   });
 };
 
-export const deleteScrap = (qnAId: number) => {
-  return httpClient<void>(`/api/v1/scraps/${qnAId}`, {
+export const deleteScrap = (scrapId: number) => {
+  return httpClient<void>(`/api/v1/scraps/${scrapId}`, {
     method: 'DELETE',
   });
 };

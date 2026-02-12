@@ -11,6 +11,14 @@ const QnADetailView = () => {
 
   const qnaQuery = useQnAListQueries(qnAName ?? null);
 
+  if (qnaQuery.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (qnaQuery.isError) {
+    return <div>문서를 불러오는 중 오류가 발생했습니다.</div>;
+  }
+
   // API 데이터 또는 목데이터에서 찾기
   const mockQuestions = getMockQuestionsByQnAName(qnAName ?? null);
 
@@ -42,11 +50,11 @@ const QnADetailView = () => {
       </div>
       <div className='flex flex-col items-start justify-start gap-3 self-stretch'>
         <div className='relative flex flex-col items-start justify-start gap-0.5 self-stretch'>
-          <p className='w-[810px] self-stretch text-left text-[22px] font-bold text-gray-950'>
+          <p className='w-full self-stretch text-left text-[22px] font-bold text-gray-950'>
             {currentDocument.applySeason}
           </p>
           <div className='relative flex items-start justify-start gap-1'>
-            <p className='text-body-s text-gray-400'>총 1문항 · </p>
+            <p className='text-body-s text-gray-400'>총 {1}문항 · </p>
             <div className='relative flex items-center justify-start'>
               {/* [박소민] TODO: 최종 수정일 넣기 */}
               <p className='text-body-s text-gray-400'>2026 . 01. 23</p>

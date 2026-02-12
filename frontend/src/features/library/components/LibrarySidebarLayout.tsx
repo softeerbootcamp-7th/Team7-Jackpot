@@ -13,17 +13,17 @@ import EmptyCase from '@/shared/components/EmptyCase';
 // [박소민] TODO: 지금 root 태그에 원래 overflow-hidden이 있었는데 삭제했습니다.
 // 문제가 되는 경우 다시 수정하겠습니다.
 
+const isDev = import.meta.env.DEV;
+
 // 데이터 페칭 및 레이아웃을 반환합니다.
 const LibrarySidebarLayout = () => {
   const { currentTab } = useLibraryTabs();
 
-  const { data, isLoading } = useLibraryListQueries(currentTab); // placeholderData: keepPreviousData 넣기
-
-  if (isLoading) return <div>Loading...</div>;
+  const { data } = useLibraryListQueries(currentTab);
 
   const folderList =
     data?.folderList ??
-    (currentTab === 'COMPANY'
+    (isDev && currentTab === 'COMPANY'
       ? MOCK_COVER_LETTER_FOLDERS
       : MOCK_QUESTION_FOLDERS);
 

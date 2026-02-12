@@ -1,4 +1,9 @@
-import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
+import {
+  type InfiniteData,
+  keepPreviousData,
+  useInfiniteQuery,
+  useQuery,
+} from '@tanstack/react-query';
 
 import { fetchDocumentList, fetchFolderList } from '@/features/library/api';
 import { libraryKeys } from '@/features/library/hooks/queries/keys';
@@ -19,14 +24,15 @@ export const useLibraryListQueries = (type: LibraryView) => {
         folderList: data.libraries,
       };
     },
+    placeholderData: keepPreviousData,
   });
 };
 
 export const useCompanyListQueries = (folderId: string | null) => {
   return useInfiniteQuery<
-    CoverLetterListResponse, // TQueryFnData 공부공부공부
+    CoverLetterListResponse, // TQueryFnData
     Error, // TError
-    CoverLetterListResponse, // TData
+    InfiniteData<CoverLetterListResponse>, // TData
     string[], // TQueryKey (queryKey 타입)
     number // TPageParam (페이지 번호)
   >({
@@ -37,12 +43,13 @@ export const useCompanyListQueries = (folderId: string | null) => {
         folderId ?? '',
         pageParam,
       ) as Promise<CoverLetterListResponse>,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
+    initialPageParam: undefined as unknown as number,
+    getNextPageParam: (lastPage) => {
       if (!lastPage.hasNext) {
         return undefined;
       }
-      return allPages.length;
+      const lastItem = lastPage.coverLetters.at(-1);
+      return lastItem?.id;
     },
     enabled: true,
   });
@@ -52,7 +59,7 @@ export const useQnAListQueries = (folderId: string | null) => {
   return useInfiniteQuery<
     QuestionListResponse, // TQueryFnData
     Error, // TError
-    QuestionListResponse, // TData
+    InfiniteData<QuestionListResponse>, // TData
     string[], // TQueryKey
     number // TPageParam
   >({
@@ -63,12 +70,14 @@ export const useQnAListQueries = (folderId: string | null) => {
         folderId ?? '',
         pageParam,
       ) as Promise<QuestionListResponse>,
-    initialPageParam: 0,
-    getNextPageParam: (lastPage, allPages) => {
+    initialPageParam: undefined as unknown as number,
+    getNextPageParam: (lastPage) => {
       if (!lastPage.hasNext) {
         return undefined;
       }
-      return allPages.length;
+
+      const lastItem = lastPage.questions.at(-1);
+      return lastItem?.id;
     },
     enabled: true,
   });
