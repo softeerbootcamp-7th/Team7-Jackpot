@@ -1,4 +1,9 @@
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import type {
+  ApiApplyHalf,
+  CoverLetter,
+  RecentCoverLetter,
+} from '@/shared/types/coverLetter';
+import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface SearchCoverLettersParams {
   searchWord?: string;
@@ -51,4 +56,35 @@ export const searchCoverLetters = async ({
   }
 
   return response.json();
+};
+
+interface CoverLetterApiResponse {
+  coverLetterId: number;
+  companyName: string;
+  applyYear: number;
+  applyHalf: ApiApplyHalf;
+  jobPosition: string;
+  deadline: string;
+}
+
+export const getCoverLetter = async (
+  coverLetterId: number,
+): Promise<CoverLetter> => {
+  const response = await fetch(`${BASE_URL}/coverletter/${coverLetterId}`, {
+    headers: {
+      Authorization: `${getToken()}`,
+    },
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || 'Failed to fetch cover letter');
+  }
+
+  const data: CoverLetterApiResponse = await response.json();
+
+  return {
+    ...data,
+    applyHalf: mapApplyHalf(data.applyHalf),
+  };
 };
