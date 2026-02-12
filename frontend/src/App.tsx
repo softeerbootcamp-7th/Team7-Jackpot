@@ -16,6 +16,9 @@ import CoverLetterEditContent from '@/features/coverLetter/components/CoverLette
 import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
 import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayout';
+import FirstContentArea from '@/features/upload/components/FirstContentArea';
+import SecondContentArea from '@/features/upload/components/SecondContentArea';
+import ThirdContentArea from '@/features/upload/components/ThirdContentArea';
 import RootLayout from '@/shared/components/RootLayout';
 import { queryClient } from '@/shared/queries/queryClient';
 
@@ -26,12 +29,17 @@ function App() {
         <Routes>
           <Route element={<RootLayout />}>
             <Route path='/home' element={<HomePage />} />
-            <Route path='/upload' element={<UploadPage />} />
+            <Route path='/upload' element={<UploadPage />}>
+              <Route index element={<Navigate to='input' replace />} />
+              <Route path='input' element={<FirstContentArea />} />
+              <Route path='labeling' element={<SecondContentArea />} />
+              <Route path='complete' element={<ThirdContentArea />} />
+            </Route>
             <Route path='/library' element={<LibraryPage />} />
             <Route path='/cover-letter' element={<CoverLetterLayout />}>
               <Route
                 index
-                element={<Navigate to='/cover-letter/list' replace />}
+                element={<Navigate to='/cover-let\ter/list' replace />}
               />
               <Route
                 path='/cover-letter/list'
