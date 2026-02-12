@@ -8,8 +8,9 @@ interface StepItemProps {
 
 const StepItem = ({ step }: StepItemProps) => {
   const generateStepIcon = () => {
-    if (step === '1') return <I.FirstStepIcon />;
-    else if (step === '2') return <I.SecondStepIcon />;
+    if (step === '1') return <I.UploadInputIcon />;
+    else if (step === '2') return <I.LabelingResultIcon />;
+    else if (step === '3') return <I.UploadCompleteIcon />;
   };
 
   return (
