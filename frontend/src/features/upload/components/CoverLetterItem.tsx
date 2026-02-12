@@ -14,7 +14,7 @@ const CoverLetterItem = ({
   return (
     <button
       onClick={onClick}
-      className={`px-4 py-2 cursor-pointer rounded-lg ${tabNumber === targetTab ? 'bg-gray-50 font-bold text-gray-600' : 'text-gray-400'}`}
+      className={`cursor-pointer rounded-lg px-4 py-2 ${tabNumber === targetTab ? 'bg-gray-50 font-bold text-gray-600' : 'text-gray-400'}`}
     >
       {tabName}
     </button>
