@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { QueryClientProvider } from '@tanstack/react-query';
+=======
+>>>>>>> 4da9db3 ([feat] 사용성을 극대화하고자 중첩 라우팅 구현)
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import CoverLetterQnAFriendsPage from '@/pages//CoverLetterQnAFriendsPage';
