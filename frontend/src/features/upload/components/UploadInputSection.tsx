@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 import { useNavigate, useSearchParams } from 'react-router';
 
-import FirstContentAreaHeader from '@/features/upload/components/FirstContentAreaHeader';
 import UploadFileArea from '@/features/upload/components/UploadFileArea';
+import UploadInputHeader from '@/features/upload/components/UploadInputHeader';
 import UploadTextArea from '@/features/upload/components/UploadTextArea';
 
-const FirstContentArea = () => {
+const UploadInputSection = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
@@ -36,7 +36,7 @@ const FirstContentArea = () => {
   const [totalSize, setTotalSize] = useState<number>(0);
   return (
     <div className='flex flex-col gap-6'>
-      <FirstContentAreaHeader
+      <UploadInputHeader
         isContent={isContent}
         totalSize={totalSize}
         setIsContent={setIsContent}
@@ -60,4 +60,4 @@ const FirstContentArea = () => {
   );
 };
 
-export default FirstContentArea;
+export default UploadInputSection;

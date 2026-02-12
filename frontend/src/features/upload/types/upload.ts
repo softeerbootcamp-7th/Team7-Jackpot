@@ -1,4 +1,4 @@
-export interface FirstContentAreaHeaderProps {
+export interface UploadInputHeaderProps {
   uploadTab: 'file' | 'text';
   setUploadTab: (newValue: 'file' | 'text') => void;
   totalSize?: number;

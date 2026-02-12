@@ -2,17 +2,17 @@ import TabButton from '@/features/upload/components/TabButton';
 import { UPLOAD_TAB_DATA } from '@/features/upload/constants/uploadPage';
 import { MAX_BYTES } from '@/features/upload/constants/uploadPage';
 import { UploadPageIcons as I } from '@/features/upload/icons';
-import type { FirstContentAreaHeaderProps } from '@/features/upload/types/upload';
+import type { UploadInputHeaderProps } from '@/features/upload/types/upload';
 import { formatFileSize } from '@/features/upload/utils/formatFileSize';
 
-const FirstContentAreaHeader = ({
+const UploadInputHeader = ({
   uploadTab,
   isContent,
   totalSize,
   setIsContent = () => {},
   setUploadTab,
   nextStep,
-}: FirstContentAreaHeaderProps) => {
+}: UploadInputHeaderProps) => {
   const isOverSize =
     uploadTab === 'file' && !!totalSize && totalSize > MAX_BYTES;
   const canLabeling = isContent && !isOverSize;
@@ -68,4 +68,4 @@ const FirstContentAreaHeader = ({
   );
 };
 
-export default FirstContentAreaHeader;
+export default UploadInputHeader;
