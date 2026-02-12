@@ -1,49 +1,61 @@
-import { useCallback, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 
-import CoverLetter from '@/features/coverLetter/components/CoverLetter';
-import ReviewCardList from '@/features/coverLetter/components/reviewWithFriend/ReviewCardList';
-import useReviewState from '@/shared/hooks/useReviewState';
+import { useParams } from 'react-router';
+
+import CoverLetterSection from '@/features/coverLetter/components/CoverLetterSection';
+import {
+  useSharedLink,
+  useSharedLinkToggle,
+} from '@/features/coverLetter/hooks/useCoverLetterQueries';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
+import SectionError from '@/shared/components/SectionError';
 
 const CoverLetterReviewContent = ({
-  selectedDocumentId,
   isReviewActive,
   setIsReviewActive,
 }: {
-  selectedDocumentId: number;
   isReviewActive: boolean;
   setIsReviewActive: (v: boolean) => void;
 }) => {
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
-  const reviewState = useReviewState(selectedDocumentId);
+  const { coverLetterId } = useParams();
+  const id = !coverLetterId ? 0 : Number(coverLetterId);
+
+  const { data: sharedLink } = useSharedLink(id);
+  const { mutate: toggleLink } = useSharedLinkToggle();
+
+  useEffect(() => {
+    if (sharedLink) setIsReviewActive(sharedLink.active);
+  }, [sharedLink, setIsReviewActive]);
+
+  const handleToggleReview = useCallback(
+    (value: boolean) => {
+      setIsReviewActive(value);
+      toggleLink({ coverLetterId: id, active: value });
+    },
+    [setIsReviewActive, toggleLink, id],
+  );
 
   const handleReviewClick = useCallback((reviewId: string | null) => {
     setSelectedReviewId(reviewId);
   }, []);
 
   return (
-    <div className='flex h-full min-h-0 w-full min-w-0 flex-row pb-39.5'>
-      <div className='h-full min-h-0 min-w-0 flex-1 overflow-hidden'>
-        <CoverLetter
-          key={reviewState.currentPageIndex}
-          documentId={selectedDocumentId}
-          openReview={setIsReviewActive}
-          isReviewOpen={isReviewActive}
+    <ErrorBoundary
+      fallback={(reset) => (
+        <SectionError onRetry={reset} text='QnA를 표시할 수 없습니다' />
+      )}
+    >
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <CoverLetterSection
+          id={id}
+          isReviewActive={isReviewActive}
+          setIsReviewActive={handleToggleReview}
           selectedReviewId={selectedReviewId}
           onReviewClick={handleReviewClick}
-          reviewState={reviewState}
         />
-      </div>
-
-      {isReviewActive && (
-        <aside className='h-full min-h-0 w-[248px] overflow-y-auto border-l border-gray-100'>
-          <ReviewCardList
-            reviews={reviewState.currentReviews}
-            selectedReviewId={selectedReviewId}
-            onReviewClick={handleReviewClick}
-          />
-        </aside>
-      )}
-    </div>
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 
