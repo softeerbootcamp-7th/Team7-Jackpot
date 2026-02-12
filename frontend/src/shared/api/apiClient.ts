@@ -1,4 +1,4 @@
-import { getAccessToken } from '@/shared/utils/getAccessToken';
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 
 // 환경 변수 속의 요청 주소 불러오기
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;

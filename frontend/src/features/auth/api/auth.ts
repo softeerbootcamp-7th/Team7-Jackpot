@@ -1,3 +1,7 @@
+import {
+  getAccessToken,
+  setAccessToken,
+} from '@/features/auth/libs/tokenStore';
 import type {
   AuthResponse,
   CheckIdRequest,
@@ -5,9 +9,6 @@ import type {
   LoginRequest,
 } from '@/features/auth/types/authApi';
 import { apiClient } from '@/shared/api/apiClient';
-
-// 액세스 토큰의 인메모리 저장 방식 채택
-let ACCESS_TOKEN = '';
 
 export const authClient = {
   // 아이디 중복확인을 위한 메서드
@@ -30,14 +31,14 @@ export const authClient = {
       },
     });
     if (data.accessToken) {
-      ACCESS_TOKEN = data.accessToken;
+      setAccessToken(data.accessToken);
     }
 
     return data;
   },
 
   // 토큰 조회 메서드
-  getToken: () => ACCESS_TOKEN,
+  getToken: () => getAccessToken(),
 
   // 액세스 토큰 리프레시를 위한 메서드
   refresh: async (): Promise<AuthResponse> => {
@@ -48,7 +49,7 @@ export const authClient = {
       },
     });
     if (data.accessToken) {
-      ACCESS_TOKEN = data.accessToken;
+      setAccessToken(data.accessToken);
     }
     return data;
   },
