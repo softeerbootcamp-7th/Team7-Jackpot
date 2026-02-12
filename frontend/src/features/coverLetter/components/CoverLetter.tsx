@@ -12,6 +12,7 @@ import type { CoverLetter as CoverLetterType } from '@/shared/types/coverLetter'
 import type { QnA } from '@/shared/types/qna';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
+import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 const SPACER_HEIGHT = 10;
 
@@ -114,7 +115,7 @@ const CoverLetter = ({
 
       <div className='flex flex-shrink-0 flex-col gap-0.5 pb-2 pl-2'>
         <div className='line-clamp-1 text-xl leading-9 font-bold'>
-          {coverLetter.applyYear}년 {coverLetter.applyHalf}
+          {coverLetter.applyYear}년 {mapApplyHalf(coverLetter.applyHalf)}
         </div>
         <div className='flex gap-1 text-sm text-gray-400'>
           <span>총 {qnas.length}문항</span>
