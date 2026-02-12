@@ -23,7 +23,7 @@ export const emptyCaseText = {
   },
 };
 
-// 합치는 방법 찾기 나중에
+// [박소민] 합치는 방법 찾기
 export const libraryContent: TabContentType<LibraryView>[] = [
   {
     name: 'COMPANY',
@@ -31,7 +31,7 @@ export const libraryContent: TabContentType<LibraryView>[] = [
     icon: <CompanyNameLibrary />,
   },
   {
-    name: 'QUESTIONS',
+    name: 'QUESTION',
     label: '문항 라이브러리',
     icon: <QnALibrary />,
   },
