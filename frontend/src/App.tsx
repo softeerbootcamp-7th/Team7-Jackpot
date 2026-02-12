@@ -8,10 +8,10 @@ import LandingPage from '@/pages/LandingPage';
 import LibraryPage from '@/pages/LibraryPage';
 import LoginPage from '@/pages/LoginPage';
 import ReviewPage from '@/pages/ReviewPage';
+import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
-import SignUpComplete from '@/features/auth/components/SignUpComplete';
 import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
 import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
@@ -59,7 +59,7 @@ function App() {
           {/* <Route path="/recruit" element={<RecruitPage />}/> */}
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/signup/complete' element={<SignUpComplete />} />
+          <Route path='/signup/complete' element={<SignUpCompletePage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import NotificationDropdown from '@/features/notification/components/NotificationDropdown';
 import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
@@ -9,6 +10,7 @@ import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
   const navigate = useNavigate();
+  const { userInfo } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
 
   return (
@@ -19,6 +21,7 @@ const PageGlobalHeader = () => {
             className='cursor-pointer'
             type='button'
             onClick={() => navigate('/home')}
+            aria-label='홈으로 이동'
           >
             <I.TitleLogo width='99' height='27' />
           </button>
@@ -44,8 +47,9 @@ const PageGlobalHeader = () => {
         />
         <div className='flex cursor-pointer items-center gap-2'>
           <I.UserAvatarIcon />
-          {/* [윤종근] - 졸린 경민 하드코딩 수정 */}
-          <span className='text-base font-medium text-gray-600'>졸린 경민</span>
+          <span className='text-base font-medium text-gray-600'>
+            {userInfo.nickname || '사용자'}
+          </span>
         </div>
       </div>
     </header>

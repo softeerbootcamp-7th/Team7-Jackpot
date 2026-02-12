@@ -83,7 +83,7 @@ const CoverLetterContent = ({
           isSelected ? 'bg-red-100' : ''
         }`;
 
-        return `<span class="${className}" data-review-id="${matchingReview.id}">${chunk.text}</span>`;
+        return `<span class="${className ?? ''}" data-review-id="${matchingReview.id}">${chunk.text}</span>`;
       })
       .join('');
 
