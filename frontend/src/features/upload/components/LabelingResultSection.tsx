@@ -1,9 +1,9 @@
 import { useNavigate, useSearchParams } from 'react-router';
 
-import SecondContentAreaHeader from '@/features/upload/components/SecondContentAreaHeader';
-import SecondContentItem from '@/features/upload/components/SecondContentItem';
+import LabelingResultHeader from '@/features/upload/components/LabelingResultHeader';
+import LabelingResultItem from '@/features/upload/components/LabelingResultItem';
 
-const SecondContentArea = () => {
+const LabelingResultSection = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const coverLetterParam = searchParams.get('coverLetterId');
@@ -20,8 +20,8 @@ const SecondContentArea = () => {
   };
   return (
     <div className='flex flex-col gap-6'>
-      <SecondContentAreaHeader nextStep={hanldeNextStep} />
-      <SecondContentItem
+      <LabelingResultHeader nextStep={hanldeNextStep} />
+      <LabelingResultItem
         tabState={currentId}
         setTabState={handleCoverLetterIdChange}
       />
@@ -29,4 +29,4 @@ const SecondContentArea = () => {
   );
 };
 
-export default SecondContentArea;
+export default LabelingResultSection;

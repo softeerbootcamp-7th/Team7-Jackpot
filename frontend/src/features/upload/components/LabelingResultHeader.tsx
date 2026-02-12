@@ -1,12 +1,12 @@
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
-interface SecondContentAreaHeaderProps {
+interface LabelingResultHeaderProps {
   nextStep?: (step: string) => void;
 }
 
-const SecondContentAreaHeader = ({
+const LabelingResultHeader = ({
   nextStep,
-}: SecondContentAreaHeaderProps) => {
+}: LabelingResultHeaderProps) => {
   return (
     <div>
       <div className='flex items-center justify-between select-none'>
@@ -30,4 +30,4 @@ const SecondContentAreaHeader = ({
   );
 };
 
-export default SecondContentAreaHeader;
+export default LabelingResultHeader;

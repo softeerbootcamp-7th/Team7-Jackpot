@@ -19,7 +19,7 @@ const COMPANY_NAME_LIST: string[] = ['현대자동차', '현대오토에버', '�
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
 const JOB_POSITION_LIST: string[] = ['프론트엔드 개발', '프론트엔드', 'FE'];
 
-const SecondContentItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
+const LabelingResultItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<DropdownStateType>({
     companyNameDropdown: false,
     jobPositionDropdown: false,
@@ -115,4 +115,4 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
   );
 };
 
-export default SecondContentItem;
+export default LabelingResultItem;
