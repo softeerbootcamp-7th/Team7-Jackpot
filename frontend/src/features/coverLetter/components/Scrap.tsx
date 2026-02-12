@@ -12,6 +12,11 @@ const Scrap = ({ scrap, deleteScrap, onClick }: ScrapProps) => {
   return (
     <div
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') onClick();
+      }}
+      role='button'
+      tabIndex={0}
       className='flex cursor-pointer flex-col items-start justify-start gap-3 self-stretch'
     >
       <div className='flex flex-col items-start justify-start self-stretch px-3'>
@@ -37,7 +42,10 @@ const Scrap = ({ scrap, deleteScrap, onClick }: ScrapProps) => {
             <button
               type='button'
               className='inline-flex h-6 w-6 items-center justify-center overflow-hidden'
-              onClick={() => deleteScrap}
+              onClick={(e) => {
+                e.stopPropagation();
+                deleteScrap(scrap.questionId);
+              }}
             >
               <DeleteIcon />
             </button>

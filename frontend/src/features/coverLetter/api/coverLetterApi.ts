@@ -1,11 +1,8 @@
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import type { GetScrapsResponse } from '@/features/coverLetter/types/coverLetter';
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
 
 interface GetScrapsParams {
   searchWord?: string;
@@ -28,7 +25,7 @@ export const fetchScraps = async ({
     `${BASE_URL}/search/scrap?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
       },
     },
   );
@@ -40,7 +37,7 @@ export const fetchScraps = async ({
   return response.json();
 };
 
-interface getSharedLinkResponse {
+interface GetSharedLinkResponse {
   active: boolean;
   shareLinkId: string;
 }
@@ -49,19 +46,18 @@ export const fetchSharedLink = async ({
   coverLetterId,
 }: {
   coverLetterId: number;
-}): Promise<getSharedLinkResponse> => {
+}): Promise<GetSharedLinkResponse> => {
   const response = await fetch(
     `${BASE_URL}/coverletter/${coverLetterId}/share-link`,
     {
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
       },
     },
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch QnA list');
+    await parseErrorResponse(response);
   }
 
   return response.json();
@@ -84,7 +80,7 @@ export const toggleSharedLinkStatus = async ({
     {
       method: 'PATCH',
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
         'Content-Type': 'application/json;charset=UTF-8',
       },
       body: JSON.stringify({ active }),
@@ -92,8 +88,7 @@ export const toggleSharedLinkStatus = async ({
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch QnA list');
+    await parseErrorResponse(response);
   }
 
   return response.json();

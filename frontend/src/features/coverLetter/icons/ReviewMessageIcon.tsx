@@ -9,6 +9,7 @@ export const ReviewMessageIcon = (props: SVGProps<SVGSVGElement>) => {
       fill='none'
       viewBox='0 0 20 20'
       {...props}
+      aria-hidden='true'
     >
       <path
         stroke='currentColor'

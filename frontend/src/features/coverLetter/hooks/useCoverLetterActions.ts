@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-
 import {
   useSharedLink,
   useSharedLinkToggle,
@@ -30,53 +28,50 @@ const useCoverLetterActions = ({
   const { mutate: updateQnA, isPending } = useUpdateQnA();
   const { showToast } = useToastMessageContext();
 
-  const { data: sharedLink } = useSharedLink(documentId);
+  const { data: sharedLink, isLoading } = useSharedLink(documentId);
   const { mutate: toggleLink } = useSharedLinkToggle();
 
-  // 서버에서 받아온 초기 active 값으로 세팅
-  useEffect(() => {
-    if (sharedLink) setIsReviewOpen(sharedLink.active);
-  }, [sharedLink, setIsReviewOpen]);
-
   const handleSave = () => {
-    if (!currentQna?.qnAId) {
-      showToast('저장할 문항이 없습니다.');
-      return;
+    const qnAId = currentQna?.qnAId;
+    const editedText = qnAId ? editedAnswers[qnAId] : null;
+
+    if (!qnAId) return showToast('저장할 문항이 없습니다.');
+
+    if (editedText === null || editedText === undefined) {
+      return showToast('변경된 내용이 없습니다.');
     }
-
-    const qnAId = currentQna.qnAId;
-
-    if (!(qnAId in editedAnswers)) {
-      showToast('변경된 내용이 없습니다.');
-      return;
-    }
-
-    const editedText = editedAnswers[qnAId];
-    const taggedAnswer = reconstructTaggedText(editedText, currentReviews);
 
     updateQnA(
-      { qnAId, answer: taggedAnswer },
       {
-        onSuccess: () => {
-          showToast('저장되었습니다.', true);
-        },
-        onError: (error) => {
-          showToast(`저장에 실패했습니다: ${error.message}`);
-        },
+        qnAId,
+        answer: reconstructTaggedText(editedText, currentReviews),
+      },
+      {
+        onSuccess: () => showToast('저장되었습니다.', true),
+        onError: (error) => showToast(`저장에 실패했습니다: ${error.message}`),
       },
     );
   };
 
   const handleDelete = () => {
     if (confirm('정말로 삭제하시겠습니까?')) {
-      // TODO: 삭제 API 호출
       showToast('삭제되었습니다.', true);
     }
   };
 
   const handleCopyLink = () => {
-    const shareLinkId = sharedLink?.shareLinkId;
-    const url = `${import.meta.env.VITE_SERVICE_BASE_URL || window.location.origin}/review/${shareLinkId ?? documentId}`;
+    if (isLoading) {
+      showToast('링크 정보를 불러오는 중입니다.');
+      return;
+    }
+
+    if (!sharedLink || !sharedLink.active) {
+      showToast('공유 기능이 비활성화되어 있습니다. 먼저 설정을 켜주세요.');
+      return;
+    }
+
+    const shareLinkId = sharedLink.shareLinkId;
+    const url = `${import.meta.env.VITE_SERVICE_BASE_URL || window.location.origin}/review/${shareLinkId}`;
 
     navigator.clipboard
       .writeText(url)
@@ -90,7 +85,6 @@ const useCoverLetterActions = ({
 
   const handleToggleReview = () => {
     const next = !isReviewOpen;
-    console.log(next);
     setIsReviewOpen(next);
     toggleLink({ coverLetterId: documentId, active: next });
   };
@@ -101,6 +95,7 @@ const useCoverLetterActions = ({
     handleCopyLink,
     handleToggleReview,
     isPending,
+    isShareDisabled: isLoading || !sharedLink?.active,
   };
 };
 

@@ -5,8 +5,7 @@ import {
   useSuspenseQuery,
 } from '@tanstack/react-query';
 
-import { getQnA, getQnAIdList } from '@/shared/api/qnaApi';
-import { updateQnA } from '@/shared/api/qnaApi';
+import { getQnA, getQnAIdList, updateQnA } from '@/shared/api/qnaApi';
 import type { QnA } from '@/shared/types/qna';
 
 export const useQnAIdList = (coverLetterId: number) => {

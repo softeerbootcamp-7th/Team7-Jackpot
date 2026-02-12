@@ -13,203 +13,164 @@ import type { QnA } from '@/shared/types/qna';
 import type { Review, ReviewBase } from '@/shared/types/review';
 
 export const useReviewState = (coverLetter: CoverLetter, qnas: QnA[]) => {
+  // 페이지 인덱스 상태
   const [currentPageIndex, setCurrentPageIndex] = useState(0);
-  const currentQna = qnas[currentPageIndex];
+
+  const safePageIndex =
+    qnas.length > 0 ? Math.min(currentPageIndex, qnas.length - 1) : 0;
+
+  const currentQna = qnas.length > 0 ? qnas[safePageIndex] : null;
   const currentQnaId = currentQna?.qnAId;
 
+  // 데이터 페칭
   const { data: reviewData } = useReviewsByQnaId(currentQnaId);
 
-  // QnA별 리뷰 상태 관리
+  // 로컬 편집 상태 (Map 구조)
   const [reviewsByQnaId, setReviewsByQnaId] = useState<
     Record<number, Review[]>
   >({});
-
-  // QnA별 편집 텍스트 관리
   const [editedAnswers, setEditedAnswers] = useState<Record<number, string>>(
     {},
   );
 
-  // 원본 텍스트 (memoized)
-  const answer = currentQna ? currentQna.answer : '';
-
-  const parsed = useMemo(() => {
-    if (!answer) {
-      return { cleaned: '', taggedRanges: [] };
-    }
-
-    return parseTaggedText(answer);
-  }, [answer]);
-
+  // 텍스트 데이터 파생
+  const answer = currentQna?.answer ?? '';
+  const parsed = useMemo(
+    () =>
+      answer ? parseTaggedText(answer) : { cleaned: '', taggedRanges: [] },
+    [answer],
+  );
   const originalText = parsed.cleaned;
 
   const currentText =
-    currentQnaId && editedAnswers[currentQnaId] !== undefined
+    currentQnaId !== undefined && editedAnswers[currentQnaId] !== undefined
       ? editedAnswers[currentQnaId]
       : originalText;
 
-  // 서버 데이터 → 로컬 리뷰 초기화
+  // 리뷰 데이터 통합 (파생된 상태)
   const currentReviews = useMemo(() => {
-    if (!currentQnaId) return [];
-
-    // 로컬에 이미 있으면 그걸 사용
-    if (reviewsByQnaId[currentQnaId]) {
-      return reviewsByQnaId[currentQnaId];
-    }
-
-    // 없으면 서버 기반으로 계산
+    if (currentQnaId === undefined) return [];
+    if (reviewsByQnaId[currentQnaId]) return reviewsByQnaId[currentQnaId];
     if (!reviewData) return [];
 
-    const parsed = parseTaggedText(currentQna?.answer ?? '');
-
+    const serverParsed = parseTaggedText(currentQna?.answer ?? '');
     return buildReviewsFromApi(
-      parsed.cleaned,
-      parsed.taggedRanges,
+      serverParsed.cleaned,
+      serverParsed.taggedRanges,
       reviewData.reviews,
     );
   }, [currentQnaId, reviewData, currentQna?.answer, reviewsByQnaId]);
 
-  //  Editing 상태
+  // 편집 중인 리뷰 상태
   const [editingId, setEditingId] = useState<string | null>(null);
+  const editingReview = useMemo(
+    () =>
+      editingId != null
+        ? (currentReviews.find((r) => r.id === editingId) ?? null)
+        : null,
+    [editingId, currentReviews],
+  );
 
-  const editingReview =
-    editingId != null
-      ? (currentReviews.find((r) => r.id === editingId) ?? null)
-      : null;
-
-  const hasActiveEdit = editingId !== null;
-
-  // 페이지 이동
   const handlePageChange = useCallback((index: number) => {
     setCurrentPageIndex(index);
     setEditingId(null);
   }, []);
 
-  // 리뷰 추가
   const handleAddReview = useCallback(
     (review: ReviewBase) => {
-      if (!currentQnaId) return;
-
+      if (currentQnaId === undefined) return;
       setReviewsByQnaId((prev) => ({
         ...prev,
         [currentQnaId]: [
-          ...(prev[currentQnaId] ?? []),
+          ...(prev[currentQnaId] ?? currentReviews),
           {
             ...review,
             id: generateInternalReviewId(),
             sender: { id: 'me', nickname: '나' },
             createdAt: new Date().toISOString(),
+            isValid: true,
           },
         ],
       }));
     },
-    [currentQnaId],
+    [currentQnaId, currentReviews],
   );
 
-  //  리뷰 수정
-  const handleUpdateReview = useCallback(
-    (reviewId: string, revision: string, comment: string) => {
-      if (!currentQnaId) return;
-
-      setReviewsByQnaId((prev) => ({
-        ...prev,
-        [currentQnaId]:
-          prev[currentQnaId]?.map((r) =>
-            r.id === reviewId ? { ...r, revision, comment } : r,
-          ) ?? [],
-      }));
-
-      setEditingId(null);
-    },
-    [currentQnaId],
-  );
-
-  //  리뷰 삭제
-  const handleDeleteReview = useCallback(
-    (id: string) => {
-      if (!currentQnaId) return;
-
-      setReviewsByQnaId((prev) => ({
-        ...prev,
-        [currentQnaId]: prev[currentQnaId]?.filter((r) => r.id !== id) ?? [],
-      }));
-    },
-    [currentQnaId],
-  );
-
-  // 리뷰 편집 모드
-  const handleEditReview = useCallback((id: string) => {
-    setEditingId(id);
-  }, []);
-
-  const handleCancelEdit = useCallback(() => {
-    setEditingId(null);
-  }, []);
-
-  // 텍스트 변경 + 리뷰 범위 보정
   const handleTextChange = useCallback(
     (newText: string) => {
-      if (!currentQnaId) return;
+      if (currentQnaId === undefined) return;
 
-      setEditedAnswers((prevAnswers) => {
-        const oldText = prevAnswers[currentQnaId] ?? originalText;
+      const oldText = editedAnswers[currentQnaId] ?? originalText;
+      const change = calculateTextChange(oldText, newText);
 
-        const change = calculateTextChange(oldText, newText);
-
-        setReviewsByQnaId((prevReviews) => ({
-          ...prevReviews,
-          [currentQnaId]: updateReviewRanges(
-            prevReviews[currentQnaId] ?? [],
-            change.changeStart,
-            change.oldLength,
-            change.newLength,
-          ),
-        }));
-
-        return {
-          ...prevAnswers,
-          [currentQnaId]: newText,
-        };
-      });
+      setEditedAnswers((prev) => ({ ...prev, [currentQnaId]: newText }));
+      setReviewsByQnaId((prevReviews) => ({
+        ...prevReviews,
+        [currentQnaId]: updateReviewRanges(
+          prevReviews[currentQnaId] ?? currentReviews,
+          change.changeStart,
+          change.oldLength,
+          change.newLength,
+        ),
+      }));
     },
-    [currentQnaId, originalText],
+    [currentQnaId, originalText, editedAnswers, currentReviews],
   );
 
-  // 페이지 데이터
+  const handleUpdateReview = useCallback(
+    (id: string, revision: string, comment: string) => {
+      if (currentQnaId === undefined) return;
+      setReviewsByQnaId((prev) => ({
+        ...prev,
+        [currentQnaId]: (prev[currentQnaId] ?? currentReviews).map((r) =>
+          r.id === id ? { ...r, revision, comment } : r,
+        ),
+      }));
+      setEditingId(null);
+    },
+    [currentQnaId, currentReviews],
+  );
+
+  const handleDeleteReview = useCallback(
+    (id: string) => {
+      if (currentQnaId === undefined) return;
+      setReviewsByQnaId((prev) => ({
+        ...prev,
+        [currentQnaId]: (prev[currentQnaId] ?? currentReviews).filter(
+          (r) => r.id !== id,
+        ),
+      }));
+    },
+    [currentQnaId, currentReviews],
+  );
+
   const pages = useMemo(
     () =>
       qnas.map((qna) => ({
         chipData: {
-          company: coverLetter.companyName,
-          job: coverLetter.jobPosition,
+          company: coverLetter?.companyName ?? '회사명 없음',
+          job: coverLetter?.jobPosition ?? '직무 없음',
         },
-        question: qna.question,
+        question: qna?.question ?? '질문이 없습니다.',
       })),
-    [qnas, coverLetter.companyName, coverLetter.jobPosition],
+    [qnas, coverLetter],
   );
 
   return {
-    coverLetter,
-    qnas,
-    pages,
-
-    currentPageIndex,
+    currentPageIndex: safePageIndex,
     currentQna,
     currentText,
     currentReviews,
-
-    editingId,
+    pages,
     editingReview,
-    hasActiveEdit,
-
-    editedAnswers,
-
+    hasQnas: qnas.length > 0,
     handlePageChange,
     handleAddReview,
+    handleTextChange,
     handleUpdateReview,
     handleDeleteReview,
-    handleEditReview,
-    handleCancelEdit,
-    handleTextChange,
+    handleEditReview: useCallback((id: string) => setEditingId(id), []),
+    handleCancelEdit: useCallback(() => setEditingId(null), []),
   };
 };
 

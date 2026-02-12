@@ -9,7 +9,7 @@ export interface CoverLetter {
   companyName: string;
   jobPosition: string;
   applyYear: number;
-  applyHalf: ApplyHalf;
+  applyHalf: ApiApplyHalf;
   deadline: ISODateString;
 }
 

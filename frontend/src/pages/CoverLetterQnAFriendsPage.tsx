@@ -36,10 +36,7 @@ const CoverLetterQnAFriendsPage = () => {
       />
       <div className='flex min-h-0 w-full flex-1 flex-row overflow-hidden'>
         <aside className='h-full w-[427px] flex-none overflow-y-auto'>
-          <ReviewSidebar
-            selectedDocumentId={coverLetterIdNumber}
-            onSelectDocument={() => {}}
-          />
+          <ReviewSidebar selectedDocumentId={coverLetterIdNumber} />
         </aside>
 
         <main className='h-full min-h-0 min-w-0 flex-1 overflow-hidden'>

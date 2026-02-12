@@ -7,6 +7,7 @@ import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import SearchInput from '@/shared/components/SearchInput';
 import SectionError from '@/shared/components/SectionError';
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
+import { validateSearchKeyword } from '@/shared/utils/validation';
 
 const CoverLetterLandingPage = () => {
   const [searchWord, setSearchWord] = useState('');
@@ -14,8 +15,9 @@ const CoverLetterLandingPage = () => {
   const { showToast } = useToastMessageContext();
 
   const handleSearch = (word: string) => {
-    if (word.length === 1) {
-      showToast('검색어는 2자 이상이어야 합니다.');
+    const { isValid, message } = validateSearchKeyword(word);
+    if (!isValid && message) {
+      showToast(message);
       return;
     }
     setSearchWord(word);
@@ -33,6 +35,7 @@ const CoverLetterLandingPage = () => {
       </div>
       <div className='flex flex-1 items-center'>
         <ErrorBoundary
+          key={searchWord}
           fallback={(reset) => (
             <SectionError
               onRetry={reset}

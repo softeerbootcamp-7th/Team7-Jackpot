@@ -3,10 +3,7 @@ import { Suspense, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import CoverLetterSection from '@/features/coverLetter/components/CoverLetterSection';
-import {
-  useSharedLink,
-  useSharedLinkToggle,
-} from '@/features/coverLetter/hooks/useCoverLetterQueries';
+import { useSharedLink } from '@/features/coverLetter/hooks/useCoverLetterQueries';
 import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import SectionError from '@/shared/components/SectionError';
 
@@ -19,26 +16,31 @@ const CoverLetterReviewContent = ({
 }) => {
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
   const { coverLetterId } = useParams();
-  const id = !coverLetterId ? 0 : Number(coverLetterId);
+  const id = Number(coverLetterId);
+  const isValidId = !!coverLetterId && !Number.isNaN(id);
 
-  const { data: sharedLink } = useSharedLink(id);
-  const { mutate: toggleLink } = useSharedLinkToggle();
+  const { data: sharedLink } = useSharedLink(id, isValidId);
 
   useEffect(() => {
-    if (sharedLink) setIsReviewActive(sharedLink.active);
+    if (sharedLink) {
+      setIsReviewActive(sharedLink.active);
+    }
   }, [sharedLink, setIsReviewActive]);
 
   const handleToggleReview = useCallback(
     (value: boolean) => {
       setIsReviewActive(value);
-      toggleLink({ coverLetterId: id, active: value });
     },
-    [setIsReviewActive, toggleLink, id],
+    [setIsReviewActive],
   );
 
   const handleReviewClick = useCallback((reviewId: string | null) => {
     setSelectedReviewId(reviewId);
   }, []);
+
+  if (!isValidId) {
+    return <SectionError text='잘못된 자기소개서 ID입니다' />;
+  }
 
   return (
     <ErrorBoundary

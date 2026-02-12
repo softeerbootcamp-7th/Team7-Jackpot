@@ -12,9 +12,9 @@ const ScrapDetail = ({ scrap, onBack }: ScrapDetailProps) => {
   const { companyName, jobPosition, applySeason, question, answer } = scrap;
 
   return (
-    <div className='flex h-full w-96 flex-col items-center gap-3'>
+    <div className='flex h-full w-full flex-col items-center gap-3'>
       <div className='flex shrink-0 flex-col gap-5 self-stretch'>
-        <div className='flex w-96 flex-col gap-1'>
+        <div className='flex w-full flex-col gap-1'>
           <div className='inline-flex items-center gap-1 self-stretch px-3'>
             <button
               type='button'
@@ -36,7 +36,7 @@ const ScrapDetail = ({ scrap, onBack }: ScrapDetailProps) => {
 
       <div className='flex min-h-0 flex-1 flex-col gap-3 self-stretch overflow-y-auto'>
         <div className='flex flex-col self-stretch px-3'>
-          <div className='flex w-96 flex-col gap-3 border-b border-gray-100 px-3 py-5'>
+          <div className='flex w-full flex-col gap-3 border-b border-gray-100 px-3 py-5'>
             <div className='inline-flex items-center self-stretch pr-1'>
               <div className='flex flex-1 items-center gap-1'>
                 <div className='flex items-center justify-center gap-1 rounded-xl bg-blue-50 px-3 py-1.5'>
@@ -70,10 +70,7 @@ const ScrapDetail = ({ scrap, onBack }: ScrapDetailProps) => {
 
             <div className='inline-flex items-center gap-0.5'>
               <div className='text-sm leading-5 font-medium text-gray-400'>
-                {answer.length}
-              </div>
-              <div className='text-sm leading-5 font-medium text-gray-400'>
-                자
+                {answer.length}자
               </div>
             </div>
           </div>

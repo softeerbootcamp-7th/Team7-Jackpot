@@ -1,11 +1,8 @@
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import type { QnA } from '@/shared/types/qna';
+import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// TODO: 추후에 inmemory로 옮기면서 코드 수정 예정
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
 
 // 하나의 자기소개서의 QnA id 목록 조회
 export const getQnAIdList = async ({
@@ -18,13 +15,12 @@ export const getQnAIdList = async ({
 
   const response = await fetch(`${BASE_URL}/qna/id/all?${params.toString()}`, {
     headers: {
-      Authorization: `${getToken()}`,
+      Authorization: `${getAccessToken()}`,
     },
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch QnA list');
+    await parseErrorResponse(response);
   }
 
   return response.json();
@@ -34,13 +30,12 @@ export const getQnAIdList = async ({
 export const getQnA = async (qnaId: number): Promise<QnA> => {
   const response = await fetch(`${BASE_URL}/qna/${qnaId}`, {
     headers: {
-      Authorization: `${getToken()}`,
+      Authorization: `${getAccessToken()}`,
     },
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch QnA');
+    await parseErrorResponse(response);
   }
 
   return response.json();
@@ -62,15 +57,14 @@ export const updateQnA = async ({
   const response = await fetch(`${BASE_URL}/qna`, {
     method: 'PUT',
     headers: {
-      Authorization: `${getToken()}`,
+      Authorization: `${getAccessToken()}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ qnAId: qnAId, answer }),
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to update QnA');
+    await parseErrorResponse(response);
   }
 
   return response.json();

@@ -1,9 +1,7 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
+import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
-// TODO: 추후에 inmemory로 옮기면서 코드 수정 예정
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
+const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export interface ApiReview {
   id: number;
@@ -24,13 +22,12 @@ export const getReviewsByQnaId = async (
 ): Promise<GetReviewsResponse> => {
   const response = await fetch(`${BASE_URL}/qna/${qnaId}/reviews/all`, {
     headers: {
-      Authorization: `${getToken()}`,
+      Authorization: `${getAccessToken()}`,
     },
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch reviews');
+    await parseErrorResponse(response);
   }
 
   return response.json();

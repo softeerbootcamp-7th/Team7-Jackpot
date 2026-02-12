@@ -1,9 +1,9 @@
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import type {
-  ApiApplyHalf,
   CoverLetter,
   RecentCoverLetter,
 } from '@/shared/types/coverLetter';
-import { mapApplyHalf } from '@/shared/utils/recruitSeason';
+import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 interface SearchCoverLettersParams {
   searchWord?: string;
@@ -25,11 +25,6 @@ interface CoverLetterSearchResponse {
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-// TODO: 추후에 inmemory로 옮기면서 코드 수정 예정
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
-
 export const searchCoverLetters = async ({
   searchWord,
   size = 9,
@@ -45,46 +40,30 @@ export const searchCoverLetters = async ({
     `${BASE_URL}/search/coverletter?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`, // TODO: 토큰 가져오는 함수 변경
+        Authorization: `${getAccessToken()}`,
       },
     },
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to search cover letters');
+    await parseErrorResponse(response);
   }
 
   return response.json();
 };
-
-interface CoverLetterApiResponse {
-  coverLetterId: number;
-  companyName: string;
-  applyYear: number;
-  applyHalf: ApiApplyHalf;
-  jobPosition: string;
-  deadline: string;
-}
 
 export const getCoverLetter = async (
   coverLetterId: number,
 ): Promise<CoverLetter> => {
   const response = await fetch(`${BASE_URL}/coverletter/${coverLetterId}`, {
     headers: {
-      Authorization: `${getToken()}`,
+      Authorization: `${getAccessToken()}`,
     },
   });
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to fetch cover letter');
+    await parseErrorResponse(response);
   }
 
-  const data: CoverLetterApiResponse = await response.json();
-
-  return {
-    ...data,
-    applyHalf: mapApplyHalf(data.applyHalf),
-  };
+  return response.json();
 };

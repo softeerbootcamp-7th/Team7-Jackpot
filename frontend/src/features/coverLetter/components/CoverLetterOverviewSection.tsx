@@ -15,7 +15,7 @@ const CoverLetterOverviewSection = ({
   onPageChange,
 }: CoverLetterSectionProps) => {
   const { data } = useCoverLetterSearch(searchWord, 9, page + 1);
-  const coverLetters = data?.coverLetters ?? [];
+  const coverLetters = data.coverLetters ?? [];
   const coverLetterEmptyCaseText = emptyCaseText['overview'];
 
   if (coverLetters.length === 0) {
@@ -27,7 +27,7 @@ const CoverLetterOverviewSection = ({
       coverLetters={coverLetters}
       isCoverLetter
       currentPage={page}
-      totalPages={data?.page.totalPages}
+      totalPages={data.page.totalPages}
       onPageChange={onPageChange}
     />
   );

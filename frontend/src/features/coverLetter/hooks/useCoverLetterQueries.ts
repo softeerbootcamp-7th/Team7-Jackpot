@@ -38,11 +38,14 @@ export const useScrapCoverLetters = (searchWord = '', size = 9) => {
 };
 
 // 첨삭 링크 조회
-export const useSharedLink = (coverLetterId: number) => {
+export const useSharedLink = (
+  coverLetterId: number,
+  enabled: boolean = true,
+) => {
   return useQuery({
     queryKey: ['sharedLink', coverLetterId],
     queryFn: () => fetchSharedLink({ coverLetterId }),
-    staleTime: 0,
+    enabled,
   });
 };
 

@@ -1,3 +1,4 @@
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import type {
   CalendarDatesResponse,
   HomeCountResponse,
@@ -6,11 +7,6 @@ import type {
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// TODO: 추후에 inmemory로 옮기면서 코드 수정 예정
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
 
 export const fetchHomeCount = async (
   date: string,
@@ -21,7 +17,7 @@ export const fetchHomeCount = async (
     `${BASE_URL}/coverletter/count?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
       },
     },
   );
@@ -54,7 +50,7 @@ export const fetchUpcomingDeadlines = async ({
     `${BASE_URL}/coverletter/upcoming?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
       },
     },
   );
@@ -84,7 +80,7 @@ export const fetchCalendarDates = async ({
     `${BASE_URL}/coverletter/calendar?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`,
+        Authorization: `${getAccessToken()}`,
       },
     },
   );

@@ -10,6 +10,7 @@ import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import SearchInput from '@/shared/components/SearchInput';
 import SectionError from '@/shared/components/SectionError';
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
+import { validateSearchKeyword } from '@/shared/utils/validation';
 
 const CoverLetterWriteSidebar = ({
   currentSidebarTab,
@@ -21,31 +22,11 @@ const CoverLetterWriteSidebar = ({
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams] = useSearchParams();
-  const { showToast } = useToastMessageContext();
 
   const isScrap = currentSidebarTab === 'scrap';
   const searchWord = searchParams.get('search') ?? '';
 
-  const handleTabChange = (tab: 'scrap' | 'library') => {
-    onTabChange(tab);
-    const params = new URLSearchParams(location.search);
-    params.set('tab', tab);
-    navigate({ search: params.toString() });
-  };
-
-  const handleSearch = useCallback(
-    (keyword: string) => {
-      if (keyword.length === 1) {
-        showToast('검색어는 2자 이상이어야 합니다.');
-        return;
-      }
-      const params = new URLSearchParams(location.search);
-      params.set('tab', currentSidebarTab);
-      params.set('search', keyword);
-      navigate({ search: params.toString() }, { replace: true });
-    },
-    [currentSidebarTab, navigate, location.search, showToast],
-  );
+  const { showToast } = useToastMessageContext();
 
   const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
   const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
@@ -58,7 +39,32 @@ const CoverLetterWriteSidebar = ({
     selectedDocumentId,
   });
 
-  const deleteScrap = () => {};
+  const handleTabChange = (tab: 'scrap' | 'library') => {
+    onTabChange(tab);
+    const params = new URLSearchParams(location.search);
+    params.set('tab', tab);
+    navigate({ search: params.toString() });
+  };
+
+  const handleSearch = useCallback(
+    (keyword: string) => {
+      const { isValid, message } = validateSearchKeyword(keyword);
+      if (!isValid && message) {
+        showToast(message);
+        return;
+      }
+
+      const params = new URLSearchParams(location.search);
+      params.set('tab', currentSidebarTab);
+      params.set('search', keyword);
+      navigate({ search: params.toString() }, { replace: true });
+    },
+    [currentSidebarTab, navigate, location.search, showToast],
+  );
+
+  const deleteScrap = () => {
+    // TODO: Scrap 취소 api 연결 필요
+  };
 
   return (
     <div className='inline-flex w-[26.75rem] flex-col items-start justify-start gap-3 self-stretch pb-4'>
@@ -105,6 +111,7 @@ const CoverLetterWriteSidebar = ({
 
       {isScrap ? (
         <ErrorBoundary
+          key={searchWord}
           fallback={(reset) => (
             <SectionError
               onRetry={reset}
