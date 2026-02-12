@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 
-import FolderIcon from '@/assets/icons/FolderIcon.png';
+import FolderIconInSignUp from '@/assets/icons/FolderIconInSignUp.png';
 import { SignUpPageIcons as SI } from '@/features/auth/icons';
 import { CommonIcon as CI } from '@/shared/icons';
 
@@ -14,7 +14,7 @@ const SignUpComplete = () => {
       </div>
       <div className='z-10 flex flex-col items-center'>
         <div className='mb-8'>
-          <img src={FolderIcon} />
+          <img src={FolderIconInSignUp} />
         </div>
         <div className='mb-5'>
           <CI.TitleLogo />
