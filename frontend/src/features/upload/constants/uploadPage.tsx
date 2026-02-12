@@ -1,11 +1,11 @@
 import { UploadPageIcons as I } from '@/features/upload/icons';
 import type {
-  StepInformationProps,
+  StepDataType,
   TabDataType,
   UploadTabDataType,
 } from '@/features/upload/types/upload';
 
-export const STEP_DATA: Record<string, StepInformationProps> = {
+export const STEP_DATA: Record<string, StepDataType> = {
   '1': {
     className: 'left-[4.6875rem]',
     Icon: I.UploadIcon,

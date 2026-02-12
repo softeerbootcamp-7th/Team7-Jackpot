@@ -1,22 +1,14 @@
-
-
-export interface CoverLetterTabProps {
-  tabState: number;
-  setTabState: (newValue: number) => void;
-}
-
 export interface PaginationButtonIconProps {
   color: string;
 }
 
-export interface StepInformationProps {
+export interface StepDataType {
   className: string;
-  Icon?: React.ComponentType<{ color: string }>;
-  icon?: React.ReactNode;
+  Icon: React.ComponentType<{ color: string }>;
   step: string;
   name: string;
-  loadingTitle?: string;
-  loadingSubTitle?: string;
+  loadingTitle: string;
+  loadingSubTitle: string;
 }
 
 export interface ContentItemType {
