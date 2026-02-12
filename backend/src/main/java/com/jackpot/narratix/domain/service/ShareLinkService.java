@@ -71,13 +71,6 @@ public class ShareLinkService {
                 .orElseGet(ShareLinkActiveResponse::deactivate);
     }
 
-    @Transactional(readOnly = true)
-    public boolean validateShareLink(String shareId) {
-        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
-                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
-        return shareLink.isValid();
-    }
-
     public boolean accessShareLink(String userId, ReviewRoleType role, String shareId) {
         return shareLinkLockManager.tryLock(shareId, role, userId);
     }
