@@ -1,4 +1,5 @@
-import { ReviewPageIcons } from '@/features/review/components/icons';
+import PaperChipIcon from '@/shared/icons/PaperChipIcon';
+import PenToolIcon from '@/shared/icons/PenToolIcon';
 
 const ChipRow = ({
   hasEdit,
@@ -10,16 +11,14 @@ const ChipRow = ({
   <div className='flex items-center gap-1.5'>
     {hasEdit && (
       <div className='flex items-center gap-1 rounded-full bg-red-50 px-2 py-[5px] pr-2.5'>
-        <ReviewPageIcons.PaperChipIcon />
-        <span className='text-xs leading-5 font-medium text-red-500'>수정</span>
+        <PaperChipIcon />
+        <span className='text-caption-l font-medium text-red-500'>수정</span>
       </div>
     )}
     {hasComment && (
       <div className='flex items-center gap-1 rounded-full bg-blue-50 px-2 py-[5px] pr-2.5'>
-        <ReviewPageIcons.PenToolIcon />
-        <span className='text-xs leading-5 font-medium text-blue-500'>
-          코멘트
-        </span>
+        <PenToolIcon />
+        <span className='text-caption-l font-medium text-blue-500'>코멘트</span>
       </div>
     )}
   </div>

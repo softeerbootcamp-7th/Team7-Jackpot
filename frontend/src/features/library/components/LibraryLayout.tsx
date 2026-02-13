@@ -1,23 +1,32 @@
-import type { ReactNode } from 'react';
+import { Outlet } from 'react-router';
 
-interface LibraryLayoutProps {
-  headerSlot: ReactNode;
-  sidebarSlot: ReactNode;
-  children: ReactNode;
-}
+import ScrapNum from '@/features/library/components/ScrapNum';
+import {
+  libraryContent,
+  libraryHeaderText,
+} from '@/features/library/constants';
+import { useLibraryTabs } from '@/features/library/hooks/useLibraryTabs';
+import type { LibraryView } from '@/features/library/types';
+import ContentHeader from '@/shared/components/ContentHeader';
+import TabBar from '@/shared/components/TabBar';
 
-const LibraryLayout = ({
-  headerSlot,
-  sidebarSlot,
-  children,
-}: LibraryLayoutProps) => {
+const LibraryLayout = () => {
+  const { currentTab, handleTabChange } = useLibraryTabs();
+
   return (
-    <div className='flex h-screen w-full max-w-screen min-w-[1700px] flex-col overflow-hidden px-75'>
-      <div className='flex-none'>{headerSlot}</div>
-      <div className='flex min-h-0 w-full flex-1 flex-row'>
-        <aside className='h-full w-[427px] flex-none'>{sidebarSlot}</aside>
-        <main className='h-full flex-1'>{children}</main>
-      </div>
+    <div className='flex h-[calc(100vh-6.25rem)] w-full max-w-screen min-w-[1700px] flex-col px-75'>
+      <header>
+        <ContentHeader {...libraryHeaderText} />
+        <div className='flex flex-row items-center justify-between'>
+          <TabBar<LibraryView>
+            content={libraryContent}
+            currentTab={currentTab}
+            handleTabChange={handleTabChange}
+          />
+          <ScrapNum />
+        </div>
+      </header>
+      <Outlet />
     </div>
   );
 };

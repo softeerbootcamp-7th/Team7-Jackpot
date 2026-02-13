@@ -1,5 +1,6 @@
-import { ReviewPageIcons } from '@/features/review/components/icons';
-import type { Review } from '@/features/review/types/review';
+import PaperChipIcon from '@/shared/icons/PaperChipIcon';
+import PenToolIcon from '@/shared/icons/PenToolIcon';
+import type { Review } from '@/shared/types/review';
 
 const CardContentSection = ({
   text,
@@ -23,12 +24,10 @@ const CardContentSection = ({
       {review.revision && (
         <div className='flex w-full flex-col gap-1'>
           <div className='flex items-center gap-1.5'>
-            <ReviewPageIcons.PaperChipIcon />
-            <span className='text-base leading-6 font-bold text-gray-950'>
-              첨삭
-            </span>
+            <PaperChipIcon />
+            <span className='text-body-l font-bold text-gray-950'>첨삭</span>
           </div>
-          <p className='pl-6 text-sm leading-5 font-normal text-gray-600'>
+          <p className='text-body-s pl-6 font-normal text-gray-600'>
             {review.revision}
           </p>
         </div>
@@ -37,12 +36,10 @@ const CardContentSection = ({
       {review.comment && (
         <div className='flex w-full flex-col gap-1'>
           <div className='flex items-center gap-1.5'>
-            <ReviewPageIcons.PenToolIcon />
-            <span className='text-base leading-6 font-bold text-gray-950'>
-              코멘트
-            </span>
+            <PenToolIcon />
+            <span className='text-body-l font-bold text-gray-950'>코멘트</span>
           </div>
-          <p className='pl-6 text-sm leading-5 font-normal text-gray-600'>
+          <p className='text-body-s pl-6 font-normal text-gray-600'>
             {review.comment}
           </p>
         </div>

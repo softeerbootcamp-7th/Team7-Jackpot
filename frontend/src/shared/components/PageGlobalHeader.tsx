@@ -1,37 +1,38 @@
-import { useLocation, useNavigate } from 'react-router';
+import { useState } from 'react';
 
+import { useNavigate } from 'react-router';
+
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import NotificationDropdown from '@/features/notification/components/NotificationDropdown';
+import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
-  const nav = useNavigate();
-  const location = useLocation();
+  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const { userInfo } = useAuth();
 
   return (
     <header className='mb-[1.875rem] flex h-[3.75rem] w-full items-center justify-between bg-white px-75'>
       <div className='flex items-center gap-20'>
         <div className='flex items-center text-2xl font-bold text-blue-300'>
-          Narratix
+          <button
+            className='cursor-pointer'
+            type='button'
+            onClick={() => navigate('/home')}
+            aria-label='홈으로 이동'
+          >
+            <I.TitleLogo width='99' height='27' />
+          </button>
         </div>
 
         <div>
           <ul className='flex items-center gap-10 select-none'>
             {NAV_ITEMS.map((item) => {
-              const isActive = location.pathname.startsWith(item.path);
-
               return (
                 <li key={item.label}>
-                  <button
-                    type='button'
-                    onClick={() => nav(item.path)}
-                    className={`cursor-pointer text-base ${
-                      isActive
-                        ? 'font-bold text-gray-950'
-                        : 'font-medium text-gray-600 hover:text-gray-900'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
+                  <NavItem to={item.path}>{item.label}</NavItem>
                 </li>
               );
             })}
@@ -40,12 +41,15 @@ const PageGlobalHeader = () => {
       </div>
 
       <div className='flex items-center gap-5'>
-        <button type='button' className='cursor-pointer p-1'>
-          <I.NotificationIcon />
-        </button>
+        <NotificationDropdown
+          isOpen={isDropdownOpen}
+          handleDropdown={setIsDropdownOpen}
+        />
         <div className='flex cursor-pointer items-center gap-2'>
           <I.UserAvatarIcon />
-          <span className='text-base font-medium text-gray-600'>졸린 경민</span>
+          <span className='text-base font-medium text-gray-600'>
+            {userInfo.nickname || '사용자'}
+          </span>
         </div>
       </div>
     </header>

@@ -1,32 +1,14 @@
-export interface FirstContentAreaHeaderProps {
-  uploadTab: 'file' | 'text';
-  setUploadTab: (newValue: 'file' | 'text') => void;
-  step?: string;
-  nextStep?: (step: string) => void;
-}
-
-export interface CoverLetterTabProps {
-  tabState: 1 | 2 | 3;
-  setTabState: (newValue: 1 | 2 | 3) => void;
-}
-
 export interface PaginationButtonIconProps {
   color: string;
 }
 
-export interface StepInformationProps {
+export interface StepDataType {
   className: string;
-  Icon?: React.ComponentType<{ color: string }>;
-  icon?: React.ReactNode;
+  Icon: React.ComponentType<{ color: string }>;
   step: string;
   name: string;
-  loadingTitle?: string;
-  loadingSubTitle?: string;
-}
-
-export interface RecruitSeasonType {
-  season: 'first' | 'second';
-  label: string;
+  loadingTitle: string;
+  loadingSubTitle: string;
 }
 
 export interface ContentItemType {
@@ -34,7 +16,7 @@ export interface ContentItemType {
   jobPosition: string;
   recruitPeriod: {
     year: number;
-    season: 'first' | 'second';
+    season: 'FIRST_HALF' | 'SECOND_HALF';
   };
   questionType: string;
 }
@@ -52,7 +34,7 @@ export interface DropdownStateType {
 
 export interface TabDataType {
   tabName: string;
-  tabNumber: 1 | 2 | 3;
+  tabNumber: number;
 }
 
 export interface UploadTabDataType {
@@ -60,3 +42,5 @@ export interface UploadTabDataType {
   targetTab: 'file' | 'text';
   icon: React.ReactNode;
 }
+
+export type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';

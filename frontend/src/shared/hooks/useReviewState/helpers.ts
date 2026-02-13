@@ -1,0 +1,292 @@
+import type { Review } from '@/shared/types/review';
+
+// parseTaggedText: 태그 제거 + 위치 계산
+export const parseTaggedText = (raw: string) => {
+  const openTagRegex = /<c(\d+)>/g;
+  const closeTagRegex = /<\/c(\d+)>/g;
+
+  const tags: Array<{
+    id: number;
+    type: 'open' | 'close';
+    position: number;
+    matchLength: number;
+  }> = [];
+
+  // 여는 태그
+  let match: RegExpExecArray | null;
+  while ((match = openTagRegex.exec(raw)) !== null) {
+    tags.push({
+      id: Number(match[1]),
+      type: 'open',
+      position: match.index,
+      matchLength: match[0].length,
+    });
+  }
+
+  // 닫는 태그
+  while ((match = closeTagRegex.exec(raw)) !== null) {
+    tags.push({
+      id: Number(match[1]),
+      type: 'close',
+      position: match.index,
+      matchLength: match[0].length,
+    });
+  }
+
+  // 위치순 정렬
+  tags.sort((a, b) => a.position - b.position);
+
+  const taggedRanges: Array<{ id: number; start: number; end: number }> = [];
+  const stack: Array<{ id: number; start: number }> = [];
+
+  let cleaned = '';
+  let lastIndex = 0;
+
+  for (const tag of tags) {
+    cleaned += raw.slice(lastIndex, tag.position);
+
+    if (tag.type === 'open') {
+      stack.push({ id: tag.id, start: cleaned.length });
+    } else {
+      const openIndex = stack.findIndex((t) => t.id === tag.id);
+      if (openIndex !== -1) {
+        const open = stack[openIndex];
+        taggedRanges.push({
+          id: tag.id,
+          start: open.start,
+          end: cleaned.length,
+        });
+        stack.splice(openIndex, 1);
+      } else {
+        console.warn(`Closing tag </c${tag.id}> without matching opening tag`);
+      }
+    }
+
+    lastIndex = tag.position + tag.matchLength;
+  }
+
+  cleaned += raw.slice(lastIndex);
+
+  if (stack.length > 0) {
+    console.warn(
+      'Unclosed tags:',
+      stack.map((t) => t.id),
+    );
+  }
+
+  return { cleaned, taggedRanges };
+};
+
+// buildReviewsFromApi: API 리뷰 -> 내부 Review
+export const buildReviewsFromApi = (
+  cleanedText: string,
+  taggedRanges: Array<{ id: number; start: number; end: number }>,
+  apiReviews: Array<{
+    id: number;
+    sender: { id: string; nickname: string };
+    originText: string;
+    suggest: string | null;
+    comment: string;
+    createdAt: string;
+  }>,
+): Review[] => {
+  return apiReviews.map((api) => {
+    const tagged = taggedRanges.find((t) => t.id === api.id);
+
+    if (!tagged) {
+      return {
+        id: api.id,
+        selectedText: api.originText,
+        revision: api.suggest || '',
+        comment: api.comment,
+        range: { start: -1, end: -1 },
+        sender: api.sender,
+        originText: api.originText,
+        suggest: api.suggest,
+        createdAt: api.createdAt,
+        isValid: false,
+      };
+    }
+
+    const actualText = cleanedText.slice(tagged.start, tagged.end);
+    const isTextMatching = actualText === api.originText;
+
+    return {
+      id: api.id,
+      selectedText: api.originText,
+      revision: api.suggest || '',
+      comment: api.comment,
+      range: { start: tagged.start, end: tagged.end },
+      sender: api.sender,
+      originText: api.originText,
+      suggest: api.suggest,
+      createdAt: api.createdAt,
+      isValid: isTextMatching,
+    };
+  });
+};
+
+let internalReviewAutoId = 1000;
+export const generateInternalReviewId = () => ++internalReviewAutoId;
+
+// 두 문자열을 비교하여 변경된 위치와 길이를 계산
+export const calculateTextChange = (
+  oldText: string,
+  newText: string,
+): { changeStart: number; oldLength: number; newLength: number } => {
+  // 앞에서부터 같은 부분 찾기
+  let changeStart = 0;
+  while (
+    changeStart < oldText.length &&
+    changeStart < newText.length &&
+    oldText[changeStart] === newText[changeStart]
+  ) {
+    changeStart++;
+  }
+
+  // 뒤에서부터 같은 부분 찾기
+  let oldEnd = oldText.length;
+  let newEnd = newText.length;
+  while (
+    oldEnd > changeStart &&
+    newEnd > changeStart &&
+    oldText[oldEnd - 1] === newText[newEnd - 1]
+  ) {
+    oldEnd--;
+    newEnd--;
+  }
+
+  return {
+    changeStart,
+    oldLength: oldEnd - changeStart,
+    newLength: newEnd - changeStart,
+  };
+};
+
+// 텍스트 변경에 따라 리뷰 범위를 업데이트하고 겹침 감지
+export const updateReviewRanges = <T extends Review>(
+  reviews: T[],
+  changeStart: number,
+  oldLength: number,
+  newLength: number,
+  newDocumentText: string,
+): T[] => {
+  const lengthDiff = newLength - oldLength;
+  const changeEnd = changeStart + oldLength;
+
+  const shiftedReviews = reviews.map((review): T => {
+    const { start, end } = review.range;
+
+    // 변경 영역과 겹치지 않는 리뷰는 위치만 이동
+    if (end <= changeStart) return review;
+    if (start >= changeEnd) {
+      return {
+        ...review,
+        range: { start: start + lengthDiff, end: end + lengthDiff },
+      };
+    }
+
+    // 변경 영역에 리뷰가 완전히 포함되는 경우 → 무효화
+    if (start >= changeStart && end <= changeEnd) {
+      return {
+        ...review,
+        range: { start: -1, end: -1 },
+        isValid: false,
+      };
+    }
+
+    // 부분 겹침 처리
+    let newStart = start;
+    let newEnd = end;
+
+    if (start >= changeStart && start < changeEnd) {
+      newStart = changeStart + newLength;
+      newEnd = end + lengthDiff;
+    } else if (end > changeStart && end <= changeEnd) {
+      newEnd = changeStart;
+    } else if (start < changeStart && end > changeEnd) {
+      newEnd = end + lengthDiff;
+    }
+
+    return {
+      ...review,
+      range: {
+        start: newStart,
+        end: Math.max(newStart, newEnd),
+      },
+    };
+  });
+
+  // originText 검증
+  const validatedReviews = shiftedReviews.map((review) => {
+    const { start, end } = review.range;
+    if (start < 0 || end < 0 || !review.isValid)
+      return { ...review, isValid: false };
+
+    const currentText = newDocumentText.slice(start, end);
+    return { ...review, isValid: currentText === review.originText };
+  });
+
+  // 겹침 검증
+  const activeReviews = validatedReviews
+    .filter((r) => r.range.start !== -1 && r.isValid)
+    .sort((a, b) => a.range.start - b.range.start);
+
+  const conflictIds = new Set<number>();
+  let lastEnd = -1;
+
+  for (const r of activeReviews) {
+    if (r.range.start < lastEnd) {
+      conflictIds.add(r.id);
+      lastEnd = Math.max(lastEnd, r.range.end);
+    } else {
+      lastEnd = r.range.end;
+    }
+  }
+
+  // 겹친 리뷰 무효화
+  return validatedReviews.map((r) =>
+    conflictIds.has(r.id) ? { ...r, isValid: false } : r,
+  );
+};
+
+// 편집된 텍스트와 리뷰 범위를 받아 태그 포함 원본으로 재구성
+export const reconstructTaggedText = (
+  cleanedText: string,
+  reviews: Review[],
+): string => {
+  // 유효한 리뷰 필터링
+  const validReviews = reviews.filter(
+    (r) =>
+      r.isValid !== false &&
+      r.range.start !== -1 &&
+      r.range.start < r.range.end &&
+      r.range.end <= cleanedText.length,
+  );
+
+  const sorted = [...validReviews].sort(
+    (a, b) => a.range.start - b.range.start,
+  );
+
+  let result = '';
+  let lastIndex = 0;
+
+  for (const review of sorted) {
+    const { start, end } = review.range;
+
+    // 이전 리뷰 영역과 겹치면 스킵
+    if (start < lastIndex) {
+      console.warn(`Collision skipped: Review ${review.id}`);
+      continue;
+    }
+
+    // 텍스트 조립
+    result += cleanedText.slice(lastIndex, start);
+    result += `<c${review.id}>${cleanedText.slice(start, end)}</c${review.id}>`;
+
+    lastIndex = end;
+  }
+
+  result += cleanedText.slice(lastIndex);
+  return result;
+};
