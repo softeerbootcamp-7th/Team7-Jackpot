@@ -3,14 +3,15 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router';
 
 import { useAuth } from '@/features/auth/hooks/useAuth';
+import NotificationDropdown from '@/features/notification/components/NotificationDropdown';
 import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { CommonIcon as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
   const navigate = useNavigate();
-  const { userInfo } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const { userInfo } = useAuth();
 
   return (
     <header className='mb-[1.875rem] flex h-[3.75rem] w-full items-center justify-between bg-white px-75'>

@@ -1,0 +1,36 @@
+import { emptyCaseText } from '@/features/coverLetter/constants';
+import { useCoverLetterSearch } from '@/features/coverLetter/hooks/useCoverLetterQueries';
+import CoverLetterOverview from '@/shared/components/CoverLetterOverview';
+import EmptyCase from '@/shared/components/EmptyCase';
+
+interface CoverLetterSectionProps {
+  searchWord: string;
+  page: number;
+  onPageChange: (page: number) => void;
+}
+
+const CoverLetterOverviewSection = ({
+  searchWord,
+  page,
+  onPageChange,
+}: CoverLetterSectionProps) => {
+  const { data } = useCoverLetterSearch(searchWord, 9, page + 1);
+  const coverLetters = data.coverLetters ?? [];
+  const overviewEmptyText = emptyCaseText['overview'];
+
+  if (coverLetters.length === 0) {
+    return <EmptyCase {...overviewEmptyText} />;
+  }
+
+  return (
+    <CoverLetterOverview
+      coverLetters={coverLetters}
+      isCoverLetter
+      currentPage={page}
+      totalPages={data.page.totalPages}
+      onPageChange={onPageChange}
+    />
+  );
+};
+
+export default CoverLetterOverviewSection;

@@ -11,9 +11,9 @@ interface CoverLetterContentProps {
   editingReview: Review | null;
   selection: SelectionInfo | null;
   isReviewOpen: boolean;
-  selectedReviewId: string | null;
+  selectedReviewId: number | null;
   onSelectionChange: (selection: SelectionInfo | null) => void;
-  onReviewClick: (reviewId: string) => void;
+  onReviewClick: (reviewId: number) => void;
   onTextChange?: (newText: string) => void;
 }
 
@@ -110,16 +110,19 @@ const CoverLetterContent = ({
   // 리뷰 클릭 이벤트 처리
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const target = e.target as HTMLElement;
-    const reviewId = target.getAttribute('data-review-id');
-    if (reviewId && isReviewOpen) {
-      onReviewClick(reviewId);
+    const reviewIdStr = target.getAttribute('data-review-id');
+    if (reviewIdStr && isReviewOpen) {
+      const reviewId = Number(reviewIdStr);
+      if (!isNaN(reviewId)) {
+        onReviewClick(reviewId);
+      }
     }
   };
 
   return (
     <div
       ref={containerRef}
-      className='relative ml-12 min-h-0 flex-1 overflow-y-auto px-4'
+      className='relative ml-12 min-h-0 flex-1 overflow-y-auto rounded-xl border border-gray-200 bg-white px-4 transition-colors focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-100 hover:border-gray-300'
       style={{
         whiteSpace: 'pre-wrap',
         overflowY: selection ? 'hidden' : 'auto',
@@ -131,7 +134,7 @@ const CoverLetterContent = ({
         suppressContentEditableWarning={true}
         onInput={handleInput}
         onClick={handleClick}
-        className='w-full py-2 text-base leading-7 font-normal text-gray-800 outline-none'
+        className='w-full cursor-text py-3 text-base leading-7 font-normal text-gray-800 outline-none'
         style={{
           paddingBottom: spacerHeight,
         }}

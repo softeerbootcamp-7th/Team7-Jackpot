@@ -11,6 +11,8 @@ import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
+import { coverLetterEmptyCaseText } from './shared/constants/coverLetterEmptyCaseText';
+
 import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
 import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
@@ -18,7 +20,6 @@ import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayou
 import DetailView from '@/features/library/components/DetailView';
 import LibraryLayout from '@/features/library/components/LibraryLayout';
 import LibrarySidebarLayout from '@/features/library/components/LibrarySidebarLayout';
-import { emptyCaseText } from '@/features/library/constants';
 import LabelingResultSection from '@/features/upload/components/LabelingResultSection';
 import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
 import UploadInputSection from '@/features/upload/components/UploadInputSection';
@@ -50,11 +51,11 @@ function App() {
                 <Route path='company'>
                   <Route
                     index
-                    element={<EmptyCase {...emptyCaseText.folder} />}
+                    element={<EmptyCase {...coverLetterEmptyCaseText} />}
                   />
                   <Route
                     path=':companyName'
-                    element={<EmptyCase {...emptyCaseText.folder} />}
+                    element={<EmptyCase {...coverLetterEmptyCaseText} />}
                   />
                   <Route
                     path=':companyName/:coverLetterId'
@@ -64,11 +65,11 @@ function App() {
                 <Route path='qna'>
                   <Route
                     index
-                    element={<EmptyCase {...emptyCaseText.folder} />}
+                    element={<EmptyCase {...coverLetterEmptyCaseText} />}
                   />
                   <Route
                     path=':qnAName'
-                    element={<EmptyCase {...emptyCaseText.folder} />}
+                    element={<EmptyCase {...coverLetterEmptyCaseText} />}
                   />
                   <Route path=':qnAName/:qnAId' element={<DetailView />} />
                 </Route>
@@ -77,6 +78,10 @@ function App() {
             <Route path='/review/:coverLetterId' element={<ReviewPage />} />
 
             <Route path='/cover-letter' element={<CoverLetterLayout />}>
+              <Route
+                index
+                element={<Navigate to='/cover-letter/list' replace />}
+              />
               <Route
                 path='/cover-letter/list'
                 element={<CoverLetterLandingPage />}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import CoverLetterChipList from '@/features/review/components/coverLetter/CoverLetterChipList';
 import CoverLetterContent from '@/features/review/components/coverLetter/CoverLetterContent';
@@ -6,6 +6,7 @@ import CoverLetterPagination from '@/features/review/components/coverLetter/Cove
 import CoverLetterQuestion from '@/features/review/components/coverLetter/CoverLetterQuestion';
 import ReviewModal from '@/features/review/components/reviewModal/ReviewModal';
 import type { Review, ReviewBase } from '@/shared//types/review';
+import useOutsideClick from '@/shared/hooks/useOutsideClick';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
 
 const SPACER_HEIGHT = 10;
@@ -21,7 +22,7 @@ interface CoverLetterSectionProps {
   totalPages: number;
   editingReview: Review | null;
   onAddReview: (review: ReviewBase) => void;
-  onUpdateReview: (id: string, revision: string, comment: string) => void;
+  onUpdateReview: (id: number, revision: string, comment: string) => void;
   onCancelEdit: () => void;
   onPageChange: (index: number) => void;
 }
@@ -44,21 +45,12 @@ const CoverLetterSection = ({
   const [selection, setSelection] = useState<SelectionInfo | null>(null);
   const modalRef = useRef<HTMLDivElement>(null);
 
-  const handleDocumentMouseDown = useCallback(
-    (e: MouseEvent) => {
-      if (modalRef.current?.contains(e.target as Node)) return;
+  const handleOutsideClick = useCallback(() => {
+    setSelection(null);
+    if (editingReview) onCancelEdit();
+  }, [editingReview, onCancelEdit]);
 
-      setSelection(null);
-      if (editingReview) onCancelEdit();
-    },
-    [editingReview, onCancelEdit],
-  );
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleDocumentMouseDown);
-    return () =>
-      document.removeEventListener('mousedown', handleDocumentMouseDown);
-  }, [handleDocumentMouseDown]);
+  useOutsideClick(modalRef, handleOutsideClick, !!selection);
 
   const handleSubmit = (revision: string, comment: string) => {
     if (!selection) return;

@@ -3,6 +3,7 @@ import { Link } from 'react-router';
 
 import type { RecentCoverLetter } from '@/shared/types/coverLetter';
 import { getDate } from '@/shared/utils/dates';
+import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface CoverLetterPreviewProps {
   data: RecentCoverLetter;
@@ -13,13 +14,9 @@ const CoverLetterPreview = ({
   data,
   isCoverLetter = false,
 }: CoverLetterPreviewProps) => {
-  const getApplyHalfText = (applyHalf: string) => {
-    return `${data.applyYear}년 ${applyHalf}`;
-  };
-
   return (
     <Link
-      to={`/coverLetter/edit/${data.coverLetterId}`}
+      to={`/cover-letter/edit/${data.coverLetterId}`}
       className={`${isCoverLetter ? 'h-[11.25rem]' : ''} flex flex-1 cursor-pointer items-center justify-start gap-9 rounded-2xl py-6 pr-6 pl-9 outline outline-1 outline-offset-[-1px] outline-gray-100`}
     >
       <img src={fileIcon} className='h-16 w-14' alt='' aria-hidden='true' />
@@ -32,7 +29,7 @@ const CoverLetterPreview = ({
           </div>
           <div className='flex items-center justify-center rounded-xl bg-gray-50 px-3 py-1.5'>
             <div className='text-xs leading-4 font-medium text-gray-600'>
-              {getApplyHalfText(data.applyHalf)}
+              {`${data.applyYear}년 ${mapApplyHalf(data.applyHalf)}`}
             </div>
           </div>
         </div>
