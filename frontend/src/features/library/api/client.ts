@@ -4,12 +4,13 @@ export async function httpClient<T>(
   path: string,
   config?: RequestInit,
 ): Promise<T> {
-  // const token = localStorage.getItem('accessToken');
-  const token = 'Bearer ' + localStorage.getItem('accessToken');
+  const storedToken = localStorage.getItem('accessToken');
 
-  if (!token) {
-    throw new Error('Access Denied');
+  if (!storedToken) {
+    throw new Error('Access Denied'); // 혹은 로그인 페이지로 리다이렉트
   }
+
+  const token = `Bearer ${storedToken}`;
 
   const response = await fetch(`${BASE_URL}${path}`, {
     method: 'GET',
@@ -27,5 +28,6 @@ export async function httpClient<T>(
     throw new Error(`HTTP Error: ${response.status}`);
   }
 
-  return response.json();
+  const text = await response.text();
+  return text ? JSON.parse(text) : (undefined as T);
 }

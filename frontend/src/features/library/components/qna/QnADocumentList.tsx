@@ -1,10 +1,9 @@
-import { NavLink, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
 import { getMockQuestionsByQnAName } from '@/features/library/api/mockData';
+import DocumentList from '@/features/library/components/DocumentList';
 import QnADocument from '@/features/library/components/qna/QnADocument';
 import { useQnAListQueries } from '@/features/library/hooks/queries/useLibraryListQueries';
-import { ChevronLeftIcon } from '@/features/library/icons/ChevronLeft';
-import { FolderIcon } from '@/features/library/icons/Folder';
 
 type Props = {
   className: string;
@@ -14,30 +13,24 @@ const isDev = import.meta.env.DEV;
 
 const QnADocumentList = ({ className }: Props) => {
   const { qnAName } = useParams<{ qnAName?: string }>();
+  const navigate = useNavigate();
+
   const { data } = useQnAListQueries(qnAName ?? null);
   const questions =
     data?.pages.flatMap((page) => page.questions) ??
     (isDev ? getMockQuestionsByQnAName(qnAName ?? null) : []);
 
   return (
-    <div className={`w-full ${className}`}>
-      <div className='inline-flex items-center justify-start gap-1 self-stretch px-3'>
-        <NavLink to={`/library/qna`}>
-          <ChevronLeftIcon />
-        </NavLink>
-        <div className='flex flex-1 items-center justify-start gap-2'>
-          <div className='h-7 w-7'>
-            <FolderIcon />
-          </div>
-          <div className='text-title-m line-clamp-1 flex-1 justify-start font-bold text-gray-950'>
-            {qnAName}
-          </div>
-        </div>
-      </div>
-      {questions.map((document) => (
+    <DocumentList
+      className={className}
+      // `qnAName`이 없을 경우를 대비해 기본값 설정
+      title={qnAName ?? ''}
+      items={questions}
+      onBack={() => navigate('/library/qna')}
+      renderItem={(document) => (
         <QnADocument key={document.id} content={document} />
-      ))}
-    </div>
+      )}
+    />
   );
 };
 

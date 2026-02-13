@@ -12,12 +12,19 @@ type Props = {
   className: string;
 };
 
+const isDev = import.meta.env.DEV;
+
+// [박소민] TODO: isLoading, isError 처리하기
 const CompanyDocumentList = ({ className }: Props) => {
   const { companyName } = useParams<{ companyName?: string }>();
   const { data } = useCompanyListQueries(companyName ?? null);
   const coverLetters =
     data?.pages.flatMap((page) => page.coverLetters) ??
-    MOCK_COVER_LETTERS.filter((letter) => letter.companyName === companyName);
+    (isDev
+      ? MOCK_COVER_LETTERS.filter(
+          (letter) => letter.companyName === companyName,
+        )
+      : []);
 
   return (
     <div className={`w-full ${className}`}>

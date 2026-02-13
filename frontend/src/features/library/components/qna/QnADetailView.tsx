@@ -19,6 +19,8 @@ const QnADetailView = () => {
     return <div>문서를 불러오는 중 오류가 발생했습니다.</div>;
   }
 
+  const isDev = import.meta.env.DEV;
+
   // API 데이터 또는 목데이터에서 찾기
   const mockQuestions = getMockQuestionsByQnAName(qnAName ?? null);
 
@@ -26,7 +28,7 @@ const QnADetailView = () => {
     qnaQuery.data?.pages
       .flatMap((page) => page.questions)
       .find((doc) => doc.id === Number(qnAId)) ||
-    mockQuestions.find((doc) => doc.id === Number(qnAId));
+    (isDev ? mockQuestions.find((doc) => doc.id === Number(qnAId)) : undefined);
 
   if (!currentDocument) {
     console.log('Document not found!');

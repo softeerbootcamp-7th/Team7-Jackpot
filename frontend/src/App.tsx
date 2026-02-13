@@ -1,7 +1,6 @@
 import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
-import CoverLetterQnAFriendsPage from '@/pages//CoverLetterQnAFriendsPage';
 import CoverLetterLandingPage from '@/pages/CoverLetterLandingPage';
 import CoverLetterQnAFriendsPage from '@/pages/CoverLetterQnAFriendsPage';
 import HomePage from '@/pages/HomePage';
@@ -30,13 +29,8 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route element={<RootLayout />}>
-            {/* <Route path="/" element={<LandingPage />}/> */}
             <Route path='/home' element={<HomePage />} />
             <Route path='/upload' element={<UploadPage />} />
-            <Route path='/cover-letter' element={<CoverLetterLandingPage />} />
-            <Route path='/cover-letter/new' element={<CoverLetterPage />} />
-
-            {/* <Route path="/recruit" element={<RecruitPage />}/> */}
             <Route path='/library' element={<LibraryLayout />}>
               {/* [박소민] /library로 접속시 자동으로 /library/company로 이동 */}
               {/* TODO: 렌더링을 최소화할 수 있는 방법이 없는지 확인 (라우팅 변경해도 됨) */}
