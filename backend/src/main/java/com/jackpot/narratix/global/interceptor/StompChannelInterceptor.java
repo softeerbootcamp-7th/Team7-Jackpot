@@ -30,34 +30,66 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private final JwtTokenParser jwtTokenParser;
     private final ShareLinkService shareLinkService;
 
+    private static final String WRITER_SUBSCRIBE_ENDPOINT = "/writer";
+    private static final String REVIEWER_SUBSCRIBE_ENDPOINT = "/reviewer";
+
+
     @Override
     public Message<?> preSend(@NonNull Message<?> message, @NonNull MessageChannel channel) {
         final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-
-            String userId = extractUserId(accessor);
-            String shareId = getShareId(accessor);
-            ReviewRoleType role = shareLinkService.validateShareLinkAndGetRole(userId, shareId);
-
-            if (!shareLinkService.accessShareLink(userId, role, shareId)) {
-                log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
-                throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
-            }
-
-            Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
-            if (sessionAttributes == null) {
-                throw new IllegalStateException("Session attributes cannot be null during CONNECT");
-            }
-
-            WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
-            WebSocketSessionAttributes.setShareId(sessionAttributes, shareId);
-            WebSocketSessionAttributes.setRole(sessionAttributes, role);
-
-            log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
+            setSessionAttributes(accessor);
+        } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            convertSubscribeEndPoint(accessor);
         }
 
         return message;
+    }
+
+    private void convertSubscribeEndPoint(StompHeaderAccessor accessor) {
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        if (sessionAttributes == null) {
+            throw new IllegalStateException("Session attributes cannot be null during CONNECT");
+        }
+
+        ReviewRoleType role = WebSocketSessionAttributes.getRole(sessionAttributes);
+
+        String suffixEndPoint = "";
+        if (role == ReviewRoleType.WRITER) {
+            suffixEndPoint = WRITER_SUBSCRIBE_ENDPOINT;
+        } else if (role == ReviewRoleType.REVIEWER) {
+            suffixEndPoint = REVIEWER_SUBSCRIBE_ENDPOINT;
+        }
+
+        String convertedDestination = accessor.getDestination() + suffixEndPoint;
+        accessor.setDestination(convertedDestination);
+
+        String userId = WebSocketSessionAttributes.getUserId(sessionAttributes);
+        String shareId = WebSocketSessionAttributes.getShareId(sessionAttributes);
+        log.info("WebSocket SUBSCRIBED at {}: userId={}, shareId={}, role={}", convertedDestination, userId, shareId, role);
+    }
+
+    private void setSessionAttributes(StompHeaderAccessor accessor) {
+        String userId = extractUserId(accessor);
+        String shareId = getShareId(accessor);
+        ReviewRoleType role = shareLinkService.validateShareLinkAndGetRole(userId, shareId);
+
+        if (!shareLinkService.accessShareLink(userId, role, shareId)) {
+            log.warn("Share link access denied: userId={}, shareId={}, role={}", userId, shareId, role);
+            throw new BaseException(ShareLinkErrorCode.SHARE_LINK_ACCESS_LIMIT_EXCEEDED);
+        }
+
+        Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
+        if (sessionAttributes == null) {
+            throw new IllegalStateException("Session attributes cannot be null during CONNECT");
+        }
+
+        WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
+        WebSocketSessionAttributes.setShareId(sessionAttributes, shareId);
+        WebSocketSessionAttributes.setRole(sessionAttributes, role);
+
+        log.info("WebSocket CONNECT: userId={}, shareId={}, role={}", userId, shareId, role);
     }
 
     private String getShareId(StompHeaderAccessor accessor) {
