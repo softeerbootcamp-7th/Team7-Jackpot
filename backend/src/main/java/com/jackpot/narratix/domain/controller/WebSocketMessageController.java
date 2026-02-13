@@ -31,12 +31,7 @@ public class WebSocketMessageController {
             @DestinationVariable String shareId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
-
-        webSocketMessageService.validateShareId(shareId, sessionInfo.shareId());
-        webSocketMessageService.validateRole(sessionInfo.role(), ReviewRoleType.WRITER, shareId, sessionInfo.shareId());
-
-        log.info("User subscribed to share: shareId={}, userId={}", shareId, sessionInfo.userId());
+        handleSubscription(shareId, headerAccessor, ReviewRoleType.WRITER);
     }
 
     @SubscribeMapping("/share/{shareId}/review/reviewer")
@@ -44,12 +39,14 @@ public class WebSocketMessageController {
             @DestinationVariable String shareId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
+        handleSubscription(shareId, headerAccessor, ReviewRoleType.REVIEWER);
+    }
+
+    private void handleSubscription(String shareId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole){
         WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
-
         webSocketMessageService.validateShareId(shareId, sessionInfo.shareId());
-        webSocketMessageService.validateRole(sessionInfo.role(), ReviewRoleType.REVIEWER, shareId, sessionInfo.shareId());
-
-        log.info("User subscribed to share: shareId={}, userId={}", shareId, sessionInfo.userId());
+        webSocketMessageService.validateRole(sessionInfo.role(), expectedRole, shareId, sessionInfo.shareId());
+        log.info("User subscribed to share: shareId={}, userId={}, role={}", shareId, sessionInfo.userId(), expectedRole);
     }
 
     @MessageMapping("/share/{shareId}/text-update")
