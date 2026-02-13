@@ -17,6 +17,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -39,9 +40,12 @@ public class StompChannelInterceptor implements ChannelInterceptor {
         final StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
         if (StompCommand.CONNECT.equals(accessor.getCommand())) {
+            log.info("WebSocket CONNECTING...");
             setSessionAttributes(accessor);
         } else if (StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+            log.info("WebSocket SUBSCRIBING...");
             convertSubscribeEndPoint(accessor);
+            return MessageBuilder.createMessage(message.getPayload(), accessor.getMessageHeaders());
         }
 
         return message;
