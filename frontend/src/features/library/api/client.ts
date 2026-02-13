@@ -29,5 +29,8 @@ export async function httpClient<T>(
   }
 
   const text = await response.text();
-  return text ? JSON.parse(text) : (undefined as T);
+  if (!text) {
+    throw new Error(`Empty response body for ${path}`);
+  }
+  return JSON.parse(text) as T;
 }

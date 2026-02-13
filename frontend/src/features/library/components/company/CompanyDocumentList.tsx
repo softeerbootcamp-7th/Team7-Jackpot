@@ -17,7 +17,10 @@ const isDev = import.meta.env.DEV;
 // [박소민] TODO: isLoading, isError 처리하기
 const CompanyDocumentList = ({ className }: Props) => {
   const { companyName } = useParams<{ companyName?: string }>();
-  const { data } = useCompanyListQueries(companyName ?? null);
+
+  const { data, isLoading, isError } = useCompanyListQueries(
+    companyName ?? null,
+  );
   const coverLetters =
     data?.pages.flatMap((page) => page.coverLetters) ??
     (isDev
@@ -41,6 +44,19 @@ const CompanyDocumentList = ({ className }: Props) => {
           </div>
         </div>
       </div>
+      {isLoading && (
+        <div className='p-4 text-center text-gray-500'>로딩 중...</div>
+      )}
+      {isError && (
+        <div className='p-4 text-center text-red-500'>
+          데이터를 불러오는 중 오류가 발생했습니다.
+        </div>
+      )}
+      {!isLoading && !isError && coverLetters.length === 0 && (
+        <div className='p-4 text-center text-gray-400'>
+          등록된 자기소개서가 없습니다.
+        </div>
+      )}
       {coverLetters.map((document) => (
         <CompanyDocument key={document.id} content={document} />
       ))}
