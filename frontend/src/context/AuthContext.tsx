@@ -18,11 +18,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   useEffect(() => {
-    // const initAuth = async () => {
-    //   const success = await authClient.refresh();
-    //   setIsAuthenticated(success);
-    // };
-
     const initAuth = () => {
       const token = authClient.getToken();
 
