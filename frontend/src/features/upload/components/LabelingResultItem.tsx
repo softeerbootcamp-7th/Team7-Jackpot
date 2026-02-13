@@ -19,9 +19,16 @@ const JOB_POSITION_LIST: string[] = ['프론트엔드 개발', '프론트엔드'
 interface CoverLetterTabProps {
   tabState: number;
   setTabState: (newValue: number) => void;
+  qnAState: number;
+  setQnAState: (newValue: number) => void;
 }
 
-const LabelingResultItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
+const LabelingResultItem = ({
+  tabState,
+  setTabState,
+  qnAState,
+  setQnAState,
+}: CoverLetterTabProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<DropdownStateType>({
     companyNameDropdown: false,
     jobPositionDropdown: false,
@@ -111,7 +118,7 @@ const LabelingResultItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
             />
           </div>
         </div>
-        <CoverLetterContentArea />
+        <CoverLetterContentArea qnAState={qnAState} setQnAState={setQnAState} />
       </div>
     </div>
   );
