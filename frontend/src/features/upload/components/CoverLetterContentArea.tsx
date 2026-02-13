@@ -20,7 +20,7 @@ const CoverLetterContentArea = () => {
           <div className='text-body-m flex h-9 w-9 items-center justify-center rounded-md bg-gray-50 font-bold text-gray-600 select-none'>
             {currentIndex + 1}
           </div>
-          <div className='text-lg font-bold text-gray-950'>
+          <div className='text-lg font-bold text-gray-950 select-text'>
             {MOCK_COVER_LETTER[currentIndex].title}
           </div>
         </div>
@@ -28,7 +28,7 @@ const CoverLetterContentArea = () => {
           <div className='text-sm text-gray-400'>
             {`총 ${MOCK_COVER_LETTER[currentIndex].content.length.toLocaleString('ko-KR')}자`}
           </div>
-          <div className='text-body-s fixed-scroll-bar h-96 overflow-y-auto whitespace-pre-wrap text-gray-600'>
+          <div className='text-body-s fixed-scroll-bar h-96 overflow-y-auto whitespace-pre-wrap text-gray-600 select-text'>
             {currentContent.split('\n').map((paragraph, index) => (
               <p key={index} className='mb-2 min-h-[1rem] leading-relaxed'>
                 {paragraph}
