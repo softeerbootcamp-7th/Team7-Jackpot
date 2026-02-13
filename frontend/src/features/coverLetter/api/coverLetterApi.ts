@@ -3,6 +3,7 @@ import type { GetScrapsResponse } from '@/features/coverLetter/types/coverLetter
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const accessToken = getAccessToken();
 
 interface GetScrapsParams {
   searchWord?: string;
@@ -25,7 +26,7 @@ export const fetchScraps = async ({
     `${BASE_URL}/search/scrap?${params.toString()}`,
     {
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
       },
     },
   );
@@ -51,7 +52,7 @@ export const fetchSharedLink = async ({
     `${BASE_URL}/coverletter/${coverLetterId}/share-link`,
     {
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
       },
     },
   );
@@ -75,7 +76,7 @@ export const toggleSharedLinkStatus = async ({
     {
       method: 'PATCH',
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ active }),

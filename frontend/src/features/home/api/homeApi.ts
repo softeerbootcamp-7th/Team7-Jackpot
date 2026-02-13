@@ -7,6 +7,7 @@ import type {
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const accessToken = getAccessToken();
 
 export const fetchHomeCount = async (
   date: string,
@@ -17,7 +18,7 @@ export const fetchHomeCount = async (
     `${BASE_URL}/coverletter/count?${params.toString()}`,
     {
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
       },
     },
   );
@@ -50,7 +51,7 @@ export const fetchUpcomingDeadlines = async ({
     `${BASE_URL}/coverletter/upcoming?${params.toString()}`,
     {
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
       },
     },
   );
@@ -80,7 +81,7 @@ export const fetchCalendarDates = async ({
     `${BASE_URL}/coverletter/calendar?${params.toString()}`,
     {
       headers: {
-        Authorization: getAccessToken(),
+        Authorization: accessToken,
       },
     },
   );

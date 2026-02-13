@@ -3,6 +3,7 @@ import type { QnA } from '@/shared/types/qna';
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const accessToken = getAccessToken();
 
 // 하나의 자기소개서의 QnA id 목록 조회
 export const getQnAIdList = async ({
@@ -15,7 +16,7 @@ export const getQnAIdList = async ({
 
   const response = await fetch(`${BASE_URL}/qna/id/all?${params.toString()}`, {
     headers: {
-      Authorization: getAccessToken(),
+      Authorization: accessToken,
     },
   });
 
@@ -30,7 +31,7 @@ export const getQnAIdList = async ({
 export const getQnA = async (qnaId: number): Promise<QnA> => {
   const response = await fetch(`${BASE_URL}/qna/${qnaId}`, {
     headers: {
-      Authorization: getAccessToken(),
+      Authorization: accessToken,
     },
   });
 
@@ -57,7 +58,7 @@ export const updateQnA = async ({
   const response = await fetch(`${BASE_URL}/qna`, {
     method: 'PUT',
     headers: {
-      Authorization: getAccessToken(),
+      Authorization: accessToken,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ qnAId, answer }),
