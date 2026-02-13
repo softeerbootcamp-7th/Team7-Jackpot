@@ -16,7 +16,6 @@ const SummaryOverview = () => {
     return null;
   }
 
-  // TODO: 닉네임 실제 닉네임으로 변경
   return (
     <div className='inline-flex w-full items-center justify-start gap-3'>
       <div className='flex h-28 flex-1 items-center justify-start gap-5 rounded-2xl px-10 py-5 outline outline-1 outline-offset-[-1px] outline-gray-100'>

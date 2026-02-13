@@ -1,4 +1,5 @@
-import { useLocation, useOutletContext, useParams } from 'react-router';
+import { useOutletContext, useParams } from 'react-router';
+import { useLocation } from 'react-router';
 
 import CoverLetterReviewContent from '@/features/coverLetter/components/CoverLetterReviewContent';
 import ReviewSidebar from '@/features/coverLetter/components/reviewWithFriend/ReviewSidebar';
@@ -15,10 +16,9 @@ const CoverLetterQnAFriendsPage = () => {
   const coverLetterIdNumber = coverLetterId ? Number(coverLetterId) : null;
   const location = useLocation();
 
-  const DEFAULT_TAB: CoverLetterView = 'COVERLETTER_WRITE';
   const currentTab =
     coverLetterContent.find((tab) => location.pathname.startsWith(tab.path))
-      ?.name ?? DEFAULT_TAB;
+      ?.name ?? ('COVERLETTER_WRITE' as CoverLetterView);
 
   const { isReviewActive, setIsReviewActive } = useOutletContext<{
     isReviewActive: boolean;

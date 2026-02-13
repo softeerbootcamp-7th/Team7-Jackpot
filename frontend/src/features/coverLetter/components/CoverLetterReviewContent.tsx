@@ -1,49 +1,63 @@
-import { useCallback, useState } from 'react';
+import { Suspense, useCallback, useEffect, useState } from 'react';
 
-import CoverLetter from '@/features/coverLetter/components/CoverLetter';
-import ReviewCardList from '@/features/coverLetter/components/reviewWithFriend/ReviewCardList';
-import useReviewState from '@/shared/hooks/useReviewState';
+import { useParams } from 'react-router';
+
+import CoverLetterSection from '@/features/coverLetter/components/CoverLetterSection';
+import { useSharedLink } from '@/features/coverLetter/hooks/useCoverLetterQueries';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
+import SectionError from '@/shared/components/SectionError';
 
 const CoverLetterReviewContent = ({
-  selectedDocumentId,
   isReviewActive,
   setIsReviewActive,
 }: {
-  selectedDocumentId: number;
   isReviewActive: boolean;
   setIsReviewActive: (v: boolean) => void;
 }) => {
-  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
-  const reviewState = useReviewState(selectedDocumentId);
+  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
+  const { coverLetterId } = useParams();
+  const id = Number(coverLetterId);
+  const isValidId = !!coverLetterId && !Number.isNaN(id);
 
-  const handleReviewClick = useCallback((reviewId: string | null) => {
+  const { data: sharedLink } = useSharedLink(id, isValidId);
+
+  useEffect(() => {
+    if (sharedLink?.active !== undefined) {
+      setIsReviewActive(sharedLink.active);
+    }
+  }, [sharedLink?.active, setIsReviewActive]);
+
+  const handleToggleReview = useCallback(
+    (value: boolean) => {
+      setIsReviewActive(value);
+    },
+    [setIsReviewActive],
+  );
+
+  const handleReviewClick = useCallback((reviewId: number | null) => {
     setSelectedReviewId(reviewId);
   }, []);
 
+  if (!isValidId) {
+    return <SectionError text='잘못된 자기소개서 ID입니다' />;
+  }
+
   return (
-    <div className='flex h-full min-h-0 w-full min-w-0 flex-row pb-39.5'>
-      <div className='h-full min-h-0 min-w-0 flex-1 overflow-hidden'>
-        <CoverLetter
-          key={reviewState.currentPageIndex}
-          documentId={selectedDocumentId}
-          openReview={setIsReviewActive}
-          isReviewOpen={isReviewActive}
+    <ErrorBoundary
+      fallback={(reset) => (
+        <SectionError onRetry={reset} text='QnA를 표시할 수 없습니다' />
+      )}
+    >
+      <Suspense fallback={<div>로딩 중...</div>}>
+        <CoverLetterSection
+          id={id}
+          isReviewActive={isReviewActive}
+          setIsReviewActive={handleToggleReview}
           selectedReviewId={selectedReviewId}
           onReviewClick={handleReviewClick}
-          reviewState={reviewState}
         />
-      </div>
-
-      {isReviewActive && (
-        <aside className='h-full min-h-0 w-[248px] overflow-y-auto border-l border-gray-100'>
-          <ReviewCardList
-            reviews={reviewState.currentReviews}
-            selectedReviewId={selectedReviewId}
-            onReviewClick={handleReviewClick}
-          />
-        </aside>
-      )}
-    </div>
+      </Suspense>
+    </ErrorBoundary>
   );
 };
 

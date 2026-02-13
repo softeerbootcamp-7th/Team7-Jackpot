@@ -1,4 +1,9 @@
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
+import type {
+  CoverLetter,
+  RecentCoverLetter,
+} from '@/shared/types/coverLetter';
+import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 interface SearchCoverLettersParams {
   searchWord?: string;
@@ -19,12 +24,6 @@ interface CoverLetterSearchResponse {
 }
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-// TODO: 추후에 inmemory로 옮기면서 코드 수정 예정
-function getToken(): string {
-  return localStorage.getItem('accessToken') || '';
-}
-
 export const searchCoverLetters = async ({
   searchWord,
   size = 9,
@@ -40,14 +39,33 @@ export const searchCoverLetters = async ({
     `${BASE_URL}/search/coverletter?${params.toString()}`,
     {
       headers: {
-        Authorization: `${getToken()}`, // TODO: 토큰 가져오는 함수 변경
+        Authorization: getAccessToken(),
       },
     },
   );
 
   if (!response.ok) {
-    const error = await response.json();
-    throw new Error(error.message || 'Failed to search cover letters');
+    await parseErrorResponse(response);
+  }
+
+  return response.json();
+};
+
+export const getCoverLetter = async (
+  coverLetterId: number,
+): Promise<CoverLetter> => {
+  if (!coverLetterId || Number.isNaN(coverLetterId) || coverLetterId <= 0) {
+    throw new Error(`Invalid coverLetterId: ${coverLetterId}`);
+  }
+
+  const response = await fetch(`${BASE_URL}/coverletter/${coverLetterId}`, {
+    headers: {
+      Authorization: getAccessToken(),
+    },
+  });
+
+  if (!response.ok) {
+    await parseErrorResponse(response);
   }
 
   return response.json();
