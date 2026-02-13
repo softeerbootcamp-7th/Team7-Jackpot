@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Scrap from '@/features/coverLetter/components/Scrap';
 import ScrapDetail from '@/features/coverLetter/components/ScrapDetail';
 import { useScrapCoverLetters } from '@/features/coverLetter/hooks/useCoverLetterQueries';
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import { SidebarSkeleton } from '@/shared/components/SidebarSkeleton';
+import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 const ScrapSection = ({
   searchWord,
@@ -19,22 +20,12 @@ const ScrapSection = ({
   const [selectedScrap, setSelectedScrap] = useState<ScrapItem | null>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const el = sentinelRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
+  useInfiniteScroll({
+    sentinelRef,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
 
   const scraps = data?.pages?.flatMap((page) => page.scraps ?? []) ?? [];
 
