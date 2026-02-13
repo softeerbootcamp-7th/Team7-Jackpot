@@ -13,7 +13,7 @@ const StepInformation = ({
 }: StepInformationProps) => {
   return (
     <div
-      className={`absolute top-1/2 flex flex-col items-center ${className} -translate-x-1/2 -translate-y-1/2`}
+      className={`absolute top-1/2 flex flex-col items-center ${className ?? ''} -translate-x-1/2 -translate-y-1/2`}
     >
       {icon}
       <div className='mt-1 text-xs font-bold'>{step}</div>
