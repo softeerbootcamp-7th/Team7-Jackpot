@@ -1,32 +1,26 @@
-import { useState } from 'react';
+import { Outlet, useLocation } from 'react-router';
 
-import { useSearchParams } from 'react-router';
-
-import ContentArea from '@/features/upload/components/ContentArea';
 import StepItem from '@/features/upload/components/StepItem';
-import UploadPageHeader from '@/features/upload/components/UploadPageHeader';
+import UploadLayoutHeader from '@/features/upload/components/UploadLayoutHeader';
 
 const UploadPage = () => {
-  const [uploadTab, setUploadTab] = useState<'file' | 'text'>('file');
-  const [searchParams, setSearchParams] = useSearchParams();
-  const currentStep: string = searchParams.get('step') || '1';
-  const nextStep = (step: string) => {
-    setSearchParams({ step: step });
+  const location = useLocation();
+
+  const getCurrentStep = () => {
+    if (location.pathname.includes('labeling')) return 2;
+    if (location.pathname.includes('complete')) return 3;
+    return 1;
   };
+
+  const currentStep = getCurrentStep();
   return (
     <div>
-      <div className='mb-12 px-75'>
+      <div className='mb-12 h-screen px-75 select-none'>
         <div className='mb-12'>
-          <UploadPageHeader />
-          <StepItem step={currentStep} />
+          <UploadLayoutHeader />
+          <StepItem step={currentStep.toString()} />
         </div>
-
-        <ContentArea
-          uploadTab={uploadTab}
-          setUploadTab={setUploadTab}
-          step={currentStep}
-          nextStep={nextStep}
-        />
+        <Outlet />
       </div>
     </div>
   );

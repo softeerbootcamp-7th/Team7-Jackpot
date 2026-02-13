@@ -6,10 +6,7 @@ import LabeledSelectInput from '@/features/upload/components/LabeledSelectInput'
 import { QUESTION_TYPE_LIST } from '@/features/upload/constants/uploadPage';
 import useCoverLetterState from '@/features/upload/hooks/useCoverLetterState';
 import { UploadPageIcons as I } from '@/features/upload/icons';
-import type {
-  CoverLetterTabProps,
-  DropdownStateType,
-} from '@/features/upload/types/upload';
+import type { DropdownStateType } from '@/features/upload/types/upload';
 import { yearList } from '@/features/upload/utils/generateAboutDate';
 import RecruitPeriodSelectInput from '@/shared/components/RecruitPeriodSelectInput';
 
@@ -19,7 +16,19 @@ const COMPANY_NAME_LIST: string[] = ['현대자동차', '현대오토에버', '�
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
 const JOB_POSITION_LIST: string[] = ['프론트엔드 개발', '프론트엔드', 'FE'];
 
-const SecondContentItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
+interface CoverLetterTabProps {
+  tabState: number;
+  setTabState: (newValue: number) => void;
+  qnAState: number;
+  setQnAState: (newValue: number) => void;
+}
+
+const LabelingResultItem = ({
+  tabState,
+  setTabState,
+  qnAState,
+  setQnAState,
+}: CoverLetterTabProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<DropdownStateType>({
     companyNameDropdown: false,
     jobPositionDropdown: false,
@@ -32,10 +41,10 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
   // [윤종근] - 추후 리팩토링 예정
   return (
     <div className='flex flex-col gap-6'>
-      <CoverLetterList tabState={tabState} setTabState={setTabState} />
       <div className='flex gap-6'>
-        <div className='flex-1'>
+        <div className='flex-3'>
           <div className='flex flex-col gap-5'>
+            <CoverLetterList tabState={tabState} setTabState={setTabState} />
             <LabeledSelectInput
               label='기업명'
               value={currentData.companyName}
@@ -109,10 +118,10 @@ const SecondContentItem = ({ tabState, setTabState }: CoverLetterTabProps) => {
             />
           </div>
         </div>
-        <CoverLetterContentArea />
+        <CoverLetterContentArea qnAState={qnAState} setQnAState={setQnAState} />
       </div>
     </div>
   );
 };
 
-export default SecondContentItem;
+export default LabelingResultItem;

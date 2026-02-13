@@ -20,6 +20,9 @@ import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayou
 import DetailView from '@/features/library/components/DetailView';
 import LibraryLayout from '@/features/library/components/LibraryLayout';
 import LibrarySidebarLayout from '@/features/library/components/LibrarySidebarLayout';
+import LabelingResultSection from '@/features/upload/components/LabelingResultSection';
+import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
+import UploadInputSection from '@/features/upload/components/UploadInputSection';
 import EmptyCase from '@/shared/components/EmptyCase';
 import RootLayout from '@/shared/components/RootLayout';
 import { queryClient } from '@/shared/queries/queryClient';
@@ -31,7 +34,12 @@ function App() {
         <Routes>
           <Route element={<RootLayout />}>
             <Route path='/home' element={<HomePage />} />
-            <Route path='/upload' element={<UploadPage />} />
+            <Route path='/upload' element={<UploadPage />}>
+              <Route index element={<Navigate to='input' replace />} />
+              <Route path='input' element={<UploadInputSection />} />
+              <Route path='labeling' element={<LabelingResultSection />} />
+              <Route path='complete' element={<UploadCompleteSection />} />
+            </Route>
             <Route path='/library' element={<LibraryLayout />}>
               {/* [박소민] /library로 접속시 자동으로 /library/company로 이동 */}
               {/* TODO: 렌더링을 최소화할 수 있는 방법이 없는지 확인 (라우팅 변경해도 됨) */}

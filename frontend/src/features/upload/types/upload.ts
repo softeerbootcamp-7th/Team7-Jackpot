@@ -1,30 +1,14 @@
-export interface FirstContentAreaHeaderProps {
-  uploadTab: 'file' | 'text';
-  setUploadTab: (newValue: 'file' | 'text') => void;
-  totalSize?: number;
-  isContent?: boolean;
-  setIsContent?: (state: boolean) => void;
-  step?: string;
-  nextStep?: (step: string) => void;
-}
-
-export interface CoverLetterTabProps {
-  tabState: 1 | 2 | 3;
-  setTabState: (newValue: 1 | 2 | 3) => void;
-}
-
 export interface PaginationButtonIconProps {
   color: string;
 }
 
-export interface StepInformationProps {
+export interface StepDataType {
   className: string;
-  Icon?: React.ComponentType<{ color: string }>;
-  icon?: React.ReactNode;
+  Icon: React.ComponentType<{ color: string }>;
   step: string;
   name: string;
-  loadingTitle?: string;
-  loadingSubTitle?: string;
+  loadingTitle: string;
+  loadingSubTitle: string;
 }
 
 export interface ContentItemType {
@@ -50,7 +34,7 @@ export interface DropdownStateType {
 
 export interface TabDataType {
   tabName: string;
-  tabNumber: 1 | 2 | 3;
+  tabNumber: number;
 }
 
 export interface UploadTabDataType {
