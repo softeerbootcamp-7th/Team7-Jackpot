@@ -1,20 +1,21 @@
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useHomeCount } from '@/features/home/hooks/useHomeQueries';
 import BooksIcon from '@/features/home/icons/BooksIcon';
 import ScrollIcon from '@/features/home/icons/ScrollIcon';
 import ThoughtIcon from '@/features/home/icons/ThoughtIcon';
 
-interface SummaryType {
-  coverLetterCnt: number;
-  QnACnt: number;
-  applicationCount: number;
-}
-
-const mockSummary: SummaryType = {
-  coverLetterCnt: 0,
-  QnACnt: 0,
-  applicationCount: 0,
-};
-
 const SummaryOverview = () => {
+  const { data } = useHomeCount();
+  const { userInfo } = useAuth();
+
+  if (
+    data.coverLetterCount === 0 &&
+    data.qnaCount === 0 &&
+    data.seasonCoverLetterCount === 0
+  ) {
+    return null;
+  }
+
   return (
     <div className='inline-flex w-full items-center justify-start gap-3'>
       <div className='flex h-28 flex-1 items-center justify-start gap-5 rounded-2xl px-10 py-5 outline outline-1 outline-offset-[-1px] outline-gray-100'>
@@ -23,10 +24,10 @@ const SummaryOverview = () => {
         </div>
         <div className='inline-flex flex-col items-start justify-start'>
           <div className='text-title-s font-medium text-gray-400'>
-            졸린 경민님은 지금까지
+            {userInfo.nickname || '사용자'}님은 지금까지
           </div>
           <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
-            {mockSummary.coverLetterCnt}장의 자기소개서를 완성했어요
+            {data.coverLetterCount}장의 자기소개서를 완성했어요
           </div>
         </div>
       </div>
@@ -39,7 +40,7 @@ const SummaryOverview = () => {
             끝까지 작성을 마친 답변들은
           </div>
           <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
-            총 {mockSummary.QnACnt}문항이에요
+            총 {data.qnaCount}문항이에요
           </div>
         </div>
       </div>
@@ -52,7 +53,7 @@ const SummaryOverview = () => {
             이번 시즌에는
           </div>
           <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
-            총 {mockSummary.applicationCount}개의 공고에 지원했어요
+            총 {data.seasonCoverLetterCount}개의 공고에 지원했어요
           </div>
         </div>
       </div>

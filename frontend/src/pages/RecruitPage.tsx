@@ -12,6 +12,7 @@ const RecruitPage = () => {
       </div>
       <div className='flex flex-row items-center justify-between'>
         <Calendar />
+        <RecruitSection />
       </div>
     </div>
   );

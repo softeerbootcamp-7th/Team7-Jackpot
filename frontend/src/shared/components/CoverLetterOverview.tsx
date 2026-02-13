@@ -1,22 +1,29 @@
 import type { ReactNode } from 'react';
 
 import CoverLetterPreview from '@/shared/components/CoverLetterPreview';
+import Pagination from '@/shared/components/Pagination';
 import WritingCoverLetterIcon from '@/shared/icons/WritingCoverLetter';
+import type { RecentCoverLetter } from '@/shared/types/coverLetter';
 
 interface CoverLetterOverviewProps {
   button?: ReactNode;
-  len: number;
+  coverLetters: RecentCoverLetter[];
   isCoverLetter?: boolean;
+  isHome?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  onPageChange?: (page: number) => void;
 }
 
-//  w-[82.5rem]
 const CoverLetterOverview = ({
   button,
-  len,
+  coverLetters,
   isCoverLetter = false,
+  isHome = false,
+  currentPage = 0,
+  totalPages,
+  onPageChange,
 }: CoverLetterOverviewProps) => {
-  const previews = Array.from({ length: len });
-
   return (
     <div className='inline-flex w-full flex-col items-start justify-start gap-6'>
       <div className='inline-flex items-center justify-between self-stretch'>
@@ -31,10 +38,23 @@ const CoverLetterOverview = ({
         {button}
       </div>
       <div className='grid w-full grid-cols-3 gap-3'>
-        {previews.map((_, idx) => (
-          <CoverLetterPreview isCoverLetter={isCoverLetter} key={idx} />
+        {coverLetters.map((coverLetter) => (
+          <CoverLetterPreview
+            key={coverLetter.coverLetterId}
+            data={coverLetter}
+            isCoverLetter={isCoverLetter}
+          />
         ))}
       </div>
+      {!isHome && totalPages !== undefined && onPageChange && (
+        <div className='flex w-full justify-center'>
+          <Pagination
+            current={currentPage}
+            total={totalPages}
+            onChange={onPageChange}
+          />
+        </div>
+      )}
     </div>
   );
 };

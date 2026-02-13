@@ -1,7 +1,13 @@
+import { Suspense } from 'react';
+
+import CoverLetterOverviewSkeleton from '@/features/home/components/CoverLetterOverviewSkeleton';
+import HomeCoverLetterSection from '@/features/home/components/HomeCoverLetterSection';
 import ScheduleOverview from '@/features/home/components/ScheduleOverview';
 import SummaryOverview from '@/features/home/components/SummaryOverview';
-import CoverLetterOverview from '@/shared/components/CoverLetterOverview';
-import RightArrow from '@/shared/icons/RightArrow';
+import SummaryOverviewSkeleton from '@/features/home/components/SummaryOverviewSkeleton';
+import UpcomingSchedulesSkeleton from '@/features/home/components/UpcomingSchedulesSkeleton';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
+import SectionError from '@/shared/components/SectionError';
 
 const HomePage = () => {
   return (
@@ -12,9 +18,34 @@ const HomePage = () => {
           src='/images/banner.png'
           alt='홈 화면 배너'
         />
-        <SummaryOverview />
-        <ScheduleOverview />
-        <CoverLetterOverview button={<RightArrow />} len={6} />
+
+        <ErrorBoundary
+          fallback={(reset) => (
+            <SectionError
+              onRetry={reset}
+              text='통계, 일정, 자기소개서 정보를 표시할 수 없습니다'
+            />
+          )}
+        >
+          <Suspense fallback={<SummaryOverviewSkeleton />}>
+            <SummaryOverview />
+          </Suspense>
+
+          <Suspense
+            fallback={
+              <div className='inline-flex w-full items-center justify-start gap-16'>
+                <div className='h-[270px] w-[426px] animate-pulse rounded-2xl bg-gray-100' />
+                <UpcomingSchedulesSkeleton />
+              </div>
+            }
+          >
+            <ScheduleOverview />
+          </Suspense>
+
+          <Suspense fallback={<CoverLetterOverviewSkeleton len={6} />}>
+            <HomeCoverLetterSection />
+          </Suspense>
+        </ErrorBoundary>
       </div>
     </div>
   );

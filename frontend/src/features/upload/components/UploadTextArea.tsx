@@ -1,10 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CoverLetterList from '@/features/upload/components/CoverLetterList';
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
-const UploadTextArea = () => {
-  const [tabState, setTabState] = useState<1 | 2 | 3>(1);
+interface UploadTextAreaProps {
+  setIsContent: (state: boolean) => void;
+  currentId: number;
+  handleIdChange: (id: number) => void;
+}
+const UploadTextArea = ({
+  setIsContent,
+  currentId,
+  handleIdChange,
+}: UploadTextAreaProps) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [contents, setContents] = useState<{ [key: number]: string }>({
@@ -16,34 +24,40 @@ const UploadTextArea = () => {
   const handleContents = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
 
-    setContents((prev) => ({ ...prev, [tabState]: newValue }));
+    setContents((prev) => ({ ...prev, [currentId]: newValue }));
   };
+
+  useEffect(() => {
+    const contentList = Object.values(contents);
+    const hasContent = contentList.some((content) => content !== '');
+    setIsContent(hasContent);
+  }, [contents, setIsContent]);
 
   return (
     <div className='flex flex-col gap-6'>
-      <div className='px-[1.5rem] py-[1.25rem] rounded-lg select-none bg-purple-50 select-none'>
+      <div className='rounded-lg bg-purple-50 px-[1.5rem] py-[1.25rem] select-none'>
         <div className='flex w-full items-center gap-[0.625rem]'>
           <I.TextDocumentIcon />
-          <div className='font-bold text-purple-600 text-[1.375rem]'>
+          <div className='text-[1.375rem] font-bold text-purple-600'>
             최대 3개의 텍스트형 자기소개서를 업로드할 수 있어요.
           </div>
         </div>
-        <div className='font-normal text-gray-400 px-[2.75rem] text-base'>
+        <div className='px-[2.75rem] text-base font-normal text-gray-400'>
           라이브러리 내에 아카이빙하기 위한 기본 정보와 함께, 질문과 답변으로
           구성된 자기소개서 텍스트를 붙여넣어주세요.
         </div>
       </div>
-      <CoverLetterList tabState={tabState} setTabState={setTabState} />
+      <CoverLetterList tabState={currentId} setTabState={handleIdChange} />
       <div>
         <div className='flex gap-[0.125rem]'>
-          <div className='font-bold text-lg text-gray-950'>자기소개서 내용</div>
+          <div className='text-lg font-bold text-gray-950'>자기소개서 내용</div>
           <div className='text-red-600'>*</div>
         </div>
         <div>
           <div className='relative w-full'>
             {
               <div
-                className={`absolute inset-0 px-5 py-[0.875rem] flex flex-col gap-1 text-gray-400 text-sm select-none pointer-events-none ${!contents[tabState] && !isFocused ? 'opacity-100' : 'opacity-0'}`}
+                className={`pointer-events-none absolute inset-0 flex flex-col gap-1 px-5 py-[0.875rem] text-sm text-gray-400 select-none ${!contents[currentId] && !isFocused ? 'opacity-100' : 'opacity-0'}`}
               >
                 <div className='font-bold'>
                   보유하고 계신 자기소개서 전체, 혹은 경험의 일부를
@@ -64,8 +78,8 @@ const UploadTextArea = () => {
           </div>
           <textarea
             id='text'
-            className='w-full min-h-64 px-5 py-3 resize-none outline-none bg-gray-50 rounded-lg'
-            value={contents[tabState]}
+            className='min-h-64 w-full resize-none rounded-lg bg-gray-50 px-5 py-3 outline-none'
+            value={contents[currentId]}
             onChange={handleContents}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}

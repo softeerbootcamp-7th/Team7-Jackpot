@@ -1,12 +1,12 @@
 import EmptyReview from '@/features/review/components/review/EmptyReview';
 import ReviewCard from '@/features/review/components/review/ReviewCard';
-import type { Review } from '@/features/review/types/review';
+import type { Review } from '@/shared/types/review';
 
 interface ReviewListSectionProps {
   reviews: Review[];
   editingReview: Review | null;
-  onEditReview: (id: string) => void;
-  onDeleteReview: (id: string) => void;
+  onEditReview: (id: number) => void;
+  onDeleteReview: (id: number) => void;
 }
 
 const ReviewListSection = ({

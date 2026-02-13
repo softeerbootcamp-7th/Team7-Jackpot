@@ -1,33 +1,60 @@
+import { Suspense, useState } from 'react';
+
+import CoverLetterOverviewSection from '@/features/coverLetter/components/CoverLetterOverviewSection';
 import NewCoverLetterButton from '@/features/coverLetter/components/NewCoverLetterButton';
-import { emptyCaseText } from '@/features/coverLetter/constants';
-import CoverLetterOverview from '@/shared/components/CoverLetterOverview';
-import DataGuard from '@/shared/components/DataGuard';
-import EmptyCase from '@/shared/components/EmptyCase';
+import CoverLetterOverviewSkeleton from '@/features/home/components/CoverLetterOverviewSkeleton';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import SearchInput from '@/shared/components/SearchInput';
+import SectionError from '@/shared/components/SectionError';
+import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
+import { validateSearchKeyword } from '@/shared/utils/validation';
 
 const CoverLetterLandingPage = () => {
-  const hasData = true;
-  const handleSearch = () => {};
+  const [searchWord, setSearchWord] = useState('');
+  const [page, setPage] = useState(0);
+  const { showToast } = useToastMessageContext();
 
-  const coverLetterEmptyCaseText = emptyCaseText['overview'];
+  const handleSearch = (word: string) => {
+    const { isValid, message } = validateSearchKeyword(word);
+    if (!isValid && message) {
+      showToast(message);
+      return;
+    }
+    setSearchWord(word);
+    setPage(0);
+  };
 
   return (
-    <div className='flex h-[calc(100vh-5.625rem)] w-full max-w-screen min-w-[1700px] flex-col overflow-hidden px-75 pb-30'>
-      <div className='flex flex-row items-center justify-between'>
+    <>
+      <div className='flex flex-row items-center justify-between pb-[30px]'>
         <SearchInput
           onSearch={handleSearch}
           placeholder='문항 유형을 입력해주세요'
         />
-        {/* [박소민] TODO: Link로 변환 */}
         <NewCoverLetterButton />
       </div>
-      <DataGuard
-        data={hasData}
-        fallback={<EmptyCase {...coverLetterEmptyCaseText} />}
-      >
-        <CoverLetterOverview isCoverLetter={true} len={9} />
-      </DataGuard>
-    </div>
+      <div className='flex flex-1 items-center'>
+        <ErrorBoundary
+          key={searchWord}
+          fallback={(reset) => (
+            <SectionError
+              onRetry={reset}
+              text='작성중인 자기소개서 목록을 표시할 수 없습니다'
+            />
+          )}
+        >
+          <Suspense fallback={<CoverLetterOverviewSkeleton len={9} />}>
+            <div className='flex h-full flex-1'>
+              <CoverLetterOverviewSection
+                searchWord={searchWord}
+                page={page}
+                onPageChange={setPage}
+              />
+            </div>
+          </Suspense>
+        </ErrorBoundary>
+      </div>
+    </>
   );
 };
 
