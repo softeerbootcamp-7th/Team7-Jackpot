@@ -47,6 +47,7 @@ export const useSharedLink = (
     queryKey: ['coverletter', 'sharedLink', { coverLetterId }],
     queryFn: () => fetchSharedLink({ coverLetterId }),
     enabled,
+    // staleTime: 0  // 기본값 그대로, 항상 새로 조회
   });
 };
 
