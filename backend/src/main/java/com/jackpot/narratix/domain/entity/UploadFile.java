@@ -1,6 +1,6 @@
 package com.jackpot.narratix.domain.entity;
 
-import com.jackpot.narratix.domain.entity.enums.UploadJobStatusType;
+import com.jackpot.narratix.domain.entity.enums.UploadStatusType;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,22 +29,22 @@ public class UploadFile {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private UploadJobStatusType status;
+    private UploadStatusType status;
 
     @Builder
     public UploadFile(String id, String originalFileName, String s3Key) {
         this.id = id;
         this.originalFileName = originalFileName;
         this.s3Key = s3Key;
-        this.status = UploadJobStatusType.PENDING;
+        this.status = UploadStatusType.PENDING;
     }
 
-    public void changeStatus(UploadJobStatusType status) {
+    public void changeStatus(UploadStatusType status) {
         this.status = status;
     }
 
     public void fail() {
-        this.status = UploadJobStatusType.FAILED;
+        this.status = UploadStatusType.FAILED;
     }
 
 }
