@@ -35,7 +35,6 @@ function App() {
             <Route path='/upload' element={<UploadPage />} />
             <Route path='/cover-letter' element={<CoverLetterLandingPage />} />
             <Route path='/cover-letter/new' element={<CoverLetterPage />} />
-            <Route path='/review/:id' element={<ReviewPage />} />
 
             {/* <Route path="/recruit" element={<RecruitPage />}/> */}
             <Route path='/library' element={<LibraryLayout />}>
