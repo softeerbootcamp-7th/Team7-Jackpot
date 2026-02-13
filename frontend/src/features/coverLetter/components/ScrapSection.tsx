@@ -36,7 +36,7 @@ const ScrapSection = ({
     return () => observer.disconnect();
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
-  const scraps = data.pages.flatMap((page) => page.scraps);
+  const scraps = data?.pages?.flatMap((page) => page.scraps ?? []) ?? [];
 
   if (selectedScrap) {
     return (

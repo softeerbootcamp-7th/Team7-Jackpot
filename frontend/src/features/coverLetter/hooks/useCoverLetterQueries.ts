@@ -30,8 +30,9 @@ export const useScrapCoverLetters = (searchWord = '', size = 9) => {
       fetchScraps({ searchWord, size, lastQnAId: pageParam }),
     initialPageParam: undefined as number | undefined,
     getNextPageParam: (lastPage) => {
-      if (!lastPage.hasNext || lastPage.scraps.length === 0) return undefined;
-      return lastPage.scraps[lastPage.scraps.length - 1].questionId;
+      const lastScrap = lastPage.scraps.at(-1);
+      if (!lastPage.hasNext || !lastScrap) return undefined;
+      return lastScrap.questionId;
     },
     staleTime: 5 * 60 * 1000,
   });
