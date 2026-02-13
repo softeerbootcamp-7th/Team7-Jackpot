@@ -1,6 +1,8 @@
 package com.jackpot.narratix.global.websocket;
 
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
+import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +13,6 @@ import java.util.Map;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WebSocketSessionAttributes {
 
-    // 세션 속성 키 상수
     private static final String USER_ID = "userId";
     private static final String SHARE_ID = "shareId";
     private static final String ROLE = "role";
@@ -21,9 +22,15 @@ public class WebSocketSessionAttributes {
     }
 
     public static String getUserId(Map<String, Object> attributes) {
-        if (attributes == null) return null;
+        validateSession(attributes);
         Object value = attributes.get(USER_ID);
-        return value != null ? value.toString() : null;
+
+        if (value == null) {
+            log.warn("WebSocket session userId is null");
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+        }
+
+        return value.toString();
     }
 
     public static void setShareId(Map<String, Object> attributes, String shareId) {
@@ -31,9 +38,15 @@ public class WebSocketSessionAttributes {
     }
 
     public static String getShareId(Map<String, Object> attributes) {
-        if (attributes == null) return null;
+        validateSession(attributes);
         Object value = attributes.get(SHARE_ID);
-        return value != null ? value.toString() : null;
+
+        if (value == null) {
+            log.warn("WebSocket session shareId is null");
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+        }
+
+        return value.toString();
     }
 
     public static void setRole(Map<String, Object> attributes, ReviewRoleType role) {
@@ -42,35 +55,26 @@ public class WebSocketSessionAttributes {
 
 
     public static ReviewRoleType getRole(Map<String, Object> attributes) {
-        if (attributes == null) return null;
-        Object value = attributes.get(ROLE);
-        
-        if (value instanceof ReviewRoleType type) {
-            return type;
+        validateSession(attributes);
+        Object role = attributes.get(ROLE);
+
+        if (role == null) {
+            log.warn("WebSocket session role is null");
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
         }
 
-        return null;
+        if (role instanceof ReviewRoleType type) {
+            return type;
+        } else {
+            log.warn("WebSocket session role is not ReviewRoleType");
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+        }
     }
 
-    public static boolean isValid(Map<String, Object> attributes) {
+    private static void validateSession(Map<String, Object> attributes) {
         if (attributes == null) {
             log.warn("WebSocket session attributes is null");
-            return false;
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
         }
-
-        String userId = getUserId(attributes);
-        String shareId = getShareId(attributes);
-        ReviewRoleType role = getRole(attributes);
-
-        boolean isValid = userId != null && shareId != null && role != null;
-
-        if (!isValid) {
-            log.warn("WebSocket session validation failed: userId={}, shareId={}, role={}",
-                     userId != null ? "present" : "null",
-                     shareId != null ? "present" : "null",
-                     role != null ? role : "null");
-        }
-
-        return isValid;
     }
 }

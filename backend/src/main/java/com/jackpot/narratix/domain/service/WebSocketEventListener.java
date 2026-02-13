@@ -23,12 +23,6 @@ public class WebSocketEventListener {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> attributes = headerAccessor.getSessionAttributes();
 
-        // 세션 속성 검증
-        if (!WebSocketSessionAttributes.isValid(attributes)) {
-            log.warn("Invalid session attributes during disconnect");
-            return;
-        }
-
         // 세션 속성 추출
         String userId = WebSocketSessionAttributes.getUserId(attributes);
         String shareId = WebSocketSessionAttributes.getShareId(attributes);
