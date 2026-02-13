@@ -1,7 +1,7 @@
 import CoverLetter from '@/features/coverLetter/components/CoverLetter';
 import ReviewCardList from '@/features/coverLetter/components/reviewWithFriend/ReviewCardList';
-import { useCoverLetter } from '@/shared/hooks/useCoverLetterQueries';
-import { useQnAIdList, useQnAList } from '@/shared/hooks/useQnAQueries';
+import { useCoverLetterWithQnAIds } from '@/shared/hooks/useCoverLetterQueries';
+import { useQnAList } from '@/shared/hooks/useQnAQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
 
 interface CoverLetterSectionProps {
@@ -19,8 +19,7 @@ const CoverLetterSection = ({
   selectedReviewId,
   onReviewClick,
 }: CoverLetterSectionProps) => {
-  const { data: coverLetter } = useCoverLetter(id);
-  const { data: qnaIds } = useQnAIdList(id);
+  const { coverLetter, qnaIds } = useCoverLetterWithQnAIds(id);
   const { data: qnas } = useQnAList(qnaIds ?? []);
 
   const reviewState = useReviewState(coverLetter, qnas);

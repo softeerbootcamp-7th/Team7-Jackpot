@@ -2,19 +2,10 @@ import {
   useMutation,
   useQueryClient,
   useSuspenseQueries,
-  useSuspenseQuery,
 } from '@tanstack/react-query';
 
-import { getQnA, getQnAIdList, updateQnA } from '@/shared/api/qnaApi';
+import { getQnA, updateQnA } from '@/shared/api/qnaApi';
 import type { QnA } from '@/shared/types/qna';
-
-export const useQnAIdList = (coverLetterId: number) => {
-  return useSuspenseQuery({
-    queryKey: ['qna', 'idList', { coverLetterId }],
-    queryFn: () => getQnAIdList({ coverLetterId }),
-    staleTime: 5 * 60 * 1000,
-  });
-};
 
 export const useQnAList = (qnaIds: number[]) => {
   return useSuspenseQueries({

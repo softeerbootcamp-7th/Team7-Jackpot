@@ -1,10 +1,8 @@
-import { useSuspenseQueries } from '@tanstack/react-query';
 import { useParams } from 'react-router';
 
 import CoverLetterSection from '@/features/review/components/coverLetter/CoverLetterSection';
 import ReviewListSection from '@/features/review/components/review/ReviewListSection';
-import { getCoverLetter } from '@/shared/api/coverLetterApi';
-import { getQnAIdList } from '@/shared/api/qnaApi';
+import { useCoverLetterWithQnAIds } from '@/shared/hooks/useCoverLetterQueries';
 import { useQnAList } from '@/shared/hooks/useQnAQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
 
@@ -16,21 +14,7 @@ const ReviewLayout = () => {
     throw new Error('유효하지 않은 자기소개서 ID입니다.');
   }
 
-  const [{ data: coverLetter }, { data: qnaIds }] = useSuspenseQueries({
-    queries: [
-      {
-        queryKey: ['coverletter', { coverLetterId }],
-        queryFn: () => getCoverLetter(coverLetterId),
-        staleTime: 5 * 60 * 1000,
-      },
-      {
-        queryKey: ['qna', 'idList', { coverLetterId }],
-        queryFn: () => getQnAIdList({ coverLetterId }),
-        staleTime: 5 * 60 * 1000,
-      },
-    ],
-  });
-
+  const { coverLetter, qnaIds } = useCoverLetterWithQnAIds(coverLetterId);
   const { data: qnas } = useQnAList(qnaIds);
 
   const {
