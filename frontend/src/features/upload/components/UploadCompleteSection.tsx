@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router';
 
-import FolderIconInUpload from '@/assets/icons/FolderIconInUpload.png';
+import folderIconInUpload from '@/assets/icons/folderIconInUpload.png';
 import { UploadPageIcons as I } from '@/features/upload/icons';
 
 const UploadCompleteSection = () => {
@@ -13,7 +13,7 @@ const UploadCompleteSection = () => {
         <I.UploadCompleteBackground />
       </div>
       <div className='z-10 mt-24 flex flex-col items-center gap-12'>
-        <img src={FolderIconInUpload} />
+        <img src={folderIconInUpload} />
 
         <div className='text-title-s flex gap-3'>
           <button
