@@ -3,12 +3,12 @@ import FileDocument from '../icons/FileDocument';
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import RightArrow from '@/shared/icons/RightArrow';
 
-interface ScrapDetailProps {
+interface CardDetailProps {
   scrap: ScrapItem;
   onBack: () => void;
 }
 
-const ScrapDetail = ({ scrap, onBack }: ScrapDetailProps) => {
+const CardDetail = ({ scrap, onBack }: CardDetailProps) => {
   const { companyName, jobPosition, applySeason, question, answer } = scrap;
 
   return (
@@ -80,4 +80,4 @@ const ScrapDetail = ({ scrap, onBack }: ScrapDetailProps) => {
   );
 };
 
-export default ScrapDetail;
+export default CardDetail;

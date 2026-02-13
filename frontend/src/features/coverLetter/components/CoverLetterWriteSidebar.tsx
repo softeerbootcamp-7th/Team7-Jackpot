@@ -1,10 +1,8 @@
-import { Suspense, useCallback, useState } from 'react';
+import { Suspense, useCallback } from 'react';
 
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 
-import ScrapSection from '@/features/coverLetter/components/ScrapSection';
-import SideBar from '@/features/library/components/SideBar';
-import useLibraryData from '@/features/library/hooks/useLibraryData';
+import CardSection from '@/features/coverLetter/components/CardSection';
 import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import SearchInput from '@/shared/components/SearchInput';
 import SectionError from '@/shared/components/SectionError';
@@ -28,21 +26,11 @@ const CoverLetterWriteSidebar = ({
 
   const { showToast } = useToastMessageContext();
 
-  const [selectedFolderId, setSelectedFolderId] = useState<number | null>(null);
-  const [selectedDocumentId, setSelectedDocumentId] = useState<number | null>(
-    null,
-  );
-
-  const { folderList, selectedDocumentList } = useLibraryData({
-    currentTab: 'QUESTIONS',
-    selectedFolderId,
-    selectedDocumentId,
-  });
-
   const handleTabChange = (tab: 'scrap' | 'library') => {
     onTabChange(tab);
     const params = new URLSearchParams(location.search);
     params.set('tab', tab);
+    // 탭 전환 시 기존 검색어를 유지하고 싶지 않다면 params.delete('search')를 추가하세요.
     navigate({ search: params.toString() });
   };
 
@@ -62,8 +50,9 @@ const CoverLetterWriteSidebar = ({
     [currentSidebarTab, navigate, location.search, showToast],
   );
 
-  const deleteScrap = () => {
-    // TODO: Scrap 취소 api 연결 필요
+  const deleteScrap = (id: number) => {
+    // TODO: Scrap 취소 api 연결 필요 (전달받은 id 활용)
+    console.log(`삭제 요청 ID: ${id}`);
   };
 
   return (
@@ -73,67 +62,73 @@ const CoverLetterWriteSidebar = ({
           <div className='inline-flex h-12 items-center justify-start self-stretch overflow-hidden rounded-lg bg-gray-50 p-1'>
             <button
               onClick={() => handleTabChange('scrap')}
-              className={`flex h-11 flex-1 items-center justify-center gap-1.5 rounded-md px-16 py-2.5 ${
+              className={`flex h-11 flex-1 items-center justify-center gap-1.5 rounded-md px-16 py-2.5 transition-all ${
                 isScrap
                   ? 'bg-white shadow-[0px_0px_10px_0px_rgba(41,41,41,0.06)]'
                   : ''
               }`}
             >
               <div
-                className={`text-body-m justify-start ${isScrap ? 'font-bold text-gray-950' : 'font-normal text-gray-400'}`}
+                className={`text-body-m justify-start ${
+                  isScrap
+                    ? 'font-bold text-gray-950'
+                    : 'font-normal text-gray-400'
+                }`}
               >
                 문항 스크랩
               </div>
             </button>
             <button
               onClick={() => handleTabChange('library')}
-              className={`flex h-11 flex-1 items-center justify-center rounded-md px-10 py-2.5 ${
+              className={`flex h-11 flex-1 items-center justify-center rounded-md px-10 py-2.5 transition-all ${
                 !isScrap
                   ? 'bg-white shadow-[0px_0px_10px_0px_rgba(41,41,41,0.06)]'
                   : ''
               }`}
             >
               <div
-                className={`text-body-m justify-start ${!isScrap ? 'font-bold text-gray-950' : 'font-normal text-gray-400'}`}
+                className={`text-body-m justify-start ${
+                  !isScrap
+                    ? 'font-bold text-gray-950'
+                    : 'font-normal text-gray-400'
+                }`}
               >
-                라이브러리 검색
+                자기소개서 검색
               </div>
             </button>
           </div>
         </div>
-        {isScrap && (
-          <SearchInput
-            onSearch={handleSearch}
-            placeholder='문항 유형을 입력해주세요'
-          />
-        )}
+        <SearchInput
+          onSearch={handleSearch}
+          placeholder={
+            isScrap
+              ? '문항 유형을 입력해주세요'
+              : '기업명 또는 직무를 입력해주세요'
+          }
+        />
       </div>
 
-      {isScrap ? (
-        <ErrorBoundary
-          key={searchWord}
-          fallback={(reset) => (
-            <SectionError
-              onRetry={reset}
-              text='스크랩 목록을 표시할 수 없습니다'
-            />
-          )}
-        >
-          <Suspense fallback={<SidebarSkeleton />}>
-            <ScrapSection searchWord={searchWord} deleteScrap={deleteScrap} />
-          </Suspense>
-        </ErrorBoundary>
-      ) : (
-        <SideBar
-          currentTab='QUESTIONS'
-          folderList={folderList}
-          folderId={selectedFolderId}
-          selectedDocumentId={selectedDocumentId}
-          selectedDocumentList={selectedDocumentList}
-          handleFolderId={setSelectedFolderId}
-          handleDocumentId={setSelectedDocumentId}
-        />
-      )}
+      <ErrorBoundary
+        key={`${currentSidebarTab}-${searchWord}`}
+        fallback={(reset) => (
+          <SectionError
+            onRetry={reset}
+            text={
+              isScrap
+                ? '스크랩 목록을 표시할 수 없습니다'
+                : '자기소개서 목록을 표시할 수 없습니다'
+            }
+          />
+        )}
+      >
+        <Suspense fallback={<SidebarSkeleton />}>
+          <CardSection
+            searchWord={searchWord}
+            isScrap={isScrap}
+            deleteScrap={deleteScrap}
+          />
+        </Suspense>
+      </ErrorBoundary>
     </div>
   );
 };
