@@ -1,3 +1,5 @@
+import { useContext } from 'react';
+
 import {
   useMutation,
   useQuery,
@@ -12,6 +14,7 @@ import {
   toggleSharedLinkStatus,
 } from '@/features/coverLetter/api/coverLetterApi';
 import { searchCoverLetters } from '@/shared/api/coverLetterApi';
+import { ToastMessageContext } from '@/shared/context/ToastMessageContext';
 
 // 기업명 직무명 기반 검색
 export const useCoverLetterSearch = (searchWord = '', size = 9, page = 1) => {
@@ -54,6 +57,8 @@ export const useSharedLink = (
 // 첨삭 링크 활성화/비활성화
 export const useSharedLinkToggle = () => {
   const queryClient = useQueryClient();
+  const toast = useContext(ToastMessageContext);
+
   return useMutation({
     mutationFn: ({
       coverLetterId,
@@ -66,6 +71,17 @@ export const useSharedLinkToggle = () => {
       queryClient.invalidateQueries({
         queryKey: ['coverletter', 'sharedLink', { coverLetterId }],
       });
+      toast?.showToast('첨삭 링크 상태가 변경되었습니다.', true);
+    },
+    onError: (error: unknown) => {
+      console.error('첨삭 링크 토글 실패', error);
+
+      const message =
+        error instanceof Error
+          ? error.message
+          : '첨삭 링크 상태 변경에 실패했습니다.';
+
+      toast?.showToast(message, false);
     },
   });
 };
