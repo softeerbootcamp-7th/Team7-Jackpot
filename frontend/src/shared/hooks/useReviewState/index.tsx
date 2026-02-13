@@ -70,9 +70,12 @@ export const useReviewState = (coverLetter: CoverLetter, qnas: QnA[]) => {
   }, [currentReviews]);
 
   const getLatestReviews = useCallback(
-    (prev: Record<number, Review[]>, qnaId: number) =>
-      prev[qnaId] ?? currentReviewsRef.current,
-    [],
+    (prev: Record<number, Review[]>, qnaId: number): Review[] => {
+      if (prev[qnaId]) return prev[qnaId];
+      if (currentQnaId === qnaId) return currentReviewsRef.current;
+      return [];
+    },
+    [currentQnaId],
   );
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -110,6 +113,7 @@ export const useReviewState = (coverLetter: CoverLetter, qnas: QnA[]) => {
   );
 
   const editedAnswersRef = useRef(editedAnswers);
+
   useEffect(() => {
     editedAnswersRef.current = editedAnswers;
   }, [editedAnswers]);
@@ -118,7 +122,7 @@ export const useReviewState = (coverLetter: CoverLetter, qnas: QnA[]) => {
     (newText: string) => {
       if (currentQnaId === undefined) return;
 
-      const oldText = editedAnswersRef.current[currentQnaId] ?? originalText;
+      const oldText = editedAnswers[currentQnaId] ?? originalText;
       const change = calculateTextChange(oldText, newText);
 
       setEditedAnswers((prev) => ({ ...prev, [currentQnaId]: newText }));
@@ -136,7 +140,7 @@ export const useReviewState = (coverLetter: CoverLetter, qnas: QnA[]) => {
         };
       });
     },
-    [currentQnaId, originalText, getLatestReviews],
+    [currentQnaId, originalText, editedAnswers, getLatestReviews],
   );
 
   const handleUpdateReview = useCallback(
