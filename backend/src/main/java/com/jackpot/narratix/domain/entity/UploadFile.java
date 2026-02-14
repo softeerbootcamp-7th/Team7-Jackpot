@@ -31,6 +31,21 @@ public class UploadFile {
     @Column(nullable = false)
     private UploadStatusType status;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
+    private String extractedText;
+
+
+    public void successExtract(String extractedText) {
+        this.extractedText = extractedText;
+        changeStatus(UploadStatusType.EXTRACTED);
+    }
+
+    public void failExtract() {
+        this.extractedText = null;
+        fail();
+    }
+
     @Builder
     public UploadFile(String id, String originalFileName, String s3Key) {
         this.id = id;
@@ -39,7 +54,7 @@ public class UploadFile {
         this.status = UploadStatusType.PENDING;
     }
 
-    public void changeStatus(UploadStatusType status) {
+    private void changeStatus(UploadStatusType status) {
         this.status = status;
     }
 
