@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.service;
 
+import com.jackpot.narratix.domain.event.NotificationSendEvent;
 import com.jackpot.narratix.domain.service.dto.NotificationSendRequest;
 import com.jackpot.narratix.domain.service.dto.NotificationSendResponse;
 import com.jackpot.narratix.domain.controller.response.UnreadNotificationCountResponse;
@@ -8,8 +9,8 @@ import com.jackpot.narratix.domain.entity.Notification;
 import com.jackpot.narratix.domain.repository.NotificationRepository;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
-import com.jackpot.narratix.global.sse.SseEmitterService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ import java.util.Optional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final SseEmitterService sseEmitterService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional(readOnly = true)
     public NotificationsPaginationResponse getNotificationsByUserId(
@@ -59,6 +60,7 @@ public class NotificationService {
         Notification notification = request.toEntity(receiverId);
         notificationRepository.save(notification);
 
-        sseEmitterService.send(receiverId, NotificationSendResponse.of(notification));
+        // 트랜잭션 커밋 이후 비동기로 SSE 전송
+        eventPublisher.publishEvent(new NotificationSendEvent(receiverId, NotificationSendResponse.of(notification)));
     }
 }
