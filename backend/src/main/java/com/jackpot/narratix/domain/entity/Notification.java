@@ -18,7 +18,7 @@ import java.util.Objects;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseTimeEntity {
 
     @Id
