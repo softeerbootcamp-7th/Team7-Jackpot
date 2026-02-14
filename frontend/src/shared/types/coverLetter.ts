@@ -11,6 +11,10 @@ export interface CoverLetter {
   applyYear: number;
   applyHalf: ApiApplyHalf;
   deadline: ISODateString;
+  questions?: {
+    question: string;
+    category: string;
+  }[];
 }
 
 export interface RecentCoverLetter extends CoverLetter {

@@ -59,6 +59,16 @@ export const isSameDay = (dateLeft: Date, dateRight: Date): boolean => {
   );
 };
 
+export const isPastDate = (date: Date, currentDay: Date) => {
+  const targetDate = new Date(date);
+  targetDate.setHours(0, 0, 0, 0);
+
+  const today = new Date(currentDay);
+  today.setHours(0, 0, 0, 0);
+
+  return targetDate < today;
+};
+
 // [박소민] Date 객체는 setMonth()의 값을 저절로 0 ~ 11 범위 안에서 정해지도록 구현되어 있다.
 export const addMonths = (date: Date, amount = 1): Date => {
   const newDate = cloneDate(date);
