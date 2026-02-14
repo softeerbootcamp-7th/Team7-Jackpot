@@ -2,6 +2,7 @@ package com.jackpot.narratix.global.interceptor;
 
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.exception.ShareLinkErrorCode;
+import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
 import com.jackpot.narratix.domain.service.ShareLinkService;
 import com.jackpot.narratix.global.auth.jwt.domain.Token;
 import com.jackpot.narratix.global.auth.jwt.service.JwtTokenParser;
@@ -54,7 +55,7 @@ public class StompChannelInterceptor implements ChannelInterceptor {
     private void convertSubscribeEndPoint(StompHeaderAccessor accessor) {
         Map<String, Object> sessionAttributes = accessor.getSessionAttributes();
         if (sessionAttributes == null) {
-            throw new IllegalStateException("Session attributes cannot be null during CONNECT");
+            throw new IllegalStateException("Session attributes cannot be null during Subscribe");
         }
 
         ReviewRoleType role = WebSocketSessionAttributes.getRole(sessionAttributes);
@@ -64,6 +65,8 @@ public class StompChannelInterceptor implements ChannelInterceptor {
             suffixEndPoint = WRITER_SUBSCRIBE_ENDPOINT;
         } else if (role == ReviewRoleType.REVIEWER) {
             suffixEndPoint = REVIEWER_SUBSCRIBE_ENDPOINT;
+        } else{
+            throw new BaseException(WebSocketErrorCode.ROLE_NOT_FOUND);
         }
 
         String convertedDestination = accessor.getDestination() + suffixEndPoint;
