@@ -1,11 +1,14 @@
 package com.jackpot.narratix.domain.service;
 
+import com.jackpot.narratix.domain.service.dto.NotificationSendRequest;
+import com.jackpot.narratix.domain.service.dto.NotificationSendResponse;
 import com.jackpot.narratix.domain.controller.response.UnreadNotificationCountResponse;
 import com.jackpot.narratix.domain.controller.response.NotificationsPaginationResponse;
 import com.jackpot.narratix.domain.entity.Notification;
 import com.jackpot.narratix.domain.repository.NotificationRepository;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
+import com.jackpot.narratix.global.sse.SseEmitterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -19,6 +22,7 @@ import java.util.Optional;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final SseEmitterService sseEmitterService;
 
     @Transactional(readOnly = true)
     public NotificationsPaginationResponse getNotificationsByUserId(
@@ -49,5 +53,12 @@ public class NotificationService {
     public UnreadNotificationCountResponse countUnreadNotification(String userId) {
         long unreadNotificationCount = notificationRepository.countByUserIdAndIsRead(userId, false);
         return new UnreadNotificationCountResponse(unreadNotificationCount);
+    }
+
+    public void sendNotification(String userId, NotificationSendRequest request){
+        Notification notification = request.toEntity();
+        notificationRepository.save(notification);
+
+        sseEmitterService.send(userId, NotificationSendResponse.of(notification));
     }
 }
