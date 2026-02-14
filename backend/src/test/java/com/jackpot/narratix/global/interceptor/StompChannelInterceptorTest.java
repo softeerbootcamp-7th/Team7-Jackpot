@@ -74,10 +74,14 @@ class StompChannelInterceptorTest {
     }
 
     @Test
-    @DisplayName("shareId 헤더가 없으면 BaseException을 던진다")
+    @DisplayName("CONNECT 명령에서 shareId 헤더가 없으면 Exception을 던진다")
     void preSend_WhenShareIdMissing_ThrowsException() {
         // given
-        Message<?> message = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+        StompHeaderAccessor connectAccessor = StompHeaderAccessor.create(StompCommand.CONNECT);
+        Message<?> message = MessageBuilder.createMessage(new byte[0], connectAccessor.getMessageHeaders());
+        Token token = mock(Token.class);
+        given(jwtTokenParser.parseBearerToken(any())).willReturn(token);
+        given(token.getSubject()).willReturn("userId");
 
         // when & then
         assertThatThrownBy(() -> stompChannelInterceptor.preSend(message, messageChannel))
@@ -89,8 +93,12 @@ class StompChannelInterceptorTest {
     @DisplayName("shareId 헤더가 빈 문자열이면 BaseException을 던진다")
     void preSend_WhenShareIdEmpty_ThrowsException() {
         // given
-        accessor.setNativeHeader("shareId", "");
-        Message<?> message = MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders());
+        StompHeaderAccessor connectAccessor = StompHeaderAccessor.create(StompCommand.CONNECT);
+        connectAccessor.setNativeHeader("shareId", "");
+        Message<?> message = MessageBuilder.createMessage(new byte[0], connectAccessor.getMessageHeaders());
+        Token token = mock(Token.class);
+        given(jwtTokenParser.parseBearerToken(any())).willReturn(token);
+        given(token.getSubject()).willReturn("userId");
 
         // when & then
         assertThatThrownBy(() -> stompChannelInterceptor.preSend(message, messageChannel))
