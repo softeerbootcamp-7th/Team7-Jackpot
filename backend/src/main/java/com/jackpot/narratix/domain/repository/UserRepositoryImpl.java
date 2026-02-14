@@ -1,6 +1,8 @@
 package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.User;
+import com.jackpot.narratix.domain.exception.UserErrorCode;
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +17,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Optional<User> findById(String userId) {
         return userJpaRepository.findById(userId);
+    }
+
+    @Override
+    public User findByIdOrElseThrow(String userId) {
+        return this.findById(userId).orElseThrow(() -> new BaseException(UserErrorCode.USER_NOT_FOUND));
     }
 }

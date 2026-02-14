@@ -2,9 +2,7 @@ package com.jackpot.narratix.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(
@@ -12,6 +10,8 @@ import lombok.NoArgsConstructor;
         indexes = @Index(name = "idx_qna_id_reviewer_id", columnList = "qna_id, reviewer_id")
 )
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseTimeEntity {
 
