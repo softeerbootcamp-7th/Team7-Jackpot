@@ -6,8 +6,7 @@ import com.jackpot.narratix.domain.entity.notification_meta.NotificationMeta;
 import com.jackpot.narratix.domain.entity.notification_meta.NotificationMetaConverter;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Objects;
 
@@ -17,7 +16,9 @@ import java.util.Objects;
         indexes = @Index(name = "idx_user_id_created_at_desc", columnList = "user_id, created_at DESC")
 )
 @Getter
-@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Notification extends BaseTimeEntity {
 
     @Id

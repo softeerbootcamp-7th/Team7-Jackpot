@@ -42,4 +42,9 @@ public class NotificationRepositoryImpl implements NotificationRepository {
     public long countByUserIdAndIsRead(String userId, boolean isRead) {
         return notificationJpaRepository.countByUserIdAndIsRead(userId, isRead);
     }
+
+    @Override
+    public Notification save(Notification notification) {
+        return notificationJpaRepository.save(notification);
+    }
 }

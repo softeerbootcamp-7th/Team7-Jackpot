@@ -2,13 +2,16 @@ package com.jackpot.narratix.domain.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
-@Table(name = "review")
+@Table(
+        name = "review",
+        indexes = @Index(name = "idx_qna_id_reviewer_id", columnList = "qna_id, reviewer_id")
+)
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review extends BaseTimeEntity {
 
@@ -18,17 +21,20 @@ public class Review extends BaseTimeEntity {
     private Long id;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "qna_id", nullable = false)
-    private QnA qna;
+    @Column(name = "qna_id", nullable = false)
+    private Long qnaId;
 
     @NotNull
-    @Column(name = "user_id", nullable = false)
-    private String userId;
+    @Column(name = "reviewer_id", nullable = false)
+    private String reviewerId;
 
     @Column(name = "comment", nullable = true)
     private String comment;
 
     @Column(name = "suggest", nullable = true)
     private String suggest;
+
+    @Builder.Default
+    @Column(name = "is_approved", nullable = false)
+    private boolean isApproved = false;
 }
