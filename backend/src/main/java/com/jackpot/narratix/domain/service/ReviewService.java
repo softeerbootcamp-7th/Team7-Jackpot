@@ -109,4 +109,26 @@ public class ReviewService {
             throw new BaseException(GlobalErrorCode.FORBIDDEN);
         }
     }
+
+    public void approveReview(String userId, Long qnAId, Long reviewId) {
+        Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+        QnA qnA = qnARepository.findByIdOrElseThrow(qnAId);
+
+        validateReviewBelongsToQnA(review, qnAId);
+        validateIsQnAOwner(userId, qnA);
+
+        // TODO: Redis에서 최신 버전 가져오기
+        // TODO: 최신 버전에서 첨삭 댓글 확인 및 originText와 같은지 비교
+
+        review.approve();
+
+        // TODO: 웹소켓 본문 전체 텍스트 변경 이벤트 발송
+        // TODO: 첨삭 댓글 수정 이벤트 발송
+    }
+
+    private void validateIsQnAOwner(String userId, QnA qnA) {
+        if (!qnA.isOwner(userId)) {
+            throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        }
+    }
 }

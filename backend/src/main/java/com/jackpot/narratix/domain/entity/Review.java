@@ -30,6 +30,10 @@ public class Review extends BaseTimeEntity {
     @Column(name = "reviewer_id", nullable = false)
     private String reviewerId;
 
+    @NotNull
+    @Column(name = "origin_text", nullable = false)
+    private String originText;
+
     @Column(name = "comment", nullable = true)
     private String comment;
 
@@ -54,5 +58,12 @@ public class Review extends BaseTimeEntity {
 
     public boolean belongsToQnA(Long qnAId){
         return Objects.equals(this.qnaId, qnAId);
+    }
+
+    public void approve() {
+        String temp = this.originText;
+        this.originText = this.suggest;
+        this.suggest = temp;
+        this.isApproved = true;
     }
 }
