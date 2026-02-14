@@ -6,11 +6,11 @@ import {
 
 import { fetchCalendarDates } from '@/features/recruit/api';
 import { coverLetterKeys } from '@/features/recruit/hooks/queries/keys';
-import type { CalendarParams } from '@/features/recruit/types';
+import type { CalendarRequest } from '@/features/recruit/types';
 import { getCoverLetter } from '@/shared/api/coverLetterApi';
 
 // 1. 달력 조회
-export const useInfiniteCalendarDates = (params: CalendarParams) => {
+export const useInfiniteCalendarDates = (params: CalendarRequest) => {
   return useInfiniteQuery({
     queryKey: coverLetterKeys.calendar(params),
 

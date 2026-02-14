@@ -9,6 +9,7 @@ import { coverLetterKeys } from '@/features/recruit/hooks/queries/keys';
 import type {
   CreateCoverLetterRequest,
   CreateCoverLetterResponse,
+  DeleteCoverLetterRequest,
   UpdateCoverLetterRequest,
 } from '@/features/recruit/types';
 
@@ -49,8 +50,8 @@ export const useUpdateCoverLetter = () => {
 export const useDeleteCoverLetter = () => {
   const invalidate = useInvalidateCoverLetters();
 
-  return useMutation<void, Error, number>({
-    mutationFn: deleteCoverLetter,
+  return useMutation<void, Error, DeleteCoverLetterRequest>({
+    mutationFn: (variables) => deleteCoverLetter(variables.coverLetterId),
     onSuccess: () => invalidate(), // ['coverLetters'] 전체 무효화
     onError: (error) => console.error('삭제 실패:', error.message),
   });
