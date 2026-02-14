@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { authClient } from '@/features/auth/api/auth';
+import { useRefresh } from '@/features/auth/hooks/useAuthClient';
 import { userInformation } from '@/shared/api/user';
 
 interface UserInfoType {
@@ -8,6 +8,7 @@ interface UserInfoType {
 }
 
 export const useInitAuth = () => {
+  const { mutateAsync: refresh } = useRefresh();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   // 토큰을 확인하는 중인지 체크하는 상태 값
   const [isInitialized, setIsInitialized] = useState<boolean>(false);
@@ -25,7 +26,7 @@ export const useInitAuth = () => {
   useEffect(() => {
     const initAuth = async () => {
       try {
-        const data = await authClient.refresh();
+        const data = await refresh();
 
         if (data.accessToken) {
           setIsAuthenticated(true);
@@ -43,7 +44,7 @@ export const useInitAuth = () => {
     };
 
     initAuth();
-  }, []);
+  }, [refresh]);
 
   const login = async () => {
     setIsAuthenticated(true);
