@@ -34,6 +34,7 @@ public class Review extends BaseTimeEntity {
     @Column(name = "suggest", nullable = true)
     private String suggest;
 
+    @Builder.Default
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved = false;
 }
