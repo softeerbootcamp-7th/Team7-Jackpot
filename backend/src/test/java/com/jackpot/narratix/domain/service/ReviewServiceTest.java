@@ -2,7 +2,6 @@ package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
-import com.jackpot.narratix.domain.controller.response.ReviewEditResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.Review;
@@ -350,11 +349,9 @@ class ReviewServiceTest {
         given(reviewRepository.save(existingReview)).willReturn(updatedReview);
 
         // when
-        ReviewEditResponse response = reviewService.editReview(userId, qnAId, reviewId, request);
+        reviewService.editReview(userId, qnAId, reviewId, request);
 
         // then
-        assertThat(response).isNotNull();
-        assertThat(response.modifiedAt()).isNotNull();
         assertThat(existingReview.getSuggest()).isEqualTo(request.suggest());
         assertThat(existingReview.getComment()).isEqualTo(request.comment());
         verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
@@ -389,6 +386,39 @@ class ReviewServiceTest {
         assertThatThrownBy(() -> reviewService.editReview(otherUserId, qnAId, reviewId, request))
                 .isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.FORBIDDEN);
+
+        verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
+        verify(reviewRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("리뷰 수정 실패 - 리뷰가 해당 QnA에 속하지 않는 경우 REVIEW_NOT_BELONGS_TO_QNA 에러 발생")
+    void editReview_Fail_ReviewNotBelongsToQnA() {
+        // given
+        String userId = "reviewer123";
+        Long reviewQnAId = 1L;
+        Long requestQnAId = 2L;  // 다른 QnA ID
+        Long reviewId = 1L;
+
+        ReviewEditRequest request = new ReviewEditRequest(
+                "수정된 제안 텍스트",
+                "수정된 코멘트"
+        );
+
+        Review existingReview = ReviewFixture.builder()
+                .id(reviewId)
+                .reviewerId(userId)
+                .qnaId(reviewQnAId)  // 리뷰는 QnA 1L에 속함
+                .suggest("기존 제안 텍스트")
+                .comment("기존 코멘트")
+                .build();
+
+        given(reviewRepository.findByIdOrElseThrow(reviewId)).willReturn(existingReview);
+
+        // when & then
+        assertThatThrownBy(() -> reviewService.editReview(userId, requestQnAId, reviewId, request))
+                .isInstanceOf(BaseException.class)
+                .hasFieldOrPropertyWithValue("errorCode", com.jackpot.narratix.domain.exception.ReviewErrorCode.REVIEW_NOT_BELONGS_TO_QNA);
 
         verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
         verify(reviewRepository, never()).save(any());

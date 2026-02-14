@@ -2,7 +2,6 @@ package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
-import com.jackpot.narratix.domain.controller.response.ReviewEditResponse;
 import com.jackpot.narratix.domain.service.ReviewService;
 import com.jackpot.narratix.global.auth.UserId;
 import jakarta.validation.Valid;
@@ -27,13 +26,15 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/qna/{qnAId}/reviews/{reviewId}")
-    public ResponseEntity<ReviewEditResponse> editReview(
+    @PutMapping
+            ("/qna/{qnAId}/reviews/{reviewId}")
+    public ResponseEntity<Void> editReview(
             @UserId String userId,
             @PathVariable Long qnAId,
             @PathVariable Long reviewId,
             @RequestBody ReviewEditRequest request
     ) {
-        return ResponseEntity.ok(reviewService.editReview(userId, qnAId, reviewId, request));
+        reviewService.editReview(userId, qnAId, reviewId, request);
+        return ResponseEntity.noContent().build();
     }
 }
