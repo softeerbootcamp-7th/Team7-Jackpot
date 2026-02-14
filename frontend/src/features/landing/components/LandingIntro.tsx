@@ -27,12 +27,14 @@ const LandingIntro = ({ onEnter }: LandingIntroProps) => {
       <div className='absolute right-24 bottom-16 z-50'>
         <button
           onClick={handleEnterClick}
-          className='group relative flex items-center gap-3 overflow-hidden rounded-full bg-white'
+          className='group relative flex cursor-pointer items-center gap-3 overflow-hidden rounded-full bg-white'
         >
-          <span className='absolute top-0 right-0 h-full w-0 bg-gray-950 transition-all duration-500 ease-in-out group-hover:w-full' />
+          <span className='absolute top-0 right-0 h-full w-16 rounded-full bg-gray-950 transition-all duration-500 ease-in-out group-hover:w-full' />
+
           <span className='relative z-10 pl-6 text-2xl text-gray-950 transition-colors duration-500 group-hover:text-white'>
             Step into Narratix
           </span>
+
           <div className='relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-gray-950'>
             <I.RightArrowIcon />
           </div>
