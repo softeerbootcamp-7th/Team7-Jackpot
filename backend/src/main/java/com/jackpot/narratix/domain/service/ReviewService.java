@@ -13,6 +13,8 @@ import com.jackpot.narratix.domain.repository.QnARepository;
 import com.jackpot.narratix.domain.repository.ReviewRepository;
 import com.jackpot.narratix.domain.repository.UserRepository;
 import com.jackpot.narratix.domain.service.dto.NotificationSendRequest;
+import com.jackpot.narratix.global.exception.BaseException;
+import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +63,9 @@ public class ReviewService {
     public ReviewEditResponse editReview(String userId, Long qnAId, Long reviewId, ReviewEditRequest request) {
 
         Review review = reviewRepository.findByIdOrElseThrow(reviewId);
+
+        validateIsReviewOwner(userId, review);
+
         review.editSuggest(request.suggest());
         review.editComment(request.comment());
         review = reviewRepository.save(review);
@@ -68,5 +73,11 @@ public class ReviewService {
         // TODO: 첨삭 댓글 수정 이벤트 수신
 
         return new ReviewEditResponse(review.getModifiedAt());
+    }
+
+    private void validateIsReviewOwner(String userId, Review review) {
+        if (!review.isOwner(userId)) {
+            throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        }
     }
 }

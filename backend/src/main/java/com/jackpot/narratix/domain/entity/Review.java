@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(
         name = "review",
@@ -43,5 +45,9 @@ public class Review extends BaseTimeEntity {
 
     public void editComment(String comment) {
         this.comment = comment;
+    }
+
+    public boolean isOwner(String userId) {
+        return Objects.equals(this.reviewerId, userId);
     }
 }
