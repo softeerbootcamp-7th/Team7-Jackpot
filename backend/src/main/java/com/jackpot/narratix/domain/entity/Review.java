@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
+import java.util.Objects;
+
 @Entity
 @Table(
         name = "review",
@@ -37,4 +39,20 @@ public class Review extends BaseTimeEntity {
     @Builder.Default
     @Column(name = "is_approved", nullable = false)
     private boolean isApproved = false;
+
+    public void editSuggest(String suggest) {
+        this.suggest = suggest;
+    }
+
+    public void editComment(String comment) {
+        this.comment = comment;
+    }
+
+    public boolean isOwner(String userId) {
+        return Objects.equals(this.reviewerId, userId);
+    }
+
+    public boolean belongsToQnA(Long qnAId){
+        return Objects.equals(this.qnaId, qnAId);
+    }
 }
