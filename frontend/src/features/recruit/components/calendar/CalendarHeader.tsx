@@ -1,44 +1,81 @@
+import { memo } from 'react';
+
+import { Link } from 'react-router';
+
 import { PaginationIcon } from '@/shared/icons/PaginationIcons';
 import { addMonths, formatYearMonth, subMonths } from '@/shared/utils/dates';
 
 interface Props {
   day: Date;
-  handlePrevMonth: () => void;
-  handleNextMonth: () => void;
 }
 
-const CalendarHeader = ({ day, handlePrevMonth, handleNextMonth }: Props) => {
-  const prevMonthText = formatYearMonth(subMonths(day, 1));
+const CalendarHeader = ({ day }: Props) => {
+  // 1. 이전 달, 다음 달 날짜 객체 계산
+  const prevDate = subMonths(day, 1);
+  const nextDate = addMonths(day, 1);
+
+  // 2. 화면에 표시할 텍스트
+  const prevMonthText = formatYearMonth(prevDate);
   const currentMonthText = formatYearMonth(day);
-  const nextMonthText = formatYearMonth(addMonths(day, 1));
+  const nextMonthText = formatYearMonth(nextDate);
+
+  // 3. URL 생성 헬퍼 함수 (YYYY/MM/01 형식)
+  const createPath = (date: Date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    // 월 이동 시에는 보통 1일로 이동합니다.
+    return `/recruit/${year}/${month}`;
+  };
 
   return (
-    <div>
+    <div className='inline-flex items-center justify-center gap-14 self-stretch'>
+      {/* 이전 달 텍스트 */}
       <div className='flex items-center justify-start gap-1'>
-        <div className='text-title-s justify-start text-center font-medium text-gray-300'>
+        <Link
+          to={createPath(prevDate)}
+          className='text-title-s justify-start text-center font-medium text-gray-300'
+        >
           {prevMonthText}
-        </div>
+        </Link>
       </div>
+
+      {/* 중앙 컨트롤러 영역 */}
       <div className='flex items-center justify-start gap-5'>
-        <button type='button' onClick={handlePrevMonth}>
+        {/* 4. 이전 달 Link */}
+        <Link
+          to={createPath(prevDate)}
+          className='flex items-center justify-center' // 스타일 유지를 위한 클래스 추가 (선택사항)
+        >
           <PaginationIcon size={36} direction='left' />
-        </button>
+        </Link>
+
+        {/* 현재 월 표시 */}
         <div className='flex items-center justify-start gap-1'>
           <div className='text-headline-s justify-start text-center font-bold text-gray-950'>
             {currentMonthText}
           </div>
         </div>
-        <button type='button' onClick={handleNextMonth}>
+
+        {/* 5. 다음 달 버튼 -> Link로 교체 */}
+        <Link
+          to={createPath(nextDate)}
+          className='flex items-center justify-center'
+        >
           <PaginationIcon size={36} direction='right' />
-        </button>
+        </Link>
       </div>
+
+      {/* 다음 달 텍스트 */}
       <div className='flex items-center justify-start gap-1'>
-        <div className='text-title-s justify-start text-center font-medium text-gray-300'>
+        <Link
+          to={createPath(nextDate)}
+          className='text-title-s justify-start text-center font-medium text-gray-300'
+        >
           {nextMonthText}
-        </div>
+        </Link>
       </div>
     </div>
   );
 };
 
-export default CalendarHeader;
+export default memo(CalendarHeader);

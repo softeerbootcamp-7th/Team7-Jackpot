@@ -1,56 +1,40 @@
-import { useMemo } from 'react';
+import { memo } from 'react';
 
 import CalendarDay from '@/features/recruit/components/calendar/CalendarDay';
 import CalendarHeader from '@/features/recruit/components/calendar/CalendarHeader';
 import CalendarWeekday from '@/features/recruit/components/calendar/CalendarWeekday';
 import CalendarDaySkeleton from '@/features/recruit/components/calendar/skeleton/CalendarDaySkeleton';
 import CalendarHeaderSkeleton from '@/features/recruit/components/calendar/skeleton/CalendarHeaderSkeleton';
-import { useInfiniteCalendarDates } from '@/features/recruit/hooks/queries/useCalendarQuery';
-import { useCalendar } from '@/features/recruit/hooks/useCalendar';
+import type { CoverLetterItem } from '@/features/recruit/types';
 import { getISODate } from '@/shared/utils/dates';
 
-const Calendar = () => {
-  const { startDate, endDate, currentDate, days, handlers, helpers } =
-    useCalendar();
+interface Props {
+  isLoading: boolean;
+  currentDate: Date;
+  today: Date;
+  days: Date[];
+  helpers: {
+    isSelected: (date: Date) => boolean;
+    isCurrentMonth: (date: Date) => boolean;
+  };
+  eventsByDate: Record<string, CoverLetterItem[]>;
+}
 
-  const startDateStr = getISODate(startDate);
-  const endDateStr = getISODate(endDate);
-
-  const { data, isLoading } = useInfiniteCalendarDates({
-    startDate: startDateStr,
-    endDate: endDateStr,
-    size: 100, // 달력 조회용으로는 한 번에 많이 가져오는 게 유리함
-  });
-
-  const eventsByDate = useMemo(() => {
-    if (!data) return {};
-
-    const allItems = data.pages.flatMap((page) => page.coverLetters);
-    const map: Record<string, typeof allItems> = {};
-
-    allItems.forEach((item) => {
-      const dateKey = item.deadline;
-
-      if (!map[dateKey]) {
-        map[dateKey] = [];
-      }
-      map[dateKey].push(item);
-    });
-
-    return map;
-  }, [data]);
-
+const Calendar = ({
+  isLoading,
+  currentDate,
+  today,
+  days,
+  helpers,
+  eventsByDate,
+}: Props) => {
   return (
     <div className='inline-flex flex-col items-center justify-center gap-6 self-stretch py-6'>
-      <div className='inline-flex items-center justify-center gap-14 self-stretch'>
+      <div>
         {isLoading ? (
           <CalendarHeaderSkeleton />
         ) : (
-          <CalendarHeader
-            day={currentDate}
-            handlePrevMonth={handlers.handlePrevMonth}
-            handleNextMonth={handlers.handleNextMonth}
-          />
+          <CalendarHeader day={currentDate} />
         )}
       </div>
       <div className='flex flex-col items-start justify-start gap-3 self-stretch'>
@@ -67,12 +51,11 @@ const Calendar = () => {
                 return (
                   <CalendarDay
                     key={date.toString()}
-                    currentDate={currentDate}
+                    today={today}
                     items={eventsByDate[getISODate(date)] || []}
                     date={date}
                     isSelected={helpers.isSelected(date)}
                     isCurrentMonth={helpers.isCurrentMonth(date)}
-                    onClick={handlers.handleDateClick}
                   />
                 );
               })}
@@ -82,4 +65,4 @@ const Calendar = () => {
   );
 };
 
-export default Calendar;
+export default memo(Calendar);
