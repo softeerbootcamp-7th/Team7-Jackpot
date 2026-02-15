@@ -9,7 +9,6 @@ export const coverLetterHeaderText = {
 export const emptyCaseText = {
   overview: {
     title: '잠시만요!\n아직 작성된 자기소개서가 없어요',
-    content:
-      "상단의 '자기소개서 추가하기' 버튼을 눌러\n새로운 자기소개서를 작성할 수 있어요.",
+    content: `상단의 '자기소개서 추가하기' 버튼을 눌러\n새로운 자기소개서를 작성할 수 있어요.`,
   },
 };
