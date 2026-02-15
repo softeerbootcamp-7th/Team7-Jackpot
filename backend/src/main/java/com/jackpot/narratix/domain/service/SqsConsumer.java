@@ -1,7 +1,7 @@
 package com.jackpot.narratix.domain.service;
 
-import com.jackpot.narratix.domain.controller.response.FileProcessResult;
 import com.jackpot.narratix.domain.entity.enums.UploadStatus;
+import com.jackpot.narratix.domain.service.dto.FileProcessResult;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

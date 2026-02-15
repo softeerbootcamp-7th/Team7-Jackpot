@@ -1,4 +1,4 @@
-package com.jackpot.narratix.domain.controller.response;
+package com.jackpot.narratix.domain.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.jackpot.narratix.domain.entity.enums.UploadStatus;
