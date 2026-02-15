@@ -10,16 +10,16 @@ export const getQnAIdList = async ({
   const params = new URLSearchParams();
   params.append('coverLetterId', String(coverLetterId));
 
-  return apiClient.get({
+  return apiClient.get<number[]>({
     endpoint: `/qna/id/all?${params.toString()}`,
-  }) as Promise<number[]>;
+  });
 };
 
 // 단건 QnA 조회
 export const getQnA = async (qnaId: number): Promise<QnA> => {
-  return apiClient.get({
+  return apiClient.get<QnA>({
     endpoint: `/qna/${qnaId}`,
-  }) as Promise<QnA>;
+  });
 };
 
 interface UpdateQnAResponse {
@@ -35,8 +35,12 @@ export const updateQnA = async ({
   qnAId: number;
   answer: string;
 }): Promise<UpdateQnAResponse> => {
-  return apiClient.put({
+  if (!qnAId || Number.isNaN(qnAId) || qnAId <= 0) {
+    throw new Error(`Invalid qnAId: ${qnAId}`);
+  }
+
+  return apiClient.put<UpdateQnAResponse>({
     endpoint: `/qna`,
     body: { qnAId, answer },
-  }) as Promise<UpdateQnAResponse>;
+  });
 };

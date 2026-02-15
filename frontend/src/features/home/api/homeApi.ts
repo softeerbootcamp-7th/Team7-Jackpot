@@ -10,9 +10,9 @@ export const fetchHomeCount = async (
 ): Promise<HomeCountResponse> => {
   const params = new URLSearchParams({ date });
 
-  return apiClient.get({
+  return apiClient.get<HomeCountResponse>({
     endpoint: `/coverletter/count?${params.toString()}`,
-  }) as Promise<HomeCountResponse>;
+  });
 };
 
 interface FetchUpcomingDeadlinesParams {
@@ -32,9 +32,9 @@ export const fetchUpcomingDeadlines = async ({
     maxCoverLetterSizePerDeadLine: maxCoverLetterSizePerDeadLine.toString(),
   });
 
-  return apiClient.get({
+  return apiClient.get<UpcomingDeadlinesResponse>({
     endpoint: `/coverletter/upcoming?${params.toString()}`,
-  }) as Promise<UpcomingDeadlinesResponse>;
+  });
 };
 
 interface FetchCalendarDatesParams {
@@ -51,7 +51,7 @@ export const fetchCalendarDates = async ({
     endDate,
   });
 
-  return apiClient.get({
+  return apiClient.get<CalendarDatesResponse>({
     endpoint: `/coverletter/calendar?${params.toString()}`,
-  }) as Promise<CalendarDatesResponse>;
+  });
 };

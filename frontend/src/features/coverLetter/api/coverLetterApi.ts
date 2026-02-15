@@ -19,9 +19,9 @@ export const fetchScraps = async ({
   if (size !== undefined) params.set('size', String(size));
   if (lastQnaId !== undefined) params.set('lastQnaId', String(lastQnaId));
 
-  return apiClient.get({
+  return apiClient.get<GetScrapsResponse>({
     endpoint: `/search/scrap?${params.toString()}`,
-  }) as Promise<GetScrapsResponse>;
+  });
 };
 
 interface SharedLinkResponse {
@@ -34,9 +34,9 @@ export const fetchSharedLink = async ({
 }: {
   coverLetterId: number;
 }): Promise<SharedLinkResponse> => {
-  return apiClient.get({
+  return apiClient.get<SharedLinkResponse>({
     endpoint: `/coverletter/${coverLetterId}/share-link`,
-  }) as Promise<SharedLinkResponse>;
+  });
 };
 
 export const toggleSharedLinkStatus = async ({
@@ -46,8 +46,8 @@ export const toggleSharedLinkStatus = async ({
   coverLetterId: number;
   active: boolean;
 }): Promise<SharedLinkResponse> => {
-  return apiClient.patch({
+  return apiClient.patch<SharedLinkResponse>({
     endpoint: `/coverletter/${coverLetterId}/share-link`,
     body: { active },
-  }) as Promise<SharedLinkResponse>;
+  });
 };

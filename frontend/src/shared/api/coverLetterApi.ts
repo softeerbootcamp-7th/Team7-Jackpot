@@ -33,9 +33,9 @@ export const searchCoverLetters = async ({
   params.append('size', size.toString());
   params.append('page', page.toString());
 
-  return apiClient.get({
+  return apiClient.get<CoverLetterSearchResponse>({
     endpoint: `/search/coverletter?${params.toString()}`,
-  }) as Promise<CoverLetterSearchResponse>;
+  });
 };
 
 export const getCoverLetter = async (
@@ -45,7 +45,7 @@ export const getCoverLetter = async (
     throw new Error(`Invalid coverLetterId: ${coverLetterId}`);
   }
 
-  return apiClient.get({
+  return apiClient.get<CoverLetter>({
     endpoint: `/coverletter/${coverLetterId}`,
-  }) as Promise<CoverLetter>;
+  });
 };

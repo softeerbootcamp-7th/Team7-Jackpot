@@ -6,7 +6,7 @@ import {
 // 환경 변수 속의 요청 주소 불러오기
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-interface methodProps {
+interface MethodProps {
   endpoint: string;
   body?: unknown;
   options?: RequestInit;
@@ -15,11 +15,17 @@ interface methodProps {
 
 // 인터셉터 패턴처럼 fetch Wrapper
 export const apiClient = {
-  get: async ({ endpoint, options, skipAuth }: methodProps) => {
-    return request(endpoint, { ...options, method: 'GET' }, skipAuth);
+  get: async <T>({ endpoint, options, skipAuth }: MethodProps): Promise<T> => {
+    return request<T>(endpoint, { ...options, method: 'GET' }, skipAuth);
   },
-  post: async ({ endpoint, body, options, skipAuth }: methodProps) => {
-    return request(
+
+  post: async <T>({
+    endpoint,
+    body,
+    options,
+    skipAuth,
+  }: MethodProps): Promise<T> => {
+    return request<T>(
       endpoint,
       {
         ...options,
@@ -29,8 +35,14 @@ export const apiClient = {
       skipAuth,
     );
   },
-  put: async ({ endpoint, body, options, skipAuth }: methodProps) => {
-    return request(
+
+  put: async <T>({
+    endpoint,
+    body,
+    options,
+    skipAuth,
+  }: MethodProps): Promise<T> => {
+    return request<T>(
       endpoint,
       {
         ...options,
@@ -40,8 +52,14 @@ export const apiClient = {
       skipAuth,
     );
   },
-  patch: async ({ endpoint, body, options, skipAuth }: methodProps) => {
-    return request(
+
+  patch: async <T>({
+    endpoint,
+    body,
+    options,
+    skipAuth,
+  }: MethodProps): Promise<T> => {
+    return request<T>(
       endpoint,
       {
         ...options,
@@ -51,8 +69,13 @@ export const apiClient = {
       skipAuth,
     );
   },
-  delete: async ({ endpoint, options, skipAuth }: methodProps) => {
-    return request(
+
+  delete: async <T>({
+    endpoint,
+    options,
+    skipAuth,
+  }: MethodProps): Promise<T> => {
+    return request<T>(
       endpoint,
       {
         ...options,
@@ -63,13 +86,11 @@ export const apiClient = {
   },
 };
 
-// fetch Wrapper 내부에서 사용하는 실제 요청 함수
-const request = async (
+const request = async <T>(
   endpoint: string,
   options: RequestInit,
   skipAuth: boolean = false,
-) => {
-  // 헤더 설정
+): Promise<T> => {
   const headers = new Headers(options.headers || {});
 
   // GET, DELETE에서는 Body가 없으므로 Content-Type이 필요가 없음
@@ -93,39 +114,37 @@ const request = async (
 
     // 액세스 토큰이 만료되었다면 리프레시 후 재요청하는 로직
     if (response.status === 401 && !skipAuth) {
-      try {
-        const refreshResponse = await fetch(`${BASE_URL}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include',
-        });
+      const refreshResponse = await fetch(`${BASE_URL}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include',
+      });
 
-        // 리프레시 토큰마저 만료된 경우
-        if (!refreshResponse.ok) {
-          throw new Error('리프레시 토큰 만료');
-        }
-
-        const refreshData = await refreshResponse.json();
-
-        setAccessToken(refreshData.accessToken);
-
-        headers.set('Authorization', getAccessToken());
-
-        response = await fetch(`${BASE_URL}${endpoint}`, {
-          ...options,
-          headers,
-        });
-      } catch (error) {
-        console.error('리프레시 에러', error);
-        throw error;
+      if (!refreshResponse.ok) {
+        throw new Error('Refresh token expired');
       }
+
+      const refreshData = await refreshResponse.json();
+      setAccessToken(refreshData.accessToken);
+
+      headers.set('Authorization', refreshData.accessToken);
+
+      response = await fetch(`${BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+      });
     }
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.status}`);
+      throw new Error(`API Error: ${response.status}`);
     }
 
     const text = await response.text();
-    return text ? JSON.parse(text) : null;
+
+    if (!text) {
+      return null as T;
+    }
+
+    return JSON.parse(text) as T;
   } catch (error) {
     console.error('API Request Failed:', error);
     throw error;

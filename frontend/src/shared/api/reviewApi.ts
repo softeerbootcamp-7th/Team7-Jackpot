@@ -17,7 +17,7 @@ interface GetReviewsResponse {
 export const getReviewsByQnaId = async (
   qnaId: number,
 ): Promise<GetReviewsResponse> => {
-  return apiClient.get({
+  return apiClient.get<GetReviewsResponse>({
     endpoint: `/qna/${qnaId}/reviews/all`,
-  }) as Promise<GetReviewsResponse>;
+  });
 };
