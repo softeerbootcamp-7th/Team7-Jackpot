@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { useCalendarDates } from '@/features/home/hooks/useHomeQueries';
 import CalendarIcon from '@/features/home/icons/CalendarIcon';
-import { weekList } from '@/shared/constants/dates';
 import RightArrow from '@/shared/icons/RightArrow';
 import { getISODate } from '@/shared/utils/dates';
 
@@ -95,17 +94,6 @@ const MyApplicationCalendar = () => {
         className='flex w-full flex-col items-start justify-start gap-1 self-stretch'
       >
         <div className='inline-flex items-center justify-between self-stretch'>
-<<<<<<< HEAD
-          {weekList.map((d) => (
-            <div
-              key={d}
-              className='inline-flex h-12 w-12 flex-col items-center justify-center rounded-[125px] px-4 py-1'
-            >
-              <div
-                className={`h-5 w-6 justify-center text-center text-xl leading-4 font-normal ${dayColorMap[d] || 'text-gray-950'}`}
-              >
-                {d}
-=======
           {weekDays.map((day, index) => (
             <div
               key={day}
@@ -115,56 +103,10 @@ const MyApplicationCalendar = () => {
                 className={`h-5 w-6 justify-center text-center text-xl leading-4 font-normal ${weekDayColors[index]}`}
               >
                 {day}
->>>>>>> fe
               </div>
             </div>
           ))}
         </div>
-<<<<<<< HEAD
-        {/* [박소민] TODO: 현재 전 날짜이면 회색, 현재 날짜이면 날짜가 동그라미, 마감일이 있다면 아래에 점표시 */}
-        <div className='grid grid-cols-7 items-center justify-between self-stretch'>
-          {days.map((d, idx) => (
-            <MyApplicationCalendarDay
-              key={idx}
-              date={d}
-              isPastDate={isPastDay(d)}
-              hasApplication={hasApplication()}
-            />
-          ))}
-
-          <div className='inline-flex h-12 w-12 flex-col items-center justify-end gap-1.5 rounded-2xl px-4 py-1 opacity-40'>
-            <div className='h-5 w-6 justify-center text-center text-xl leading-4 font-normal text-gray-950 opacity-40'>
-              2
-            </div>
-            <div className='h-[5px] w-[5px] rounded-full opacity-40' />
-          </div>
-          <div className='inline-flex h-12 w-12 flex-col items-center justify-end gap-1.5 rounded-2xl px-4 py-1 opacity-40'>
-            <div className='h-5 w-6 justify-center text-center text-xl leading-4 font-normal text-gray-950 opacity-40'>
-              3
-            </div>
-            <div className='h-[5px] w-[5px] rounded-full bg-gray-950 opacity-40' />
-          </div>
-          <div className='inline-flex h-12 w-12 flex-col items-center justify-end gap-1.5 rounded-2xl bg-purple-50 px-4 py-1'>
-            <div className='h-5 w-6 justify-center text-center text-xl leading-4 font-semibold text-purple-500'>
-              4
-            </div>
-            <div className='h-[5px] w-[5px] rounded-full' />
-          </div>
-          <div className='inline-flex h-12 w-12 flex-col items-center justify-end gap-1.5 rounded-2xl px-4 py-1'>
-            <div className='h-5 w-6 justify-center text-center text-xl leading-4 font-normal text-gray-950'>
-              5
-            </div>
-            <div className='h-[5px] w-[5px] rounded-full' />
-          </div>
-          <div className='inline-flex h-12 w-12 flex-col items-center justify-end gap-1.5 rounded-2xl px-4 py-1'>
-            <div className='h-5 w-6 justify-center text-center text-xl leading-4 font-normal text-gray-950'>
-              6
-            </div>
-            <div className='h-[5px] w-[5px] rounded-full' />
-          </div>
-        </div>
-      </div>
-=======
 
         {weeks.map((week, weekIndex) => (
           <div
@@ -213,7 +155,6 @@ const MyApplicationCalendar = () => {
           </div>
         ))}
       </button>
->>>>>>> fe
     </div>
   );
 };

@@ -1,18 +1,36 @@
-// [박소민] 달력 훅
+import { useCallback, useMemo } from 'react';
 
-import { useCallback, useMemo, useState } from 'react';
+import { useParams } from 'react-router';
 
 import { useDataGrid } from '@/shared/hooks/useDataGrid';
-import {
-  addMonths,
-  getMonthRange,
-  isSameDay,
-  subMonths,
-} from '@/shared/utils/dates';
+import { getMonthRange, isSameDay } from '@/shared/utils/dates';
 
 export const useCalendar = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const { year, month, day } = useParams();
+
+  const today = useMemo(() => new Date(), []);
+
+  const parseNumberParam = (value?: string) => {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
+
+  const yearNum = parseNumberParam(year) ?? today.getFullYear();
+  const monthNum = parseNumberParam(month) ?? today.getMonth() + 1;
+  const dayNum = parseNumberParam(day);
+
+  const currentDate = useMemo(() => {
+    const safeMonth = Math.min(Math.max(monthNum, 1), 12);
+    const safeDay = dayNum ? Math.min(Math.max(dayNum, 1), 31) : 1;
+    return new Date(yearNum, safeMonth - 1, safeDay);
+  }, [yearNum, monthNum, dayNum]);
+
+  const selectedDate = useMemo(() => {
+    if (!dayNum) return null;
+    const safeMonth = Math.min(Math.max(monthNum, 1), 12);
+    const safeDay = Math.min(Math.max(dayNum, 1), 31);
+    return new Date(yearNum, safeMonth - 1, safeDay);
+  }, [yearNum, monthNum, dayNum]);
 
   const { startDate, endDate } = useMemo(() => {
     return getMonthRange(currentDate);
@@ -20,34 +38,35 @@ export const useCalendar = () => {
 
   const days = useDataGrid(startDate, endDate);
 
-  const handleNextMonth = useCallback(() => {
-    setCurrentDate((prev) => addMonths(prev, 1));
-  }, []);
+  // 1. 헬퍼 함수들을 useCallback으로 개별 정의
+  const isSelected = useCallback(
+    (date: Date) => (selectedDate ? isSameDay(date, selectedDate) : false),
+    [selectedDate],
+  );
 
-  const handlePrevMonth = useCallback(() => {
-    setCurrentDate((prev) => subMonths(prev, 1));
-  }, []);
+  const isCurrentMonth = useCallback(
+    (date: Date) =>
+      date.getFullYear() === currentDate.getFullYear() &&
+      date.getMonth() === currentDate.getMonth(),
+    [currentDate],
+  );
 
-  const handleDateClick = useCallback((date: Date) => {
-    setSelectedDate(date);
-    setCurrentDate(date);
-  }, []);
+  // 2. 헬퍼 객체 메모이제이션
+  const helpers = useMemo(
+    () => ({
+      isSelected,
+      isCurrentMonth,
+    }),
+    [isSelected, isCurrentMonth],
+  );
 
   return {
+    currentDate,
+    today,
     startDate,
     endDate,
-    currentDate,
     selectedDate,
     days,
-    handlers: {
-      handleNextMonth,
-      handlePrevMonth,
-      handleDateClick,
-    },
-    helpers: {
-      isSelected: (date: Date) => isSameDay(date, selectedDate),
-      isCurrentMonth: (date: Date) =>
-        date.getMonth() === currentDate.getMonth(),
-    },
+    helpers,
   };
 };

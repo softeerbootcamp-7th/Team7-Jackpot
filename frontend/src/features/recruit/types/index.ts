@@ -7,7 +7,7 @@ export interface CoverLetterItem {
   companyName: string;
   jobPosition: string;
   applyYear: number;
-  applyHalf: string;
+  applyHalf: ApiApplyHalf;
   deadline: string;
   questionCount: number;
 }
