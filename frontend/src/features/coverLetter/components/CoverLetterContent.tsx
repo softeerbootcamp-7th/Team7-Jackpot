@@ -1,96 +1,10 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { buildChunks } from '@/features/coverLetter/libs/buildChunks';
+import { restoreCaret, saveCaret } from '@/features/coverLetter/libs/caret';
 import { useTextSelection } from '@/shared/hooks/useTextSelection';
-import type { TextChunk } from '@/shared/hooks/useTextSelection/helpers';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
-
-// caret 저장
-const saveCaret = (el: HTMLElement): number => {
-  const sel = window.getSelection();
-  if (!sel || sel.rangeCount === 0) return 0;
-  const range = sel.getRangeAt(0);
-  const preRange = range.cloneRange();
-  preRange.selectNodeContents(el);
-  preRange.setEnd(range.startContainer, range.startOffset);
-  return preRange.toString().length;
-};
-
-// caret 복원
-const restoreCaret = (el: HTMLElement, offset: number) => {
-  const sel = window.getSelection();
-  if (!sel) return;
-
-  const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-  let remaining = offset;
-
-  while (walker.nextNode()) {
-    const node = walker.currentNode as Text;
-    if (remaining <= node.length) {
-      const range = document.createRange();
-      range.setStart(node, remaining);
-      range.collapse(true);
-      sel.removeAllRanges();
-      sel.addRange(range);
-      return;
-    }
-    remaining -= node.length;
-  }
-};
-
-// 리뷰 기반 JSX chunks 생성
-const buildChunks = (
-  before: TextChunk[],
-  after: TextChunk[],
-  chunkPositions: number[],
-  reviews: Review[],
-  selectedReviewId: number | null,
-  isReviewOpen: boolean,
-  selection: SelectionInfo | null,
-) => {
-  const beforeChunks = before.map((chunk, i) => {
-    const chunkStart = chunkPositions[i];
-    const chunkEnd = chunkStart + chunk.text.length;
-
-    if (!chunk.isHighlighted) return chunk.text;
-
-    const matchingReview = reviews.find(
-      (review) =>
-        review.isValid &&
-        review.range.start <= chunkStart &&
-        review.range.end >= chunkEnd,
-    );
-
-    if (!matchingReview) return chunk.text;
-
-    const isSelected = selectedReviewId === matchingReview.id;
-    const className = `${isReviewOpen ? 'cursor-pointer font-bold' : ''} ${
-      isSelected ? 'bg-red-100' : ''
-    }`;
-
-    return (
-      <span key={i} className={className} data-review-id={matchingReview.id}>
-        {chunk.text}
-      </span>
-    );
-  });
-
-  if (!selection || after.length === 0) return beforeChunks;
-
-  const afterChunks = after.map((chunk, i) => (
-    <span key={`after-${i}`} className={chunk.isHighlighted ? 'font-bold' : ''}>
-      {chunk.text}
-    </span>
-  ));
-
-  return [
-    ...beforeChunks,
-    <div key='spacer' className='h-2.5' />,
-    <span key='after' className='opacity-30'>
-      {afterChunks}
-    </span>,
-  ];
-};
 
 interface CoverLetterContentProps {
   text: string;
@@ -116,6 +30,10 @@ const CoverLetterContent = ({
   onTextChange,
 }: CoverLetterContentProps) => {
   const [spacerHeight, setSpacerHeight] = useState(0);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const isInputtingRef = useRef(false);
+  const caretOffsetRef = useRef(0);
+  const isComposingRef = useRef(false);
 
   const { containerRef, before, after } = useTextSelection({
     text,
@@ -125,11 +43,7 @@ const CoverLetterContent = ({
     onSelectionChange,
   });
 
-  const contentRef = useRef<HTMLDivElement>(null);
-  const isInputtingRef = useRef(false);
-  const caretOffsetRef = useRef(0);
-  const isComposingRef = useRef(false);
-
+  // 컨테이너 높이에 따라 스페이서 설정
   useEffect(() => {
     if (!containerRef.current) return;
     const containerHeight = containerRef.current.clientHeight;
@@ -137,6 +51,7 @@ const CoverLetterContent = ({
     setSpacerHeight(Math.max(0, containerHeight - lineHeight));
   }, [containerRef]);
 
+  // chunkPositions 계산
   const chunkPositions = useMemo(
     () =>
       before.reduce<number[]>((acc, _, i) => {
@@ -147,6 +62,7 @@ const CoverLetterContent = ({
     [before],
   );
 
+  // JSX chunks 생성
   const chunks = useMemo(
     () =>
       buildChunks(
@@ -181,7 +97,7 @@ const CoverLetterContent = ({
     isInputtingRef.current = false;
   }, [chunks]);
 
-  // ⚡ 공통 입력 처리
+  // 입력 처리
   const processInput = () => {
     if (!contentRef.current || isComposingRef.current) return;
     const newText = contentRef.current.textContent || '';
@@ -210,9 +126,7 @@ const CoverLetterContent = ({
     const reviewIdStr = target.getAttribute('data-review-id');
     if (reviewIdStr && isReviewOpen) {
       const reviewId = Number(reviewIdStr);
-      if (!isNaN(reviewId)) {
-        onReviewClick(reviewId);
-      }
+      if (!isNaN(reviewId)) onReviewClick(reviewId);
     }
   };
 
@@ -240,7 +154,7 @@ const CoverLetterContent = ({
           className='w-full cursor-text py-3 text-base leading-7 font-normal text-gray-800 outline-none'
           style={{ paddingBottom: spacerHeight }}
         >
-          {chunks}
+          {chunks.length > 0 ? chunks : '\u200B'}
         </div>
       </div>
     </div>
