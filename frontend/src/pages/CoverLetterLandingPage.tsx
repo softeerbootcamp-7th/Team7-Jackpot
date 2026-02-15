@@ -55,6 +55,7 @@ const CoverLetterLandingPage = () => {
           <button
             type='button'
             onClick={handleFilterToggle}
+            aria-pressed={isFilterActive}
             className={`flex h-12 shrink-0 cursor-pointer items-center gap-2 rounded-lg border px-4 transition-colors ${
               isFilterActive
                 ? 'border-purple-500 bg-purple-50 text-purple-600'

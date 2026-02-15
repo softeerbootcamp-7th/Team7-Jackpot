@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { useTextSelection } from '@/shared/hooks/useTextSelection';
 import type { TextChunk } from '@/shared/hooks/useTextSelection/helpers';
@@ -38,7 +38,7 @@ const restoreCaret = (el: HTMLElement, offset: number) => {
   }
 };
 
-// 리뷰 기반 텍스트 변환 JSX
+// 리뷰 기반 JSX chunks 생성
 const buildChunks = (
   before: TextChunk[],
   after: TextChunk[],
@@ -128,6 +128,7 @@ const CoverLetterContent = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const isInputtingRef = useRef(false);
   const caretOffsetRef = useRef(0);
+  const isComposingRef = useRef(false);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -139,11 +140,8 @@ const CoverLetterContent = ({
   const chunkPositions = useMemo(
     () =>
       before.reduce<number[]>((acc, _, i) => {
-        if (i === 0) {
-          acc.push(0);
-        } else {
-          acc.push(acc[i - 1] + before[i - 1].text.length);
-        }
+        if (i === 0) acc.push(0);
+        else acc.push(acc[i - 1] + before[i - 1].text.length);
         return acc;
       }, []),
     [before],
@@ -171,20 +169,36 @@ const CoverLetterContent = ({
     ],
   );
 
-  useEffect(() => {
-    if (!contentRef.current || !isInputtingRef.current) return;
-    isInputtingRef.current = false;
+  // caret 복원: layout effect로 렌더 후 바로 실행
+  useLayoutEffect(() => {
+    if (
+      !contentRef.current ||
+      !isInputtingRef.current ||
+      isComposingRef.current
+    )
+      return;
+
     restoreCaret(contentRef.current, caretOffsetRef.current);
+    isInputtingRef.current = false; // ref로 상태 관리
   }, [chunks]);
 
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    if (!contentRef.current) return;
+    if (!contentRef.current || isComposingRef.current) return;
     const newText = e.currentTarget.textContent || '';
     caretOffsetRef.current = saveCaret(contentRef.current);
     if (onTextChange) {
       isInputtingRef.current = true;
       onTextChange(newText);
     }
+  };
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true;
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLDivElement>) => {
+    isComposingRef.current = false;
+    handleInput(e as unknown as React.FormEvent<HTMLDivElement>);
   };
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -216,13 +230,15 @@ const CoverLetterContent = ({
           // 브라우저가 직접 DOM을 수정하는 경우 충돌 가능
           // 이 경고는 React가 직접 수정 사항을 보장하지 않음을 알리는 것임
           // 사용자가 입력하면 isInputtingRef와 caretOffsetRef로 caret 복원 및 입력 유지
-          suppressContentEditableWarning={true} // 경고 억제
+          suppressContentEditableWarning={true}
           onInput={handleInput}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
           onClick={handleClick}
           className='w-full cursor-text py-3 text-base leading-7 font-normal text-gray-800 outline-none'
           style={{ paddingBottom: spacerHeight }}
         >
-          {chunks} {/* React가 관리하는 children */}
+          {chunks}
         </div>
       </div>
     </div>
