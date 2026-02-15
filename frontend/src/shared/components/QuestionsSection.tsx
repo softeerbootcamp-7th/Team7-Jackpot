@@ -1,22 +1,35 @@
-import { useState } from 'react';
-
-import Question from '@/features/coverLetter/components/newCoverLetter/Question';
+import type { CoverLetterQuestion } from '@/features/recruit/types';
+import Question from '@/shared/components/Question';
 import { PlusIcon } from '@/shared/icons/Plus';
 
-const QuestionsSection = () => {
-  // 단순 숫자가 아니라 ID 배열로 관리 (삭제나 순서 변경 대비)
-  const [questionIds, setQuestionIds] = useState<number[]>([1]);
+interface Props {
+  questions: CoverLetterQuestion[];
+  onQuestionsChange: (newQuestions: CoverLetterQuestion[]) => void;
+}
 
+const QuestionsSection = ({ questions, onQuestionsChange }: Props) => {
   const addQuestion = () => {
-    setQuestionIds((prev) => {
-      const nextId = prev.length > 0 ? Math.max(...prev) + 1 : 1;
-      return [...prev, nextId];
-    });
+    const newQuestion: CoverLetterQuestion = {
+      question: '',
+      category: '',
+    };
+    onQuestionsChange([...questions, newQuestion]);
   };
 
-  // (선택 사항) 삭제 기능이 필요하다면
-  const removeQuestion = (idToRemove: number) => {
-    setQuestionIds((prev) => prev.filter((id) => id !== idToRemove));
+  const removeQuestion = (indexToRemove: number) => {
+    const nextQuestions = questions.filter((_, idx) => idx !== indexToRemove);
+    onQuestionsChange(nextQuestions);
+  };
+
+  // key의 타입을 keyof CoverLetterQuestion으로
+  const updateQuestion = (
+    index: number,
+    key: keyof CoverLetterQuestion,
+    value: string,
+  ) => {
+    const nextQuestions = [...questions];
+    nextQuestions[index] = { ...nextQuestions[index], [key]: value };
+    onQuestionsChange(nextQuestions);
   };
 
   return (
@@ -34,20 +47,22 @@ const QuestionsSection = () => {
         </div>
       </div>
 
-      {/* 배열을 순회하며 Question 렌더링 */}
-      {questionIds.map((id, index) => (
+      {questions.map((q, index) => (
         <Question
-          key={id} // 리액트 내부 관리용 ID
-          displayIndex={index + 1} // 화면에 보여질 번호 (1, 2, 3...)
-          onRemove={() => removeQuestion(id)}
-          // 에러가 사라져야 합니다.
+          key={index}
+          displayIndex={index + 1}
+          data={q}
+          onRemove={() => removeQuestion(index)}
+          onChange={(key: keyof CoverLetterQuestion, val: string) =>
+            updateQuestion(index, key, val)
+          }
         />
       ))}
 
       <button
         type='button'
         onClick={addQuestion}
-        className='inline-flex cursor-pointer items-center justify-center gap-1.5 self-stretch rounded-lg py-3 pr-5 pl-4 outline outline-1 outline-offset-[-1px] outline-gray-100 hover:bg-gray-50'
+        className='inline-flex cursor-pointer items-center justify-center gap-1.5 self-stretch rounded-lg py-3 pr-5 pl-4 outline outline-1 outline-offset-[-1px] outline-gray-100 transition-colors hover:bg-gray-50'
       >
         <div className='relative h-6 w-6'>
           <PlusIcon className='text-gray-300' />

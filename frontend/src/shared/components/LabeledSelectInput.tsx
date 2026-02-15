@@ -1,10 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-// 1. 제네릭 T 정의 (string 또는 number)
 interface LabeledSelectInputProps<T extends string | number> {
   label: string;
-  name: string; // [필수] Form 데이터 수집을 위한 name 속성
-  defaultValue: T; // 초기값 (value 대신 사용)
+  name: string;
+  value: string;
+  onChange: (value: string) => void;
   constantData?: T[];
   handleDropdown: (isOpen: boolean) => void;
   isOpen: boolean;
@@ -14,74 +14,62 @@ interface LabeledSelectInputProps<T extends string | number> {
 const LabeledSelectInput = <T extends string | number>({
   label,
   name,
-  defaultValue,
+  value, // 외부 prop 사용
+  onChange, // 외부 prop 사용
   constantData = [],
   handleDropdown,
   isOpen,
   dropdownDirection = 'bottom',
 }: LabeledSelectInputProps<T>) => {
-  const hasDropdown = constantData.length > 0;
-
-  // 2. 내부 상태 관리 (부모 의존성 제거)
-  // 입력된 값은 화면 표시용이므로 string | number 다 허용
-  const [innerValue, setInnerValue] = useState<string | number>(defaultValue);
-
-  // 3. 입력 핸들러
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInnerValue(e.target.value);
-
-    if (!isOpen && hasDropdown) {
-      handleDropdown(true);
-    }
-  };
-
-  // 4. 필터링 로직 (입력값 기준 즉시 필터링)
-  const searchData = useMemo(
-    () =>
-      constantData.filter((each) =>
-        String(each).toLowerCase().includes(String(innerValue).toLowerCase()),
-      ),
-    [constantData, innerValue],
-  );
+  // 검색 필터링
+  const searchData = useMemo(() => {
+    if (!constantData) return [];
+    return constantData.filter((each) =>
+      String(each).toLowerCase().includes(value.toLowerCase()),
+    );
+  }, [constantData, value]);
 
   return (
     <div className='flex flex-col gap-3'>
-      <label className='text-lg font-bold'>
+      <label className='text-lg font-bold text-gray-950'>
         {label} <span className='text-red-600'>*</span>
       </label>
 
-      <div className='relative inline-block'>
+      <div className='relative'>
         <input
           type='text'
           name={name}
-          required={true}
-          value={String(innerValue)}
-          onChange={handleInputChange}
-          className={`relative w-full rounded-lg bg-gray-50 px-5 py-[0.875rem] focus:outline-none ${isOpen ? 'z-20' : 'z-0'}`}
-          onClick={() => handleDropdown?.(!isOpen)}
-          autoComplete='off' // 브라우저 자동완성과 겹치지 않게
+          value={value}
+          onChange={(e) => {
+            onChange(e.target.value); // 부모 상태 업데이트
+            if (!isOpen) handleDropdown(true);
+          }}
+          onClick={() => handleDropdown(!isOpen)}
+          autoComplete='off'
+          className='w-full rounded-lg bg-gray-50 px-5 py-[0.875rem] text-gray-950 placeholder:text-gray-400 focus:ring-2 focus:ring-gray-200 focus:outline-none'
+          placeholder={`${label}을(를) 입력해주세요`}
         />
 
-        {hasDropdown && isOpen && (
+        {constantData.length > 0 && isOpen && (
           <>
             <div
               className='fixed inset-0 z-10 cursor-default'
               onClick={() => handleDropdown(false)}
             />
             <div
-              className={`absolute z-20 max-h-48 w-full overflow-y-scroll rounded-lg bg-white shadow-lg select-none ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'mt-2'}`}
+              className={`absolute z-20 w-full overflow-hidden rounded-lg bg-white shadow-lg ${dropdownDirection === 'top' ? 'bottom-full mb-2' : 'top-full mt-2'}`}
             >
-              <div className='flex flex-col gap-1 p-1'>
+              <div className='max-h-48 overflow-y-auto p-1'>
                 {searchData &&
                   searchData.map((item, index) => (
                     <button
+                      key={`${item}-${index}`}
                       type='button'
                       onClick={() => {
-                        setInnerValue(item);
+                        onChange(String(item)); // 선택 시 부모 업데이트
                         handleDropdown(false);
                       }}
-                      key={index}
-                      className='w-full cursor-pointer rounded-md px-4 py-[0.875rem] text-left text-[0.813rem] font-medium text-gray-700 hover:bg-gray-50 hover:font-bold hover:text-gray-950 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
+                      className='w-full rounded-md px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-gray-50 hover:font-bold hover:text-gray-950'
                     >
                       {item}
                     </button>

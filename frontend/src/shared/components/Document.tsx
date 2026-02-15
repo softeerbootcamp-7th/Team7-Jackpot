@@ -1,4 +1,7 @@
 // UI에 필요한 데이터만 정의 (비즈니스 로직 분리)
+
+import type { ReactNode } from 'react';
+
 export interface DocumentProps {
   id: number;
   companyName: string;
@@ -8,6 +11,7 @@ export interface DocumentProps {
   date: string; // 예: "2026.01.23" (부모에서 포맷팅해서 전달)
   isSelected?: boolean;
   onClick?: () => void;
+  children?: ReactNode;
 }
 
 const Document = ({
@@ -18,6 +22,7 @@ const Document = ({
   date,
   isSelected = false,
   onClick,
+  children,
 }: DocumentProps) => {
   return (
     <div
@@ -26,55 +31,37 @@ const Document = ({
       }`}
       onClick={onClick}
     >
-      <div
-        data-마감일자='true'
-        data-속성-1='기본'
-        data-수정-버튼='true'
-        className='border-Semantic-text-field-line-primary flex flex-col items-start justify-start gap-1 self-stretch border-b px-3 py-5'
-      >
+      <div className='flex flex-col items-start justify-start gap-1 self-stretch border-b border-gray-100 px-3 py-5'>
         {/* 상단: 기업명, 직무명 칩 + 아이콘 */}
+
         <div className='inline-flex items-center justify-between self-stretch pr-1'>
           <div className='flex flex-1 items-center justify-start gap-1'>
-            <div
-              data-속성-1='comp chip'
-              className='bg-Semantic-chip-blue-chip-bg---primary flex items-center justify-center gap-1 rounded-xl px-3 py-1.5'
-            >
-              <div className="text-Semantic-chip-blue-chip-text----primary justify-start font-['Pretendard'] text-xs leading-4 font-medium">
+            <div className='flex items-center justify-center gap-1 rounded-xl bg-blue-50 px-3 py-1.5'>
+              <div className='justify-start text-xs leading-4 font-medium text-blue-600'>
                 {companyName}
               </div>
             </div>
-            <div
-              data-속성-1='job chip'
-              className='bg-Semantic-chip-gray-chip-bg flex items-center justify-center gap-1 rounded-xl px-3 py-1.5'
-            >
-              <div className="text-Semantic-chip-gray-chip-text justify-start font-['Pretendard'] text-xs leading-4 font-medium">
+
+            <div className='flex items-center justify-center gap-1 rounded-xl bg-gray-50 px-3 py-1.5'>
+              <div className='justify-start text-xs leading-4 font-medium text-gray-600'>
                 {jobPosition}
               </div>
             </div>
           </div>
 
-          {/* 우측 아이콘 (수정/메뉴 등) */}
-          <div className='relative h-5 w-5'>
-            <div className='outline-Primitive-Color-gray-gray-300 absolute top-[2px] left-[2px] h-4 w-4 outline outline-[1.50px] outline-offset-[-0.75px]' />
-          </div>
+          {children}
         </div>
 
         {/* 하단: 제목 + 문항수 + 날짜 */}
+
         <div className='flex flex-col items-start justify-start gap-0.5 self-stretch'>
-          <div className="line-clamp-1 justify-start self-stretch font-['Pretendard'] text-lg leading-7 font-bold text-zinc-800">
+          <div className='line-clamp-1 justify-start self-stretch text-lg leading-7 font-bold text-gray-950'>
             {title}
           </div>
+
           <div className='inline-flex items-start justify-start gap-1'>
-            <div className="text-Semantic-text-label-400 justify-start font-['Pretendard'] text-xs leading-5 font-normal">
-              총 {questionCount}문항
-            </div>
-            <div className="text-Semantic-text-label-400 justify-start font-['Pretendard'] text-sm leading-5 font-normal">
-              ·
-            </div>
-            <div className='flex items-center justify-start'>
-              <div className="text-Semantic-text-label-400 justify-start font-['Pretendard'] text-xs leading-5 font-normal">
-                {date}
-              </div>
+            <div className='text-Semantic-text-label-400 justify-start text-xs leading-5 font-normal'>
+              총 {questionCount}문항 · {date}
             </div>
           </div>
         </div>
