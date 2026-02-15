@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.entity;
 
 import com.jackpot.narratix.domain.controller.request.CreateQuestionRequest;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -61,5 +62,12 @@ public class QnA extends BaseTimeEntity {
     public void editAnswer(String answer) {
         this.answer = answer;
         updateModifiedAt(LocalDateTime.now());
+    }
+
+    public ReviewRoleType determineReviewRole(String userId) {
+        if (Objects.equals(this.userId, userId)) {
+            return ReviewRoleType.WRITER;
+        }
+        return ReviewRoleType.REVIEWER;
     }
 }

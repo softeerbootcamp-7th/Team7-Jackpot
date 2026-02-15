@@ -2,11 +2,13 @@ package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
+import com.jackpot.narratix.domain.controller.response.ReviewsGetResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.Review;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.NotificationType;
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.entity.notification_meta.FeedbackNotificationMeta;
 import com.jackpot.narratix.domain.exception.ReviewErrorCode;
 import com.jackpot.narratix.domain.repository.QnARepository;
@@ -19,7 +21,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -130,5 +136,50 @@ public class ReviewService {
         if (!qnA.isOwner(userId)) {
             throw new BaseException(GlobalErrorCode.FORBIDDEN);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public ReviewsGetResponse getAllReviews(String userId, Long qnAId) {
+        QnA qnA = qnARepository.findByIdOrElseThrow(qnAId);
+        ReviewRoleType role = qnA.determineReviewRole(userId);
+
+        if (role == ReviewRoleType.WRITER) {
+            return getReviewsForWriter(qnAId);
+        }
+        return getReviewsForReviewer(qnAId, userId);
+    }
+
+    // Writer는 모든 첨삭 댓글을 볼 수 있다.
+    private ReviewsGetResponse getReviewsForWriter(Long qnAId) {
+        List<Review> reviews = reviewRepository.findAllByQnaId(qnAId);
+
+        Set<String> reviewerIds = reviews.stream()
+                .map(Review::getReviewerId)
+                .collect(Collectors.toSet());
+
+        Map<String, User> reviewerMap = userRepository.findAllByIdIn(reviewerIds).stream()
+                .collect(Collectors.toMap(User::getId, user -> user));
+
+        List<ReviewsGetResponse.ReviewResponse> reviewResponses = reviews.stream()
+                .filter(review -> reviewerMap.containsKey(review.getReviewerId()))
+                .map(review -> {
+                    User reviewer = reviewerMap.get(review.getReviewerId());
+                    return ReviewsGetResponse.ReviewResponse.from(review, reviewer);
+                })
+                .toList();
+
+        return new ReviewsGetResponse(reviewResponses);
+    }
+
+    // Reviewer는 자신이 작성한 첨삭 댓글만을 볼 수 있다.
+    private ReviewsGetResponse getReviewsForReviewer(Long qnAId, String reviewerId) {
+        User reviewer = userRepository.findByIdOrElseThrow(reviewerId);
+        List<Review> reviews = reviewRepository.findAllByQnaIdAndReviewerId(qnAId, reviewerId);
+
+        List<ReviewsGetResponse.ReviewResponse> reviewResponses = reviews.stream()
+                .map(review -> ReviewsGetResponse.ReviewResponse.from(review, reviewer))
+                .toList();
+
+        return new ReviewsGetResponse(reviewResponses);
     }
 }
