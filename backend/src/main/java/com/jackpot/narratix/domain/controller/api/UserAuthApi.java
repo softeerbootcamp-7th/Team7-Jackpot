@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -66,4 +67,11 @@ public interface UserAuthApi {
     })
     @PostMapping("/refresh")
     ResponseEntity<UserTokenResponse> refresh(@CookieValue(value = "refreshToken", required = true) String refreshToken);
+
+    @Operation(summary = "로그아웃", description = "쿠키에 저장된 리프레시 토큰을 삭제하여 로그아웃 처리합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "로그아웃 성공"),
+    })
+    @DeleteMapping("/logout")
+    ResponseEntity<Void> logout(@CookieValue(value = "refreshToken", required = false) String refreshToken);
 }
