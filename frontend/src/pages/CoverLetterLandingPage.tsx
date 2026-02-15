@@ -73,7 +73,7 @@ const CoverLetterLandingPage = () => {
       </div>
       <div className='flex flex-1 items-center'>
         <ErrorBoundary
-          key={`${searchWord}-${isFilterActive}`}
+          key={`${searchWord}|${isFilterActive}`}
           fallback={(reset) => (
             <SectionError
               onRetry={reset}

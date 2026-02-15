@@ -72,14 +72,14 @@ const buildHTML = (
 
   if (!selection || after.length === 0) return beforeHTML;
 
-  const afterChunks = after
+  const afterHTML = after
     .map(
       (chunk) =>
         `<span class="${chunk.isHighlighted ? 'font-bold' : ''}">${chunk.text}</span>`,
     )
     .join('');
 
-  return `${beforeHTML}<div class="h-2.5"></div><span class="opacity-30">${afterChunks}</span>`;
+  return `${beforeHTML}<div class="h-2.5"></div><span class="opacity-30">${afterHTML}</span>`;
 };
 
 interface CoverLetterContentProps {
@@ -175,9 +175,11 @@ const CoverLetterContent = ({
 
   // 편집 이벤트 처리
   const handleInput = (e: React.FormEvent<HTMLDivElement>) => {
-    isInputtingRef.current = true;
     const newText = e.currentTarget.textContent || '';
-    onTextChange?.(newText);
+    if (onTextChange) {
+      isInputtingRef.current = true;
+      onTextChange(newText);
+    }
   };
 
   // 리뷰 클릭 이벤트 처리
@@ -209,9 +211,7 @@ const CoverLetterContent = ({
           onInput={handleInput}
           onClick={handleClick}
           className='w-full cursor-text py-3 text-base leading-7 font-normal text-gray-800 outline-none'
-          style={{
-            paddingBottom: spacerHeight,
-          }}
+          style={{ paddingBottom: spacerHeight }}
         />
       </div>
     </div>
