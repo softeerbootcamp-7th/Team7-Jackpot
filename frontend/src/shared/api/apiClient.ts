@@ -3,7 +3,6 @@ import {
   setAccessToken,
 } from '@/features/auth/libs/tokenStore';
 
-// 환경 변수 속의 요청 주소 불러오기
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 interface MethodProps {
@@ -13,7 +12,6 @@ interface MethodProps {
   skipAuth?: boolean;
 }
 
-// 인터셉터 패턴처럼 fetch Wrapper
 export const apiClient = {
   get: async <T>({ endpoint, options, skipAuth }: MethodProps): Promise<T> => {
     return request<T>(endpoint, { ...options, method: 'GET' }, skipAuth);
@@ -70,19 +68,12 @@ export const apiClient = {
     );
   },
 
-  delete: async <T>({
+  delete: async <T = void>({
     endpoint,
     options,
     skipAuth,
   }: MethodProps): Promise<T> => {
-    return request<T>(
-      endpoint,
-      {
-        ...options,
-        method: 'DELETE',
-      },
-      skipAuth,
-    );
+    return request<T>(endpoint, { ...options, method: 'DELETE' }, skipAuth);
   },
 };
 
@@ -93,17 +84,15 @@ const request = async <T>(
 ): Promise<T> => {
   const headers = new Headers(options.headers || {});
 
-  // GET, DELETE에서는 Body가 없으므로 Content-Type이 필요가 없음
-  // Body가 있는 요청에서만 JSON 헤더 설정
+  // Body가 있는 요청에만 JSON Content-Type 설정
   if (options.body && !headers.has('Content-Type')) {
     headers.set('Content-Type', 'application/json');
   }
 
+  // 인증 토큰 설정
   if (!skipAuth) {
     const token = getAccessToken();
-    if (token) {
-      headers.set('Authorization', token);
-    }
+    if (token) headers.set('Authorization', token);
   }
 
   try {
@@ -112,7 +101,7 @@ const request = async <T>(
       headers,
     });
 
-    // 액세스 토큰이 만료되었다면 리프레시 후 재요청하는 로직
+    // 액세스 토큰 만료 시 리프레시 후 재요청
     if (response.status === 401 && !skipAuth) {
       const refreshResponse = await fetch(`${BASE_URL}/auth/refresh`, {
         method: 'POST',
@@ -124,24 +113,29 @@ const request = async <T>(
       }
 
       const refreshData = await refreshResponse.json();
-      setAccessToken(refreshData.accessToken);
 
+      // accessToken 유효성 검증
+      if (!refreshData.accessToken) {
+        throw new Error('Invalid refresh response: missing accessToken');
+      }
+
+      setAccessToken(refreshData.accessToken);
       headers.set('Authorization', refreshData.accessToken);
 
-      response = await fetch(`${BASE_URL}${endpoint}`, {
-        ...options,
-        headers,
-      });
+      response = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers });
     }
 
+    // API 에러 처리 (본문 포함)
     if (!response.ok) {
-      throw new Error(`API Error: ${response.status}`);
+      const errorBody = await response.text().catch(() => '');
+      throw new Error(`API Error: ${response.status} ${errorBody}`);
     }
 
     const text = await response.text();
 
+    // 빈 본문 처리: DELETE 등 예상되는 경우만 null 반환, 나머지는 에러 가능
     if (!text) {
-      return null as T;
+      return null as unknown as T;
     }
 
     return JSON.parse(text) as T;
