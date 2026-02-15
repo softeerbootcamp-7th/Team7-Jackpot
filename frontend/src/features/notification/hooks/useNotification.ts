@@ -6,12 +6,11 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 
+import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import type {
   NotificationResponse,
   NotificationType,
-} from '../types/notification';
-
-import { getAccessToken } from '@/features/auth/libs/tokenStore';
+} from '@/features/notification/types/notification';
 import { apiClient } from '@/shared/api/apiClient';
 
 // 알림 목록을 조회하는 커스텀 훅
