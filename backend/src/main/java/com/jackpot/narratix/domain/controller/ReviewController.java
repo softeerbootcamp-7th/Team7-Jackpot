@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.controller;
 
+import com.jackpot.narratix.domain.controller.api.ReviewApi;
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
 import com.jackpot.narratix.domain.controller.response.ReviewsGetResponse;
@@ -13,10 +14,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
-public class ReviewController {
+public class ReviewController implements ReviewApi {
 
     private final ReviewService reviewService;
 
+    @Override
     @PostMapping("/qna/{qnAId}/reviews")
     public ResponseEntity<Void> createReview(
             @UserId String userId,
@@ -27,6 +29,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @PutMapping("/qna/{qnAId}/reviews/{reviewId}")
     public ResponseEntity<Void> editReview(
             @UserId String userId,
@@ -38,6 +41,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @DeleteMapping("/qna/{qnAId}/reviews/{reviewId}")
     public ResponseEntity<Void> deleteReview(
             @UserId String userId,
@@ -48,6 +52,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @PatchMapping("/qna/{qnAId}/reviews/{reviewId}/approve")
     public ResponseEntity<Void> approveReview(
             @UserId String userId,
@@ -58,6 +63,7 @@ public class ReviewController {
         return ResponseEntity.noContent().build();
     }
 
+    @Override
     @GetMapping("/qna/{qnAId}/reviews/all")
     public ResponseEntity<ReviewsGetResponse> getAllReviews(
             @UserId String userId,
