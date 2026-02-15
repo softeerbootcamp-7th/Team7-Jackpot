@@ -4,7 +4,7 @@ import PageGlobalHeader from '@/shared/components/PageGlobalHeader';
 
 const RootLayout = () => {
   return (
-    <div className=''>
+    <div>
       <PageGlobalHeader />
       <div>
         <Outlet />
