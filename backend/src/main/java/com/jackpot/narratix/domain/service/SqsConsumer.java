@@ -5,7 +5,6 @@ import com.jackpot.narratix.domain.service.dto.FileProcessResult;
 import io.awspring.cloud.sqs.annotation.SqsListener;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 public class SqsConsumer {
 
     private final FileProcessService fileProcessService;
-    private final ThreadPoolTaskExecutor aiLabellingTaskExecutor;
-
 
     @SqsListener(value = "${sqs.queue.name}", factory = "sqsMessageListenerContainerFactory")
     public void consume(FileProcessResult message) {
@@ -27,8 +24,7 @@ public class SqsConsumer {
                 return;
             }
 
-            aiLabellingTaskExecutor.execute(() ->
-                    fileProcessService.processUploadedFile(message.fileId(), message.extractedText()));
+            fileProcessService.processUploadedFile(message.fileId(), message.extractedText());
 
         } catch (Exception e) {
             log.error("Error processing SQS message for fileId: {}", message.fileId(), e);
