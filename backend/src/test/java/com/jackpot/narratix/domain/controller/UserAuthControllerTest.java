@@ -28,6 +28,7 @@ import java.util.Date;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willDoNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -201,5 +202,26 @@ class UserAuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공 : 리프레시 토큰 쿠키 삭제 설정(Max-Age=0) 반환")
+    void logout_Success() throws Exception {
+        // when & then
+        mockMvc.perform(delete("/api/v1/auth/logout")
+                        .cookie(new Cookie("refreshToken", JWT_REFRESH_TOKEN)))
+                .andExpect(status().isNoContent())
+                .andExpect(header().exists("Set-Cookie"))
+                .andExpect(cookie().value("refreshToken", ""))
+                .andExpect(cookie().maxAge("refreshToken", 0))
+                .andExpect(cookie().path("refreshToken", "/"));
+    }
+
+    @Test
+    @DisplayName("로그아웃 성공 : 쿠키가 없어도 에러 없이 삭제 헤더 반환 (멱등성 보장)")
+    void logout_NoCookie_Success() throws Exception {
+        mockMvc.perform(delete("/api/v1/auth/logout"))
+                .andExpect(status().isNoContent())
+                .andExpect(cookie().maxAge("refreshToken", 0));
     }
 }
