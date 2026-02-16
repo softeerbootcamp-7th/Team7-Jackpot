@@ -27,6 +27,7 @@ interface CoverLetterContentProps {
   onSelectionChange: (selection: SelectionInfo | null) => void;
   onReviewClick: (reviewId: number) => void;
   onTextChange?: (newText: string) => void;
+  onComposingLengthChange?: (length: number | null) => void;
 }
 
 const CoverLetterContent = ({
@@ -39,6 +40,7 @@ const CoverLetterContent = ({
   onSelectionChange,
   onReviewClick,
   onTextChange,
+  onComposingLengthChange,
 }: CoverLetterContentProps) => {
   const [spacerHeight, setSpacerHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -55,6 +57,11 @@ const CoverLetterContent = ({
   useEffect(() => {
     onTextChangeRef.current = onTextChange;
   }, [onTextChange]);
+
+  const onComposingLengthChangeRef = useRef(onComposingLengthChange);
+  useEffect(() => {
+    onComposingLengthChangeRef.current = onComposingLengthChange;
+  }, [onComposingLengthChange]);
 
   const undoStack = useRef<{ text: string; caret: number }[]>([]);
   const redoStack = useRef<{ text: string; caret: number }[]>([]);
@@ -143,15 +150,15 @@ const CoverLetterContent = ({
     updateText(newText);
   };
 
-  // compositionEnd의 rAF processInput이 아직 실행되지 않았을 때
-  // DOM과 latestTextRef가 불일치할 수 있으므로 먼저 동기화
+  // compositionEnd 직후 등 DOM과 latestTextRef가 불일치할 수 있으므로 ref만 동기화.
+  // undo 스택에 중간 상태를 남기지 않기 위해 updateText 대신 ref를 직접 갱신한다.
   const syncDOMToState = useCallback(() => {
     if (!contentRef.current) return;
     const domText = collectText(contentRef.current);
     if (domText !== latestTextRef.current) {
-      updateText(domText);
+      latestTextRef.current = domText;
     }
-  }, [updateText]);
+  }, []);
 
   // 커서 위치에 텍스트 삽입 (ref 기반)
   const insertTextAtCaret = useCallback(
@@ -198,18 +205,34 @@ const CoverLetterContent = ({
     isInputtingRef.current = false;
   }, [text]);
 
-  const handleInput = () => processInput();
+  const handleInput = () => {
+    // 조합 중에는 텍스트 상태를 갱신하지 않지만 글자 수만 실시간 반영
+    if (isComposingRef.current) {
+      if (contentRef.current) {
+        onComposingLengthChangeRef.current?.(
+          collectText(contentRef.current).length,
+        );
+      }
+      return;
+    }
+    processInput();
+  };
   const handleCompositionStart = () => {
     isComposingRef.current = true;
   };
   const handleCompositionEnd = () => {
     isComposingRef.current = false;
-    // Chrome: compositionEnd가 최종 input 이벤트보다 먼저 발생할 수 있음
-    // rAF로 한 프레임 지연하여 DOM이 확정된 후 처리
-    // 만약 handleInput의 processInput이 먼저 실행되면 updateText는 no-op (같은 텍스트)
-    requestAnimationFrame(() => {
-      processInput();
-    });
+    onComposingLengthChangeRef.current?.(null);
+    // compositionEnd 시점에 이전 조합은 확정된 상태.
+    // 동기적으로 DOM 텍스트를 읽어 상태를 갱신한다.
+    // rAF로 지연하면 다음 compositionStart가 먼저 도착해 isComposing이 다시 true가 되어 스킵될 수 있다.
+    if (!contentRef.current) return;
+    const domText = collectText(contentRef.current);
+    if (domText !== latestTextRef.current) {
+      const { start } = getCaretPosition(contentRef.current);
+      caretOffsetRef.current = domText === '' ? 0 : start;
+      updateText(domText);
+    }
   };
 
   // Undo/Redo (ref 기반)
