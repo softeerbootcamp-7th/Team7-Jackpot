@@ -54,4 +54,8 @@ public class SseEmitterRepository {
         }
         return result;
     }
+
+    public Map<String, SseEmitter> getAllEmitters(){
+        return emitters;
+    }
 }
