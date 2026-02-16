@@ -36,8 +36,8 @@ const RecruitDetail = ({ formData, onUpdate }: Props) => {
       <LabeledSelectInput
         label='기업명'
         name='companyName'
-        value={formData.companyName} // [Controlled]
-        onChange={(val) => onUpdate('companyName', val)} // [Controlled]
+        value={formData.companyName}
+        onChange={(val) => onUpdate('companyName', val)}
         constantData={COMPANY_NAME_LIST}
         handleDropdown={(isOpen) =>
           toggleDropdown('companyNameDropdown', isOpen)
@@ -49,8 +49,8 @@ const RecruitDetail = ({ formData, onUpdate }: Props) => {
       <LabeledSelectInput
         label='직무명'
         name='jobPosition'
-        value={formData.jobPosition} // [Controlled]
-        onChange={(val) => onUpdate('jobPosition', val)} // [Controlled]
+        value={formData.jobPosition}
+        onChange={(val) => onUpdate('jobPosition', val)}
         constantData={JOB_POSITION_LIST}
         handleDropdown={(isOpen) =>
           toggleDropdown('jobPositionDropdown', isOpen)
@@ -63,10 +63,10 @@ const RecruitDetail = ({ formData, onUpdate }: Props) => {
         label='채용 시기'
         nameYear='applyYear'
         nameSeason='applyHalf'
-        yearValue={formData.applyYear} // [Controlled]
-        seasonValue={formData.applyHalf} // [Controlled]
-        onChangeYear={(val) => onUpdate('applyYear', val)} // [Controlled]
-        onChangeSeason={(val: ApiApplyHalf) => onUpdate('applyHalf', val)} // [Controlled]
+        yearValue={formData.applyYear}
+        seasonValue={formData.applyHalf}
+        onChangeYear={(val) => onUpdate('applyYear', val)}
+        onChangeSeason={(val: ApiApplyHalf) => onUpdate('applyHalf', val)}
         constantData={yearList}
         handleDropdown={(isOpen) => toggleDropdown('yearDropdown', isOpen)}
         isOpen={isDropdownOpen.yearDropdown}
@@ -76,8 +76,8 @@ const RecruitDetail = ({ formData, onUpdate }: Props) => {
       <Deadline
         label='마감일'
         name='deadline'
-        value={formData.deadline} // [Controlled] (Deadline 컴포넌트 내부도 수정 필요할 수 있음)
-        onChange={(val) => onUpdate('deadline', val)} // [Controlled]
+        value={formData.deadline}
+        onChange={(val) => onUpdate('deadline', val)}
       />
     </div>
   );

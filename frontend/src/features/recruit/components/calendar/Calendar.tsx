@@ -43,8 +43,8 @@ const Calendar = ({
           <CalendarWeekday />
 
           {isLoading
-            ? // 달력 한 달 치 칸 수만큼 반복 (35개 | 42개)
-              Array.from({ length: 35 }).map((_, index) => (
+            ? // 달력 한 달 치 칸 수만큼 반복 최대 6주이므로 이에 따라 스켈레톤 UI 생성 (42개)
+              Array.from({ length: 42 }).map((_, index) => (
                 <CalendarDaySkeleton key={`skeleton-${index}`} tagCount={2} />
               ))
             : days.map((date) => {

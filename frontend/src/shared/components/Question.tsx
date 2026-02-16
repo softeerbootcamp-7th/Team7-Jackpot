@@ -1,4 +1,4 @@
-import type { CoverLetterQuestion } from '@/features/recruit/types';
+import type { CoverLetterQuestion } from '@/shared/types/coverLetter';
 
 interface QuestionProps {
   displayIndex: number;
@@ -35,7 +35,6 @@ const Question = ({
         {/* 1. 질문 내용 */}
         <textarea
           value={data.question}
-          // 'question'은 CoverLetterQuestion의 key이므로 타입 통과
           onChange={(e) => onChange('question', e.target.value)}
           className='text-body-s resize-none justify-start self-stretch bg-transparent font-normal text-gray-950 outline-none placeholder:text-gray-400'
           placeholder='자기소개서 질문을 입력해주세요'
@@ -47,7 +46,6 @@ const Question = ({
       <input
         type='text'
         value={data.category}
-        // 'category'는 CoverLetterQuestion의 key이므로 타입 통과
         onChange={(e) => onChange('category', e.target.value)}
         className='text-caption-m inline-flex h-9 w-full items-center justify-start rounded-lg bg-white px-4 font-normal text-gray-950 ring-1 ring-gray-200 outline-none placeholder:text-gray-400 focus:ring-blue-500'
         placeholder='해당 문항의 유형을 입력해주세요 (예: 지원동기, 성장과정)'

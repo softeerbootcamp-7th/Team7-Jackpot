@@ -2,7 +2,7 @@ export interface EmptyCaseProps {
   title: string;
   content: string;
   size?: 'small' | 'medium' | 'large';
-  icon?: React.ReactNode;
+  icon?: string;
   className?: string;
 }
 

@@ -4,7 +4,7 @@ import type {
   CoverLetterItem,
 } from '@/features/recruit/types';
 
-const MOCK_CALENDAR_COVER_LETTERS: CoverLetterItem[] = [
+export const MOCK_CALENDAR_COVER_LETTERS: CoverLetterItem[] = [
   {
     coverLetterId: 1001,
     companyName: '현대자동차',
@@ -102,5 +102,3 @@ export const fetchCalendarDatesMock = (
 ) => {
   return Promise.resolve(getMockCalendarResponse(params, lastIdParam));
 };
-
-export { MOCK_CALENDAR_COVER_LETTERS };

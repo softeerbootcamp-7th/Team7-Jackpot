@@ -49,7 +49,7 @@ const RecruitFormView = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault(); // 기본 제출 방지
 
-    if (!isValid) return;
+    if (!isValid || isSubmitting) return;
 
     if (step === 1) {
       setStep(2);

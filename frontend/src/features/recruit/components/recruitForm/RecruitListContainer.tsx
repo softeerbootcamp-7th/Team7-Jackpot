@@ -11,14 +11,12 @@ interface Props {
   dateParams: CalendarRequest;
   onItemClick?: (id: number) => void;
   emptyComponent?: ReactNode;
-  // [추가] 부모(Page)로부터 받을 수정/삭제 핸들러
   onEdit?: (id: number) => void;
   onDelete?: (id: number) => void;
 }
 
 const RecruitListContainer = ({
   dateParams,
-  onItemClick,
   emptyComponent,
   onEdit,
   onDelete,
@@ -61,13 +59,13 @@ const RecruitListContainer = ({
     <div className='flex h-full w-full flex-col'>
       <DocumentList
         documents={formattedDocuments}
-        onItemClick={onItemClick}
         emptyMessage='해당 기간에 마감되는 공고가 없습니다.'
         // [핵심] renderAction을 통해 버튼 주입
         renderAction={(doc) => (
-          <div className='flex items-center gap-1'>
+          <div className='flex items-center gap-3'>
             <button
-              className='relative h-5 w-5'
+              type='button'
+              className='relative h-5 w-5 cursor-pointer'
               onClick={(e) => {
                 e.stopPropagation(); //부모의 클릭 이벤트(onItemClick) 방지
                 onEdit?.(doc.id);
@@ -76,7 +74,8 @@ const RecruitListContainer = ({
               <I.EditIcon />
             </button>
             <button
-              className='relative h-5 w-5'
+              type='button'
+              className='relative h-5 w-5 cursor-pointer'
               onClick={(e) => {
                 e.stopPropagation(); // 이하동문
                 onDelete?.(doc.id);

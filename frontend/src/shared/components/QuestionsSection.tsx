@@ -1,6 +1,6 @@
-import type { CoverLetterQuestion } from '@/features/recruit/types';
 import Question from '@/shared/components/Question';
 import { PlusIcon } from '@/shared/icons/Plus';
+import type { CoverLetterQuestion } from '@/shared/types/coverLetter';
 
 interface Props {
   questions: CoverLetterQuestion[];

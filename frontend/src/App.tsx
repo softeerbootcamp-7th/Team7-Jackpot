@@ -21,6 +21,7 @@ import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayou
 import DetailView from '@/features/library/components/DetailView';
 import LibraryLayout from '@/features/library/components/LibraryLayout';
 import LibrarySidebarLayout from '@/features/library/components/LibrarySidebarLayout';
+import RecruitRedirect from '@/features/recruit/components/RecruitRedirect';
 import LabelingResultSection from '@/features/upload/components/LabelingResultSection';
 import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
 import UploadInputSection from '@/features/upload/components/UploadInputSection';
@@ -29,11 +30,6 @@ import RootLayout from '@/shared/components/RootLayout';
 import { queryClient } from '@/shared/queries/queryClient';
 
 function App() {
-  const today = new Date();
-  const currentYear = today.getFullYear();
-  const currentMonth = String(today.getMonth() + 1).padStart(2, '0');
-  const currentDay = String(today.getDate()).padStart(2, '0');
-
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
@@ -107,15 +103,7 @@ function App() {
                 element={<CoverLetterQnAFriendsPage />}
               />
             </Route>
-            <Route
-              path='/recruit'
-              element={
-                <Navigate
-                  to={`/recruit/${currentYear}/${currentMonth}/${currentDay}`}
-                  replace
-                />
-              }
-            />
+            <Route path='/recruit' element={<RecruitRedirect />} />
 
             {/* 2. 실제 페이지 (day는 선택 사항) */}
             <Route

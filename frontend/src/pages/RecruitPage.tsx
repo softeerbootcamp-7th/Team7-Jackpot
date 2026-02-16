@@ -76,8 +76,8 @@ const RecruitPage = () => {
         <div className='flex-none'>
           <CalendarContainer />
         </div>
-        {/* [박소민] TODO: 레이아웃 overflow 처리 필요 */}
-        <div className='h-full flex-none pl-4'>
+        {/* [박소민] TODO: 레이아웃 flex-1 처리 필요 */}
+        <div className='h-full flex-1 pl-4'>
           {isFormOpen ? (
             <RecruitFormContainer
               // 수정 모드일 경우 ID를 넘겨줘서 데이터를 불러오게 함

@@ -1,4 +1,4 @@
-// 반짝이는 효과 컴포넌트 (기존 코드 유지)
+// 반짝이는 효과 컴포넌트
 const SkeletonBox = ({ className = '' }: { className?: string }) => {
   return (
     <div

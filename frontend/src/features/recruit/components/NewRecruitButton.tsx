@@ -1,9 +1,6 @@
-// [박소민] TODO: 공고 등록하기 버튼 최적화 memo 안되는 이유 찾기
-import { memo } from 'react';
-
 import { PlusIcon } from '@/shared/icons/Plus';
 
-const NewRecruitButton = memo(({ onClick }: { onClick: () => void }) => {
+const NewRecruitButton = ({ onClick }: { onClick: () => void }) => {
   return (
     <button
       type='button'
@@ -18,8 +15,6 @@ const NewRecruitButton = memo(({ onClick }: { onClick: () => void }) => {
       </div>
     </button>
   );
-});
-
-NewRecruitButton.displayName = 'NewRecruitButton';
+};
 
 export default NewRecruitButton;

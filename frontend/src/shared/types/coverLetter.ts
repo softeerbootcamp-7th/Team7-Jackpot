@@ -20,3 +20,9 @@ export interface CoverLetter {
 export interface RecentCoverLetter extends CoverLetter {
   questionCount: number;
 }
+
+// 질문 아이템 타입
+export interface CoverLetterQuestion {
+  question: string;
+  category: string;
+}

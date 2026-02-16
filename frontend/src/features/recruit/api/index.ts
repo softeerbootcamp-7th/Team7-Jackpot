@@ -27,7 +27,7 @@ export const fetchCalendarDates = async (
   });
 
   // lastCoverLetterId가 존재할 때만 파라미터에 추가 (첫 요청엔 없음)
-  if (lastIdParam !== undefined && lastIdParam !== null) {
+  if (lastIdParam !== undefined) {
     queryParams.append('lastCoverLetterId', String(lastIdParam));
   }
 

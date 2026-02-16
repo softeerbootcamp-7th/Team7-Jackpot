@@ -1,28 +1,30 @@
-import { useMemo } from 'react';
+// [박소민] TODO: 무한 스크롤 확인하기
+import { useEffect, useMemo } from 'react';
 
 import Calendar from '@/features/recruit/components/calendar/Calendar';
 import { useInfiniteCalendarDates } from '@/features/recruit/hooks/queries/useCalendarQuery';
-import { useCalendar } from '@/features/recruit/hooks/useCalendar'; 
+import { useCalendar } from '@/features/recruit/hooks/useCalendar';
 import { getISODate } from '@/shared/utils/dates';
 
 const CalendarContainer = () => {
-  const {
-    currentDate,
-    today,
-    startDate,
-    endDate,
-    days,
-    helpers, 
-  } = useCalendar();
+  const { currentDate, today, startDate, endDate, days, helpers } =
+    useCalendar();
 
-  const startDateStr = getISODate(startDate);
-  const endDateStr = getISODate(endDate);
+  const startDateStr = useMemo(() => getISODate(startDate), [startDate]);
+  const endDateStr = useMemo(() => getISODate(endDate), [endDate]);
 
-  const { data, isLoading } = useInfiniteCalendarDates({
-    startDate: startDateStr,
-    endDate: endDateStr,
-    size: 100,
-  });
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteCalendarDates({
+      startDate: startDateStr,
+      endDate: endDateStr,
+      size: 100,
+    });
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const eventsByDate = useMemo(() => {
     if (!data) return {};

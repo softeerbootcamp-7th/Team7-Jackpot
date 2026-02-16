@@ -11,7 +11,7 @@ const PaginationButton = ({
   step,
   isSubmitting,
   mode,
-  isValid,
+  isValid = false,
 }: Props) => {
   // 버튼 비활성화 조건: 제출 중/ 폼이 유효하지 않을 때
   const isDisabled = isSubmitting || !isValid;
@@ -22,7 +22,7 @@ const PaginationButton = ({
         type='button'
         onClick={onClick}
         disabled={step === 1}
-        className='flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-lg px-5 py-3 transition-colors hover:bg-gray-100'
+        className='disabled:cursor-not-allowedcursor-pointer flex flex-1 items-center justify-center gap-1.5 rounded-lg px-5 py-3 transition-colors hover:bg-gray-100'
       >
         <div className='justify-start text-center text-lg leading-7 font-bold text-gray-600'>
           이전

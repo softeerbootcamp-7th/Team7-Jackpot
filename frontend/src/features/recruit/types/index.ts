@@ -1,4 +1,7 @@
-import type { ApiApplyHalf } from '@/shared/types/coverLetter';
+import type {
+  ApiApplyHalf,
+  CoverLetterQuestion,
+} from '@/shared/types/coverLetter';
 
 // 1. 날짜별 공고 조회 API 관련 타입
 // 개별 자소서 아이템 타입
@@ -43,12 +46,6 @@ export interface ErrorResponse {
 
 // 3. 자기소개서 등록하기
 
-// 질문 아이템 타입
-export interface CoverLetterQuestion {
-  question: string;
-  category: string;
-}
-
 // 요청 데이터 타입
 export interface CreateCoverLetterRequest {
   companyName: string;
@@ -61,7 +58,7 @@ export interface CreateCoverLetterRequest {
 
 // 응답 데이터 타입
 export interface CreateCoverLetterResponse {
-  coverletterId: number;
+  coverLetterId: number;
 }
 
 // 4. 자기소개서 수정하기

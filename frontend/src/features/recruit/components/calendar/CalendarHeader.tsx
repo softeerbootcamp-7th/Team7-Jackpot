@@ -19,11 +19,10 @@ const CalendarHeader = ({ day }: Props) => {
   const currentMonthText = formatYearMonth(day);
   const nextMonthText = formatYearMonth(nextDate);
 
-  // 3. URL 생성 헬퍼 함수 (YYYY/MM/01 형식)
+  // 3. URL 생성 헬퍼 함수 (YYYY/MM 형식)
   const createPath = (date: Date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
-    // 월 이동 시에는 보통 1일로 이동합니다.
     return `/recruit/${year}/${month}`;
   };
 

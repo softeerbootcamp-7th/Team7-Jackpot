@@ -28,7 +28,7 @@ export const fetchCalendarDates = async ({
   );
 
   if (!response.ok) {
-    await parseErrorResponse(response);
+    return parseErrorResponse(response);
   }
 
   return response.json();

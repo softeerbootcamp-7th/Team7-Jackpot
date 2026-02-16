@@ -1,73 +1,96 @@
+import { useEffect, useState } from 'react';
+
 interface Props {
   label: string;
   name?: string;
-  value?: string | Date; // [수정] 외부에서 주입받는 값
-  onChange: (value: string) => void; // [수정] 변경 핸들러 (YYYY-MM-DD 형식 반환)
+  value?: string | Date;
+  onChange: (value: string) => void;
 }
 
+// 파싱 헬퍼 함수 (컴포넌트 밖)
+const parseDate = (val?: string | Date) => {
+  if (!val) return { y: '', m: '', d: '' };
+
+  if (typeof val === 'string') {
+    const parts = val.split('-');
+    return parts.length === 3
+      ? { y: parts[0], m: parts[1], d: parts[2] }
+      : { y: '', m: '', d: '' };
+  }
+
+  if (val instanceof Date) {
+    if (isNaN(val.getTime())) return { y: '', m: '', d: '' };
+    return {
+      y: String(val.getFullYear()),
+      m: String(val.getMonth() + 1).padStart(2, '0'),
+      d: String(val.getDate()).padStart(2, '0'),
+    };
+  }
+
+  return { y: '', m: '', d: '' };
+};
+
 const Deadline = ({ label, value, onChange }: Props) => {
-  // 1. props.value를 기반으로 연/월/일 추출하는 함수
-  const parseDate = (val?: string | Date) => {
-    if (!val) return { y: '', m: '', d: '' };
+  // 초기값 세팅
+  const initial = parseDate(value);
 
-    // "YYYY-MM-DD" 문자열인 경우
-    if (typeof val === 'string') {
-      const parts = val.split('-');
-      if (parts.length === 3) {
-        return { y: parts[0], m: parts[1], d: parts[2] };
-      }
-      // Date 객체 변환 시도 (ISO string 등)
-      const date = new Date(val);
-      if (!isNaN(date.getTime())) {
-        return {
-          y: String(date.getFullYear()),
-          m: String(date.getMonth() + 1).padStart(2, '0'),
-          d: String(date.getDate()).padStart(2, '0'),
-        };
-      }
-      return { y: '', m: '', d: '' };
+  const [localY, setLocalY] = useState(initial.y);
+  const [localM, setLocalM] = useState(initial.m);
+  const [localD, setLocalD] = useState(initial.d);
+
+  // [수정된 useEffect]
+  useEffect(() => {
+    const { y: propY, m: propM, d: propD } = parseDate(value);
+
+    // 숫자로 변환하여 비교 ( "5" == "05" )
+    // 빈 문자열('')은 Number 변환 시 0이 되므로, 둘 다 비어있는 경우도 체크해야 함
+    const isEq = (a: string, b: string) => {
+      if (a === b) return true; // 완전 일치
+      if (a === '' || b === '') return false; // 하나만 비었으면 불일치
+      return Number(a) === Number(b); // "05" vs "5" 처리
+    };
+
+    // 현재 로컬 상태와 부모로부터 온 값이 '의미적으로' 같으면 무시
+    if (isEq(localY, propY) && isEq(localM, propM) && isEq(localD, propD)) {
+      return;
     }
 
-    // Date 객체인 경우
-    if (val instanceof Date) {
-      return {
-        y: String(val.getFullYear()),
-        m: String(val.getMonth() + 1).padStart(2, '0'),
-        d: String(val.getDate()).padStart(2, '0'),
-      };
-    }
+    // 다르면 업데이트 (외부에서 데이터가 로드된 경우)
+    setLocalY(propY);
+    setLocalM(propM);
+    setLocalD(propD);
 
-    return { y: '', m: '', d: '' };
-  };
+    // 의존성 배열에는 value만 넣습니다. local state를 넣으면 루프 돕니다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
-  // 2. 현재 상태 (입력 중인 값)
-  // 부모의 value가 바뀌면 이 값들도 업데이트되어야 하므로 useEffect 사용 필요
-  // 하지만 여기서는 간단하게 렌더링 시마다 계산된 값을 input value로 쓰고,
-  // 입력 시 onChange를 호출하는 방식으로 처리합니다.
-
-  // 입력 편의성을 위해 로컬 state를 둡니다. (사용자가 '2'만 쳤을 때 부모에게 바로 반영하기 위해)
-  const { y, m, d } = parseDate(value);
-
-  // [중요] 개별 필드 변경 핸들러
   const handleInputChange = (
     type: 'year' | 'month' | 'day',
     inputValue: string,
   ) => {
-    // 숫자만 허용
     const numValue = inputValue.replace(/[^0-9]/g, '');
 
-    // 길이 제한
     if (type === 'year' && numValue.length > 4) return;
     if ((type === 'month' || type === 'day') && numValue.length > 2) return;
 
-    // 새로운 날짜 조합
-    const newY = type === 'year' ? numValue : y;
-    const newM = type === 'month' ? numValue : m;
-    const newD = type === 'day' ? numValue : d;
+    // UI 즉시 반영 (사용자 경험 최우선)
+    if (type === 'year') setLocalY(numValue);
+    if (type === 'month') setLocalM(numValue);
+    if (type === 'day') setLocalD(numValue);
 
-    // [박소민] TODO: 유효한 날짜인지 검증 후 리팩토링
+    // 부모 전송용 데이터 계산
+    const nextY = type === 'year' ? numValue : localY;
+    const nextM = type === 'month' ? numValue : localM;
+    const nextD = type === 'day' ? numValue : localD;
 
-    onChange(`${newY}-${newM}-${newD}`);
+    // 모두 유효할 때만 전송
+    if (nextY.length === 4 && nextM.length >= 1 && nextD.length >= 1) {
+      const formattedM = nextM.padStart(2, '0');
+      const formattedD = nextD.padStart(2, '0');
+
+      // 입력 중인 값과 기존 value가 다를 때만 호출하여 부모 리렌더링 최소화
+      onChange(`${nextY}-${formattedM}-${formattedD}`);
+    }
   };
 
   return (
@@ -77,11 +100,13 @@ const Deadline = ({ label, value, onChange }: Props) => {
       </div>
 
       <div className='flex w-full items-start justify-between gap-2'>
+        {/* 연도 */}
         <div className='flex h-12 min-w-0 flex-1 items-center rounded-2xl bg-gray-50 px-3'>
           <input
             type='text'
+            inputMode='numeric'
             placeholder='YYYY'
-            value={y}
+            value={localY}
             onChange={(e) => handleInputChange('year', e.target.value)}
             className='min-w-0 flex-1 bg-transparent text-center text-sm leading-5 font-normal text-gray-950 placeholder:text-gray-400 focus:outline-none'
           />
@@ -90,11 +115,13 @@ const Deadline = ({ label, value, onChange }: Props) => {
           </div>
         </div>
 
+        {/* 월 */}
         <div className='flex h-12 min-w-0 flex-1 items-center rounded-2xl bg-gray-50 px-3'>
           <input
             type='text'
+            inputMode='numeric'
             placeholder='MM'
-            value={m}
+            value={localM}
             onChange={(e) => handleInputChange('month', e.target.value)}
             className='min-w-0 flex-1 bg-transparent text-center text-sm leading-5 font-normal text-gray-950 placeholder:text-gray-400 focus:outline-none'
           />
@@ -103,11 +130,13 @@ const Deadline = ({ label, value, onChange }: Props) => {
           </div>
         </div>
 
+        {/* 일 */}
         <div className='flex h-12 min-w-0 flex-1 items-center rounded-2xl bg-gray-50 px-3'>
           <input
             type='text'
+            inputMode='numeric'
             placeholder='DD'
-            value={d}
+            value={localD}
             onChange={(e) => handleInputChange('day', e.target.value)}
             className='min-w-0 flex-1 bg-transparent text-center text-sm leading-5 font-normal text-gray-950 placeholder:text-gray-400 focus:outline-none'
           />
