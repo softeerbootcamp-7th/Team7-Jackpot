@@ -1,5 +1,7 @@
 package com.jackpot.narratix.domain.entity;
 
+import com.jackpot.narratix.domain.exception.ReviewErrorCode;
+import com.jackpot.narratix.global.exception.BaseException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -61,6 +63,8 @@ public class Review extends BaseTimeEntity {
     }
 
     public void approve() {
+        if(suggest == null) throw new BaseException(ReviewErrorCode.REVIEW_SUGGEST_IS_NULL);
+
         String temp = this.originText;
         this.originText = this.suggest;
         this.suggest = temp;
