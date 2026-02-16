@@ -190,7 +190,7 @@ class WebSocketEventListenerTest {
 
         ShareLink shareLink = ShareLink.newActivatedShareLink(coverLetterId);
 
-        ReviewEditEvent event = new com.jackpot.narratix.domain.event.ReviewEditEvent(
+        ReviewEditEvent event = new ReviewEditEvent(
                 coverLetterId,
                 qnAId,
                 reviewId,
@@ -217,7 +217,7 @@ class WebSocketEventListenerTest {
         // given
         Long coverLetterId = 1L;
 
-        com.jackpot.narratix.domain.event.ReviewEditEvent event = new com.jackpot.narratix.domain.event.ReviewEditEvent(
+        ReviewEditEvent event = new ReviewEditEvent(
                 coverLetterId,
                 2L,
                 10L,
