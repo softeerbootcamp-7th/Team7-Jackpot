@@ -28,9 +28,7 @@ const UploadInputHeader = ({
       </div>
       <div className='flex items-center gap-6'>
         <div className='flex items-center gap-1 text-gray-400 select-none'>
-          <span
-            className={totalSize && totalSize > MAX_BYTES ? 'text-red-600' : ''}
-          >
+          <span className={isOverSize ? 'text-red-600' : ''}>
             {formatFileSize(totalSize ?? 0)}
           </span>
           <span>/</span>
