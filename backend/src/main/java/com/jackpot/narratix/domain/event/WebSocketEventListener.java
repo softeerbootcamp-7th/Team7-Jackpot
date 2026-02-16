@@ -5,9 +5,9 @@ import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
-import com.jackpot.narratix.domain.repository.ShareLinkRepository;
 import com.jackpot.narratix.domain.repository.UserRepository;
 import com.jackpot.narratix.domain.service.ShareLinkLockManager;
+import com.jackpot.narratix.domain.service.ShareLinkService;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.domain.service.dto.WebSocketCreateCommentMessage;
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
@@ -31,9 +31,9 @@ public class WebSocketEventListener {
 
     private final WebSocketMessageSender webSocketMessageSender;
     private final ShareLinkLockManager shareLinkLockManager;
+    private final ShareLinkService shareLinkService;
 
     private final UserRepository userRepository;
-    private final ShareLinkRepository shareLinkRepository;
 
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
@@ -41,20 +41,12 @@ public class WebSocketEventListener {
         User reviewer = userRepository.findByIdOrElseThrow(event.reviewerId());
 
         // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 생성 웹소켓 메시지를 전송한다.
-        Optional<ShareLink> shareLinkOptional = shareLinkRepository.findById(event.coverLetterId());
-        if (shareLinkOptional.isEmpty()) {
-            log.info("share link not found");
-            return;
-        }
-        ShareLink shareLink = shareLinkOptional.get();
-        if (!shareLink.isValid()) {
-            log.info("share link is not valid");
-            return;
-        }
+        Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
+        if (shareLink.isEmpty()) return;
 
         WebSocketCreateCommentMessage message = WebSocketCreateCommentMessage.of(reviewer, event);
         webSocketMessageSender.sendMessageToShare(
-                shareLink.getShareId(),
+                shareLink.get().getShareId(),
                 new WebSocketMessageResponse(WebSocketMessageType.COMMENT_CREATED, message)
         );
     }
