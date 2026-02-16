@@ -9,10 +9,10 @@ const LabelingResultSection = () => {
     coverLetterId: string;
     qnAId: string;
   }>();
-  const currentCoverLetterId: number = coverLetterId
-    ? Number(coverLetterId)
-    : 0;
-  const currentQnAId: number = qnAId ? Number(qnAId) : 0;
+
+  // NaN || 0 -> 0 (비숫자 입력에 대한 방어 처리)
+  const currentCoverLetterId: number = Number(coverLetterId) || 0;
+  const currentQnAId: number = Number(qnAId) || 0;
 
   const handleNextStep = () => {
     navigate('/upload/complete', { replace: true });
