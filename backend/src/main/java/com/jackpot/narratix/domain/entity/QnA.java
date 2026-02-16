@@ -65,7 +65,7 @@ public class QnA extends BaseTimeEntity {
     }
 
     public ReviewRoleType determineReviewRole(String userId) {
-        if (Objects.equals(this.userId, userId)) {
+        if (isOwner(userId)) {
             return ReviewRoleType.WRITER;
         }
         return ReviewRoleType.REVIEWER;
