@@ -3,10 +3,12 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
 import com.jackpot.narratix.domain.controller.response.ReviewsGetResponse;
+import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.Review;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
+import com.jackpot.narratix.domain.event.ReviewEditEvent;
 import com.jackpot.narratix.domain.exception.ReviewErrorCode;
 import com.jackpot.narratix.domain.event.ReviewCreatedEvent;
 import com.jackpot.narratix.domain.repository.QnARepository;
@@ -29,11 +31,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final QnARepository qnARepository;
-    private final NotificationService notificationService;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void createReview(String reviewerId, Long qnAId, ReviewCreateRequest request) {
@@ -45,14 +48,13 @@ public class ReviewService {
 
         // TODO: 본문 텍스트 전체 변경 이벤트 발행
 
-        Long coverLetterId = qnA.getCoverLetter().getId();
-        eventPublisher.publishEvent(ReviewCreatedEvent.of(coverLetterId, review));
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA, request.originText());
+        CoverLetter coverLetter = qnA.getCoverLetter();
+        eventPublisher.publishEvent(ReviewCreatedEvent.of(coverLetter.getId(), review));
+        notificationService.sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnAId, request.originText());
     }
 
     @Transactional
     public void editReview(String userId, Long qnAId, Long reviewId, ReviewEditRequest request) {
-
         Review review = reviewRepository.findByIdOrElseThrow(reviewId);
 
         validateReviewBelongsToQnA(review, qnAId);
@@ -60,9 +62,10 @@ public class ReviewService {
 
         review.editSuggest(request.suggest());
         review.editComment(request.comment());
-        reviewRepository.save(review);
+        Review updatedReview = reviewRepository.save(review);
 
-        // TODO: 첨삭 댓글 수정 이벤트 수신
+        Long coverLetterId = qnARepository.getCoverLetterIdByQnAId(qnAId);
+        eventPublisher.publishEvent(ReviewEditEvent.of(coverLetterId, updatedReview));
     }
 
     private void validateReviewBelongsToQnA(Review review, Long qnAId) {
@@ -90,7 +93,7 @@ public class ReviewService {
         reviewRepository.delete(review);
 
         // TODO: Writer, Reviewer 본문 텍스트 전체 변경 이벤트 발송
-        // TODO: Writer, Reviewer 첨삭 댓글 수정 이벤트 발송
+        // TODO: Writer, Reviewer 첨삭 댓글 삭제 이벤트 발송
     }
 
     private void validateIsReviewOwnerOrQnAOwner(String userId, Review review, QnA qnA) {
@@ -115,9 +118,12 @@ public class ReviewService {
         } else {
             review.approve();
         }
+        Review updatedReview = reviewRepository.save(review);
 
         // TODO: 웹소켓 본문 텍스트 변경 이벤트 발송
-        // TODO: 첨삭 댓글 수정 이벤트 발송
+
+        Long coverLetterId = qnARepository.getCoverLetterIdByQnAId(qnAId);
+        eventPublisher.publishEvent(ReviewEditEvent.of(coverLetterId, updatedReview));
     }
 
     private void validateIsQnAOwner(String userId, QnA qnA) {
