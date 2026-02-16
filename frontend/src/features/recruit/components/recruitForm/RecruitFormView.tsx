@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import PaginationButton from '@/features/recruit/components/recruitForm/PaginationButton';
 import RecruitDetail from '@/features/recruit/components/recruitForm/RecruitDetail';
@@ -28,19 +28,16 @@ const RecruitFormView = ({
 }: Props) => {
   const [step, setStep] = useState(1);
 
-  // ✨ 1. 유효성 검사 로직
-  const isValid = (() => {
+  // 1. 유효성 검사 로직
+  const isValid = useMemo(() => {
     if (step === 1) {
       const company = formData.companyName?.trim() || '';
       const job = formData.jobPosition?.trim() || '';
-      // 필수값: 기업명, 직무명 (채용 시기는 기본값이 있으므로 패스)
       return company.length > 0 && job.length > 0;
     } else {
-      // Step 2: 질문이 하나라도 있어야 함 (질문 내용까지 체크하려면 로직 추가)
-      // 예: return formData.questions.length > 0 && formData.questions.every(q => q.questionContent.trim() !== '');
-      return formData.questions && formData.questions.length > 0;
+      return (formData.questions ?? []).length > 0;
     }
-  })();
+  }, [step, formData.companyName, formData.jobPosition, formData.questions]);
 
   const handlePrevStep = useCallback(() => {
     setStep((prev) => Math.max(1, prev - 1));

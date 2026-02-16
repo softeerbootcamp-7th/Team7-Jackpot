@@ -36,11 +36,4 @@ export interface CreateCoverLetterResponse {
   coverLetterId: number;
 }
 
-export interface UpdateCoverLetterRequest {
-  coverLetterId: number;
-  companyName: string;
-  applyYear: number;
-  applyHalf: ApiApplyHalf;
-  jobPosition: string;
-  deadline: string;
-}
+

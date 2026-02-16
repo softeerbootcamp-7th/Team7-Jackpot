@@ -23,14 +23,7 @@ export interface CalendarRequest {
   isShared?: boolean;
 }
 
-export interface CoverLetterInfo {
-  coverLetterId: number;
-  companyName: string;
-  applyYear: number;
-  applyHalf: ApiApplyHalf;
-  jobPosition: string;
-  deadline: string;
-}
+export type CoverLetterInfo = Omit<CoverLetterItem, 'questionCount'>;
 
 export interface ErrorResponse {
   message: string;

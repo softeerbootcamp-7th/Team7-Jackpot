@@ -7,7 +7,6 @@ import type {
   CreateCoverLetterRequest,
   CreateCoverLetterResponse,
   RecentCoverLetter,
-  UpdateCoverLetterRequest,
 } from '@/shared/types/coverLetter';
 import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
@@ -87,7 +86,7 @@ export const createCoverLetter = async (
 };
 
 export const updateCoverLetter = async (
-  payload: UpdateCoverLetterRequest,
+  payload: CoverLetter,
 ): Promise<void> => {
   await apiClient.put({
     endpoint: '/coverletter',

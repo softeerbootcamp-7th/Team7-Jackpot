@@ -11,7 +11,7 @@ import { mapServerDataToFormData } from '@/features/recruit/utils';
 import { useCoverLetter } from '@/shared/hooks/useCoverLetterQueries';
 
 interface Props {
-  recruitId?: number | null; // [수정] RecruitPage의 state(number | null)와 타입 일치
+  recruitId?: number | null; // RecruitPage의 state(number | null)와 타입 일치
   onClose: () => void;
 }
 
