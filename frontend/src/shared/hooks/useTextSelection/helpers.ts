@@ -71,18 +71,51 @@ export const findNodeAtIndex = (
 };
 
 /**
- * DOM Range를 텍스트 인덱스로 변환
+ * DOM Range를 실제 데이터(text 상태값) 인덱스로 변환
  */
 export const rangeToTextIndices = (container: HTMLElement, range: Range) => {
-  const startRange = document.createRange();
-  startRange.setStart(container, 0);
-  startRange.setEnd(range.startContainer, range.startOffset);
-  const start = startRange.toString().length;
+  if (!container.contains(range.startContainer)) return { start: 0, end: 0 };
 
-  const endRange = document.createRange();
-  endRange.setStart(container, 0);
-  endRange.setEnd(range.endContainer, range.endOffset);
-  const end = endRange.toString().length;
+  const walker = document.createTreeWalker(
+    container,
+    NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT,
+  );
+
+  let start = 0;
+  let end = 0;
+  let currentOffset = 0;
+
+  let node: Node | null;
+  while ((node = walker.nextNode())) {
+    // 1. <br /> 태그를 \n(1자)로 취급
+    if (node.nodeName === 'BR') {
+      if (node === range.startContainer) start = currentOffset;
+      if (node === range.endContainer) end = currentOffset;
+      currentOffset += 1;
+      continue;
+    }
+
+    // 2. 텍스트 노드 처리
+    if (node.nodeType === Node.TEXT_NODE) {
+      const nodeText = node.textContent || '';
+      const zwspCount = (nodeText.match(/\u200B/g) || []).length;
+      const actualLength = nodeText.length - zwspCount;
+
+      if (node === range.startContainer) {
+        const textBefore = nodeText.slice(0, range.startOffset);
+        const zwspBefore = (textBefore.match(/\u200B/g) || []).length;
+        start = currentOffset + (range.startOffset - zwspBefore);
+      }
+
+      if (node === range.endContainer) {
+        const textBefore = nodeText.slice(0, range.endOffset);
+        const zwspBefore = (textBefore.match(/\u200B/g) || []).length;
+        end = currentOffset + (range.endOffset - zwspBefore);
+      }
+
+      currentOffset += actualLength;
+    }
+  }
 
   return { start, end };
 };
