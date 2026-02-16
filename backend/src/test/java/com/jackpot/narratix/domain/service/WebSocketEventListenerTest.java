@@ -173,4 +173,105 @@ class WebSocketEventListenerTest {
         verify(shareLinkService).getActiveShareLinkByCoverLetterId(coverLetterId);
         verify(webSocketMessageSender, never()).sendMessageToShare(anyString(), any());
     }
+
+    @Test
+    @DisplayName("리뷰 수정 이벤트 발생 시 활성화된 ShareLink가 있으면 WebSocket 메시지를 전송한다")
+    void handleReviewEditEvent_ActiveShareLink_SendsWebSocketMessage() {
+        // given
+        String reviewerId = "reviewer123";
+        Long coverLetterId = 1L;
+        Long reviewId = 10L;
+
+        ShareLink shareLink = ShareLink.newActivatedShareLink(coverLetterId);
+
+        com.jackpot.narratix.domain.event.ReviewEditEvent event = new com.jackpot.narratix.domain.event.ReviewEditEvent(
+                coverLetterId,
+                reviewId,
+                reviewerId,
+                "원본 텍스트",
+                "수정된 제안",
+                "수정된 코멘트",
+                LocalDateTime.now()
+        );
+
+        given(shareLinkService.getActiveShareLinkByCoverLetterId(coverLetterId)).willReturn(Optional.of(shareLink));
+
+        // when
+        webSocketEventListener.handleReviewEditEvent(event);
+
+        // then
+        verify(shareLinkService).getActiveShareLinkByCoverLetterId(coverLetterId);
+        verify(webSocketMessageSender).sendMessageToShare(anyString(), any(WebSocketMessageResponse.class));
+    }
+
+    @Test
+    @DisplayName("리뷰 수정 이벤트 발생 시 활성화된 ShareLink가 없으면 WebSocket 메시지를 전송하지 않는다")
+    void handleReviewEditEvent_NoActiveShareLink_DoesNotSendMessage() {
+        // given
+        Long coverLetterId = 1L;
+
+        com.jackpot.narratix.domain.event.ReviewEditEvent event = new com.jackpot.narratix.domain.event.ReviewEditEvent(
+                coverLetterId,
+                10L,
+                "reviewer123",
+                "원본 텍스트",
+                "수정된 제안",
+                "수정된 코멘트",
+                LocalDateTime.now()
+        );
+
+        given(shareLinkService.getActiveShareLinkByCoverLetterId(coverLetterId)).willReturn(Optional.empty());
+
+        // when
+        webSocketEventListener.handleReviewEditEvent(event);
+
+        // then
+        verify(shareLinkService).getActiveShareLinkByCoverLetterId(coverLetterId);
+        verify(webSocketMessageSender, never()).sendMessageToShare(anyString(), any());
+    }
+
+    @Test
+    @DisplayName("리뷰 삭제 이벤트 발생 시 활성화된 ShareLink가 있으면 WebSocket 메시지를 전송한다")
+    void handleReviewDeleteEvent_ActiveShareLink_SendsWebSocketMessage() {
+        // given
+        Long coverLetterId = 1L;
+        Long reviewId = 10L;
+
+        ShareLink shareLink = ShareLink.newActivatedShareLink(coverLetterId);
+
+        com.jackpot.narratix.domain.event.ReviewDeleteEvent event = new com.jackpot.narratix.domain.event.ReviewDeleteEvent(
+                coverLetterId,
+                reviewId
+        );
+
+        given(shareLinkService.getActiveShareLinkByCoverLetterId(coverLetterId)).willReturn(Optional.of(shareLink));
+
+        // when
+        webSocketEventListener.handleReviewDeleteEvent(event);
+
+        // then
+        verify(shareLinkService).getActiveShareLinkByCoverLetterId(coverLetterId);
+        verify(webSocketMessageSender).sendMessageToShare(anyString(), any(WebSocketMessageResponse.class));
+    }
+
+    @Test
+    @DisplayName("리뷰 삭제 이벤트 발생 시 활성화된 ShareLink가 없으면 WebSocket 메시지를 전송하지 않는다")
+    void handleReviewDeleteEvent_NoActiveShareLink_DoesNotSendMessage() {
+        // given
+        Long coverLetterId = 1L;
+
+        com.jackpot.narratix.domain.event.ReviewDeleteEvent event = new com.jackpot.narratix.domain.event.ReviewDeleteEvent(
+                coverLetterId,
+                10L
+        );
+
+        given(shareLinkService.getActiveShareLinkByCoverLetterId(coverLetterId)).willReturn(Optional.empty());
+
+        // when
+        webSocketEventListener.handleReviewDeleteEvent(event);
+
+        // then
+        verify(shareLinkService).getActiveShareLinkByCoverLetterId(coverLetterId);
+        verify(webSocketMessageSender, never()).sendMessageToShare(anyString(), any());
+    }
 }
