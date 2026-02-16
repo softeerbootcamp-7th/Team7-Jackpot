@@ -10,6 +10,7 @@ import com.jackpot.narratix.domain.service.ShareLinkLockManager;
 import com.jackpot.narratix.domain.service.ShareLinkService;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.domain.service.dto.WebSocketCreateCommentMessage;
+import com.jackpot.narratix.domain.service.dto.WebSocketDeleteCommentMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketEditCommentMessage;
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
@@ -55,6 +56,7 @@ public class WebSocketEventListener {
     }
 
     @Async
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewEditEvent(ReviewEditEvent event) {
         // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 수정 웹소켓 메시지를 전송한다.
@@ -65,6 +67,21 @@ public class WebSocketEventListener {
         webSocketMessageSender.sendMessageToShare(
                 shareLink.get().getShareId(),
                 new WebSocketMessageResponse(WebSocketMessageType.COMMENT_UPDATED, message)
+        );
+    }
+
+    @Async
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleReviewDeleteEvent(ReviewDeleteEvent event) {
+        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 삭제 웹소켓 메시지를 전송한다.
+        Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
+        if (shareLink.isEmpty()) return;
+
+        WebSocketDeleteCommentMessage message = new WebSocketDeleteCommentMessage(event.reviewId());
+        webSocketMessageSender.sendMessageToShare(
+                shareLink.get().getShareId(),
+                new WebSocketMessageResponse(WebSocketMessageType.COMMENT_DELETED, message)
         );
     }
 
