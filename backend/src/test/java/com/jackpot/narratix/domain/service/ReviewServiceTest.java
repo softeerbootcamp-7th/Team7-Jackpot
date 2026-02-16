@@ -101,7 +101,7 @@ class ReviewServiceTest {
 
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
         given(qnARepository.findByIdOrElseThrow(qnaId)).willReturn(qnA);
-        doNothing().when(notificationService).sendFeedbackNotificationToWriter(any(), any(), any());
+        doNothing().when(notificationService).sendFeedbackNotificationToWriter(any(), any(), any(), any());
 
         // when
         reviewService.createReview(reviewerId, qnaId, request);
@@ -110,7 +110,8 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).save(any(Review.class));
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnaId);
         verify(eventPublisher, times(1)).publishEvent(any(ReviewCreatedEvent.class));
-        verify(notificationService, times(1)).sendFeedbackNotificationToWriter(reviewerId, qnA, request.originText());
+        verify(notificationService, times(1))
+                .sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnaId, request.originText());
     }
 
     // 알림 생성 로직은 NotificationService의 책임이므로 NotificationServiceTest에서 테스트
