@@ -189,6 +189,7 @@ class WebSocketMessageControllerTest {
     void updateText_Success() {
         // given
         String shareId = "test-share-123";
+        Long qnAId = 1L;
         String userId = "user123";
         ReviewRoleType role = ReviewRoleType.WRITER;
 
@@ -204,13 +205,13 @@ class WebSocketMessageControllerTest {
         );
 
         doNothing().when(webSocketMessageService)
-                .handleTextUpdate(shareId, shareId, userId, role, request);
+                .handleTextUpdate(shareId, qnAId, shareId, userId, role, request);
 
         // when
-        webSocketMessageController.updateText(shareId, request, headerAccessor);
+        webSocketMessageController.updateText(shareId, qnAId, request, headerAccessor);
 
         // then
-        verify(webSocketMessageService).handleTextUpdate(shareId, shareId, userId, role, request);
+        verify(webSocketMessageService).handleTextUpdate(shareId, qnAId, shareId, userId, role, request);
     }
 
     @Test
@@ -219,11 +220,12 @@ class WebSocketMessageControllerTest {
         // given
         headerAccessor.setSessionAttributes(null);
         String shareId = "test-share-123";
+        Long qnAId = 1L;
         TextUpdateRequest request = new TextUpdateRequest(1L, 0, 10, "text");
 
         // when & then
         assertThatThrownBy(() ->
-            webSocketMessageController.updateText(shareId, request, headerAccessor)
+            webSocketMessageController.updateText(shareId, qnAId, request, headerAccessor)
         ).isInstanceOf(BaseException.class)
          .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.INVALID_SESSION);
 
@@ -236,6 +238,7 @@ class WebSocketMessageControllerTest {
         // given
         String pathShareId = "path-share-123";
         String sessionShareId = "session-share-456";
+        Long qnAId = 1L;
         String userId = "user123";
         ReviewRoleType role = ReviewRoleType.WRITER;
 
@@ -247,15 +250,15 @@ class WebSocketMessageControllerTest {
 
         doThrow(new BaseException(WebSocketErrorCode.SHARE_ID_MISMATCH))
                 .when(webSocketMessageService)
-                .handleTextUpdate(pathShareId, sessionShareId, userId, role, request);
+                .handleTextUpdate(pathShareId, qnAId, sessionShareId, userId, role, request);
 
         // when & then
         assertThatThrownBy(() ->
-            webSocketMessageController.updateText(pathShareId, request, headerAccessor)
+            webSocketMessageController.updateText(pathShareId, qnAId, request, headerAccessor)
         ).isInstanceOf(BaseException.class)
          .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.SHARE_ID_MISMATCH);
 
-        verify(webSocketMessageService).handleTextUpdate(pathShareId, sessionShareId, userId, role, request);
+        verify(webSocketMessageService).handleTextUpdate(pathShareId, qnAId, sessionShareId, userId, role, request);
     }
 
     @Test
@@ -263,6 +266,7 @@ class WebSocketMessageControllerTest {
     void updateText_ReviewerUnauthorized_ServiceThrowsException() {
         // given
         String shareId = "test-share-123";
+        Long qnAId = 1L;
         String userId = "user456";
         ReviewRoleType role = ReviewRoleType.REVIEWER;
 
@@ -274,15 +278,15 @@ class WebSocketMessageControllerTest {
 
         doThrow(new BaseException(WebSocketErrorCode.UNAUTHORIZED_TEXT_UPDATE))
                 .when(webSocketMessageService)
-                .handleTextUpdate(shareId, shareId, userId, role, request);
+                .handleTextUpdate(shareId, qnAId, shareId, userId, role, request);
 
         // when & then
         assertThatThrownBy(() ->
-            webSocketMessageController.updateText(shareId, request, headerAccessor)
+            webSocketMessageController.updateText(shareId, qnAId, request, headerAccessor)
         ).isInstanceOf(BaseException.class)
          .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.UNAUTHORIZED_TEXT_UPDATE);
 
-        verify(webSocketMessageService).handleTextUpdate(shareId, shareId, userId, role, request);
+        verify(webSocketMessageService).handleTextUpdate(shareId, qnAId, shareId, userId, role, request);
     }
 
     @Test
