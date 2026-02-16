@@ -10,7 +10,8 @@ import org.springframework.http.HttpStatus;
 public enum ReviewErrorCode implements ErrorCode {
 
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 첨삭 댓글을 찾을 수 없습니다."),
-    REVIEW_NOT_BELONGS_TO_QNA(HttpStatus.BAD_REQUEST, "해당 첨삭 댓글은 해당 질문에 속하지 않습니다.");
+    REVIEW_NOT_BELONGS_TO_QNA(HttpStatus.BAD_REQUEST, "해당 첨삭 댓글은 해당 질문에 속하지 않습니다."),
+    REVIEW_SUGGEST_IS_NULL(HttpStatus.BAD_REQUEST, "해당 첨삭 댓글은 Suggest 내용이 없습니다.");
 
     private final HttpStatus status;
     private final String message;
