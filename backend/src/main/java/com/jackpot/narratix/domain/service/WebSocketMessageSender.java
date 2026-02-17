@@ -14,29 +14,23 @@ public class WebSocketMessageSender {
 
     private final SimpMessagingTemplate messagingTemplate;
 
-    private static final String DESTINATION_PREFIX = "/sub/share/";
-    private static final String WRITER_DESTINATION_SUFFIX = "/review/writer";
-    private static final String REVIEWER_DESTINATION_SUFFIX = "/review/reviewer";
+    private static final String DESTINATION_PATTERN = "/sub/share/%s/qna/%s/review/%s";
 
     public void sendMessageToShare(String shareId, WebSocketMessageResponse message) {
-        String writerDestination = getDestination(ReviewRoleType.WRITER, shareId);
-        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId);
+        String writerDestination = getDestination(ReviewRoleType.WRITER, shareId, message.qnAId());
+        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, message.qnAId());
 
         messagingTemplate.convertAndSend(writerDestination, message);
         messagingTemplate.convertAndSend(reviewerDestination, message);
     }
 
     public void sendMessageToReviewer(String shareId, WebSocketMessageResponse message) {
-        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId);
+        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, message.qnAId());
         log.info("Send Reviewer At {}, message={}", reviewerDestination, message);
         messagingTemplate.convertAndSend(reviewerDestination, message);
     }
 
-    private String getDestination(ReviewRoleType role, String shareId) {
-
-        return switch (role) {
-            case REVIEWER -> DESTINATION_PREFIX + shareId + REVIEWER_DESTINATION_SUFFIX;
-            case WRITER -> DESTINATION_PREFIX + shareId + WRITER_DESTINATION_SUFFIX;
-        };
+    private String getDestination(ReviewRoleType role, String shareId, Long qnAId) {
+        return DESTINATION_PATTERN.formatted(shareId, qnAId, role.name().toLowerCase());
     }
 }

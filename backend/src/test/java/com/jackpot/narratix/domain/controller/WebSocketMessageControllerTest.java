@@ -51,6 +51,7 @@ class WebSocketMessageControllerTest {
         // given
         String shareId = "test-share-123";
         String userId = "user123";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.WRITER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -58,7 +59,7 @@ class WebSocketMessageControllerTest {
         WebSocketSessionAttributes.setRole(sessionAttributes, role);
 
         // when
-        webSocketMessageController.subscribeWriterCoverLetter(shareId, headerAccessor);
+        webSocketMessageController.subscribeWriterCoverLetter(shareId, qnAId, headerAccessor);
 
         // then - 예외가 발생하지 않으면 성공
         verifyNoInteractions(webSocketMessageSender);
@@ -71,6 +72,7 @@ class WebSocketMessageControllerTest {
         String pathShareId = "path-share-123";
         String sessionShareId = "session-share-456";
         String userId = "user123";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.WRITER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -79,7 +81,7 @@ class WebSocketMessageControllerTest {
 
         // when & then
         assertThatThrownBy(() ->
-                webSocketMessageController.subscribeWriterCoverLetter(pathShareId, headerAccessor)
+                webSocketMessageController.subscribeWriterCoverLetter(pathShareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.SHARE_ID_MISMATCH);
     }
@@ -90,6 +92,7 @@ class WebSocketMessageControllerTest {
         // given
         String shareId = "test-share-123";
         String userId = "user123";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.REVIEWER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -98,7 +101,7 @@ class WebSocketMessageControllerTest {
 
         // when & then
         assertThatThrownBy(() ->
-                webSocketMessageController.subscribeWriterCoverLetter(shareId, headerAccessor)
+                webSocketMessageController.subscribeWriterCoverLetter(shareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.ROLE_MISMATCH);
     }
@@ -109,6 +112,7 @@ class WebSocketMessageControllerTest {
         // given
         String shareId = "test-share-123";
         String userId = "user456";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.REVIEWER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -116,7 +120,7 @@ class WebSocketMessageControllerTest {
         WebSocketSessionAttributes.setRole(sessionAttributes, role);
 
         // when
-        webSocketMessageController.subscribeReviewerCoverLetter(shareId, headerAccessor);
+        webSocketMessageController.subscribeReviewerCoverLetter(shareId, qnAId, headerAccessor);
 
         // then - 예외가 발생하지 않으면 성공
         verifyNoInteractions(webSocketMessageSender);
@@ -129,6 +133,7 @@ class WebSocketMessageControllerTest {
         String pathShareId = "path-share-123";
         String sessionShareId = "session-share-456";
         String userId = "user456";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.REVIEWER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -137,7 +142,7 @@ class WebSocketMessageControllerTest {
 
         // when & then
         assertThatThrownBy(() ->
-                webSocketMessageController.subscribeReviewerCoverLetter(pathShareId, headerAccessor)
+                webSocketMessageController.subscribeReviewerCoverLetter(pathShareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.SHARE_ID_MISMATCH);
     }
@@ -148,6 +153,7 @@ class WebSocketMessageControllerTest {
         // given
         String shareId = "test-share-123";
         String userId = "user456";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.WRITER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -156,7 +162,7 @@ class WebSocketMessageControllerTest {
 
         // when & then
         assertThatThrownBy(() ->
-                webSocketMessageController.subscribeReviewerCoverLetter(shareId, headerAccessor)
+                webSocketMessageController.subscribeReviewerCoverLetter(shareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.ROLE_MISMATCH);
     }
@@ -261,10 +267,11 @@ class WebSocketMessageControllerTest {
         // given
         headerAccessor.setSessionAttributes(null);
         String shareId = "test-share-123";
+        Long qnAId = 2L;
 
         // when & then
         assertThatThrownBy(() ->
-                webSocketMessageController.subscribeWriterCoverLetter(shareId, headerAccessor)
+                webSocketMessageController.subscribeWriterCoverLetter(shareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.INVALID_SESSION);
     }

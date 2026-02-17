@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.event;
 import com.jackpot.narratix.domain.controller.response.WebSocketMessageResponse;
 import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.User;
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
 import com.jackpot.narratix.domain.repository.UserRepository;
 import com.jackpot.narratix.domain.service.ShareLinkLockManager;
@@ -12,9 +13,11 @@ import com.jackpot.narratix.domain.service.dto.WebSocketCreateReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketDeleteReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketEditReviewMessage;
 
+import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -22,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionUnsubscribeEvent;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -54,7 +59,6 @@ public class WebSocketEventListener {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewEditEvent(ReviewEditEvent event) {
-        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 수정 웹소켓 메시지를 전송한다.
         Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
         if (shareLink.isEmpty()) return;
 
@@ -69,7 +73,6 @@ public class WebSocketEventListener {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewDeleteEvent(ReviewDeleteEvent event) {
-        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 삭제 웹소켓 메시지를 전송한다.
         Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
         if (shareLink.isEmpty()) return;
 
@@ -83,10 +86,26 @@ public class WebSocketEventListener {
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         String sessionId = event.getSessionId();
-
         log.info("웹소켓 연결 종료. sessionId={}", sessionId);
 
-        // sessionId로 lockKey를 조회하여 락 해제 및 세션 목록에서 제거
-        shareLinkLockManager.unlock(sessionId);
+        try {
+            shareLinkLockManager.unlock(sessionId);
+        } catch (Exception e) {
+            log.error("Failed to release lock on disconnect: sessionId={}", sessionId, e);
+        }
+    }
+
+    @EventListener
+    public void handleWebSocketUnsubscribeListener(SessionUnsubscribeEvent event) {
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+
+        String userId = WebSocketSessionAttributes.getUserId(attributes);
+        String shareId = WebSocketSessionAttributes.getShareId(attributes);
+        ReviewRoleType role = WebSocketSessionAttributes.getRole(attributes);
+        String destination = headerAccessor.getDestination();
+
+        log.info("웹소켓 구독 해제. UserId: {}, ShareId: {}, Role: {}, Destination: {}",
+                userId, shareId, role, destination);
     }
 }

@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.dto.WebSocketSessionInfo;
 import com.jackpot.narratix.domain.controller.request.TextUpdateRequest;
 import com.jackpot.narratix.domain.controller.response.WebSocketMessageResponse;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
+import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
 import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.global.exception.BaseException;
@@ -27,63 +28,30 @@ public class WebSocketMessageController {
 
     private final WebSocketMessageSender webSocketMessageSender;
 
-    @SubscribeMapping("/share/{shareId}/review/writer")
+    @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/writer")
     public void subscribeWriterCoverLetter(
             @DestinationVariable String shareId,
+            @DestinationVariable Long qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        handleSubscription(shareId, headerAccessor, ReviewRoleType.WRITER);
+        handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.WRITER);
     }
 
-    @SubscribeMapping("/share/{shareId}/review/reviewer")
+    @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/reviewer")
     public void subscribeReviewerCoverLetter(
             @DestinationVariable String shareId,
+            @DestinationVariable Long qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        handleSubscription(shareId, headerAccessor, ReviewRoleType.REVIEWER);
+        handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.REVIEWER);
     }
 
-    private void handleSubscription(String shareId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
+    private void handleSubscription(String shareId, Long qnAId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
         WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
         this.validateShareId(shareId, sessionInfo.shareId());
         this.validateRole(sessionInfo.role(), expectedRole, shareId, sessionInfo.shareId());
-        log.info("User subscribed to share: shareId={}, userId={}, role={}", shareId, sessionInfo.userId(), expectedRole);
-    }
-
-    @MessageMapping("/share/{shareId}/qna/{qnAId}/text-update")
-    public void updateText(
-            @DestinationVariable String shareId,
-            @DestinationVariable Long qnAId,
-            @Valid @Payload TextUpdateRequest request,
-            SimpMessageHeaderAccessor headerAccessor
-    ) {
-        log.info("Writer send text update request: shareId={}, qnAId={}, request={}, path={}", shareId, qnAId, request, headerAccessor.getDestination());
-
-        WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
-
-        validateShareId(shareId, sessionInfo.shareId());
-        validateWriterRole(sessionInfo.role(), sessionInfo.userId(), shareId);
-
-        log.info("Text update received: userId={}, shareId={}, version={}, startIdx={}, endIdx={}",
-                sessionInfo.userId(), shareId, request.version(), request.startIdx(), request.endIdx());
-
-        WebSocketMessageResponse response = WebSocketMessageResponse.createTextUpdateResponse(qnAId, request);
-
-        webSocketMessageSender.sendMessageToReviewer(shareId, response);
-    }
-
-    private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {
-        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
-        if (sessionAttributes == null) {
-            log.warn("Session attributes is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
-        }
-
-        String shareId = WebSocketSessionAttributes.getShareId(sessionAttributes);
-        String userId = WebSocketSessionAttributes.getUserId(sessionAttributes);
-        ReviewRoleType role = WebSocketSessionAttributes.getRole(sessionAttributes);
-
-        return new WebSocketSessionInfo(shareId, userId, role);
+        log.info("User subscribed to share: shareId={}, qnAId={}, userId={}, role={}",
+                shareId, qnAId, sessionInfo.userId(), expectedRole);
     }
 
     private void validateShareId(String shareId, String sessionShareId) {
@@ -103,6 +71,42 @@ public class WebSocketMessageController {
             );
             throw new BaseException(WebSocketErrorCode.ROLE_MISMATCH);
         }
+    }
+
+    @MessageMapping("/share/{shareId}/qna/{qnAId}/text-update")
+    public void updateText(
+            @DestinationVariable String shareId,
+            @DestinationVariable Long qnAId,
+            @Valid @Payload TextUpdateRequest request,
+            SimpMessageHeaderAccessor headerAccessor
+    ) {
+        log.info("Writer send text update request: shareId={}, qnAId={}, request={}, path={}", shareId, qnAId, request, headerAccessor.getDestination());
+
+        WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
+
+        validateShareId(shareId, sessionInfo.shareId());
+        validateWriterRole(sessionInfo.role(), sessionInfo.userId(), shareId);
+
+        log.info("Text update received: userId={}, shareId={}, version={}, startIdx={}, endIdx={}",
+                sessionInfo.userId(), shareId, request.version(), request.startIdx(), request.endIdx());
+
+        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, request);
+
+        webSocketMessageSender.sendMessageToReviewer(shareId, response);
+    }
+
+    private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {
+        Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
+        if (sessionAttributes == null) {
+            log.warn("Session attributes is null");
+            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+        }
+
+        String shareId = WebSocketSessionAttributes.getShareId(sessionAttributes);
+        String userId = WebSocketSessionAttributes.getUserId(sessionAttributes);
+        ReviewRoleType role = WebSocketSessionAttributes.getRole(sessionAttributes);
+
+        return new WebSocketSessionInfo(shareId, userId, role);
     }
 
     private void validateWriterRole(ReviewRoleType role, String userId, String shareId) {
