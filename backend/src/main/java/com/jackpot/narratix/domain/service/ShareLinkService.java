@@ -1,11 +1,14 @@
 package com.jackpot.narratix.domain.service;
 
+import com.jackpot.narratix.domain.controller.response.QnAVersionResponse;
 import com.jackpot.narratix.domain.controller.response.ShareLinkActiveResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
+import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.exception.ShareLinkErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
+import com.jackpot.narratix.domain.repository.QnARepository;
 import com.jackpot.narratix.domain.repository.ShareLinkRepository;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
@@ -14,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -22,6 +26,7 @@ import java.util.Optional;
 public class ShareLinkService {
 
     private final CoverLetterRepository coverLetterRepository;
+    private final QnARepository qnARepository;
     private final ShareLinkRepository shareLinkRepository;
     private final ShareLinkLockManager shareLinkLockManager;
 
@@ -105,4 +110,24 @@ public class ShareLinkService {
 
         return shareLink;
     }
+
+    public QnAVersionResponse getQnAWithVersion(String userId, String shareId, Long qnAId) {
+        // TODO: userId로 Writer 또는 Reviewer인지 검증해야 함
+
+        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
+                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
+        QnA qnA = qnARepository.findByIdOrElseThrow(qnAId);
+
+        validateShareLinkAndQnA(shareLink, qnA);
+
+        return QnAVersionResponse.of(qnA);
+    }
+
+    private void validateShareLinkAndQnA(ShareLink shareLink, QnA qnA) {
+        if(!Objects.equals(shareLink.getCoverLetterId(), qnA.getCoverLetter().getId())){
+            log.warn("해당 첨삭링크로 해당 QnA를 조회할 수 없습니다. shareId={}, QnAId={}", shareLink.getShareId(), qnA.getId());
+            throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        }
+    }
+
 }
