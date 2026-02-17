@@ -1,6 +1,10 @@
+import { z } from 'zod';
+
 import { apiClient } from '@/shared/api/apiClient';
 import type {
   CoverLetter,
+  CreateCoverLetterRequest,
+  CreateCoverLetterResponse,
   RecentCoverLetter,
 } from '@/shared/types/coverLetter';
 
@@ -21,6 +25,12 @@ interface CoverLetterSearchResponse {
   coverLetters: RecentCoverLetter[];
   page: PageInfo;
 }
+
+const CreateCoverLetterResponseSchema = z.object({
+  coverLetterId: z.number(),
+});
+
+// --- Existing Search/Get APIs ---
 
 export const searchCoverLetters = async ({
   searchWord,
@@ -46,6 +56,35 @@ export const getCoverLetter = async (
   }
 
   return apiClient.get<CoverLetter>({
+    endpoint: `/coverletter/${coverLetterId}`,
+  });
+};
+
+// --- Added Mutation APIs (Moved from features) ---
+
+export const createCoverLetter = async (
+  payload: CreateCoverLetterRequest,
+): Promise<CreateCoverLetterResponse> => {
+  const response = await apiClient.post({
+    endpoint: '/coverletter',
+    body: payload,
+  });
+  return CreateCoverLetterResponseSchema.parse(response);
+};
+
+export const updateCoverLetter = async (
+  payload: CoverLetter,
+): Promise<void> => {
+  await apiClient.put({
+    endpoint: '/coverletter',
+    body: payload,
+  });
+};
+
+export const deleteCoverLetter = async (
+  coverLetterId: number,
+): Promise<void> => {
+  await apiClient.delete({
     endpoint: `/coverletter/${coverLetterId}`,
   });
 };

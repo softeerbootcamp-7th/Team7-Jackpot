@@ -5,6 +5,7 @@ import CoverLetterLandingPage from '@/pages/CoverLetterLandingPage';
 import HomePage from '@/pages/HomePage';
 import LandingPage from '@/pages/LandingPage';
 import LoginPage from '@/pages/LoginPage';
+import RecruitPage from '@/pages/RecruitPage';
 import ReviewPage from '@/pages/ReviewPage';
 import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
@@ -19,6 +20,7 @@ import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayou
 import DetailView from '@/features/library/components/DetailView';
 import LibraryLayout from '@/features/library/components/LibraryLayout';
 import LibrarySidebarLayout from '@/features/library/components/LibrarySidebarLayout';
+import RecruitRedirect from '@/features/recruit/components/RecruitRedirect';
 import LabelingResultSection from '@/features/upload/components/LabelingResultSection';
 import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
 import UploadInputSection from '@/features/upload/components/UploadInputSection';
@@ -106,8 +108,15 @@ function App() {
                 />
               </Route>
             </Route>
+            <Route path='/recruit' element={<RecruitRedirect />} />
+
+            {/* 2. 실제 페이지 (day는 선택 사항) */}
+            <Route
+              path='/recruit/:year/:month/:day?'
+              element={<RecruitPage />}
+            />
           </Route>
-          {/* <Route path="/recruit" element={<RecruitPage />}/> */}
+
           <Route path='/' element={<LandingPage />} />
           <Route path='/login' element={<LoginPage />} />
           <Route path='/signup' element={<SignUpPage />} />

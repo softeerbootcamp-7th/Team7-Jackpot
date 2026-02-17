@@ -294,6 +294,15 @@
     background: var(--gradient-c);
   }
 
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
   /* Headline Styles */
   .text-headline-l {
     font-size: var(--font-size-headline-l);
