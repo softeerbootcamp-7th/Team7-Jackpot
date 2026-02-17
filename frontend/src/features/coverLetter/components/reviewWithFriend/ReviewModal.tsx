@@ -32,7 +32,7 @@ const ReviewModal = ({
             <div className='flex flex-1 items-center justify-start gap-2'>
               <Avatar size='sm' />
               <div className='text-Semantic-text-headline line-clamp-1 justify-start text-base leading-6 font-bold'>
-                {review?.sender?.nickname}
+                {review?.sender?.nickname || '익명'}
               </div>
             </div>
           </div>

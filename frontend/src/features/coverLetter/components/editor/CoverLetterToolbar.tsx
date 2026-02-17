@@ -3,17 +3,18 @@ import { ReviewMessageIcon } from '@/features/coverLetter/icons/ReviewMessageIco
 import SaveCheckIcon from '@/features/coverLetter/icons/SaveCheckIcon';
 import TrashIcon from '@/features/coverLetter/icons/TrashIcon';
 
-interface CoverLetterToolbarProps {
+type SaveProps =
+  | { autoSave: true; onSave?: never; isPending?: never }
+  | { autoSave?: false; onSave: () => void; isPending?: boolean };
+
+type CoverLetterToolbarProps = {
   companyName: string;
   jobPosition: string;
   isReviewActive: boolean;
-  isPending?: boolean;
   onToggleReview: () => void;
   onCopyLink: () => void;
-  onSave?: () => void;
   onDelete: () => void;
-  autoSave?: boolean;
-}
+} & SaveProps;
 
 const CoverLetterToolbar = ({
   companyName,

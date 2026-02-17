@@ -23,6 +23,11 @@ const ReviewModalContainer = ({
   onDismiss,
 }: ReviewModalContainerProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const onDismissRef = useRef(onDismiss);
+
+  useEffect(() => {
+    onDismissRef.current = onDismiss;
+  }, [onDismiss]);
 
   useEffect(() => {
     if (!selection) return;
@@ -43,7 +48,7 @@ const ReviewModalContainer = ({
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
-        onDismiss();
+        onDismissRef.current();
         return;
       }
 
@@ -75,7 +80,7 @@ const ReviewModalContainer = ({
 
       previouslyFocused?.focus();
     };
-  }, [selection, onDismiss]);
+  }, [selection]);
 
   useOutsideClick(modalRef, onDismiss, !!selection);
 

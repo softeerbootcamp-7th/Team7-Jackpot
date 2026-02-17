@@ -7,8 +7,10 @@ import CoverLetterFooter from '@/features/coverLetter/components/editor/CoverLet
 import CoverLetterHeader from '@/features/coverLetter/components/editor/CoverLetterHeader';
 import ReviewModalContainer from '@/features/coverLetter/components/editor/ReviewModalContainer';
 import ReviewCardList from '@/features/coverLetter/components/reviewWithFriend/ReviewCardList';
-import { useApproveReview } from '@/shared/hooks/useReviewQueries';
-import { useDeleteReview } from '@/shared/hooks/useReviewQueries';
+import {
+  useApproveReview,
+  useDeleteReview,
+} from '@/shared/hooks/useReviewQueries';
 import type { CoverLetter as CoverLetterType } from '@/shared/types/coverLetter';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';

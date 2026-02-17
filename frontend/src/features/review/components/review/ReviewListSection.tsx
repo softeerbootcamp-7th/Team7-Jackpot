@@ -1,5 +1,6 @@
 import EmptyReview from '@/features/review/components/review/EmptyReview';
 import ReviewCard from '@/features/review/components/review/ReviewCard';
+import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
 import { useDeleteReview } from '@/shared/hooks/useReviewQueries';
 import type { Review } from '@/shared/types/review';
 
@@ -20,10 +21,14 @@ const ReviewListSection = ({
 }: ReviewListSectionProps) => {
   // TODO: websocket 연결 시 delete 결과를 websocket 이벤트로 수신하여 반영
   const { mutate: deleteReviewApi } = useDeleteReview(qnaId);
+  const { showToast } = useToastMessageContext();
 
   const handleDelete = (reviewId: number) => {
     deleteReviewApi(reviewId, {
       onSuccess: () => onDeleteReview(reviewId),
+      onError: () => {
+        showToast('리뷰 삭제에 실패했습니다.');
+      },
     });
   };
 

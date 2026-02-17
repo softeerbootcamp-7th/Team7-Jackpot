@@ -5,6 +5,7 @@ import CoverLetterContent from '@/features/review/components/coverLetter/CoverLe
 import CoverLetterPagination from '@/features/review/components/coverLetter/CoverLetterPagination';
 import CoverLetterQuestion from '@/features/review/components/coverLetter/CoverLetterQuestion';
 import ReviewModal from '@/features/review/components/reviewModal/ReviewModal';
+import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
 import useOutsideClick from '@/shared/hooks/useOutsideClick';
 import {
   useCreateReview,
@@ -53,6 +54,7 @@ const CoverLetterSection = ({
   onPageChange,
 }: CoverLetterSectionProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
+  const { showToast } = useToastMessageContext();
 
   // TODO: websocket 연결 시 API 호출 후 서버에서 websocket으로 확정 데이터를 전달하므로,
   // onSuccess 콜백에서의 로컬 상태 업데이트(onAddReview, clearLocalReviews 등)를
@@ -70,6 +72,8 @@ const CoverLetterSection = ({
   const handleSubmit = (revision: string, comment: string) => {
     if (!selection) return;
 
+    const resetSelection = () => onSelectionChange(null);
+
     if (editingReview) {
       updateReviewMutation(
         {
@@ -79,13 +83,14 @@ const CoverLetterSection = ({
         {
           onSuccess: () => {
             onUpdateReview(editingReview.id, revision, comment);
-            // TODO: websocket 연결 시 onSuccess에서 clearLocalReviews(qnaId)를 호출하여
-            // 서버 확정 데이터로 전환하는 방식으로 교체
           },
+          onError: () => {
+            showToast('리뷰 업데이트에 실패했습니다. 다시 시도해주세요.');
+          },
+          onSettled: resetSelection,
         },
       );
     } else {
-      // TODO: version은 OT 시스템 도입 시 서버와 동기화된 문서 버전으로 교체
       createReview(
         {
           version: 0,
@@ -103,8 +108,11 @@ const CoverLetterSection = ({
               comment,
               range: selection.range,
             });
-            // TODO: websocket 연결 시 clearLocalReviews(qnaId)로 서버 데이터 전환
           },
+          onError: () => {
+            showToast('리뷰 생성에 실패했습니다. 다시 시도해주세요.');
+          },
+          onSettled: resetSelection,
         },
       );
     }

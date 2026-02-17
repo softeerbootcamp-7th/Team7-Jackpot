@@ -2,6 +2,7 @@ import { useParams } from 'react-router';
 
 import CoverLetterSection from '@/features/review/components/coverLetter/CoverLetterSection';
 import ReviewListSection from '@/features/review/components/review/ReviewListSection';
+import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import useCoverLetterPage from '@/shared/hooks/useCoverLetterPage';
 import { useReviewsByQnaId } from '@/shared/hooks/useReviewQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
