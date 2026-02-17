@@ -7,17 +7,26 @@ export interface ApiReview {
   suggest: string | null;
   comment: string;
   createdAt: string;
+  isApproved: boolean;
 }
 
 interface GetReviewsResponse {
   reviews: ApiReview[];
 }
 
-// 아직 백엔드 API 개발 전입니다.
 export const getReviewsByQnaId = async (
   qnaId: number,
 ): Promise<GetReviewsResponse> => {
   return apiClient.get<GetReviewsResponse>({
     endpoint: `/qna/${qnaId}/reviews/all`,
+  });
+};
+
+export const deleteReview = async (
+  qnaId: number,
+  reviewId: number,
+): Promise<void> => {
+  return apiClient.delete<void>({
+    endpoint: `/qna/${qnaId}/reviews/${reviewId}`,
   });
 };
