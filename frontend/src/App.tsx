@@ -23,12 +23,21 @@ import LabelingResultSection from '@/features/upload/components/LabelingResultSe
 import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
 import UploadInputSection from '@/features/upload/components/UploadInputSection';
 import EmptyCase from '@/shared/components/EmptyCase';
+import PrivateGuard from '@/shared/components/PrivateGuard';
+import PublicGuard from '@/shared/components/PublicGuard';
 import RootLayout from '@/shared/components/RootLayout';
 
 function App() {
   return (
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<PublicGuard />}>
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/signup/complete' element={<SignUpCompletePage />} />
+        </Route>
+        <Route element={<PrivateGuard />}>
           <Route element={<RootLayout />}>
             <Route path='/home' element={<HomePage />} />
             <Route path='/upload' element={<UploadPage />}>
@@ -100,12 +109,9 @@ function App() {
             </Route>
           </Route>
           {/* <Route path="/recruit" element={<RecruitPage />}/> */}
-          <Route path='/' element={<LandingPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/signup/complete' element={<SignUpCompletePage />} />
-        </Routes>
-      </BrowserRouter>
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 
