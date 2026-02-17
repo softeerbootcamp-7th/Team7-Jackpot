@@ -8,7 +8,6 @@ import type {
   CreateCoverLetterResponse,
   RecentCoverLetter,
 } from '@/shared/types/coverLetter';
-import { parseErrorResponse } from '@/shared/utils/fetchUtils';
 
 interface SearchCoverLettersParams {
   searchWord?: string;
@@ -47,15 +46,9 @@ export const searchCoverLetters = async ({
   params.append('size', size.toString());
   params.append('page', page.toString());
 
-  const response = await fetch(
-    `${BASE_URL}/search/coverletter?${params.toString()}`,
-    {
-      headers: { Authorization: getAccessToken() },
-    },
-  );
-
-  if (!response.ok) await parseErrorResponse(response);
-  return response.json();
+  return apiClient.get<CoverLetterSearchResponse>({
+    endpoint: `/search/coverletter?${params.toString()}`,
+  });
 };
 
 export const getCoverLetter = async (
@@ -65,12 +58,9 @@ export const getCoverLetter = async (
     throw new Error(`Invalid coverLetterId: ${coverLetterId}`);
   }
 
-  const response = await fetch(`${BASE_URL}/coverletter/${coverLetterId}`, {
-    headers: { Authorization: getAccessToken() },
+  return apiClient.get<CoverLetter>({
+    endpoint: `/coverletter/${coverLetterId}`,
   });
-
-  if (!response.ok) await parseErrorResponse(response);
-  return response.json();
 };
 
 // --- Added Mutation APIs (Moved from features) ---
