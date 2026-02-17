@@ -1,6 +1,5 @@
 import { useParams } from 'react-router';
 
-import { getMockQuestionsByQnAName } from '@/features/library/api/mockData';
 import { useQnAListQueries } from '@/features/library/hooks/queries/useLibraryListQueries';
 
 const QnADetailView = () => {
@@ -19,16 +18,11 @@ const QnADetailView = () => {
     return <div>문서를 불러오는 중 오류가 발생했습니다.</div>;
   }
 
-  const isDev = import.meta.env.DEV;
+  // [박소민] TODO: 문항 라이브러리 API 연결해서 넣기
 
-  // API 데이터 또는 목데이터에서 찾기
-  const mockQuestions = getMockQuestionsByQnAName(qnAName ?? null);
-
-  const currentDocument =
-    qnaQuery.data?.pages
-      .flatMap((page) => page.questions)
-      .find((doc) => doc.id === Number(qnAId)) ||
-    (isDev ? mockQuestions.find((doc) => doc.id === Number(qnAId)) : undefined);
+  const currentDocument = qnaQuery.data?.pages
+    .flatMap((page) => page.questions)
+    .find((doc) => doc.id === Number(qnAId));
 
   if (!currentDocument) {
     console.log('Document not found!');

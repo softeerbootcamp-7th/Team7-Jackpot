@@ -1,6 +1,5 @@
 import { NavLink, useParams } from 'react-router';
 
-import { MOCK_COVER_LETTERS } from '@/features/library/api/mockData';
 import CompanyDocument from '@/features/library/components/company/CompanyDocument';
 import { useCompanyListQueries } from '@/features/library/hooks/queries/useLibraryListQueries';
 import { ChevronLeftIcon } from '@/features/library/icons/ChevronLeft';
@@ -12,8 +11,6 @@ type Props = {
   className: string;
 };
 
-const isDev = import.meta.env.DEV;
-
 // [박소민] TODO: isLoading, isError 처리하기
 const CompanyDocumentList = ({ className }: Props) => {
   const { companyName } = useParams<{ companyName?: string }>();
@@ -21,13 +18,8 @@ const CompanyDocumentList = ({ className }: Props) => {
   const { data, isLoading, isError } = useCompanyListQueries(
     companyName ?? null,
   );
-  const coverLetters =
-    data?.pages.flatMap((page) => page.coverLetters) ??
-    (isDev
-      ? MOCK_COVER_LETTERS.filter(
-          (letter) => letter.companyName === companyName,
-        )
-      : []);
+
+  const coverLetters = data?.pages.flatMap((page) => page.coverLetters);
 
   return (
     <div className={`w-full ${className}`}>
@@ -52,14 +44,15 @@ const CompanyDocumentList = ({ className }: Props) => {
           데이터를 불러오는 중 오류가 발생했습니다.
         </div>
       )}
-      {!isLoading && !isError && coverLetters.length === 0 && (
+      {!isLoading && !isError && !coverLetters && (
         <div className='p-4 text-center text-gray-400'>
           등록된 자기소개서가 없습니다.
         </div>
       )}
-      {coverLetters.map((document) => (
-        <CompanyDocument key={document.id} content={document} />
-      ))}
+      {coverLetters &&
+        coverLetters.map((document) => (
+          <CompanyDocument key={document.id} content={document} />
+        ))}
     </div>
   );
 };

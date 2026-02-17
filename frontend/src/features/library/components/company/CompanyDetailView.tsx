@@ -1,6 +1,5 @@
 import { useParams, useSearchParams } from 'react-router';
 
-import { MOCK_COVER_LETTERS } from '@/features/library/api/mockData';
 import { useCompanyListQueries } from '@/features/library/hooks/queries/useLibraryListQueries';
 import type { CoverLetter } from '@/features/library/types';
 import Pagination from '@/shared/components/Pagination';
@@ -19,14 +18,9 @@ const CompanyDetailView = () => {
   const currentPage = Number(searchParams.get('page')) || 1;
   const currentQuestionIndex = currentPage - 1; // 0-based index
 
-  const currentDocument: CoverLetter | undefined =
-    companyQuery.data?.pages
-      .flatMap((page) => page.coverLetters)
-      .find((doc) => doc.id === Number(coverLetterId)) ||
-    MOCK_COVER_LETTERS.find(
-      (doc) =>
-        doc.companyName === companyName && doc.id === Number(coverLetterId),
-    );
+  const currentDocument: CoverLetter | undefined = companyQuery.data?.pages
+    .flatMap((page) => page.coverLetters)
+    .find((doc) => doc.id === Number(coverLetterId));
 
   if (!currentDocument) {
     return <div>문서를 찾을 수 없습니다.</div>;

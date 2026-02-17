@@ -21,8 +21,6 @@ export interface RecentCoverLetter extends CoverLetter {
   questionCount: number;
 }
 
-// --- Added Types (Moved from features) ---
-
 export interface CreateCoverLetterRequest {
   companyName: string;
   applyYear: number;
@@ -36,4 +34,6 @@ export interface CreateCoverLetterResponse {
   coverLetterId: number;
 }
 
-
+export interface ErrorResponse {
+  message: string;
+}

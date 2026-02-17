@@ -1,13 +1,10 @@
 import { z } from 'zod';
 
-import { fetchCalendarDatesMock } from '@/features/recruit/api/mockData';
 import type {
   CalendarRequest,
   CalendarResponse,
 } from '@/features/recruit/types';
 import { apiClient } from '@/shared/api/apiClient';
-
-const isDev = import.meta.env.DEV;
 
 const ApiApplyHalfSchema = z.enum(['FIRST_HALF', 'SECOND_HALF']);
 
@@ -31,10 +28,6 @@ export const fetchCalendarDates = async (
   params: CalendarRequest,
   lastIdParam?: number,
 ): Promise<CalendarResponse> => {
-  if (isDev) {
-    return fetchCalendarDatesMock(params, lastIdParam);
-  }
-
   const queryParams = new URLSearchParams({
     startDate: params.startDate,
     endDate: params.endDate,
