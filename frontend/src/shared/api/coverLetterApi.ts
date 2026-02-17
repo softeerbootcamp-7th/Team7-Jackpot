@@ -30,8 +30,6 @@ const CreateCoverLetterResponseSchema = z.object({
   coverLetterId: z.number(),
 });
 
-// --- Existing Search/Get APIs ---
-
 export const searchCoverLetters = async ({
   searchWord,
   size = 9,
@@ -59,8 +57,6 @@ export const getCoverLetter = async (
     endpoint: `/coverletter/${coverLetterId}`,
   });
 };
-
-// --- Added Mutation APIs (Moved from features) ---
 
 export const createCoverLetter = async (
   payload: CreateCoverLetterRequest,
