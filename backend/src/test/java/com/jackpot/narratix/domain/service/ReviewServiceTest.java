@@ -106,9 +106,8 @@ class ReviewServiceTest {
                 QuestionCategoryType.MOTIVATION
         );
 
-        given(qnARepository.getCoverLetterIdByQnAIdOrElseThrow(qnaId)).willReturn(coverLetterId);
-        given(shareLinkSessionRegistry.isConnectedUserInCoverLetter(reviewerId, coverLetterId, ReviewRoleType.REVIEWER)).willReturn(true);
         given(qnARepository.findByIdOrElseThrow(qnaId)).willReturn(qnA);
+        given(shareLinkSessionRegistry.isConnectedUserInCoverLetter(reviewerId, coverLetterId, ReviewRoleType.REVIEWER)).willReturn(true);
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
         doNothing().when(notificationService).sendFeedbackNotificationToWriter(any(), any(), any(), any());
 
@@ -116,7 +115,7 @@ class ReviewServiceTest {
         reviewService.createReview(reviewerId, qnaId, request);
 
         // then
-        verify(qnARepository, times(1)).getCoverLetterIdByQnAIdOrElseThrow(qnaId);
+        verify(qnARepository, times(1)).findByIdOrElseThrow(qnaId);
         verify(shareLinkSessionRegistry, times(1)).isConnectedUserInCoverLetter(reviewerId, coverLetterId, ReviewRoleType.REVIEWER);
         verify(reviewRepository, times(1)).save(any(Review.class));
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnaId);
@@ -130,6 +129,7 @@ class ReviewServiceTest {
     void createReview_Fail_NotConnectedAsReviewer() {
         // given
         String reviewerId = "reviewer123";
+        String writerId = "writer456";
         Long qnaId = 1L;
         Long coverLetterId = 1L;
 
@@ -137,7 +137,16 @@ class ReviewServiceTest {
                 1L, 0L, 100L, "원본 텍스트", "수정 제안 텍스트", "피드백 코멘트"
         );
 
-        given(qnARepository.getCoverLetterIdByQnAIdOrElseThrow(qnaId)).willReturn(coverLetterId);
+        CoverLetter coverLetter = CoverLetterFixture.builder()
+                .id(coverLetterId)
+                .userId(writerId)
+                .build();
+
+        QnA qnA = QnAFixture.createQnAWithId(
+                qnaId, coverLetter, writerId, "지원동기는 무엇인가요?", QuestionCategoryType.MOTIVATION
+        );
+
+        given(qnARepository.findByIdOrElseThrow(qnaId)).willReturn(qnA);
         given(shareLinkSessionRegistry.isConnectedUserInCoverLetter(reviewerId, coverLetterId, ReviewRoleType.REVIEWER)).willReturn(false);
 
         // when & then
