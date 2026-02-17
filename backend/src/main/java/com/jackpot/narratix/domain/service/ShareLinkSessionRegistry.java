@@ -48,6 +48,11 @@ public class ShareLinkSessionRegistry {
         return entry;
     }
 
+    public boolean isConnectedUserInCoverLetter(String userId, String shareId, ReviewRoleType role) {
+        Optional<String> connectedUserId = findConnectedUserId(shareId, role);
+        return connectedUserId.map(s -> s.equals(userId)).orElse(false);
+    }
+
     private Optional<String> findConnectedUserId(String shareId, ReviewRoleType role) {
         String lockKey = getLockKey(shareId, role);
         String ownerSessionId = lockOwners.get(lockKey);
@@ -57,13 +62,13 @@ public class ShareLinkSessionRegistry {
 
     @Transactional(readOnly = true)
     public boolean isConnectedUserInCoverLetter(String userId, Long coverLetterId, ReviewRoleType role) {
-        return findShareId(coverLetterId)
+        return findValidShareId(coverLetterId)
                 .flatMap(shareId -> findConnectedUserId(shareId, role))
                 .map(userId::equals)
                 .orElse(false);
     }
 
-    private Optional<String> findShareId(Long coverLetterId) {
+    private Optional<String> findValidShareId(Long coverLetterId) {
         return shareLinkRepository.findByCoverLetterId(coverLetterId)
                 .filter(ShareLink::isValid)
                 .map(ShareLink::getShareId);

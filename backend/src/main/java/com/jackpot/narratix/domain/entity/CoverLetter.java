@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.entity;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.EditCoverLetterRequest;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
+import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import jakarta.persistence.*;
@@ -85,5 +86,12 @@ public class CoverLetter extends BaseTimeEntity {
         this.applyHalf = request.applyHalf();
         this.jobPosition = request.jobPosition();
         this.deadline = request.deadline();
+    }
+
+    public ReviewRoleType determineReviewRole(String userId) {
+        if (isOwner(userId)) {
+            return ReviewRoleType.WRITER;
+        }
+        return ReviewRoleType.REVIEWER;
     }
 }
