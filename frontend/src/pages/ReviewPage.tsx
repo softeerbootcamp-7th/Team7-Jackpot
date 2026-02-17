@@ -1,26 +1,41 @@
+import { useContext, useEffect } from 'react';
+
+import { useLocation, useNavigate } from 'react-router';
+
+import { useAuth } from '@/features/auth/hooks/useAuth';
 import ReviewLayout from '@/features/review/components/ReviewLayout';
 import { reviewHeaderText } from '@/features/review/constants';
 import ContentHeader from '@/shared/components/ContentHeader';
+import { ToastMessageContext } from '@/shared/context/ToastMessageContext';
 
 const ReviewPage = () => {
-  // TODO: 페이지 진입시, 접근 제어 API
-  // (1) 활성화된 첨삭 링크 상태인가?
-  // (2) 사용자가 로그인 되어있는가?
-  // (3) 사용자가 작성자인가?
+  // TODO: WebSocket 연결 및 접근 제어 후 데이터 요청 구현
+  // 1. WebSocket 연결
+  // 2. 연결 후 서버에서 접근 권한 확인 (권한 없으면 toast + 리다이렉트)
+  // 3. 접근 권한 확인 전까지 로딩 UI 표시
+  // 4. 접근 허용 후 <ReviewLayout /> 조건부 렌더링
+  // 5. ReviewLayout은 마운트 시점에 WebSocket 연결 + 접근 권한이 보장되므로 내부 fetch 로직 그대로 유지
 
-  // TODO: 첨삭자의 SSE 연결
-  // 수정된 자기소개서 정보 받기
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const toast = useContext(ToastMessageContext);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      toast?.showToast('로그인이 필요한 페이지입니다.', false);
+      navigate(`/login?redirect=${encodeURIComponent(location.pathname)}`, {
+        replace: true,
+      });
+    }
+  }, [isAuthenticated, navigate, location.pathname, toast]);
+
+  if (!isAuthenticated) return null;
 
   return (
-    <div className='flex h-screen w-full max-w-screen min-w-[1700px] flex-col overflow-hidden pb-30'>
-      <div className='flex flex-1 flex-col overflow-hidden px-75'>
-        <div className='mb-7.5 flex-none'>
-          <ContentHeader {...reviewHeaderText} />
-        </div>
-        <div className='flex w-full flex-1 overflow-hidden'>
-          <ReviewLayout />
-        </div>
-      </div>
+    <div className='flex h-[calc(100vh-6.25rem)] w-full min-w-[1700px] flex-col px-75'>
+      <ContentHeader {...reviewHeaderText} />
+      <ReviewLayout />
     </div>
   );
 };
