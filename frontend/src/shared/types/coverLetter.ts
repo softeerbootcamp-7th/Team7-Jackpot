@@ -48,3 +48,7 @@ export interface CreateCoverLetterRequest extends Omit<
 export interface CreateCoverLetterResponse {
   coverLetterId: number;
 }
+
+export interface ErrorResponse {
+  message: string;
+}
