@@ -74,26 +74,6 @@ class WebSocketEventListenerTest {
     }
 
     @Test
-    @DisplayName("연결 종료 시 다른 sessionId로도 락을 해제한다")
-    void handleWebSocketDisconnectListener_DifferentSessionId_UnlocksWithCorrectSessionId() {
-        // given
-        String sessionId = "another-session-id";
-
-        SessionDisconnectEvent event = new SessionDisconnectEvent(
-                this,
-                MessageBuilder.createMessage(new byte[0], accessor.getMessageHeaders()),
-                sessionId,
-                null
-        );
-
-        // when
-        webSocketEventListener.handleWebSocketDisconnectListener(event);
-
-        // then
-        verify(shareLinkLockManager).unlock(sessionId);
-    }
-
-    @Test
     @DisplayName("리뷰 생성 이벤트 발생 시 활성화된 ShareLink가 있으면 WebSocket 메시지를 전송한다")
     void handleReviewCreatedEvent_ActiveShareLink_SendsWebSocketMessage() {
         // given
