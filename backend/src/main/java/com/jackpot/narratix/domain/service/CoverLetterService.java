@@ -9,6 +9,7 @@ import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
+import com.jackpot.narratix.domain.exception.QnAErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
 import com.jackpot.narratix.domain.repository.QnARepository;
 import com.jackpot.narratix.domain.repository.ScrapRepository;
@@ -21,9 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -196,5 +195,28 @@ public class CoverLetterService {
         qnA.editAnswer(request.answer());
 
         return new QnAEditResponse(qnA.getId(), qnA.getModifiedAt());
+    }
+
+    @Transactional(readOnly = true)
+    public QnAListResponse getQnAsByQnAIds(String userId, List<Long> qnAIds) {
+
+        List<QnA> qnAs = qnARepository.findByIds(qnAIds);
+        if (qnAs.isEmpty()) return new QnAListResponse(Collections.emptyList());
+
+        // qnAIds가 모두 하나의 coverLetter와 연관관계를 갖는지 확인
+        boolean isSameCoverLetter = qnAs.stream()
+                .map(qnA -> qnA.getCoverLetter().getId())
+                .distinct()
+                .count() == 1;
+
+        if (!isSameCoverLetter) throw new BaseException(QnAErrorCode.NOT_SAME_COVERLETTER);
+        if (!qnAs.get(0).isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
+
+
+        return new QnAListResponse(
+                qnAs.stream()
+                        .map(QnAListResponse.QnAResponse::of)
+                        .toList()
+        );
     }
 }
