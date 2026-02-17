@@ -8,7 +8,6 @@ import com.jackpot.narratix.domain.controller.response.*;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
-import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
 import com.jackpot.narratix.domain.exception.QnAErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
@@ -96,8 +95,7 @@ public class CoverLetterService {
             if (!qnA.getCoverLetter().getId().equals(coverLetterId)) {
                 throw new BaseException(QnAErrorCode.NOT_SAME_COVERLETTER);
             }
-            QuestionCategoryType category = QuestionCategoryType.fromDescription(qnAEditRequest.category());
-            qnA.editQuestion(qnAEditRequest.question(), category);
+            qnA.editQuestion(qnAEditRequest.question(), qnAEditRequest.category());
         }
     }
 

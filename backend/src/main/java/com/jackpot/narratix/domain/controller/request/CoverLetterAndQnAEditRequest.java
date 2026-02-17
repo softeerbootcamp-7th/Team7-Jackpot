@@ -1,6 +1,7 @@
 package com.jackpot.narratix.domain.controller.request;
 
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
+import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import jakarta.annotation.Nullable;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -26,7 +27,7 @@ public record CoverLetterAndQnAEditRequest(
     public record QnAEditRequest(
             @NotNull(message = "QnA 아이디는 필수 입력 항목입니다.") Long qnAId,
             @NotNull(message = "질문은 필수 입력 항목입니다.") String question,
-            @NotNull(message = "문항 유형은 필수 입력 항목입니다.") String category
+            @NotNull(message = "문항 유형은 필수 입력 항목입니다.") QuestionCategoryType category
     ) {
     }
 }
