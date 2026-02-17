@@ -1,5 +1,6 @@
 package com.jackpot.narratix.domain.service;
 
+import com.jackpot.narratix.domain.entity.UploadFile;
 import com.jackpot.narratix.domain.repository.UploadFileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,39 +13,44 @@ import org.springframework.transaction.annotation.Transactional;
 public class FileProcessService {
 
     private final UploadFileRepository uploadFileRepository;
-    private final AiLabelingService aiLabelingService;
 
     @Transactional
-    public void processUploadedFile(String fileId, String extractedText) {
-        uploadFileRepository.findById(fileId).ifPresentOrElse(
-                file -> {
-                    file.successExtract(extractedText);
-                    log.info("Extract text saved.FileID: {}", fileId);
+    public void saveExtractSuccess(String fileId, String extractedText) {
+        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
 
-                    try {
-                        String jsonResult = aiLabelingService.aiAnalyze(extractedText);
+        if (file == null) return;
 
-                        file.successLabeling(jsonResult);
-                        log.info("AI Labeling Completed. FileID: {}", fileId);
-
-                    } catch (Exception e) {
-                        log.error("AI Labeling Failed. FileID: {}", fileId, e);
-                        file.failLabeling();
-
-                    }
-                },
-                () -> log.error("Error: File not found for ID: {}. Skipping process.", fileId)
-        );
+        file.successExtract(extractedText);
+        log.info("Extract success saved. FileId = {}", fileId);
     }
 
     @Transactional
-    public void processFailedFile(String fileId, String errorMessage) {
-        uploadFileRepository.findById(fileId).ifPresentOrElse(
-                file -> {
-                    file.failExtract();
-                    log.info("File processing failed. FileID: {}, Reason: {}", fileId, errorMessage);
-                },
-                () -> log.error("Error: File not found for ID: {}. Skipping process.", fileId)
-        );
+    public void saveExtractFail(String fileId, String errorMassage) {
+        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
+
+        if (file == null) return;
+
+        file.failExtract();
+        log.info("Extract fail saved. FileId = {} , error : {}", fileId, errorMassage);
+    }
+
+    @Transactional
+    public void saveLabelingSuccess(String fileId, String labelingJson) {
+        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
+
+        if (file == null) return;
+
+        file.successLabeling(labelingJson);
+        log.info("AI Labeling success saved. FileID: {}", fileId);
+    }
+
+    @Transactional
+    public void saveLabelingFail(String fileId) {
+        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
+
+        if (file == null) return;
+
+        file.failLabeling();
+        log.error("AI Labeling Fail saved. FileID: {}", fileId);
     }
 }
