@@ -9,8 +9,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record CoverLetterAndQnAEditRequest(
-        @Valid CoverLetterEditRequest coverLetter,
-        @Valid List<QnAEditRequest> questions
+        @Valid @NotNull CoverLetterEditRequest coverLetter,
+        @Valid @NotNull List<QnAEditRequest> questions
 ) {
 
     public record CoverLetterEditRequest(
