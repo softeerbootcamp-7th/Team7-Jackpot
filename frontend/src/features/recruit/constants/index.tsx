@@ -1,5 +1,5 @@
 import { RecruitIcons as I } from '@/features/recruit/icons';
-import type { CreateCoverLetterRequest } from '@/features/recruit/types';
+import type { CreateCoverLetterRequest } from '@/shared/types/coverLetter';
 
 export const recruitHeaderText = {
   icon: <I.RecruitIcon />,
