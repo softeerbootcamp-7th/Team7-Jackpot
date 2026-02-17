@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface QnAJpaRepository extends JpaRepository<QnA, Long> {
@@ -77,4 +78,7 @@ public interface QnAJpaRepository extends JpaRepository<QnA, Long> {
     Long countSearchQnA(
             @Param("userId") String userId,
             @Param("keyword") String keyword);
+
+    @Query("SELECT qna.coverLetter.id FROM QnA qna WHERE qna.id = :qnAId")
+    Optional<Long> getCoverLetterIdByQnAId(@Param("qnAId") Long qnAId);
 }

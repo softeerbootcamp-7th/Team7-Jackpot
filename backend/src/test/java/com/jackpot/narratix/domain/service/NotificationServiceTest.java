@@ -193,20 +193,12 @@ class NotificationServiceTest {
                 .applyHalf(ApplyHalfType.SECOND_HALF)
                 .build();
 
-        QnA qnA = QnAFixture.createQnAWithId(
-                qnaId,
-                coverLetter,
-                writerId,
-                "지원동기는 무엇인가요?",
-                QuestionCategoryType.MOTIVATION
-        );
-
         given(userRepository.findByIdOrElseThrow(reviewerId)).willReturn(reviewer);
 
         ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
 
         // when
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA, originText);
+        notificationService.sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnaId, originText);
 
         // then
         verify(userRepository).findByIdOrElseThrow(reviewerId);
@@ -247,20 +239,12 @@ class NotificationServiceTest {
                 .applyHalf(ApplyHalfType.FIRST_HALF)
                 .build();
 
-        QnA qnA = QnAFixture.createQnAWithId(
-                qnaId,
-                coverLetter,
-                writerId,
-                "지원동기는 무엇인가요?",
-                QuestionCategoryType.MOTIVATION
-        );
-
         given(userRepository.findByIdOrElseThrow(reviewerId)).willReturn(reviewer);
 
         ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
 
         // when
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA, "원본 텍스트");
+        notificationService.sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnaId, "원본 텍스트");
 
         // then
         // 1. writer에게 알림이 저장된다
@@ -297,20 +281,12 @@ class NotificationServiceTest {
                 .applyHalf(ApplyHalfType.FIRST_HALF)
                 .build();
 
-        QnA qnA = QnAFixture.createQnAWithId(
-                qnaId,
-                coverLetter,
-                writerId,
-                "지원동기는 무엇인가요?",
-                QuestionCategoryType.MOTIVATION
-        );
-
         given(userRepository.findByIdOrElseThrow(reviewerId)).willReturn(reviewer);
 
         ArgumentCaptor<Notification> notificationCaptor = ArgumentCaptor.forClass(Notification.class);
 
         // when
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA, originText);
+        notificationService.sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnaId, originText);
 
         // then
         verify(notificationRepository).save(notificationCaptor.capture());
