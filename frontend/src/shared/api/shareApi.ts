@@ -1,0 +1,33 @@
+import { apiClient } from '@/shared/api/apiClient';
+import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+
+interface ShareCoverLetterInfo {
+  coverLetter: RecentCoverLetter;
+  qnAIds: number[];
+}
+
+interface ShareQnA {
+  qnAId: number;
+  question: string;
+  answer: string;
+  version: number;
+}
+
+// ShareId로 CoverLetter와 QnAId 목록 조회
+export const getShareCoverLetterWithQnAIds = async (
+  shareId: string,
+): Promise<ShareCoverLetterInfo> => {
+  return apiClient.get<ShareCoverLetterInfo>({
+    endpoint: `/share/${shareId}/qna/id/all`,
+  });
+};
+
+// ShareId로 버전을 포함한 QnA 단건 조회
+export const getShareQnA = async (
+  shareId: string,
+  qnAId: number,
+): Promise<ShareQnA> => {
+  return apiClient.get<ShareQnA>({
+    endpoint: `/share/${shareId}/qna/${qnAId}`,
+  });
+};

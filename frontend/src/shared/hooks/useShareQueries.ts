@@ -1,0 +1,25 @@
+import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
+
+import {
+  getShareCoverLetterWithQnAIds,
+  getShareQnA,
+} from '@/shared/api/shareApi';
+
+// ShareId로 CoverLetter 정보 + QnA ID 목록 조회 (초기 로딩용 Suspense)
+export const useShareCoverLetter = (shareId: string) => {
+  return useSuspenseQuery({
+    queryKey: ['share', shareId, 'coverLetter'],
+    queryFn: () => getShareCoverLetterWithQnAIds(shareId),
+    staleTime: 5 * 60 * 1000,
+  });
+};
+
+// ShareId로 QnA 단건 조회 (페이지네이션 전환용 non-suspense)
+export const useShareQnA = (shareId: string, qnAId: number | undefined) => {
+  return useQuery({
+    queryKey: ['share', shareId, 'qna', qnAId],
+    queryFn: () => getShareQnA(shareId, qnAId!),
+    enabled: qnAId !== undefined,
+    // staleTime → 항상 최신 데이터 요청
+  });
+};
