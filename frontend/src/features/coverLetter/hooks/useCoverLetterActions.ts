@@ -5,12 +5,11 @@ import {
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
 import { useUpdateQnA } from '@/shared/hooks/useQnAQueries';
 import { reconstructTaggedText } from '@/shared/hooks/useReviewState/helpers';
-import type { QnA } from '@/shared/types/qna';
 import type { Review } from '@/shared/types/review';
 
 interface UseCoverLetterActionsParams {
-  documentId: number;
-  currentQna: QnA | undefined;
+  coverLetterId: number;
+  currentQna: { qnAId: number } | undefined;
   editedAnswers: Record<number, string>;
   currentReviews: Review[];
   isReviewOpen: boolean;
@@ -18,7 +17,7 @@ interface UseCoverLetterActionsParams {
 }
 
 const useCoverLetterActions = ({
-  documentId,
+  coverLetterId,
   currentQna,
   editedAnswers,
   currentReviews,
@@ -28,7 +27,7 @@ const useCoverLetterActions = ({
   const { mutate: updateQnA, isPending } = useUpdateQnA();
   const { showToast } = useToastMessageContext();
 
-  const { data: sharedLink, isLoading } = useSharedLink(documentId);
+  const { data: sharedLink, isLoading } = useSharedLink(coverLetterId);
   const { mutate: toggleLink } = useSharedLinkToggle();
 
   const handleSave = () => {
@@ -87,7 +86,7 @@ const useCoverLetterActions = ({
     const next = !isReviewOpen;
     setIsReviewOpen(next);
     toggleLink(
-      { coverLetterId: documentId, active: next },
+      { coverLetterId: coverLetterId, active: next },
       {
         onError: () => {
           setIsReviewOpen(!next);

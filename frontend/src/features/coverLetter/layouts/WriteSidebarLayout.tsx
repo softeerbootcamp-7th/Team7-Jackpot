@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Outlet, useOutletContext } from 'react-router';
 
-import CoverLetterWriteSidebar from '@/features/coverLetter/components/CoverLetterWriteSidebar';
+import WriteSidebar from '@/features/coverLetter/components/sidebar/WriteSidebar';
 
 const WriteSidebarLayout = () => {
   const [currentSidebarTab, setCurrentSidebarTab] = useState<
@@ -21,7 +21,7 @@ const WriteSidebarLayout = () => {
     <div className='flex w-full flex-1 flex-col'>
       <div className='flex min-h-0 w-full flex-1'>
         <aside className='h-full w-[427px] flex-none overflow-hidden'>
-          <CoverLetterWriteSidebar
+          <WriteSidebar
             currentSidebarTab={currentSidebarTab}
             onTabChange={setCurrentSidebarTab}
           />

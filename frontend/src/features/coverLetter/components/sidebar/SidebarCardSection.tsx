@@ -1,12 +1,12 @@
 import { Suspense, useState } from 'react';
 
-import CardDetail from '@/features/coverLetter/components/CardDetail';
-import LibraryList from '@/features/coverLetter/components/LibraryList';
-import ScrapList from '@/features/coverLetter/components/ScrapList';
+import LibraryList from '@/features/coverLetter/components/sidebar/LibraryList';
+import ScrapList from '@/features/coverLetter/components/sidebar/ScrapList';
+import SidebarCardDetail from '@/features/coverLetter/components/sidebar/SidebarCardDetail';
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import { SidebarSkeleton } from '@/shared/components/SidebarSkeleton';
 
-const CardSection = ({
+const SidebarCardSection = ({
   searchWord,
   isScrap,
   deleteScrap,
@@ -20,7 +20,10 @@ const CardSection = ({
   // 상세 내용이 선택되었다면 CardDetail 렌더링
   if (selectedItem) {
     return (
-      <CardDetail scrap={selectedItem} onBack={() => setSelectedItem(null)} />
+      <SidebarCardDetail
+        scrap={selectedItem}
+        onBack={() => setSelectedItem(null)}
+      />
     );
   }
 
@@ -39,4 +42,4 @@ const CardSection = ({
   );
 };
 
-export default CardSection;
+export default SidebarCardSection;

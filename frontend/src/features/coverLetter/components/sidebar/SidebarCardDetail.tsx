@@ -1,4 +1,4 @@
-import FileDocument from '../icons/FileDocument';
+import FileDocument from '../../icons/FileDocument';
 
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import RightArrow from '@/shared/icons/RightArrow';
@@ -8,7 +8,7 @@ interface CardDetailProps {
   onBack: () => void;
 }
 
-const CardDetail = ({ scrap, onBack }: CardDetailProps) => {
+const SidebarCardDetail = ({ scrap, onBack }: CardDetailProps) => {
   const { companyName, jobPosition, applySeason, question, answer } = scrap;
 
   return (
@@ -80,4 +80,4 @@ const CardDetail = ({ scrap, onBack }: CardDetailProps) => {
   );
 };
 
-export default CardDetail;
+export default SidebarCardDetail;

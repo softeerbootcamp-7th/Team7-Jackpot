@@ -9,7 +9,7 @@ interface CardProps {
   onClick: () => void;
 }
 
-const Card = ({ item, isScrap, deleteScrap, onClick }: CardProps) => {
+const SidebarCard = ({ item, isScrap, deleteScrap, onClick }: CardProps) => {
   const scrapItem = isScrap ? (item as ScrapItem) : null;
   const libraryItem = !isScrap ? (item as RecentCoverLetter) : null;
 
@@ -80,4 +80,4 @@ const Tag = ({ text, variant }: { text: string; variant: 'blue' | 'gray' }) => (
   </div>
 );
 
-export default Card;
+export default SidebarCard;
