@@ -14,7 +14,7 @@ import UploadPage from '@/pages/UploadPage';
 import { coverLetterEmptyCaseText } from './shared/constants/coverLetterEmptyCaseText';
 
 import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
-import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
+import NewCoverLetterContainer from '@/features/coverLetter/components/newCoverLetter/NewCoverLetterContainer';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
 import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayout';
 import DetailView from '@/features/library/components/DetailView';
@@ -96,7 +96,7 @@ function App() {
               <Route element={<WriteSidebarLayout />}>
                 <Route
                   path='/cover-letter/new'
-                  element={<NewCoverLetterContent />}
+                  element={<NewCoverLetterContainer />}
                 />
                 <Route
                   path='/cover-letter/edit'

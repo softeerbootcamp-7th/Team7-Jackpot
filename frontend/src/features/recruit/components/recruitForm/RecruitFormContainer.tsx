@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 
 import RecruitFormView from '@/features/recruit/components/recruitForm/RecruitFormView';
-import { DEFAULT_DATA } from '@/features/recruit/constants';
 import {
   useCreateCoverLetter,
   useUpdateCoverLetter,
 } from '@/features/recruit/hooks/queries/useCoverLetterMutation';
-import { useRecruitForm } from '@/features/recruit/hooks/useRecruitForm';
 import { mapServerDataToFormData } from '@/features/recruit/utils';
+import { DEFAULT_DATA } from '@/shared/constants/createCoverLetter';
+import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
 import { useCoverLetter } from '@/shared/hooks/useCoverLetterQueries';
+import { useRecruitForm } from '@/shared/hooks/useRecruitForm';
 
 interface Props {
   recruitId?: number | null; // RecruitPage의 state(number | null)와 타입 일치
@@ -18,10 +19,13 @@ interface Props {
 const RecruitFormContainer = ({ recruitId, onClose }: Props) => {
   // 1. 상세 데이터 조회 (recruitId가 있을 때만 enabled)
   const { data, isLoading } = useCoverLetter(recruitId || 0);
+  const { showToast } = useToastMessageContext();
 
   // 2. 뮤테이션 훅
-  const { mutate: create, isPending: isCreating } = useCreateCoverLetter();
-  const { mutate: update, isPending: isUpdating } = useUpdateCoverLetter();
+  const { mutateAsync: createCoverLetter, isPending: isCreating } =
+    useCreateCoverLetter();
+  const { mutateAsync: updateCoverLetter, isPending: isUpdating } =
+    useUpdateCoverLetter();
 
   // 3. 폼 훅 초기화
   const { formData, handleChange, setFormData } = useRecruitForm(DEFAULT_DATA);
@@ -47,19 +51,22 @@ const RecruitFormContainer = ({ recruitId, onClose }: Props) => {
   }
 
   // 6. 제출 핸들러
-  const handleSubmit = () => {
-    const options = {
-      onSuccess: onClose,
-      onError: (error: Error) => {
-        console.error('공고 저장 실패:', error);
-        // TODO: 토스트 메시지 등 사용자 피드백 추가
-      },
-    };
+  const handleSubmit = async () => {
+    try {
+      if (recruitId) {
+        // 수정 모드
+        await updateCoverLetter({ coverLetterId: recruitId, ...formData });
+        showToast('성공적으로 수정되었습니다.', true);
+      } else {
+        // 생성 모드
+        await createCoverLetter(formData);
+        showToast('새 공고가 등록되었습니다.', true);
+      }
 
-    if (recruitId) {
-      update({ coverLetterId: recruitId, ...formData }, options);
-    } else {
-      create(formData, options);
+      onClose();
+    } catch (error) {
+      console.error('작업 실패:', error);
+      showToast('저장에 실패했습니다. 다시 시도해주세요.', false);
     }
   };
 
