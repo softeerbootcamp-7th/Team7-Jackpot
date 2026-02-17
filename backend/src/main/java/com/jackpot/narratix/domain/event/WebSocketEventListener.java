@@ -12,6 +12,7 @@ import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.domain.service.dto.WebSocketCreateReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketDeleteReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketEditReviewMessage;
+
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -84,21 +85,13 @@ public class WebSocketEventListener {
 
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
-        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-        Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+        String sessionId = event.getSessionId();
+        log.info("웹소켓 연결 종료. sessionId={}", sessionId);
 
-        // 세션 속성 추출
-        String userId = WebSocketSessionAttributes.getUserId(attributes);
-        String shareId = WebSocketSessionAttributes.getShareId(attributes);
-        ReviewRoleType role = WebSocketSessionAttributes.getRole(attributes);
-
-        log.info("웹소켓 연결 종료. UserId: {}, ShareId: {}, Role: {}", userId, shareId, role);
-
-        // 락 해제
         try {
-            shareLinkLockManager.unlock(shareId, role, userId);
+            shareLinkLockManager.unlock(sessionId);
         } catch (Exception e) {
-            log.error("Failed to release lock on disconnect: shareId={}, role={}, userId={}", shareId, role, userId, e);
+            log.error("Failed to release lock on disconnect: sessionId={}", sessionId, e);
         }
     }
 
