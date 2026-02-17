@@ -2,7 +2,6 @@ import { useParams } from 'react-router';
 
 import CoverLetterSection from '@/features/review/components/coverLetter/CoverLetterSection';
 import ReviewListSection from '@/features/review/components/review/ReviewListSection';
-import ErrorBoundary from '@/shared/components/ErrorBoundary';
 import useCoverLetterPage from '@/shared/hooks/useCoverLetterPage';
 import { useReviewsByQnaId } from '@/shared/hooks/useReviewQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
@@ -52,10 +51,6 @@ const ReviewLayout = () => {
     apiReviews: reviewData?.reviews,
   });
 
-  const handlePageChange = (index: number) => {
-    setCurrentPageIndex(index);
-  };
-
   if (qnAIds.length === 0) {
     return (
       <div className='p-8 text-center text-gray-500'>
@@ -91,7 +86,7 @@ const ReviewLayout = () => {
           onAddReview={handleAddReview}
           onUpdateReview={handleUpdateReview}
           onCancelEdit={handleCancelEdit}
-          onPageChange={handlePageChange}
+          onPageChange={setCurrentPageIndex}
         />
       </main>
       <aside className='h-full w-[426px] flex-none'>

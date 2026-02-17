@@ -1,4 +1,10 @@
-import { type ReactNode, useCallback, useEffect, useState } from 'react';
+import {
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 import { useSearchParams } from 'react-router';
 
@@ -22,7 +28,7 @@ interface MinimalQnA {
   modifiedAt?: string;
 }
 
-interface CoverLetterProps {
+interface CoverLetterEditorProps {
   coverLetter: CoverLetterType;
   currentQna: MinimalQnA | undefined;
   currentText: string;
@@ -46,7 +52,7 @@ const CoverLetterEditor = ({
   toolbar,
   onPageChange,
   onTextChange,
-}: CoverLetterProps) => {
+}: CoverLetterEditorProps) => {
   const [, setSearchParams] = useSearchParams();
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [selection, setSelection] = useState<SelectionInfo | null>(null);
@@ -75,10 +81,13 @@ const CoverLetterEditor = ({
     [currentQna?.qnAId, updateReviewMutation],
   );
 
-  const editingReview =
-    selectedReviewId != null
-      ? (currentReviews.find((r) => r.id === selectedReviewId) ?? null)
-      : null;
+  const editingReview = useMemo(
+    () =>
+      selectedReviewId != null
+        ? (currentReviews.find((r) => r.id === selectedReviewId) ?? null)
+        : null,
+    [selectedReviewId, currentReviews],
+  );
 
   const handleReviewClick = useCallback((reviewId: number | null) => {
     setSelectedReviewId(reviewId);

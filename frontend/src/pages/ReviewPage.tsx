@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 
 import { useLocation, useNavigate } from 'react-router';
 
@@ -48,7 +48,15 @@ const ReviewPage = () => {
           />
         )}
       >
-        <ReviewLayout />
+        <Suspense
+          fallback={
+            <div className='flex flex-1 items-center justify-center'>
+              <span className='text-gray-400'>데이터를 불러오는 중...</span>
+            </div>
+          }
+        >
+          <ReviewLayout />
+        </Suspense>
       </ErrorBoundary>
     </div>
   );
