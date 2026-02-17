@@ -110,7 +110,9 @@ public class WebSocketEventListener {
         String userId = WebSocketSessionAttributes.getUserId(attributes);
         String shareId = WebSocketSessionAttributes.getShareId(attributes);
         ReviewRoleType role = WebSocketSessionAttributes.getRole(attributes);
+        String destination = headerAccessor.getDestination();
 
-        log.info("웹소켓 구독 해제. UserId: {}, ShareId: {}, Role: {}", userId, shareId, role);
+        log.info("웹소켓 구독 해제. UserId: {}, ShareId: {}, Role: {}, Destination: {}",
+                userId, shareId, role, destination);
     }
 }
