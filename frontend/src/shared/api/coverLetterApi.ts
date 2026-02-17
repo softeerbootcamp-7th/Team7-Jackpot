@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import { apiClient } from '@/shared/api/apiClient';
 import type {
   CoverLetter,
@@ -26,8 +25,6 @@ interface CoverLetterSearchResponse {
   coverLetters: RecentCoverLetter[];
   page: PageInfo;
 }
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 const CreateCoverLetterResponseSchema = z.object({
   coverLetterId: z.number(),
