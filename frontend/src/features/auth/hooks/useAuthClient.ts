@@ -1,10 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
 
-import {
-  removeAccessToken,
-  setAccessToken,
-} from '@/features/auth/libs/tokenStore';
+import { useAuth } from '@/features/auth/hooks/useAuth';
+import { setAccessToken } from '@/features/auth/libs/tokenStore';
 import type {
   AuthResponse,
   CheckIdRequest,
@@ -40,6 +37,7 @@ export const useSignUp = () => {
 // 로그인을 위한 커스텀 훅
 export const useLogin = () => {
   const queryClient = useQueryClient();
+  const { login } = useAuth();
 
   return useMutation({
     mutationFn: async (userData: LoginRequest) => {
@@ -53,11 +51,15 @@ export const useLogin = () => {
       });
 
       if (data.accessToken) {
-        setAccessToken(data.accessToken);
+        login(data.accessToken);
       }
       return data;
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['userInfo'] }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ['userInfo', 'nickname'],
+      });
+    },
   });
 };
 
@@ -85,8 +87,8 @@ export const useRefresh = () => {
 // 로그아웃을 위한 커스텀 훅
 export const useLogout = () => {
   const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { showToast } = useToastMessageContext();
+  const { logout } = useAuth();
 
   return useMutation({
     mutationFn: () =>
@@ -96,11 +98,10 @@ export const useLogout = () => {
         skipAuth: true,
       }),
     onSuccess: () => {
-      removeAccessToken();
+      logout();
       // 로그아웃 시 전체 캐시 날리기
       queryClient.clear();
       showToast('로그아웃 되었습니다', true);
-      navigate('/');
     },
   });
 };

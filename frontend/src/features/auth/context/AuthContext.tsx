@@ -10,6 +10,8 @@ interface AuthContextType {
   isAuthenticated: boolean;
   userInfo: UserInfoType | undefined;
   isLoading: boolean;
+  login: (token: string) => void;
+  logout: () => void;
 }
 
 interface AuthProviderProps {
@@ -19,13 +21,22 @@ interface AuthProviderProps {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const { isInitialized, isAuthenticated, userInfo, isLoading } = useInitAuth();
+  const { isInitialized, isAuthenticated, userInfo, isLoading, login, logout } =
+    useInitAuth();
   if (!isInitialized) {
     return null;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, userInfo, isLoading }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        userInfo,
+        isLoading,
+        login: login,
+        logout: logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
