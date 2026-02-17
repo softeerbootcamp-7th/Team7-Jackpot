@@ -302,7 +302,7 @@ class CoverLetterServiceTest {
 
     @Test
     @DisplayName("자기소개서 수정 성공")
-    void editCoverLetter_Success() {
+    void editCoverLetter_AndQnA_Success() {
         // given
         String userId = "testUser123";
         Long coverLetterId = 1L;
@@ -332,7 +332,7 @@ class CoverLetterServiceTest {
         given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(coverLetter);
 
         // when
-        coverLetterService.editCoverLetter(userId, editRequest);
+        coverLetterService.editCoverLetterAndQnA(userId, editRequest);
 
         // then
         assertThat(coverLetter.getCompanyName()).isEqualTo("수정된 기업명");
@@ -346,7 +346,7 @@ class CoverLetterServiceTest {
 
     @Test
     @DisplayName("자기소개서 수정 시 마감일을 null로 변경 가능")
-    void editCoverLetter_DeadlineToNull() {
+    void editCoverLetter_AndQnA_DeadlineToNull() {
         // given
         String userId = "testUser123";
         Long coverLetterId = 1L;
@@ -376,7 +376,7 @@ class CoverLetterServiceTest {
         given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(coverLetter);
 
         // when
-        coverLetterService.editCoverLetter(userId, editRequest);
+        coverLetterService.editCoverLetterAndQnA(userId, editRequest);
 
         // then
         assertThat(coverLetter.getDeadline()).isNull();
@@ -385,7 +385,7 @@ class CoverLetterServiceTest {
 
     @Test
     @DisplayName("존재하지 않는 자기소개서 수정 시 예외 발생")
-    void editCoverLetter_NotFound() {
+    void editCoverLetter_AndQnA_NotFound() {
         // given
         String userId = "testUser123";
         Long coverLetterId = 999L;
@@ -403,7 +403,7 @@ class CoverLetterServiceTest {
                 .willThrow(new BaseException(CoverLetterErrorCode.COVER_LETTER_NOT_FOUND));
 
         // when & then
-        assertThatThrownBy(() -> coverLetterService.editCoverLetter(userId, editRequest))
+        assertThatThrownBy(() -> coverLetterService.editCoverLetterAndQnA(userId, editRequest))
                 .isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", CoverLetterErrorCode.COVER_LETTER_NOT_FOUND);
 
@@ -412,7 +412,7 @@ class CoverLetterServiceTest {
 
     @Test
     @DisplayName("자기소개서 소유자가 아닌 유저가 수정을 시도하면 권한 예외 발생")
-    void editCoverLetter_OwnerForbidden() {
+    void editCoverLetter_AndQnA_OwnerForbidden() {
         // given
         String userId = "testUser123";
         String otherUserId = "otherTestUser123";
@@ -443,7 +443,7 @@ class CoverLetterServiceTest {
         given(coverLetterRepository.findByIdOrElseThrow(coverLetterId)).willReturn(coverLetter);
 
         // when & then
-        assertThatThrownBy(() -> coverLetterService.editCoverLetter(otherUserId, editRequest))
+        assertThatThrownBy(() -> coverLetterService.editCoverLetterAndQnA(otherUserId, editRequest))
                 .isInstanceOf(BaseException.class)
                 .hasFieldOrPropertyWithValue("errorCode", GlobalErrorCode.FORBIDDEN);
 

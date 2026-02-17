@@ -75,7 +75,7 @@ public class CoverLetterService {
     }
 
     @Transactional
-    public void editCoverLetter(String userId, CoverLetterAndQnAEditRequest coverLetterAndQnAEditRequest) {
+    public void editCoverLetterAndQnA(String userId, CoverLetterAndQnAEditRequest coverLetterAndQnAEditRequest) {
         CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(coverLetterAndQnAEditRequest.coverLetterId());
         coverLetter.edit(userId, coverLetterAndQnAEditRequest);
     }

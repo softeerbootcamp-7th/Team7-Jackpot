@@ -42,7 +42,7 @@ public class CoverLetterController implements CoverLetterApi {
             @UserId String userId,
             @RequestBody @Valid CoverLetterAndQnAEditRequest coverLetterAndQnAEditRequest
     ) {
-        coverLetterService.editCoverLetter(userId, coverLetterAndQnAEditRequest);
+        coverLetterService.editCoverLetterAndQnA(userId, coverLetterAndQnAEditRequest);
         return ResponseEntity.noContent().build();
     }
 
