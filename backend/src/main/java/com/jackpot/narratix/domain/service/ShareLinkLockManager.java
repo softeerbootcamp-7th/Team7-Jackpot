@@ -104,8 +104,11 @@ public class ShareLinkLockManager {
     public void renewAllLocks() {
         if (sessionLocks.isEmpty()) return;
 
-        redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            for (Map.Entry<String, LockEntry> entry : sessionLocks.entrySet()) {
+        // 순서 보존을 위해 엔트리 스냅샷 생성
+        List<Map.Entry<String, LockEntry>> entries = List.copyOf(sessionLocks.entrySet());
+
+        List<Object> results = redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
+            for (Map.Entry<String, LockEntry> entry : entries) {
                 connection.scriptingCommands().eval(
                         RENEW_SCRIPT_BYTES,
                         ReturnType.INTEGER,
@@ -117,6 +120,19 @@ public class ShareLinkLockManager {
             }
             return null;
         });
+
+        // 갱신 실패한 세션의 인메모리 상태 정리
+        for (int i = 0; i < entries.size(); i++) {
+            Long result = (Long) results.get(i);
+            if (result == null || result == 0L) {
+                Map.Entry<String, LockEntry> entry = entries.get(i);
+                String sessionId = entry.getKey();
+                LockEntry lockEntry = entry.getValue();
+                sessionLocks.remove(sessionId, lockEntry);
+                lockOwners.remove(lockEntry.lockKey(), sessionId);
+                log.warn("Lock renewal failed, cleaned up: sessionId={}, lockKey={}", sessionId, lockEntry.lockKey());
+            }
+        }
         log.debug("Lock TTLs renewed for {} sessions via pipeline", sessionLocks.size());
     }
 
