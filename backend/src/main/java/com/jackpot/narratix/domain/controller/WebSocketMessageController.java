@@ -27,27 +27,49 @@ public class WebSocketMessageController {
 
     private final WebSocketMessageSender webSocketMessageSender;
 
-    @SubscribeMapping("/share/{shareId}/review/writer")
+    @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/writer")
     public void subscribeWriterCoverLetter(
             @DestinationVariable String shareId,
+            @DestinationVariable String qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        handleSubscription(shareId, headerAccessor, ReviewRoleType.WRITER);
+        handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.WRITER);
     }
 
-    @SubscribeMapping("/share/{shareId}/review/reviewer")
+    @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/reviewer")
     public void subscribeReviewerCoverLetter(
             @DestinationVariable String shareId,
+            @DestinationVariable String qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
-        handleSubscription(shareId, headerAccessor, ReviewRoleType.REVIEWER);
+        handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.REVIEWER);
     }
 
-    private void handleSubscription(String shareId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
+    private void handleSubscription(String shareId, String qnAId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
         WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
         this.validateShareId(shareId, sessionInfo.shareId());
         this.validateRole(sessionInfo.role(), expectedRole, shareId, sessionInfo.shareId());
-        log.info("User subscribed to share: shareId={}, userId={}, role={}", shareId, sessionInfo.userId(), expectedRole);
+        log.info("User subscribed to share: shareId={}, qnAId={}, userId={}, role={}",
+                shareId, qnAId, sessionInfo.userId(), expectedRole);
+    }
+
+    private void validateShareId(String shareId, String sessionShareId) {
+        if (!shareId.equals(sessionShareId)) {
+            log.warn("ShareId mismatch during subscription: shareId={}, sessionShareId={}", shareId, sessionShareId);
+            throw new BaseException(WebSocketErrorCode.SHARE_ID_MISMATCH);
+        }
+    }
+
+    private void validateRole(ReviewRoleType role, ReviewRoleType expectedRole, String shareId, String sessionShareId) {
+        if (!expectedRole.equals(role)) {
+            log.warn("Role mismatch during subscription: expected Role={}, actual Role={}, path={}, session={}",
+                    expectedRole,
+                    role,
+                    shareId,
+                    sessionShareId
+            );
+            throw new BaseException(WebSocketErrorCode.ROLE_MISMATCH);
+        }
     }
 
     @MessageMapping("/share/{shareId}/qna/{qnAId}/text-update")
@@ -69,7 +91,7 @@ public class WebSocketMessageController {
 
         WebSocketMessageResponse response = WebSocketMessageResponse.createTextUpdateResponse(qnAId, request);
 
-        webSocketMessageSender.sendMessageToReviewer(shareId, response);
+        webSocketMessageSender.sendMessageToReviewer(shareId, qnAId, response);
     }
 
     private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {
@@ -84,25 +106,6 @@ public class WebSocketMessageController {
         ReviewRoleType role = WebSocketSessionAttributes.getRole(sessionAttributes);
 
         return new WebSocketSessionInfo(shareId, userId, role);
-    }
-
-    private void validateShareId(String shareId, String sessionShareId) {
-        if (!shareId.equals(sessionShareId)) {
-            log.warn("ShareId mismatch during subscription: shareId={}, sessionShareId={}", shareId, sessionShareId);
-            throw new BaseException(WebSocketErrorCode.SHARE_ID_MISMATCH);
-        }
-    }
-
-    private void validateRole(ReviewRoleType role, ReviewRoleType expectedRole, String shareId, String sessionShareId) {
-        if (!expectedRole.equals(role)) {
-            log.warn("Role mismatch during subscription: expected Role={}, actual Role={}, path={}, session={}",
-                    expectedRole,
-                    role,
-                    shareId,
-                    sessionShareId
-            );
-            throw new BaseException(WebSocketErrorCode.ROLE_MISMATCH);
-        }
     }
 
     private void validateWriterRole(ReviewRoleType role, String userId, String shareId) {
