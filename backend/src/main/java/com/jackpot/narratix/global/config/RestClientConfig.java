@@ -1,5 +1,6 @@
 package com.jackpot.narratix.global.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -9,17 +10,20 @@ import java.time.Duration;
 
 @Configuration
 public class RestClientConfig {
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com";
 
     @Bean
-    public RestClient geminiRestClient() {
+    public RestClient geminiRestClient(
+            @Value("${gemini.base-url}") String baseUrl,
+            @Value("${gemini.connect-timeout-ms}") long connectTimeoutMs,
+            @Value("${gemini.read-timeout-ms}") long readTimeoutMs
+    ) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
 
-        factory.setConnectTimeout(Duration.ofSeconds(3));
-        factory.setReadTimeout(Duration.ofSeconds(60));
+        factory.setConnectTimeout(Duration.ofSeconds(connectTimeoutMs));
+        factory.setReadTimeout(Duration.ofSeconds(readTimeoutMs));
 
         return RestClient.builder()
-                .baseUrl(GEMINI_API_URL)
+                .baseUrl(baseUrl)
                 .requestFactory(factory)
                 .build();
     }
