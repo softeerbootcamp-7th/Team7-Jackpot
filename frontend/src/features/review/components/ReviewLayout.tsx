@@ -1,57 +1,93 @@
+import { useState } from 'react';
+
 import { useParams } from 'react-router';
 
 import CoverLetterSection from '@/features/review/components/coverLetter/CoverLetterSection';
 import ReviewListSection from '@/features/review/components/review/ReviewListSection';
-import { useCoverLetterWithQnAIds } from '@/shared/hooks/useCoverLetterQueries';
-import { useQnAList } from '@/shared/hooks/useQnAQueries';
+import { useReviewsByQnaId } from '@/shared/hooks/useReviewQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
+import {
+  useShareCoverLetter,
+  useShareQnA,
+} from '@/shared/hooks/useShareQueries';
 
 const ReviewLayout = () => {
-  const { id } = useParams();
-  const coverLetterId = Number(id);
+  const { sharedId } = useParams();
 
-  if (Number.isNaN(coverLetterId)) {
-    throw new Error('유효하지 않은 자기소개서 ID입니다.');
+  if (!sharedId) {
+    throw new Error('유효하지 않은 공유 링크입니다.');
   }
 
-  const { coverLetter, qnaIds } = useCoverLetterWithQnAIds(coverLetterId);
-  const { data: qnas } = useQnAList(qnaIds);
+  // 1. ShareId로 CoverLetter 정보 + QnA ID 목록 조회 (Suspense)
+  const { data: shareData } = useShareCoverLetter(sharedId);
+  const { coverLetter, qnAIds } = shareData;
+
+  // 2. 현재 페이지 인덱스 → 해당 QnA ID 결정
+  const [currentPageIndex, setCurrentPageIndex] = useState(0);
+  const safePageIndex =
+    qnAIds.length > 0 ? Math.min(currentPageIndex, qnAIds.length - 1) : 0;
+  const currentQnAId = qnAIds.length > 0 ? qnAIds[safePageIndex] : undefined;
+
+  // 3. 현재 QnA만 단건 조회
+  const { data: currentQna, isLoading: isQnALoading } = useShareQnA(
+    sharedId,
+    currentQnAId,
+  );
+
+  const { data: reviewData } = useReviewsByQnaId(currentQnAId);
 
   const {
-    currentPageIndex,
-    currentQna,
     currentText,
     currentReviews,
-    pages,
     editingReview,
+    selection,
+    setSelection,
     handleAddReview,
     handleUpdateReview,
-    handlePageChange,
     handleEditReview,
     handleCancelEdit,
     handleDeleteReview,
-  } = useReviewState(coverLetter, qnas);
+  } = useReviewState({
+    qna: currentQna,
+    apiReviews: reviewData?.reviews,
+  });
 
-  if (!currentQna)
+  const handlePageChange = (index: number) => {
+    setCurrentPageIndex(index);
+  };
+
+  if (qnAIds.length === 0) {
     return (
       <div className='p-8 text-center text-gray-500'>
         등록된 질문이 없습니다.
       </div>
     );
+  }
+
+  if (isQnALoading || !currentQna) {
+    return (
+      <div className='flex flex-1 items-center justify-center'>
+        <span className='text-gray-400'>질문을 불러오는 중...</span>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <main className='h-full'>
+    <div className='flex min-h-0 flex-1 flex-row pb-30'>
+      <main className='w-full'>
         <CoverLetterSection
           company={coverLetter.companyName}
           job={coverLetter.jobPosition}
-          questionIndex={currentPageIndex + 1}
+          questionIndex={safePageIndex + 1}
           question={currentQna.question}
           text={currentText}
           reviews={currentReviews}
-          currentPage={currentPageIndex}
-          totalPages={pages.length}
+          currentPage={safePageIndex}
+          totalPages={qnAIds.length}
           editingReview={editingReview}
+          selection={selection}
+          onSelectionChange={setSelection}
+          qnaId={currentQna.qnAId}
           onAddReview={handleAddReview}
           onUpdateReview={handleUpdateReview}
           onCancelEdit={handleCancelEdit}
@@ -62,11 +98,12 @@ const ReviewLayout = () => {
         <ReviewListSection
           reviews={currentReviews}
           editingReview={editingReview}
+          qnaId={currentQna.qnAId}
           onEditReview={handleEditReview}
           onDeleteReview={handleDeleteReview}
         />
       </aside>
-    </>
+    </div>
   );
 };
 
