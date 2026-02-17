@@ -27,14 +27,17 @@ public class AiLabelingService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String promptTemplate;
     private final String apiKey;
+    private final String modelPath;
 
     public AiLabelingService(
             RestClient geminiRestClient,
             @Value("${gemini.api-key}") String apiKey,
-            @Value("${gemini.model-path}") Resource promptResource
+            @Value("${gemini.model-path}") String modelPath,
+            @Value("classpath:LabelingPrompt.txt") Resource promptResource
     ) {
         this.restClient = geminiRestClient;
         this.apiKey = apiKey;
+        this.modelPath = modelPath;
         this.promptTemplate = loadPrompt(promptResource);
     }
 
@@ -59,13 +62,13 @@ public class AiLabelingService {
         try (InputStreamReader reader = new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)) {
             return FileCopyUtils.copyToString(reader);
         } catch (IOException e) {
-            throw new IllegalStateException("프롬프트 파일 로드 실패", e);
+            throw new IllegalStateException("Failed to load AI labeling prompt template.", e);
         }
     }
 
     private void validateInput(String extractedText) {
         if (extractedText == null || extractedText.isBlank()) {
-            throw new AiLabelingException("분석할 텍스트가 비어있습니다.");
+            throw new AiLabelingException("AI labeling input text is blank.");
         }
     }
 
@@ -77,25 +80,25 @@ public class AiLabelingService {
         try {
             return restClient.post()
                     .uri(uriBuilder -> uriBuilder
-                            .path(GEMINI_MODEL_PATH)
+                            .path(modelPath)
                             .queryParam("key", apiKey)
                             .build())
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(requestBody)
                     .retrieve()
                     .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> {
-                        throw new AiLabelingException("AI 요청 실패(4xx). status=" + res.getStatusCode());
+                        throw new AiLabelingException("AI labeling request failed (4xx). status=" + res.getStatusCode());
                     })
                     .onStatus(HttpStatusCode::is5xxServerError, (req, res) -> {
-                        throw new AiLabelingException("AI 서버 오류(5xx). status=" + res.getStatusCode());
+                        throw new AiLabelingException("AI labeling request failed (5xx). status=" + res.getStatusCode());
                     })
                     .body(AiLabelingResponse.class);
 
         } catch (AiLabelingException e) {
             throw e;
         } catch (Exception e) {
-            log.error("AI request failed (unknown)", e);
-            throw new AiLabelingException("AI 호출 중 알 수 없는 오류 발생", e);
+            log.error("AI labeling request failed due to unexpected error.", e);
+            throw new AiLabelingException("AI labeling request failed due to unexpected error.", e);
         }
     }
 
@@ -103,7 +106,7 @@ public class AiLabelingService {
         String rawText = response.extractText();
 
         if (rawText == null || rawText.isBlank()) {
-            throw new AiLabelingException("AI 응답 텍스트가 비어있습니다.");
+            throw new AiLabelingException("AI labeling response is null.");
         }
 
         return rawText.trim();
@@ -122,7 +125,7 @@ public class AiLabelingService {
         int end = text.lastIndexOf(']');
 
         if (start == -1 || end == -1 || start >= end) {
-            throw new AiLabelingException("AI 응답에서 JSON 배열을 찾을 수 없습니다.");
+            throw new AiLabelingException("AI labeling response text is empty.");
         }
 
         return text.substring(start, end + 1).trim();
@@ -133,11 +136,11 @@ public class AiLabelingService {
             JsonNode root = objectMapper.readTree(json);
 
             if (!root.isArray()) {
-                throw new AiLabelingException("AI 응답이 배열(List) 형식이 아닙니다.");
+                throw new AiLabelingException("AI labeling response is not a JSON array.");
             }
         } catch (JacksonException e) {
             log.warn("Invalid JSON received. length={}", json.length());
-            throw new AiLabelingException("AI 응답이 올바른 JSON 형식이 아닙니다.", e);
+            throw new AiLabelingException("AI labeling response is not a valid JSON.", e);
         }
     }
 }
