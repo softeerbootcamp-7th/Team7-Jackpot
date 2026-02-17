@@ -13,7 +13,7 @@ const PageGlobalHeader = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const { userInfo, isLoading } = useAuth();
 
-  if (isLoading) return;
+  if (isLoading) return null;
 
   return (
     <header className='mb-[1.875rem] flex h-[3.75rem] w-full items-center justify-between bg-white px-75'>
