@@ -85,12 +85,7 @@ public class ShareLinkService {
 
     @Transactional(readOnly = true)
     public ReviewRoleType validateShareLinkAndGetRole(String userId, String shareId) {
-        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
-                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
-
-        if (!shareLink.isValid()) {
-            throw new BaseException(ShareLinkErrorCode.SHARE_LINK_EXPIRED);
-        }
+        ShareLink shareLink = findValidShareLink(shareId);
 
         CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(shareLink.getCoverLetterId());
         return coverLetter.isOwner(userId) ? ReviewRoleType.WRITER : ReviewRoleType.REVIEWER;
@@ -112,16 +107,11 @@ public class ShareLinkService {
         return shareLink;
     }
 
+    @Transactional(readOnly = true)
     public QnAVersionResponse getQnAWithVersion(String userId, String shareId, Long qnAId) {
         // TODO: userId로 Writer 또는 Reviewer인지 검증해야 함
 
-        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
-                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
-        if (!shareLink.isValid()) {
-            log.warn("해당 첨삭 링크가 유효하지 않습니다. shareId={}", shareId);
-            throw new BaseException(GlobalErrorCode.FORBIDDEN);
-        }
-
+        ShareLink shareLink = findValidShareLink(shareId);
         QnA qnA = qnARepository.findByIdOrElseThrow(qnAId);
 
         validateShareLinkAndQnA(shareLink, qnA);
@@ -136,23 +126,26 @@ public class ShareLinkService {
         }
     }
 
+    @Transactional(readOnly = true)
     public CoverLetterAndQnAIdsResponse getCoverLetterAndQnAIds(String userId, String shareId) {
         // TODO: userId로 Writer 또는 Reviewer인지 검증해야 함
 
-        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
-                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
-        if (!shareLink.isValid()) {
-            log.warn("해당 첨삭 링크가 유효하지 않습니다. shareId={}", shareId);
-            throw new BaseException(GlobalErrorCode.FORBIDDEN);
-        }
-
-        Long coverLetterId = shareLink.getCoverLetterId();
-
-        CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(coverLetterId);
+        ShareLink shareLink = findValidShareLink(shareId);
+        CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(shareLink.getCoverLetterId());
 
         return CoverLetterAndQnAIdsResponse.of(
                 coverLetter,
                 coverLetter.getQnAs().stream().map(QnA::getId).toList()
         );
+    }
+
+    private ShareLink findValidShareLink(String shareId) {
+        ShareLink shareLink = shareLinkRepository.findByShareId(shareId)
+                .orElseThrow(() -> new BaseException(ShareLinkErrorCode.SHARE_LINK_NOT_FOUND));
+        if (!shareLink.isValid()) {
+            log.warn("해당 첨삭 링크가 유효하지 않습니다. shareId={}", shareId);
+            throw new BaseException(ShareLinkErrorCode.SHARE_LINK_EXPIRED);
+        }
+        return shareLink;
     }
 }
