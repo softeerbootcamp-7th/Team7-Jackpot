@@ -23,8 +23,6 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class AiLabelingService {
 
-    private static final String GEMINI_MODEL_PATH = "/v1beta/models/gemini-2.5-flash:generateContent";
-
     private final RestClient restClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final String promptTemplate;
@@ -33,7 +31,7 @@ public class AiLabelingService {
     public AiLabelingService(
             RestClient geminiRestClient,
             @Value("${gemini.api-key}") String apiKey,
-            @Value("classpath:LabelingPrompt.txt") Resource promptResource
+            @Value("${gemini.model-path}") Resource promptResource
     ) {
         this.restClient = geminiRestClient;
         this.apiKey = apiKey;
@@ -114,14 +112,12 @@ public class AiLabelingService {
     private String normalizeToJson(String rawText) {
         String text = rawText.trim();
 
-        //  ```json ... ``` 코드블럭 제거
         if (text.startsWith("```")) {
             text = text.replaceAll("^```[a-zA-Z]*\\s*", "");
             text = text.replaceAll("\\s*```$", "");
             text = text.trim();
         }
 
-        // json 배열 시작/끝 위치 기반으로 자르기 (앞뒤 설명 제거)
         int start = text.indexOf('[');
         int end = text.lastIndexOf(']');
 
