@@ -22,6 +22,7 @@ export interface CoverLetterListResponse {
   hasNext: boolean;
 }
 
+// [박소민] TODO: 변경된 API에 맞춰 수정
 export interface QuestionItem {
   id: number;
   companyName: string;
