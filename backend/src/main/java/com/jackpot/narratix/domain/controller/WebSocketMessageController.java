@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.dto.WebSocketSessionInfo;
 import com.jackpot.narratix.domain.controller.request.TextUpdateRequest;
 import com.jackpot.narratix.domain.controller.response.WebSocketMessageResponse;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
+import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
 import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.global.exception.BaseException;
@@ -30,7 +31,7 @@ public class WebSocketMessageController {
     @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/writer")
     public void subscribeWriterCoverLetter(
             @DestinationVariable String shareId,
-            @DestinationVariable String qnAId,
+            @DestinationVariable Long qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.WRITER);
@@ -39,13 +40,13 @@ public class WebSocketMessageController {
     @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/reviewer")
     public void subscribeReviewerCoverLetter(
             @DestinationVariable String shareId,
-            @DestinationVariable String qnAId,
+            @DestinationVariable Long qnAId,
             SimpMessageHeaderAccessor headerAccessor
     ) {
         handleSubscription(shareId, qnAId, headerAccessor, ReviewRoleType.REVIEWER);
     }
 
-    private void handleSubscription(String shareId, String qnAId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
+    private void handleSubscription(String shareId, Long qnAId, SimpMessageHeaderAccessor headerAccessor, ReviewRoleType expectedRole) {
         WebSocketSessionInfo sessionInfo = extractSessionInfo(headerAccessor);
         this.validateShareId(shareId, sessionInfo.shareId());
         this.validateRole(sessionInfo.role(), expectedRole, shareId, sessionInfo.shareId());
@@ -89,9 +90,9 @@ public class WebSocketMessageController {
         log.info("Text update received: userId={}, shareId={}, version={}, startIdx={}, endIdx={}",
                 sessionInfo.userId(), shareId, request.version(), request.startIdx(), request.endIdx());
 
-        WebSocketMessageResponse response = WebSocketMessageResponse.createTextUpdateResponse(qnAId, request);
+        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, request);
 
-        webSocketMessageSender.sendMessageToReviewer(shareId, qnAId, response);
+        webSocketMessageSender.sendMessageToReviewer(shareId, response);
     }
 
     private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {

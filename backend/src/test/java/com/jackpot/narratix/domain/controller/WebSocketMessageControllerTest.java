@@ -51,6 +51,7 @@ class WebSocketMessageControllerTest {
         // given
         String shareId = "test-share-123";
         String userId = "user123";
+        Long qnAId = 2L;
         ReviewRoleType role = ReviewRoleType.WRITER;
 
         WebSocketSessionAttributes.setUserId(sessionAttributes, userId);
@@ -58,7 +59,7 @@ class WebSocketMessageControllerTest {
         WebSocketSessionAttributes.setRole(sessionAttributes, role);
 
         // when
-        webSocketMessageController.subscribeWriterCoverLetter(shareId, headerAccessor);
+        webSocketMessageController.subscribeWriterCoverLetter(shareId, qnAId, headerAccessor);
 
         // then - 예외가 발생하지 않으면 성공
         verifyNoInteractions(webSocketMessageSender);

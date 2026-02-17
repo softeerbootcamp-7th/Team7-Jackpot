@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.SessionUnsubscribeEvent; // 추가됨
 
 import java.util.Map;
 import java.util.Optional;
@@ -36,14 +37,12 @@ public class WebSocketEventListener {
     private final WebSocketMessageSender webSocketMessageSender;
     private final ShareLinkLockManager shareLinkLockManager;
     private final ShareLinkService shareLinkService;
-
     private final UserRepository userRepository;
 
     @Async
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewCreatedEvent(ReviewCreatedEvent event) {
-        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 생성 웹소켓 메시지를 전송한다.
         Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
         if (shareLink.isEmpty()) return;
 
@@ -59,7 +58,6 @@ public class WebSocketEventListener {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewEditEvent(ReviewEditEvent event) {
-        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 수정 웹소켓 메시지를 전송한다.
         Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
         if (shareLink.isEmpty()) return;
 
@@ -74,7 +72,6 @@ public class WebSocketEventListener {
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleReviewDeleteEvent(ReviewDeleteEvent event) {
-        // 활성화 된 ShareLink가 존재할 때만 첨삭 댓글 삭제 웹소켓 메시지를 전송한다.
         Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
         if (shareLink.isEmpty()) return;
 
@@ -103,6 +100,17 @@ public class WebSocketEventListener {
         } catch (Exception e) {
             log.error("Failed to release lock on disconnect: shareId={}, role={}, userId={}", shareId, role, userId, e);
         }
+    }
 
+    @EventListener
+    public void handleWebSocketUnsubscribeListener(SessionUnsubscribeEvent event) {
+        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
+        Map<String, Object> attributes = headerAccessor.getSessionAttributes();
+
+        String userId = WebSocketSessionAttributes.getUserId(attributes);
+        String shareId = WebSocketSessionAttributes.getShareId(attributes);
+        ReviewRoleType role = WebSocketSessionAttributes.getRole(attributes);
+
+        log.info("웹소켓 구독 해제. UserId: {}, ShareId: {}, Role: {}", userId, shareId, role);
     }
 }

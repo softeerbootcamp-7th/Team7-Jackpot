@@ -16,16 +16,16 @@ public class WebSocketMessageSender {
 
     private static final String DESTINATION_PATTERN = "/sub/share/%s/qna/%s/review/%s";
 
-    public void sendMessageToShare(String shareId, Long qnAId, WebSocketMessageResponse message) {
-        String writerDestination = getDestination(ReviewRoleType.WRITER, shareId, qnAId);
-        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, qnAId);
+    public void sendMessageToShare(String shareId, WebSocketMessageResponse message) {
+        String writerDestination = getDestination(ReviewRoleType.WRITER, shareId, message.qnAId());
+        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, message.qnAId());
 
         messagingTemplate.convertAndSend(writerDestination, message);
         messagingTemplate.convertAndSend(reviewerDestination, message);
     }
 
-    public void sendMessageToReviewer(String shareId, Long qnAId, WebSocketMessageResponse message) {
-        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, qnAId);
+    public void sendMessageToReviewer(String shareId, WebSocketMessageResponse message) {
+        String reviewerDestination = getDestination(ReviewRoleType.REVIEWER, shareId, message.qnAId());
         log.info("Send Reviewer At {}, message={}", reviewerDestination, message);
         messagingTemplate.convertAndSend(reviewerDestination, message);
     }
