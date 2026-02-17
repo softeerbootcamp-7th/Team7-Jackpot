@@ -24,7 +24,7 @@ class FileProcessServiceTest {
     private UploadFileRepository uploadFileRepository;
 
     @InjectMocks
-    private FileProcessService fileProcessService;
+    private FileProcessFacade fileProcessFacade;
 
     @Test
     @DisplayName("파일 추출 성공 : EXTRACTED 로 상태 변경")
@@ -42,7 +42,7 @@ class FileProcessServiceTest {
         given(uploadFileRepository.findById(fileId)).willReturn(Optional.of(uploadFile));
 
         // when
-        fileProcessService.processUploadedFile(fileId, extractedText);
+        fileProcessFacade.processUploadedFile(fileId, extractedText);
 
         // then
         assertThat(uploadFile.getStatus()).isEqualTo(UploadStatus.EXTRACTED);
@@ -65,7 +65,7 @@ class FileProcessServiceTest {
         given(uploadFileRepository.findById(fileId)).willReturn(Optional.of(uploadFile));
 
         // when
-        fileProcessService.processFailedFile(fileId, "에러");
+        fileProcessFacade.processFailedFile(fileId, "에러");
 
         // then
         assertThat(uploadFile.getStatus()).isEqualTo(UploadStatus.FAILED);
@@ -82,8 +82,8 @@ class FileProcessServiceTest {
         given(uploadFileRepository.findById(fileId)).willReturn(Optional.empty());
 
         // when
-        fileProcessService.processUploadedFile(fileId, "some text");
-        fileProcessService.processFailedFile(fileId, "error");
+        fileProcessFacade.processUploadedFile(fileId, "some text");
+        fileProcessFacade.processFailedFile(fileId, "error");
 
         // then
         verifyNoInteractions(mock(UploadFile.class));
