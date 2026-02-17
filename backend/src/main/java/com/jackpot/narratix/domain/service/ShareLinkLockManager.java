@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.connection.ReturnType;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +37,21 @@ public class ShareLinkLockManager {
             """;
     private static final DefaultRedisScript<Long> UNLOCK_REDIS_SCRIPT =
             new DefaultRedisScript<>(UNLOCK_SCRIPT, Long.class);
+
+    // 내 락인 경우에만 TTL 갱신
+    private static final byte[] RENEW_SCRIPT_BYTES
+            = """
+            if redis.call('get', KEYS[1]) == ARGV[1] then
+                return redis.call('expire', KEYS[1], ARGV[2])
+            else
+                return 0
+            end
+            """.getBytes(StandardCharsets.UTF_8);
+
+    private static final byte[] LOCK_TIMEOUT_BYTES =
+            String.valueOf(LOCK_TIMEOUT).getBytes(StandardCharsets.UTF_8);
+
+    private static final int NUM_KEYS = 1;
 
     // key: sessionId, value: lockKey
     private final Map<String, String> sessionLocks = new ConcurrentHashMap<>();
@@ -81,19 +96,25 @@ public class ShareLinkLockManager {
 
     /**
      * 모든 활성 세션의 분산락 TTL 갱신 (4초마다 호출)
-     * Pipeline을 이용해 단일 네트워크 IO로 모든 락 갱신 명령 전송
+     * Pipeline + Lua Script로 단일 네트워크 IO에 소유권 검증 후 TTL 갱신
      */
     public void renewAllLocks() {
-        Collection<String> lockKeys = sessionLocks.values();
-        if (lockKeys.isEmpty()) return;
+        if (sessionLocks.isEmpty()) return;
 
         redisTemplate.executePipelined((RedisCallback<Object>) connection -> {
-            for (String lockKey : lockKeys) {
-                connection.keyCommands().expire(lockKey.getBytes(StandardCharsets.UTF_8), LOCK_TIMEOUT);
+            for (Map.Entry<String, String> entry : sessionLocks.entrySet()) {
+                connection.scriptingCommands().eval(
+                        RENEW_SCRIPT_BYTES,
+                        ReturnType.INTEGER,
+                        NUM_KEYS, // Lua EVAL 명령에서 KEYS 배열의 크기, numKeys 이후 인자 중 앞 numKeys 개는 KEYS, 나머지는 ARGV로 분류
+                        entry.getValue().getBytes(StandardCharsets.UTF_8), // KEYS[1] = lockKey
+                        entry.getKey().getBytes(StandardCharsets.UTF_8),   // ARGV[1] = sessionId
+                        LOCK_TIMEOUT_BYTES                                  // ARGV[2] = timeout
+                );
             }
             return null;
         });
-        log.debug("Lock TTLs renewed for {} sessions via pipeline", lockKeys.size());
+        log.debug("Lock TTLs renewed for {} sessions via pipeline", sessionLocks.size());
     }
 
     private String getLockKey(String shareId, ReviewRoleType role) {
