@@ -12,17 +12,26 @@ import org.springframework.transaction.annotation.Transactional;
 public class FileProcessService {
 
     private final UploadFileRepository uploadFileRepository;
-    private final AILabelingService aiLabelingService;
+    private final AiLabelingService aiLabelingService;
 
     @Transactional
     public void processUploadedFile(String fileId, String extractedText) {
         uploadFileRepository.findById(fileId).ifPresentOrElse(
                 file -> {
                     file.successExtract(extractedText);
-                    log.info("File processing completed. FileID: {}", fileId);
+                    log.info("Extract text saved.FileID: {}", fileId);
 
-                    String jsonResult = aiLabelingService.analyzeAndLabel(extractedText);
-                    log.info("AI Labeling Completed: {}", jsonResult);
+                    try {
+                        String jsonResult = aiLabelingService.aiAnalyze(extractedText);
+
+                        file.successLabeling(jsonResult);
+                        log.info("AI Labeling Completed. FileID: {}", fileId);
+
+                    } catch (Exception e) {
+                        log.error("AI Labeling Failed. FileID: {}", fileId, e);
+                        file.failLabeling();
+
+                    }
                 },
                 () -> log.error("Error: File not found for ID: {}. Skipping process.", fileId)
         );

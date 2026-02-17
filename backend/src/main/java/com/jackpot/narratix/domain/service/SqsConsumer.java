@@ -16,7 +16,7 @@ public class SqsConsumer {
 
     @SqsListener(value = "${sqs.queue.name}", factory = "sqsMessageListenerContainerFactory")
     public void consume(FileProcessResult message) {
-        log.info("SQS Message Received. FileID: {}, Status: {}", message.fileId(), message.status());
+        log.info("SQS Message Received. FileID: {}", message.fileId());
 
         try {
             if (message.status() == UploadStatus.FAILED) {
