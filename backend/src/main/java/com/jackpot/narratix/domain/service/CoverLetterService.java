@@ -83,8 +83,16 @@ public class CoverLetterService {
         if (!coverLetter.isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
         coverLetter.edit(request.coverLetter());
 
+        List<Long> qnAIds = request.questions().stream()
+                .map(CoverLetterAndQnAEditRequest.QnAEditRequest::qnAId)
+                .toList();
+
+        Map<Long, QnA> qnAMap = qnARepository.findByIds(qnAIds).stream()
+                .collect(Collectors.toMap(QnA::getId, qnA -> qnA));
+
         for (CoverLetterAndQnAEditRequest.QnAEditRequest qnAEditRequest : request.questions()) {
-            QnA qnA = qnARepository.findByIdOrElseThrow(qnAEditRequest.qnAId());
+            QnA qnA = Optional.ofNullable(qnAMap.get(qnAEditRequest.qnAId()))
+                    .orElseThrow(() -> new BaseException(QnAErrorCode.QNA_NOT_FOUND));
             if (!qnA.getCoverLetter().getId().equals(coverLetterId)) {
                 throw new BaseException(QnAErrorCode.NOT_SAME_COVERLETTER);
             }
