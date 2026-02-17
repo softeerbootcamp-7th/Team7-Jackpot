@@ -44,7 +44,7 @@ public class ShareLinkLockManager {
         String lockKey = getLockKey(shareId, role);
 
         Boolean success = redisTemplate.opsForValue()
-                .setIfAbsent(lockKey, userId, Duration.ofSeconds(LOCK_TIMEOUT));
+                .setIfAbsent(lockKey, sessionId, Duration.ofSeconds(LOCK_TIMEOUT));
 
         if (Boolean.TRUE.equals(success)) {
             sessionLocks.put(sessionId, lockKey);
@@ -56,6 +56,7 @@ public class ShareLinkLockManager {
 
     /**
      * sessionId로 락 해제 및 세션 목록에서 제거
+     * 락 값이 sessionId이므로 GET 없이 Lua Script 단일 호출로 원자적 해제
      */
     public void unlock(String sessionId) {
         String lockKey = sessionLocks.remove(sessionId);
@@ -64,14 +65,7 @@ public class ShareLinkLockManager {
             return;
         }
 
-        // Redis에서 현재 소유자(userId) 조회 후 Lua Script로 안전하게 삭제
-        String userId = redisTemplate.opsForValue().get(lockKey);
-        if (userId == null) {
-            log.warn("Lock already expired: sessionId={}, lockKey={}", sessionId, lockKey);
-            return;
-        }
-
-        redisTemplate.execute(UNLOCK_REDIS_SCRIPT, List.of(lockKey), userId);
+        redisTemplate.execute(UNLOCK_REDIS_SCRIPT, List.of(lockKey), sessionId);
         log.info("Lock released: sessionId={}, lockKey={}", sessionId, lockKey);
     }
 
