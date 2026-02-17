@@ -82,10 +82,13 @@ export const useSharedLinkToggle = () => {
       coverLetterId: number;
       active: boolean;
     }) => toggleSharedLinkStatus({ coverLetterId, active }),
-    onSuccess: (_, { coverLetterId }) => {
+    onSuccess: (_, { coverLetterId, active }) => {
       queryClient.invalidateQueries({
         queryKey: ['coverletter', 'sharedLink', { coverLetterId }],
       });
+      if (active) {
+        queryClient.invalidateQueries({ queryKey: ['reviews'] });
+      }
       toast?.showToast('첨삭 링크 상태가 변경되었습니다.', true);
     },
     onError: (error: unknown) => {
