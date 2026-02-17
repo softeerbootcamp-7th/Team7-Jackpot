@@ -626,7 +626,7 @@ class ReviewServiceTest {
         );
 
         given(qnARepository.findByIdOrElseThrow(qnAId)).willReturn(qnA);
-        // otherUserId != writerId → REVIEWER 역할이지만 approve는 WRITER 전용
+        // WebSocket 연결 검증은 통과하지만, QnA 소유자 검증에서 차단되는 시나리오
         given(shareLinkSessionRegistry.isConnectedUserInCoverLetter(otherUserId, coverLetterId, ReviewRoleType.WRITER)).willReturn(true);
         given(reviewRepository.findByIdOrElseThrow(reviewId)).willReturn(review);
 
