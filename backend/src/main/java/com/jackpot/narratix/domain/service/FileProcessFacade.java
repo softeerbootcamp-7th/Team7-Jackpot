@@ -26,7 +26,7 @@ public class FileProcessFacade {
         fileProcessService.saveExtractSuccess(fileId, extractedText);
 
         try {
-            String labelingJsonResult = aiLabelingService.aiAnalyze(extractedText);
+            String labelingJsonResult = aiLabelingService.generateLabelingJson(extractedText);
             fileProcessService.saveLabelingSuccess(fileId, labelingJsonResult);
         } catch (Exception e) {
             fileProcessService.saveLabelingFail(fileId);
