@@ -1,4 +1,3 @@
-
 package com.jackpot.narratix.domain.controller.api;
 
 import com.jackpot.narratix.domain.controller.request.ShareLinkActiveRequest;
