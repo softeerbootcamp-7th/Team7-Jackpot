@@ -10,6 +10,8 @@ import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.event.ReviewCreatedEvent;
+import com.jackpot.narratix.domain.event.ReviewDeleteEvent;
+import com.jackpot.narratix.domain.event.ReviewEditEvent;
 import com.jackpot.narratix.domain.exception.ReviewErrorCode;
 import com.jackpot.narratix.domain.fixture.CoverLetterFixture;
 import com.jackpot.narratix.domain.fixture.QnAFixture;
@@ -29,11 +31,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -101,24 +103,20 @@ class ReviewServiceTest {
 
         given(reviewRepository.save(any(Review.class))).willReturn(savedReview);
         given(qnARepository.findByIdOrElseThrow(qnaId)).willReturn(qnA);
-        doNothing().when(notificationService).sendFeedbackNotificationToWriter(any(), any(), any());
-
+        doNothing().when(notificationService).sendFeedbackNotificationToWriter(any(), any(), any(), any());
+        given(qnARepository.getCoverLetterIdByQnAId(qnaId)).willReturn(Optional.of(1L));
         // when
+
         reviewService.createReview(reviewerId, qnaId, request);
 
         // then
         verify(reviewRepository, times(1)).save(any(Review.class));
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnaId);
         verify(eventPublisher, times(1)).publishEvent(any(ReviewCreatedEvent.class));
-        verify(notificationService, times(1)).sendFeedbackNotificationToWriter(reviewerId, qnA, request.originText());
+        verify(notificationService, times(1))
+                .sendFeedbackNotificationToWriter(reviewerId, coverLetter, qnaId, request.originText());
     }
-
-    // 알림 생성 로직은 NotificationService의 책임이므로 NotificationServiceTest에서 테스트
-
-    // 알림 수신자 및 발신자 검증은 NotificationService의 책임이므로 NotificationServiceTest에서 테스트
-
-    // 알림 content 검증은 NotificationService의 책임이므로 NotificationServiceTest에서 테스트
-
+    
     @Test
     @DisplayName("리뷰 수정 성공")
     void editReview_Success() {
@@ -126,6 +124,7 @@ class ReviewServiceTest {
         String userId = "reviewer123";
         Long qnAId = 1L;
         Long reviewId = 1L;
+        Long coverLetterId = 100L;
 
         ReviewEditRequest request = new ReviewEditRequest(
                 "수정된 제안 텍스트",
@@ -150,6 +149,7 @@ class ReviewServiceTest {
 
         given(reviewRepository.findByIdOrElseThrow(reviewId)).willReturn(existingReview);
         given(reviewRepository.save(existingReview)).willReturn(updatedReview);
+        given(qnARepository.getCoverLetterIdByQnAId(qnAId)).willReturn(Optional.of(coverLetterId));
 
         // when
         reviewService.editReview(userId, qnAId, reviewId, request);
@@ -159,6 +159,8 @@ class ReviewServiceTest {
         assertThat(existingReview.getComment()).isEqualTo(request.comment());
         verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
         verify(reviewRepository, times(1)).save(existingReview);
+        verify(qnARepository, times(1)).getCoverLetterIdByQnAId(qnAId);
+        verify(eventPublisher, times(1)).publishEvent(any(ReviewEditEvent.class));
     }
 
     @Test
@@ -235,6 +237,7 @@ class ReviewServiceTest {
         String writerId = "writer456";
         Long qnAId = 1L;
         Long reviewId = 1L;
+        Long coverLetterId = 1L;
 
         Review review = ReviewFixture.builder()
                 .id(reviewId)
@@ -245,7 +248,7 @@ class ReviewServiceTest {
                 .build();
 
         CoverLetter coverLetter = CoverLetterFixture.builder()
-                .id(1L)
+                .id(coverLetterId)
                 .userId(writerId)
                 .companyName("카카오")
                 .applyYear(2024)
@@ -262,6 +265,7 @@ class ReviewServiceTest {
 
         given(reviewRepository.findById(reviewId)).willReturn(java.util.Optional.of(review));
         given(qnARepository.findByIdOrElseThrow(qnAId)).willReturn(qnA);
+        given(qnARepository.getCoverLetterIdByQnAId(qnAId)).willReturn(java.util.Optional.of(coverLetterId));
 
         // when
         reviewService.deleteReview(reviewerId, qnAId, reviewId);
@@ -270,6 +274,8 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).findById(reviewId);
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnAId);
         verify(reviewRepository, times(1)).delete(review);
+        verify(qnARepository, times(1)).getCoverLetterIdByQnAId(qnAId);
+        verify(eventPublisher, times(1)).publishEvent(any(ReviewDeleteEvent.class));
     }
 
     @Test
@@ -280,6 +286,7 @@ class ReviewServiceTest {
         String writerId = "writer456";
         Long qnAId = 1L;
         Long reviewId = 1L;
+        Long coverLetterId = 1L;
 
         Review review = ReviewFixture.builder()
                 .id(reviewId)
@@ -290,7 +297,7 @@ class ReviewServiceTest {
                 .build();
 
         CoverLetter coverLetter = CoverLetterFixture.builder()
-                .id(1L)
+                .id(coverLetterId)
                 .userId(writerId)
                 .companyName("토스")
                 .applyYear(2024)
@@ -307,6 +314,7 @@ class ReviewServiceTest {
 
         given(reviewRepository.findById(reviewId)).willReturn(java.util.Optional.of(review));
         given(qnARepository.findByIdOrElseThrow(qnAId)).willReturn(qnA);
+        given(qnARepository.getCoverLetterIdByQnAId(qnAId)).willReturn(java.util.Optional.of(coverLetterId));
 
         // when
         reviewService.deleteReview(writerId, qnAId, reviewId);
@@ -315,6 +323,8 @@ class ReviewServiceTest {
         verify(reviewRepository, times(1)).findById(reviewId);
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnAId);
         verify(reviewRepository, times(1)).delete(review);
+        verify(qnARepository, times(1)).getCoverLetterIdByQnAId(qnAId);
+        verify(eventPublisher, times(1)).publishEvent(any(ReviewDeleteEvent.class));
     }
 
     @Test
@@ -411,6 +421,7 @@ class ReviewServiceTest {
         String reviewerId = "reviewer456";
         Long qnAId = 1L;
         Long reviewId = 1L;
+        Long coverLetterId = 1L;
 
         String originalText = "기존 텍스트";
         String suggestedText = "수정된 텍스트";
@@ -425,7 +436,7 @@ class ReviewServiceTest {
                 .build();
 
         CoverLetter coverLetter = CoverLetterFixture.builder()
-                .id(1L)
+                .id(coverLetterId)
                 .userId(writerId)
                 .build();
 
@@ -439,6 +450,8 @@ class ReviewServiceTest {
 
         given(reviewRepository.findByIdOrElseThrow(reviewId)).willReturn(review);
         given(qnARepository.findByIdOrElseThrow(qnAId)).willReturn(qnA);
+        given(qnARepository.getCoverLetterIdByQnAId(qnAId)).willReturn(java.util.Optional.of(coverLetterId));
+        given(reviewRepository.save(review)).willReturn(review);
 
         // when
         reviewService.approveReview(writerId, qnAId, reviewId);
@@ -449,6 +462,8 @@ class ReviewServiceTest {
         assertThat(review.getSuggest()).isEqualTo(originalText);
         verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnAId);
+        verify(qnARepository, times(1)).getCoverLetterIdByQnAId(qnAId);
+        verify(eventPublisher, times(1)).publishEvent(any(ReviewEditEvent.class));
     }
 
     @Test
@@ -536,6 +551,7 @@ class ReviewServiceTest {
         String reviewerId = "reviewer456";
         Long qnAId = 1L;
         Long reviewId = 1L;
+        Long coverLetterId = 1L;
 
         String currentOriginText = "수정된 텍스트"; // 이미 승인되어 suggest와 swap된 상태
         String currentSuggestText = "기존 텍스트"; // 이미 승인되어 originText와 swap된 상태
@@ -550,7 +566,7 @@ class ReviewServiceTest {
                 .build();
 
         CoverLetter coverLetter = CoverLetterFixture.builder()
-                .id(1L)
+                .id(coverLetterId)
                 .userId(writerId)
                 .build();
 
@@ -564,6 +580,8 @@ class ReviewServiceTest {
 
         given(reviewRepository.findByIdOrElseThrow(reviewId)).willReturn(review);
         given(qnARepository.findByIdOrElseThrow(qnAId)).willReturn(qnA);
+        given(qnARepository.getCoverLetterIdByQnAId(qnAId)).willReturn(java.util.Optional.of(coverLetterId));
+        given(reviewRepository.save(review)).willReturn(review);
 
         // when
         reviewService.approveReview(writerId, qnAId, reviewId);
@@ -574,6 +592,8 @@ class ReviewServiceTest {
         assertThat(review.getSuggest()).isEqualTo(currentOriginText); // swap되어 원복됨
         verify(reviewRepository, times(1)).findByIdOrElseThrow(reviewId);
         verify(qnARepository, times(1)).findByIdOrElseThrow(qnAId);
+        verify(qnARepository, times(1)).getCoverLetterIdByQnAId(qnAId);
+        verify(eventPublisher, times(1)).publishEvent(any(ReviewEditEvent.class));
     }
 
     @Test

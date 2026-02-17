@@ -3,10 +3,13 @@ package com.jackpot.narratix.domain.service;
 import com.jackpot.narratix.domain.controller.request.ReviewCreateRequest;
 import com.jackpot.narratix.domain.controller.request.ReviewEditRequest;
 import com.jackpot.narratix.domain.controller.response.ReviewsGetResponse;
+import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
 import com.jackpot.narratix.domain.entity.Review;
 import com.jackpot.narratix.domain.entity.User;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
+import com.jackpot.narratix.domain.event.ReviewDeleteEvent;
+import com.jackpot.narratix.domain.event.ReviewEditEvent;
 import com.jackpot.narratix.domain.exception.ReviewErrorCode;
 import com.jackpot.narratix.domain.event.ReviewCreatedEvent;
 import com.jackpot.narratix.domain.repository.QnARepository;
@@ -15,6 +18,7 @@ import com.jackpot.narratix.domain.repository.UserRepository;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,17 +27,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
 
+    private final NotificationService notificationService;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final QnARepository qnARepository;
-    private final NotificationService notificationService;
-    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public void createReview(String reviewerId, Long qnAId, ReviewCreateRequest request) {
@@ -45,14 +52,14 @@ public class ReviewService {
 
         // TODO: 본문 텍스트 전체 변경 이벤트 발행
 
-        Long coverLetterId = qnA.getCoverLetter().getId();
-        eventPublisher.publishEvent(ReviewCreatedEvent.of(coverLetterId, qnAId, review));
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA, request.originText());
+        publishEventWithCoverLetter(qnAId,
+                coverLetterId -> eventPublisher.publishEvent(ReviewCreatedEvent.of(coverLetterId, qnAId, review))
+        );
+        notificationService.sendFeedbackNotificationToWriter(reviewerId, qnA.getCoverLetter(), qnAId, request.originText());
     }
 
     @Transactional
     public void editReview(String userId, Long qnAId, Long reviewId, ReviewEditRequest request) {
-
         Review review = reviewRepository.findByIdOrElseThrow(reviewId);
 
         validateReviewBelongsToQnA(review, qnAId);
@@ -60,9 +67,11 @@ public class ReviewService {
 
         review.editSuggest(request.suggest());
         review.editComment(request.comment());
-        reviewRepository.save(review);
+        Review updatedReview = reviewRepository.save(review);
 
-        // TODO: 첨삭 댓글 수정 이벤트 수신
+        publishEventWithCoverLetter(qnAId,
+            coverLetterId -> eventPublisher.publishEvent(ReviewEditEvent.of(coverLetterId, qnAId, updatedReview))
+        );
     }
 
     private void validateReviewBelongsToQnA(Review review, Long qnAId) {
@@ -90,7 +99,10 @@ public class ReviewService {
         reviewRepository.delete(review);
 
         // TODO: Writer, Reviewer 본문 텍스트 전체 변경 이벤트 발송
-        // TODO: Writer, Reviewer 첨삭 댓글 수정 이벤트 발송
+
+        publishEventWithCoverLetter(qnAId,
+            coverLetterId -> eventPublisher.publishEvent(new ReviewDeleteEvent(coverLetterId, qnAId, reviewId))
+        );
     }
 
     private void validateIsReviewOwnerOrQnAOwner(String userId, Review review, QnA qnA) {
@@ -115,15 +127,26 @@ public class ReviewService {
         } else {
             review.approve();
         }
+        Review updatedReview = reviewRepository.save(review);
 
         // TODO: 웹소켓 본문 텍스트 변경 이벤트 발송
-        // TODO: 첨삭 댓글 수정 이벤트 발송
+
+        publishEventWithCoverLetter(qnAId,
+            coverLetterId -> eventPublisher.publishEvent(ReviewEditEvent.of(coverLetterId, qnAId, updatedReview))
+        );
     }
 
     private void validateIsQnAOwner(String userId, QnA qnA) {
         if (!qnA.isOwner(userId)) {
             throw new BaseException(GlobalErrorCode.FORBIDDEN);
         }
+    }
+
+    private void publishEventWithCoverLetter(Long qnAId, Consumer<Long> action) {
+        qnARepository.getCoverLetterIdByQnAId(qnAId).ifPresentOrElse(
+            action,
+            () -> log.warn("coverLetterId is empty for qnAId: {}", qnAId)
+        );
     }
 
     @Transactional(readOnly = true)
