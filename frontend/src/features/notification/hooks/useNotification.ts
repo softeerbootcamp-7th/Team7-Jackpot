@@ -18,7 +18,7 @@ import { apiClient } from '@/shared/api/apiClient';
 export const useGetAllNotification = () => {
   return useInfiniteQuery({
     queryKey: ['notificationList'],
-    queryFn: ({ pageParam }) =>
+    queryFn: ({ pageParam }: {pageParam: number | null}) =>
       apiClient.get<NotificationResponse>({
         endpoint: '/notification/all',
         params: {
