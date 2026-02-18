@@ -94,20 +94,31 @@ public class WebSocketMessageController {
         log.info("Text update received: userId={}, shareId={}, startIdx={}, endIdx={}",
                 sessionInfo.userId(), shareId, request.startIdx(), request.endIdx());
 
+        long deltaVersion;
         try {
-            long deltaVersion = textDeltaService.saveAndMaybeFlush(qnAId, request);
-            TextUpdateResponse textUpdateResponse = TextUpdateResponse.of(deltaVersion, request);
-            WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, textUpdateResponse);
-            webSocketMessageSender.sendMessageToReviewer(shareId, response);
+            deltaVersion = textDeltaService.saveAndMaybeFlush(qnAId, request);
         } catch (VersionConflictException e) {
             // delta push 미발생 — rollback 없이 현재 상태를 TEXT_REPLACE_ALL로 전송
             log.warn("버전 충돌, TEXT_REPLACE_ALL 전송: shareId={}, qnAId={}", shareId, qnAId);
-            textDeltaService.recoverTextReplaceAll(shareId, qnAId);
+            try {
+                textDeltaService.recoverTextReplaceAll(shareId, qnAId);
+            } catch (Exception re) {
+                log.error("recoverTextReplaceAll 실패: shareId={}, qnAId={}", shareId, qnAId, re);
+            }
+            return;
         } catch (Exception e) {
             // delta push 이후 실패 — 마지막 push 롤백 후 TEXT_REPLACE_ALL 전송
             log.error("텍스트 업데이트 실패, rollback 후 TEXT_REPLACE_ALL 전송: shareId={}, qnAId={}", shareId, qnAId, e);
-            textDeltaService.recoverTextReplaceAllWithRollback(shareId, qnAId);
+            try {
+                textDeltaService.recoverTextReplaceAllWithRollback(shareId, qnAId);
+            } catch (Exception re) {
+                log.error("recoverTextReplaceAllWithRollback 실패: shareId={}, qnAId={}", shareId, qnAId, re);
+            }
+            return;
         }
+        TextUpdateResponse textUpdateResponse = TextUpdateResponse.of(deltaVersion, request);
+        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, textUpdateResponse);
+        webSocketMessageSender.sendMessageToReviewer(shareId, response);
     }
 
     private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {
