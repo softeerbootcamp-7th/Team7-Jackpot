@@ -16,6 +16,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -122,6 +123,35 @@ public class TextDeltaService {
             log.error("Redis commit 실패 (DB는 이미 커밋됨), pending 강제 삭제 시도: qnAId={}", qnAId, e);
             clearPendingSilently(qnAId);
         }
+    }
+
+    /**
+     * 리뷰 처리(생성·삭제·승인) 후 Redis 버전 카운터를 DB version에 맞게 강제 갱신한다.
+     */
+    public void resetDeltaVersion(Long qnAId, long newVersion) {
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    textDeltaRedisRepository.setVersion(qnAId, newVersion);
+                    log.info("리뷰 처리 후 버전 카운터 갱신 완료: qnAId={}, newVersion={}", qnAId, newVersion);
+                } catch (Exception e) {
+                    log.error("리뷰 처리 후 버전 카운터 갱신 실패: qnAId={}, newVersion={}", qnAId, newVersion, e);
+                }
+            }
+        });
+    }
+
+    /**
+     * OT 변환에 필요한 델타를 committed + pending에서 수집한다.
+     * fromVersion 이상의 델타를 version 오름차순으로 반환한다.
+     */
+    public List<TextUpdateRequest> getOtDeltasSince(Long qnAId, long fromVersion) {
+        List<TextUpdateRequest> committed = textDeltaRedisRepository.getCommitted(qnAId);
+        List<TextUpdateRequest> pending = textDeltaRedisRepository.getPending(qnAId);
+        return Stream.concat(committed.stream(), pending.stream()) // version asc
+                .filter(d -> d.version() >= fromVersion)
+                .toList();
     }
 
     private void clearPendingSilently(Long qnAId) {

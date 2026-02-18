@@ -236,6 +236,15 @@ public class TextDeltaRedisRepository {
     }
 
     /**
+     * 버전 카운터를 강제로 갱신한다
+     * 리뷰 처리(생성·삭제·승인) 후 DB version과 Redis version counter를 동기화할 때 사용한다.
+     */
+    public void setVersion(Long qnAId, long version) {
+        redisTemplate.opsForValue().set(versionKey(qnAId), String.valueOf(version), KEY_TTL);
+        log.debug("버전 카운터 강제 갱신: qnAId={}, version={}", qnAId, version);
+    }
+
+    /**
      * pending 키만 삭제한다.
      * DB 커밋 후 committed 이동(commit())이 실패했을 때 dirty 데이터를 제거하는 Fallback으로 사용된다.
      * committed 히스토리는 보존되지 않는다.
