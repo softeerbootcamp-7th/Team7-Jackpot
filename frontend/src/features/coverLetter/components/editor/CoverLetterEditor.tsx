@@ -18,7 +18,7 @@ import {
   useApproveReview,
   useDeleteReview,
 } from '@/shared/hooks/useReviewQueries';
-import type { CoverLetter as CoverLetterType } from '@/shared/types/coverLetter';
+import type { CoverLetterType } from '@/shared/types/coverLetter';
 import type { MinimalQnA } from '@/shared/types/qna';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';

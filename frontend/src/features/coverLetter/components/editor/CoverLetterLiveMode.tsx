@@ -5,7 +5,7 @@ import useCoverLetterPagination from '@/shared/hooks/useCoverLetterPagination';
 import { useReviewsByQnaId } from '@/shared/hooks/useReviewQueries';
 import useReviewState from '@/shared/hooks/useReviewState';
 import { useShareQnA } from '@/shared/hooks/useShareQueries';
-import type { CoverLetter as CoverLetterType } from '@/shared/types/coverLetter';
+import type { CoverLetterType } from '@/shared/types/coverLetter';
 
 interface CoverLetterLiveModeProps {
   shareId: string;

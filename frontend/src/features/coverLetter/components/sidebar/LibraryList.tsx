@@ -5,7 +5,7 @@ import { useInfiniteCoverLetterSearch } from '@/features/coverLetter/hooks/useCo
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import { SidebarSkeleton } from '@/shared/components/SidebarSkeleton';
 import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
 
 interface LibraryListProps {
   searchWord: string;
@@ -26,7 +26,7 @@ const LibraryList = ({ searchWord, onSelect }: LibraryListProps) => {
 
   const items = data?.pages?.flatMap((page) => page.coverLetters) ?? [];
 
-  const handleLibraryClick = (letter: RecentCoverLetter) => {
+  const handleLibraryClick = (letter: RecentCoverLetterType) => {
     const mappedData: ScrapItem = {
       questionId: letter.coverLetterId,
       companyName: letter.companyName,

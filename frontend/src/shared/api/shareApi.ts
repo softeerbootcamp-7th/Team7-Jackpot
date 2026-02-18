@@ -1,8 +1,8 @@
 import { apiClient } from '@/shared/api/apiClient';
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
 
 interface ShareCoverLetterInfo {
-  coverLetter: RecentCoverLetter;
+  coverLetter: RecentCoverLetterType;
   qnAIds: number[];
 }
 

@@ -1,8 +1,8 @@
-import type { CoverLetter } from '@/shared/types/coverLetter';
+import type { CoverLetterType } from '@/shared/types/coverLetter';
 import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface CoverLetterHeaderProps {
-  coverLetter: CoverLetter;
+  coverLetter: CoverLetterType;
   totalPages: number;
   modifiedAt?: string;
 }
