@@ -107,5 +107,12 @@ export const useLogout = () => {
       queryClient.clear();
       showToast('로그아웃 되었습니다', true);
     },
+    onError: () => {
+      // UX를 위해 서버 실패와 무관하게 클라이언트 로그아웃 처리
+      logout();
+      localStorage.removeItem('isLoggedIn');
+      queryClient.clear();
+      showToast('로그아웃 되었습니다', true);
+    }
   });
 };
