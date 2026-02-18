@@ -75,19 +75,6 @@ public class QnA extends BaseTimeEntity {
         updateModifiedAt(LocalDateTime.now());
     }
 
-    public long incrementVersionBy(int deltaCount) {
-        if (deltaCount <= 0) {
-            throw new IllegalArgumentException("deltaCount는 양수여야 합니다: " + deltaCount);
-        }
-        this.version += deltaCount;
-        return this.version;
-    }
-
-    public long incrementVersion() {
-        this.version += 1;
-        return this.version;
-    }
-
     public ReviewRoleType determineReviewRole(String userId) {
         if (isOwner(userId)) {
             return ReviewRoleType.WRITER;

@@ -85,7 +85,7 @@ public class ReviewService {
         // 텍스트 마킹 삽입
         String wrappedAnswer = addTagToReviewedSection(currentAnswer, transformedStart, transformedEnd, review.getId(), request.originText());
         qnA.editAnswer(wrappedAnswer);
-        long reviewVersion = qnA.incrementVersion();
+        long reviewVersion = qnARepository.incrementVersion(qnAId, 1);
 
         // afterCommit: Redis version counter 강제 갱신
         textDeltaService.resetDeltaVersion(qnAId, reviewVersion);
@@ -157,7 +157,7 @@ public class ReviewService {
         if (currentAnswer.contains(marker)) {
             String unwrapped = currentAnswer.replace(marker, review.getOriginText());
             qnA.editAnswer(unwrapped);
-            long newVersion = qnA.incrementVersion();
+            long newVersion = qnARepository.incrementVersion(qnAId, 1);
             textDeltaService.resetDeltaVersion(qnAId, newVersion);
             eventPublisher.publishEvent(new TextReplaceAllEvent(coverLetterId, qnAId, newVersion, unwrapped));
         } else {
@@ -200,7 +200,7 @@ public class ReviewService {
             String newMarkerContent = markerOpen(reviewId) + review.getOriginText() + MARKER_CLOSE;
             String newAnswer = currentAnswer.replace(oldMarkerContent, newMarkerContent);
             qnA.editAnswer(newAnswer);
-            long newVersion = qnA.incrementVersion();
+            long newVersion = qnARepository.incrementVersion(qnAId, 1);
             textDeltaService.resetDeltaVersion(qnAId, newVersion);
             eventPublisher.publishEvent(new TextReplaceAllEvent(coverLetterId, qnAId, newVersion, newAnswer));
         } else {
