@@ -62,8 +62,6 @@ export const readStream = async <T = unknown>(
           if (jsonStr.startsWith('{') || jsonStr.startsWith('[')) {
             const data = JSON.parse(jsonStr) as T;
             onMessage(data);
-          } else {
-            console.log('텍스트 메시지 수신:', jsonStr);
           }
         } catch (error) {
           console.error('JSON 파싱 실패:', error, '원본:', jsonStr);
