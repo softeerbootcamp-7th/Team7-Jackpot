@@ -13,6 +13,7 @@ import com.jackpot.narratix.domain.service.dto.WebSocketCreateReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketDeleteReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketEditReviewMessage;
 
+import com.jackpot.narratix.domain.service.dto.WebSocketTextReplaceAllMessage;
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +81,21 @@ public class WebSocketEventListener {
         webSocketMessageSender.sendMessageToShare(
                 shareLink.get().getShareId(),
                 new WebSocketMessageResponse(WebSocketMessageType.REVIEW_DELETED, event.qnAId(), message)
+        );
+    }
+
+    @Async
+    @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handleTextReplaceAllEvent(TextReplaceAllEvent event) {
+        Optional<ShareLink> shareLink = shareLinkService.getActiveShareLinkByCoverLetterId(event.coverLetterId());
+        if (shareLink.isEmpty()) return;
+
+        WebSocketTextReplaceAllMessage message = WebSocketTextReplaceAllMessage.of(event);
+
+        webSocketMessageSender.sendMessageToShare(
+                shareLink.get().getShareId(),
+                new WebSocketMessageResponse(WebSocketMessageType.TEXT_REPLACE_ALL, event.qnAId(), message)
         );
     }
 
