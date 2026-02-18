@@ -301,7 +301,7 @@ class ReviewServiceTest {
         // when & then
         assertThatThrownBy(() -> reviewService.createReview(reviewerId, qnaId, request))
                 .isInstanceOf(BaseException.class)
-                .hasFieldOrPropertyWithValue("errorCode", ReviewErrorCode.REVIEW_VERSION_NOT_VALID);
+                .hasFieldOrPropertyWithValue("errorCode", ReviewErrorCode.REVIEW_VERSION_AHEAD);
 
         verify(reviewRepository, never()).save(any());
     }

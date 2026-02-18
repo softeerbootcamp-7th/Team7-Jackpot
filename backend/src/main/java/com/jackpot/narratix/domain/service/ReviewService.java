@@ -72,7 +72,7 @@ public class ReviewService {
             transformedStart = transformed[0];
             transformedEnd = transformed[1];
         } else if (reviewerVersion > currentVersion) {
-            throw new BaseException(ReviewErrorCode.REVIEW_VERSION_NOT_VALID);
+            throw new BaseException(ReviewErrorCode.REVIEW_VERSION_AHEAD);
         }
 
         // originText 검증
