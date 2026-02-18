@@ -1,5 +1,4 @@
-import FileDocument from '../../icons/FileDocument';
-
+import FileDocument from '@/features/coverLetter/icons/FileDocument';
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
 import RightArrow from '@/shared/icons/RightArrow';
 
