@@ -52,6 +52,8 @@ export const useLogin = () => {
 
       if (data.accessToken) {
         login(data.accessToken);
+      } else {
+        throw new Error('로그인 응답에 accessToken이 없습니다.')
       }
       return data;
     },
