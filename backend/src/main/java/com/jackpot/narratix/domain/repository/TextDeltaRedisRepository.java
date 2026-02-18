@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jackpot.narratix.domain.controller.request.TextUpdateRequest;
+import com.jackpot.narratix.domain.exception.SerializationException;
 import com.jackpot.narratix.domain.exception.VersionConflictException;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
@@ -165,7 +166,7 @@ public class TextDeltaRedisRepository {
             return result;
         } catch (JsonProcessingException e) {
             log.error("TextUpdateRequest 직렬화 실패: qnAId={}", qnAId, e);
-            throw new BaseException(GlobalErrorCode.INTERNAL_SERVER_ERROR);
+            throw new SerializationException(e);
         }
     }
 
