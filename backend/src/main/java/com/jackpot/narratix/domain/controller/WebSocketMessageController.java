@@ -2,10 +2,12 @@ package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.dto.WebSocketSessionInfo;
 import com.jackpot.narratix.domain.controller.request.TextUpdateRequest;
+import com.jackpot.narratix.domain.controller.response.TextUpdateResponse;
 import com.jackpot.narratix.domain.controller.response.WebSocketMessageResponse;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
 import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
+import com.jackpot.narratix.domain.service.TextDeltaService;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
@@ -27,6 +29,7 @@ import java.util.Map;
 public class WebSocketMessageController {
 
     private final WebSocketMessageSender webSocketMessageSender;
+    private final TextDeltaService textDeltaService;
 
     @SubscribeMapping("/share/{shareId}/qna/{qnAId}/review/writer")
     public void subscribeWriterCoverLetter(
@@ -87,10 +90,12 @@ public class WebSocketMessageController {
         validateShareId(shareId, sessionInfo.shareId());
         validateWriterRole(sessionInfo.role(), sessionInfo.userId(), shareId);
 
-        log.info("Text update received: userId={}, shareId={}, version={}, startIdx={}, endIdx={}",
-                sessionInfo.userId(), shareId, request.version(), request.startIdx(), request.endIdx());
+        log.info("Text update received: userId={}, shareId={}, startIdx={}, endIdx={}",
+                sessionInfo.userId(), shareId, request.startIdx(), request.endIdx());
 
-        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, request);
+        long deltaVersion = textDeltaService.saveAndMaybeFlush(qnAId, request);
+        TextUpdateResponse textUpdateResponse = TextUpdateResponse.of(deltaVersion, request);
+        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, textUpdateResponse);
 
         webSocketMessageSender.sendMessageToReviewer(shareId, response);
     }
