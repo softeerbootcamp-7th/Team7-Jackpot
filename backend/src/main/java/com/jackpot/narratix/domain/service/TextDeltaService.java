@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.Collections;
 import java.util.List;
@@ -89,12 +91,50 @@ public class TextDeltaService {
         }
 
         QnA qnA = qnARepository.findByIdOrElseThrow(qnAId);
-        String newAnswer = textMerger.merge(qnA.getAnswer(), deltas);
-        qnA.editAnswer(newAnswer);
-        qnA.incrementVersionBy(deltas);
 
-        long committedDeltaCount = textDeltaRedisRepository.commit(qnAId);
-        log.info("DB flush 완료: qnAId={}, newVersion={}, committed 수={}", qnAId, qnA.getVersion(), committedDeltaCount);
+        // DB version을 기준으로 dirty 델타 제거 (Redis commit 실패 후 잔존 데이터 이중 적용 방지)
+        // delta.version()은 push 직전 서버 버전이므로, delta.version() < dbVersion인 것은 이미 반영됨
+        long dbVersion = qnA.getVersion();
+        List<TextUpdateRequest> applicableDeltas = deltas.stream()
+                .filter(d -> d.version() >= dbVersion)
+                .toList();
+
+        if (applicableDeltas.isEmpty()) {
+            log.warn("모든 pending 델타가 이미 DB에 반영된 dirty 데이터: qnAId={}, dbVersion={}", qnAId, dbVersion);
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    clearPendingSilently(qnAId);
+                }
+            });
+            return;
+        }
+
+        String newAnswer = textMerger.merge(qnA.getAnswer(), applicableDeltas);
+        qnA.editAnswer(newAnswer);
+        qnA.incrementVersionBy(applicableDeltas);
+        long newVersion = qnA.getVersion();
+
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                try {
+                    long committedDeltaCount = textDeltaRedisRepository.commit(qnAId);
+                    log.info("DB flush 완료: qnAId={}, newVersion={}, committed 수={}", qnAId, newVersion, committedDeltaCount);
+                } catch (Exception e) {
+                    log.error("Redis commit 실패 (DB는 이미 커밋됨), pending 강제 삭제 시도: qnAId={}", qnAId, e);
+                    clearPendingSilently(qnAId);
+                }
+            }
+        });
+    }
+
+    private void clearPendingSilently(Long qnAId) {
+        try {
+            textDeltaRedisRepository.clearPending(qnAId);
+        } catch (Exception e) {
+            log.error("pending 강제 삭제 실패 (다음 flush에서 버전 필터링으로 재처리됨): qnAId={}", qnAId, e);
+        }
     }
 
     /**
