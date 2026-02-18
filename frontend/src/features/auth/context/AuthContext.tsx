@@ -1,11 +1,7 @@
 import { createContext } from 'react';
 
 import { useInitAuth } from '@/features/auth/hooks/useInitAuth';
-
-interface UserInfoType {
-  nickname: string;
-}
-
+import type { UserInfoType } from '@/features/auth/types/user';
 interface AuthContextType {
   isAuthenticated: boolean;
   userInfo: UserInfoType | undefined;
