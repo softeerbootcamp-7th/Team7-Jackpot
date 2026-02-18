@@ -30,7 +30,7 @@ export const useGetAllNotification = () => {
       if (!lastPage.hasNext) return undefined;
       const notificationList = lastPage.notifications;
       return notificationList.length > 0
-        ? notificationList[notificationList.lenght - 1].id
+        ? notificationList[notificationList.length - 1].id
         : undefined;
     },
     staleTime: 0,
