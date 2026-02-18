@@ -16,6 +16,6 @@ public record PresignedUrlRequest(
         String contentType,
 
         @Positive(message = "파일 크기는 0보다 커야 합니다.")
-        long fileSize
+        Long fileSize
 ) {
 }
