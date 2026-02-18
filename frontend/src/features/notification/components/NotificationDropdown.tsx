@@ -18,7 +18,7 @@ const NotificationDropdown = ({
   const { mutateAsync: readAllNotification } = useReadAllNotification();
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러 발생</div>;
-
+  const safeCount = unreadCount ?? 0;
   return (
     <div className='relative inline-block'>
       <button
@@ -27,9 +27,9 @@ const NotificationDropdown = ({
         className={`relative cursor-pointer p-1 ${isOpen ? 'z-20' : 'z-0'}`}
       >
         <I.HeaderNotificationIcon />
-        {unreadCount > 0 && (
+        {safeCount > 0 && (
           <span className='absolute -top-0.5 -right-0.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white ring-2 ring-white'>
-            {unreadCount > 99 ? '99+' : unreadCount}
+            {safeCount > 99 ? '99+' : safeCount}
           </span>
         )}
       </button>
