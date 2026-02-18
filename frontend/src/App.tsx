@@ -10,10 +10,8 @@ import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
-import { coverLetterEmptyCaseText } from './shared/constants/coverLetterEmptyCaseText';
-
-import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
-import NewCoverLetterContent from '@/features/coverLetter/components/NewCoverLetterContent';
+import CoverLetterReviewContent from '@/features/coverLetter/components/editor/CoverLetterReviewContent';
+import NewCoverLetter from '@/features/coverLetter/components/newCoverLetter/NewCoverLetter';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
 import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayout';
 import DetailView from '@/features/library/components/DetailView';
@@ -27,6 +25,7 @@ import EmptyCase from '@/shared/components/EmptyCase';
 import PrivateGuard from '@/shared/components/PrivateGuard';
 import PublicGuard from '@/shared/components/PublicGuard';
 import RootLayout from '@/shared/components/RootLayout';
+import { coverLetterEmptyCaseText } from '@/shared/constants/coverLetterEmptyCaseText';
 
 function App() {
   return (
@@ -88,7 +87,7 @@ function App() {
               </Route>
             </Route>
 
-            <Route path='/review/:coverLetterId' element={<ReviewPage />} />
+            <Route path='/review/:sharedId' element={<ReviewPage />} />
 
             <Route path='/cover-letter' element={<CoverLetterLayout />}>
               <Route
@@ -100,17 +99,14 @@ function App() {
                 element={<CoverLetterLandingPage />}
               />
               <Route element={<WriteSidebarLayout />}>
-                <Route
-                  path='/cover-letter/new'
-                  element={<NewCoverLetterContent />}
-                />
+                <Route path='/cover-letter/new' element={<NewCoverLetter />} />
                 <Route
                   path='/cover-letter/edit'
                   element={<Navigate to='/cover-letter/list' replace />}
                 />
                 <Route
                   path='/cover-letter/edit/:coverLetterId'
-                  element={<CoverLetterEditContent />}
+                  element={<CoverLetterReviewContent />}
                 />
               </Route>
             </Route>
