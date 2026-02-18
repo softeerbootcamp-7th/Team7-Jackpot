@@ -3,6 +3,7 @@ package com.jackpot.narratix.domain.repository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jackpot.narratix.domain.controller.request.TextUpdateRequest;
+import com.jackpot.narratix.domain.exception.VersionConflictException;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +38,20 @@ public class TextDeltaRedisRepository {
     static final int MAX_COMMITTED_SIZE = 100;
 
     /**
-     * RPUSH(pending) + INCR(version) 원자적 실행 Lua 스크립트.
-     * 반환값: INCR 후 버전 카운터 값 = 이 델타의 절대 버전
+     * 버전 검증 + RPUSH(pending) + INCR(version) 원자적 실행 Lua 스크립트.
+     *
+     * <p>ARGV[2](클라이언트 예상 버전)가 현재 카운터와 일치할 때만 push를 수행한다.
+     * 불일치 시 RPUSH/INCR 없이 -1을 반환해 버전 충돌을 알린다.</p>
+     *
+     * KEYS: [pendingKey, versionKey]
+     * ARGV: [deltaJson, expectedVersion]
+     * 반환값: 버전 일치 → INCR 후 카운터(= 이 델타의 절대 버전) / 불일치 → -1
      */
     private static final String PUSH_AND_INCR_SCRIPT = """
+            local current = redis.call('get', KEYS[2])
+            if current == false or tonumber(current) ~= tonumber(ARGV[2]) then
+                return -1
+            end
             redis.call('rpush', KEYS[1], ARGV[1])
             return redis.call('incr', KEYS[2])
             """;
@@ -70,6 +81,19 @@ public class TextDeltaRedisRepository {
 
     private static final DefaultRedisScript<Long> COMMIT_REDIS_SCRIPT =
             new DefaultRedisScript<>(COMMIT_SCRIPT, Long.class);
+
+    /**
+     * RPOP(pending) + DECR(version) 원자적 실행 Lua 스크립트.
+     * pushAndIncrVersion으로 추가된 마지막 델타를 되돌린다.
+     * 반환값: DECR 후 버전 카운터 값
+     */
+    private static final String ROLLBACK_PUSH_SCRIPT = """
+            redis.call('rpop', KEYS[1])
+            return redis.call('decr', KEYS[2])
+            """;
+
+    private static final DefaultRedisScript<Long> ROLLBACK_PUSH_REDIS_SCRIPT =
+            new DefaultRedisScript<>(ROLLBACK_PUSH_SCRIPT, Long.class);
 
     private String pendingKey(Long qnAId) {
         return PENDING_KEY_FORMAT.formatted(qnAId);
@@ -102,25 +126,47 @@ public class TextDeltaRedisRepository {
 
 
     /**
-     * 델타를 pending List에 RPUSH하고 버전 카운터를 INCR한다 (Lua 스크립트로 원자적 실행).
+     * 버전 검증 후 델타를 pending List에 RPUSH하고 버전 카운터를 INCR한다 (Lua 스크립트로 원자적 실행).
      *
-     * @return 이 델타의 절대 버전 번호 (초기 카운터 = QnA.version, 이후 INCR로 단조 증가)
+     * <p>{@code expectedVersion}이 현재 Redis 버전 카운터와 일치해야 push가 수행된다.
+     * 불일치 시 push 없이 {@link WebSocketErrorCode#VERSION_CONFLICT} 예외를 던진다.</p>
+     *
+     * @return 이 델타의 절대 버전 번호
+     * @throws BaseException VERSION_CONFLICT — 버전 불일치 (push 미발생)
      */
     public long pushAndIncrVersion(Long qnAId, TextUpdateRequest delta) {
+        long expectedVersion = delta.version();
         try {
             String json = objectMapper.writeValueAsString(delta);
-            Long version = redisTemplate.execute(
+            Long result = redisTemplate.execute(
                     PUSH_AND_INCR_REDIS_SCRIPT,
                     List.of(pendingKey(qnAId), versionKey(qnAId)),
-                    json
+                    json, String.valueOf(expectedVersion)
             );
-            return version != null ? version : 1L;
+            if (result == null || result == -1L) {
+                log.warn("버전 충돌: qnAId={}, expectedVersion={}", qnAId, expectedVersion);
+                throw new VersionConflictException();
+            }
+            return result;
         } catch (JsonProcessingException e) {
             log.error("TextUpdateRequest 직렬화 실패: qnAId={}", qnAId, e);
             throw new BaseException(GlobalErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
+
+    /**
+     * pushAndIncrVersion으로 추가된 마지막 델타를 원자적으로 되돌린다 (RPOP + DECR).
+     * saveAndMaybeFlush 실패 시 오류 복구 목적으로 사용된다.
+     * pending이 비어 있는 경우 RPOP은 no-op, DECR만 수행된다.
+     */
+    public void rollbackLastPush(Long qnAId) {
+        redisTemplate.execute(
+                ROLLBACK_PUSH_REDIS_SCRIPT,
+                List.of(pendingKey(qnAId), versionKey(qnAId))
+        );
+        log.debug("마지막 push 롤백 완료: qnAId={}", qnAId);
+    }
 
     /**
      * DB에 반영되지 않은 pending 델타를 순서대로 반환한다.
