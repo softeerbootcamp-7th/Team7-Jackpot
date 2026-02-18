@@ -19,6 +19,7 @@ const PageGlobalHeader = () => {
   if (isLoading) return null;
 
   const handleLogout = () => {
+    setIsProfileOpen(false);
     logout();
   };
 
@@ -71,7 +72,7 @@ const PageGlobalHeader = () => {
                 className='fixed inset-0 z-10 cursor-default'
                 onClick={() => setIsProfileOpen(false)}
               />
-              <div className='absolute right-0 z-20 mt-2 flex w-24 flex-col overflow-y-scroll rounded-lg bg-white shadow-[0_0_20px_rgba(0,0,0,0.1)] select-none'>
+              <div className='absolute right-0 z-20 mt-2 flex w-24 flex-col rounded-lg bg-white shadow-[0_0_20px_rgba(0,0,0,0.1)] select-none'>
                 <button
                   type='button'
                   className='w-full px-4 py-2 text-center text-sm text-red-600 hover:bg-red-50'
