@@ -80,6 +80,11 @@ public class QnA extends BaseTimeEntity {
         return this.version;
     }
 
+    public long incrementVersion() {
+        this.version += 1;
+        return this.version;
+    }
+
     public ReviewRoleType determineReviewRole(String userId) {
         if (isOwner(userId)) {
             return ReviewRoleType.WRITER;
