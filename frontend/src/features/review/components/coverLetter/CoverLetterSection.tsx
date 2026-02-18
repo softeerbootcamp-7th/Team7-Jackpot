@@ -1,20 +1,15 @@
-import { useCallback, useRef } from 'react';
-
 import CoverLetterChipList from '@/features/review/components/coverLetter/CoverLetterChipList';
 import CoverLetterContent from '@/features/review/components/coverLetter/CoverLetterContent';
 import CoverLetterPagination from '@/features/review/components/coverLetter/CoverLetterPagination';
 import CoverLetterQuestion from '@/features/review/components/coverLetter/CoverLetterQuestion';
-import ReviewModal from '@/features/review/components/reviewModal/ReviewModal';
+import ReviewModalContainer from '@/features/review/components/coverLetter/ReviewModalContainer';
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
-import useOutsideClick from '@/shared/hooks/useOutsideClick';
 import {
   useCreateReview,
   useUpdateReview,
 } from '@/shared/hooks/useReviewQueries';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
-
-const SPACER_HEIGHT = 10;
 
 interface CoverLetterSectionProps {
   company: string;
@@ -51,18 +46,10 @@ const CoverLetterSection = ({
   onCancelEdit,
   onPageChange,
 }: CoverLetterSectionProps) => {
-  const modalRef = useRef<HTMLDivElement>(null);
   const { showToast } = useToastMessageContext();
 
   const { mutate: createReview } = useCreateReview(qnaId);
   const { mutate: updateReviewMutation } = useUpdateReview(qnaId);
-
-  const handleOutsideClick = useCallback(() => {
-    onSelectionChange(null);
-    if (editingReview) onCancelEdit();
-  }, [editingReview, onCancelEdit, onSelectionChange]);
-
-  useOutsideClick(modalRef, handleOutsideClick, !!selection);
 
   const handleSubmit = (revision: string, comment: string) => {
     if (!selection) return;
@@ -76,20 +63,16 @@ const CoverLetterSection = ({
           body: { suggest: revision, comment },
         },
         {
-          onSuccess: () => {
-            onUpdateReview(editingReview.id, revision, comment);
-          },
-          onError: () => {
-            showToast('리뷰 업데이트에 실패했습니다. 다시 시도해주세요.');
-          },
+          onSuccess: () => onUpdateReview(editingReview.id, revision, comment),
+          onError: () =>
+            showToast('리뷰 업데이트에 실패했습니다. 다시 시도해주세요.'),
           onSettled: resetSelection,
         },
       );
     } else {
-      // 로컬 상태를 직접 추가하지 않고 API 호출만 수행.
       createReview(
         {
-          version: 0, // TODO: WebSocket TEXT_UPDATE 이벤트의 version 필드로 실제 문서 버전 추적 후 교체
+          version: 0,
           startIdx: selection.range.start,
           endIdx: selection.range.end,
           originText: selection.selectedText,
@@ -97,9 +80,8 @@ const CoverLetterSection = ({
           comment,
         },
         {
-          onError: () => {
-            showToast('리뷰 생성에 실패했습니다. 다시 시도해주세요.');
-          },
+          onError: () =>
+            showToast('리뷰 생성에 실패했습니다. 다시 시도해주세요.'),
           onSettled: resetSelection,
         },
       );
@@ -132,23 +114,12 @@ const CoverLetterSection = ({
       />
 
       {selection && (
-        <div
-          ref={modalRef}
-          className='fixed z-50'
-          role='presentation'
-          style={{
-            top: selection.modalTop + SPACER_HEIGHT,
-            left: selection.modalLeft,
-          }}
-        >
-          <ReviewModal
-            selectedText={selection.selectedText}
-            onSubmit={handleSubmit}
-            onCancel={handleCancel}
-            initialRevision={editingReview?.revision}
-            initialComment={editingReview?.comment}
-          />
-        </div>
+        <ReviewModalContainer
+          selection={selection}
+          editingReview={editingReview}
+          onSubmit={handleSubmit}
+          onCancel={handleCancel}
+        />
       )}
     </div>
   );

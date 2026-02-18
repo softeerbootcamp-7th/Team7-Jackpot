@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 
-import ReviewModal from '@/features/coverLetter/components/reviewWithFriend/ReviewModal';
+import ReviewModal from '@/features/review/components/reviewModal/ReviewModal';
 import useModalKeyboardNavigation from '@/shared/hooks/useModalKeyboardNavigation';
 import useOutsideClick from '@/shared/hooks/useOutsideClick';
 import type { Review } from '@/shared/types/review';
@@ -9,44 +9,40 @@ import type { SelectionInfo } from '@/shared/types/selectionInfo';
 const SPACER_HEIGHT = 10;
 
 interface ReviewModalContainerProps {
-  selection: SelectionInfo | null;
+  selection: SelectionInfo;
   editingReview: Review | null;
-  onDelete: (reviewId: number) => void;
-  onToggleApproval: (reviewId: number) => void;
-  onDismiss: () => void;
+  onSubmit: (revision: string, comment: string) => void;
+  onCancel: () => void;
 }
 
 const ReviewModalContainer = ({
   selection,
   editingReview,
-  onDelete,
-  onToggleApproval,
-  onDismiss,
+  onSubmit,
+  onCancel,
 }: ReviewModalContainerProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
 
-  useModalKeyboardNavigation(modalRef, onDismiss, !!selection);
-  useOutsideClick(modalRef, onDismiss, !!selection);
+  useModalKeyboardNavigation(modalRef, onCancel, !!selection);
 
-  if (!selection) return null;
+  useOutsideClick(modalRef, onCancel, !!selection);
 
   return (
     <div
       ref={modalRef}
-      className='fixed z-[9999]'
-      role='dialog'
-      aria-modal='true'
+      className='fixed z-50'
+      role='presentation'
       style={{
         top: selection.modalTop + SPACER_HEIGHT,
         left: selection.modalLeft,
       }}
     >
       <ReviewModal
-        review={editingReview}
+        selectedText={selection.selectedText}
+        onSubmit={onSubmit}
+        onCancel={onCancel}
         initialRevision={editingReview?.revision}
         initialComment={editingReview?.comment}
-        onDelete={onDelete}
-        onToggleApproval={onToggleApproval}
       />
     </div>
   );
