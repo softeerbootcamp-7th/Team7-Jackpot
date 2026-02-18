@@ -6,6 +6,7 @@ import com.jackpot.narratix.domain.controller.response.TextUpdateResponse;
 import com.jackpot.narratix.domain.controller.response.WebSocketMessageResponse;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import com.jackpot.narratix.domain.entity.enums.WebSocketMessageType;
+import com.jackpot.narratix.domain.exception.VersionConflictException;
 import com.jackpot.narratix.domain.exception.WebSocketErrorCode;
 import com.jackpot.narratix.domain.service.TextDeltaService;
 import com.jackpot.narratix.domain.service.WebSocketMessageSender;
@@ -93,11 +94,20 @@ public class WebSocketMessageController {
         log.info("Text update received: userId={}, shareId={}, startIdx={}, endIdx={}",
                 sessionInfo.userId(), shareId, request.startIdx(), request.endIdx());
 
-        long deltaVersion = textDeltaService.saveAndMaybeFlush(qnAId, request);
-        TextUpdateResponse textUpdateResponse = TextUpdateResponse.of(deltaVersion, request);
-        WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, textUpdateResponse);
-
-        webSocketMessageSender.sendMessageToReviewer(shareId, response);
+        try {
+            long deltaVersion = textDeltaService.saveAndMaybeFlush(qnAId, request);
+            TextUpdateResponse textUpdateResponse = TextUpdateResponse.of(deltaVersion, request);
+            WebSocketMessageResponse response = new WebSocketMessageResponse(WebSocketMessageType.TEXT_UPDATE, qnAId, textUpdateResponse);
+            webSocketMessageSender.sendMessageToReviewer(shareId, response);
+        } catch (VersionConflictException e) {
+            // delta push 미발생 — rollback 없이 현재 상태를 TEXT_REPLACE_ALL로 전송
+            log.warn("버전 충돌, TEXT_REPLACE_ALL 전송: shareId={}, qnAId={}", shareId, qnAId);
+            textDeltaService.recoverTextReplaceAll(shareId, qnAId);
+        } catch (Exception e) {
+            // delta push 이후 실패 — 마지막 push 롤백 후 TEXT_REPLACE_ALL 전송
+            log.error("텍스트 업데이트 실패, rollback 후 TEXT_REPLACE_ALL 전송: shareId={}, qnAId={}", shareId, qnAId, e);
+            textDeltaService.recoverTextReplaceAllWithRollback(shareId, qnAId);
+        }
     }
 
     private WebSocketSessionInfo extractSessionInfo(SimpMessageHeaderAccessor headerAccessor) {
