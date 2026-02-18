@@ -104,7 +104,7 @@ public class TextDeltaService {
 
         String newAnswer = textMerger.merge(qnA.getAnswer(), applicableDeltas);
         qnA.editAnswer(newAnswer);
-        qnA.incrementVersionBy(applicableDeltas);
+        qnA.incrementVersionBy(applicableDeltas.size());
 
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
@@ -172,7 +172,7 @@ public class TextDeltaService {
 
         String newAnswer = textMerger.merge(qnA.getAnswer(), deltas);
         qnA.editAnswer(newAnswer);
-        long version = qnA.incrementVersionBy(deltas);
+        long version = qnA.incrementVersionBy(deltas.size());
 
         WebSocketTextReplaceAllMessage message = new WebSocketTextReplaceAllMessage(version, newAnswer);
         WebSocketMessageResponse response = new WebSocketMessageResponse(
