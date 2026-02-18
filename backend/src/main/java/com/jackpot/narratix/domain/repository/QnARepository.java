@@ -39,4 +39,6 @@ public interface QnARepository {
     Long getCoverLetterIdByQnAIdOrElseThrow(Long qnAId);
 
     List<Long> findIdsByCoverLetterId(Long coverLetterId);
+
+    List<QnA> findByIds(List<Long> qnAIds);
 }

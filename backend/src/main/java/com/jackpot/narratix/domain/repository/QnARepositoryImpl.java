@@ -95,4 +95,9 @@ public class QnARepositoryImpl implements QnARepository {
         return qnAJpaRepository.findIdsByCoverLetterId(coverLetterId);
     }
 
+    @Override
+    public List<QnA> findByIds(List<Long> qnAIds) {
+        return qnAJpaRepository.findAllById(qnAIds);
+    }
+
 }
