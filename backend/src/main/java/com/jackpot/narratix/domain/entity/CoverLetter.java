@@ -1,24 +1,22 @@
 package com.jackpot.narratix.domain.entity;
 
-import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
 import com.jackpot.narratix.domain.controller.request.CoverLetterAndQnAEditRequest;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "coverletter")
 @Getter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 public class CoverLetter extends BaseTimeEntity {
 
@@ -56,20 +54,6 @@ public class CoverLetter extends BaseTimeEntity {
 
     public int getQuestionCount() {
         return qnAs != null ? qnAs.size() : 0;
-    }
-
-    public static CoverLetter createNewCoverLetter(String userId, CreateCoverLetterRequest request) {
-        CoverLetter coverLetter = new CoverLetter();
-        coverLetter.userId = userId;
-        coverLetter.companyName = request.companyName();
-        coverLetter.applyYear = request.applyYear();
-        coverLetter.applyHalf = request.applyHalf();
-        coverLetter.jobPosition = request.jobPosition();
-        coverLetter.deadline = request.deadline();
-        coverLetter.qnAs = request.questions().stream()
-                .map(question -> QnA.newQnA(coverLetter, question))
-                .collect(Collectors.toCollection(ArrayList::new));
-        return coverLetter;
     }
 
     public boolean isOwner(String userId) {

@@ -1,9 +1,6 @@
 package com.jackpot.narratix.domain.service;
 
-import com.jackpot.narratix.domain.controller.request.CoverLetterFilterRequest;
-import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
-import com.jackpot.narratix.domain.controller.request.CoverLetterAndQnAEditRequest;
-import com.jackpot.narratix.domain.controller.request.QnAEditRequest;
+import com.jackpot.narratix.domain.controller.request.*;
 import com.jackpot.narratix.domain.controller.response.*;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
@@ -35,7 +32,8 @@ public class CoverLetterService {
 
     @Transactional
     public CreateCoverLetterResponse createNewCoverLetter(String userId, CreateCoverLetterRequest createCoverLetterRequest) {
-        CoverLetter coverLetter = CoverLetter.createNewCoverLetter(userId, createCoverLetterRequest);
+        CoverLetter coverLetter = createCoverLetterRequest.toEntity(userId);
+        CoverLetter.createNewCoverLetter(userId, createCoverLetterRequest);
         CoverLetter newCoverLetter = coverLetterRepository.save(coverLetter);
 
         return new CreateCoverLetterResponse(newCoverLetter.getId());
