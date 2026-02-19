@@ -52,9 +52,8 @@ public class FileProcessService {
                     return null;
                 });
         try {
-            List<LabeledQnARequest> qnAs = objectMapper.readValue(labelingJsonResult,
-                    new TypeReference<List<LabeledQnARequest>>() {
-                    });
+            List<LabeledQnARequest> qnAs = objectMapper.readValue(labelingJsonResult, new TypeReference<>() {
+            });
 
             for (int i = 0; i < qnAs.size(); i++) {
                 if (i >= MAX_QNA_SIZE) break;
