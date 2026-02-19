@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { authClient } from '@/features/auth/api/auth';
+import {
+  useCheckId,
+  useLogin,
+  useSignUp as useSignUpMutation,
+} from '@/features/auth/hooks/useAuthClient';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
 import type { AuthFormData, AuthInputKey } from '@/features/auth/types/auth';
 import { validateFormData } from '@/features/auth/utils/validateFormData';
@@ -21,6 +25,9 @@ interface UseSignUpProps {
 }
 
 export const useSignUp = ({ handleSuccess }: UseSignUpProps) => {
+  const { mutateAsync: checkId } = useCheckId();
+  const { mutateAsync: signUp } = useSignUpMutation();
+  const { mutateAsync: login } = useLogin();
   const [isSignUpFailed, setIsSignUpFailed] = useState<boolean>(false);
   const { showToast } = useToastMessageContext();
   const { formData, handleInputChange: originalHandleInputChange } =
@@ -53,7 +60,7 @@ export const useSignUp = ({ handleSuccess }: UseSignUpProps) => {
     if (!validateId(formData.userId)) return;
 
     try {
-      await authClient.checkId({ userId: formData.userId });
+      await checkId({ userId: formData.userId });
 
       setIsIdDuplicationVerified(true);
       setStatusMsg((prev) => ({
@@ -78,14 +85,14 @@ export const useSignUp = ({ handleSuccess }: UseSignUpProps) => {
     }
 
     try {
-      await authClient.signUp({
+      await signUp({
         userId: formData.userId,
         password: formData.password,
         passwordConfirm: formData.passwordConfirm,
         nickname: formData.nickname,
       });
 
-      await authClient.login({
+      await login({
         userId: formData.userId,
         password: formData.password,
       });

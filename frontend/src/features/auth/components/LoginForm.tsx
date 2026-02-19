@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import React from 'react';
 
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
-import { authClient } from '@/features/auth/api/auth';
 import InputBar from '@/features/auth/components/InputBar';
 import SubmitButton from '@/features/auth/components/SubmitButton';
 import { INPUT_BAR_IN_LOGIN } from '@/features/auth/constants/constantsInLoginPage';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import { useLogin } from '@/features/auth/hooks/useAuthClient';
 import useAuthForm from '@/features/auth/hooks/useAuthForm';
 import type { AuthInputKey } from '@/features/auth/types/auth';
 import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
 import { validateId } from '@/shared/utils/validation';
 
 const LoginForm = () => {
+  const { mutateAsync: login } = useLogin();
   const { showToast } = useToastMessageContext();
-  const { login: setLoginState } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   // 로그인 실패 시를 위한 상태
   const [isLoginFailed, setIsLoginFailed] = useState<boolean>(false);
   // SoC(관심사 분리)를 위해 커스텀 훅 내부가 아닌 외부에서 핸들러 고도화 (구조 분해 할당 alias 활용)
@@ -42,14 +42,12 @@ const LoginForm = () => {
     e.preventDefault();
 
     try {
-      await authClient.login({
+      await login({
         userId: formData.userId,
         password: formData.password,
       });
 
-      setLoginState();
       showToast('로그인 되었습니다.', true);
-      navigate('/home');
     } catch (error) {
       console.error('Login Failed:', error);
       if (error instanceof Error) {
@@ -94,7 +92,10 @@ const LoginForm = () => {
       </form>
       <button
         type='button'
-        onClick={() => navigate('/signup')}
+        onClick={() => {
+          const redirect = searchParams.get('redirect');
+          navigate(redirect ? `/signup?redirect=${encodeURIComponent(redirect)}` : '/signup');
+        }}
         className='text-body-m cursor-pointer font-medium text-gray-600'
       >
         회원가입
