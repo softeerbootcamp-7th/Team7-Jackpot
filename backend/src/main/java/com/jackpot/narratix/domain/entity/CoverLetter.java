@@ -52,6 +52,13 @@ public class CoverLetter extends BaseTimeEntity {
     @OneToMany(mappedBy = "coverLetter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QnA> qnAs = new ArrayList<>();
 
+    public void addQnAs(List<QnA> qnAs) {
+        qnAs.forEach(qnA -> {
+            this.qnAs.add(qnA);
+            qnA.connectCoverLetter(this);
+        });
+    }
+
     public int getQuestionCount() {
         return qnAs != null ? qnAs.size() : 0;
     }
