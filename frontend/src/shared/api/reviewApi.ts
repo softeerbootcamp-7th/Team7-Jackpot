@@ -1,7 +1,4 @@
-import { getAccessToken } from '@/features/auth/libs/tokenStore';
-import { parseErrorResponse } from '@/shared/utils/fetchUtils';
-
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { apiClient } from '@/shared/api/apiClient';
 
 export interface ApiReview {
   id: number;
@@ -10,25 +7,70 @@ export interface ApiReview {
   suggest: string | null;
   comment: string;
   createdAt: string;
+  isApproved: boolean;
 }
 
 interface GetReviewsResponse {
   reviews: ApiReview[];
 }
 
-// 아직 백엔드 API 개발 전입니다.
 export const getReviewsByQnaId = async (
   qnaId: number,
 ): Promise<GetReviewsResponse> => {
-  const response = await fetch(`${BASE_URL}/qna/${qnaId}/reviews/all`, {
-    headers: {
-      Authorization: getAccessToken(),
-    },
+  return apiClient.get<GetReviewsResponse>({
+    endpoint: `/qna/${qnaId}/reviews/all`,
   });
+};
 
-  if (!response.ok) {
-    await parseErrorResponse(response);
-  }
+export const deleteReview = async (
+  qnaId: number,
+  reviewId: number,
+): Promise<void> => {
+  return apiClient.delete<void>({
+    endpoint: `/qna/${qnaId}/reviews/${reviewId}`,
+  });
+};
 
-  return (await response.json()) as GetReviewsResponse;
+export interface CreateReviewRequest {
+  version: number;
+  startIdx: number;
+  endIdx: number;
+  originText: string;
+  suggest: string;
+  comment: string;
+}
+
+export const createReview = async (
+  qnaId: number,
+  body: CreateReviewRequest,
+): Promise<void> => {
+  return apiClient.post<void>({
+    endpoint: `/qna/${qnaId}/reviews`,
+    body,
+  });
+};
+
+export interface UpdateReviewRequest {
+  suggest: string;
+  comment: string;
+}
+
+export const updateReview = async (
+  qnaId: number,
+  reviewId: number,
+  body: UpdateReviewRequest,
+): Promise<void> => {
+  return apiClient.put<void>({
+    endpoint: `/qna/${qnaId}/reviews/${reviewId}`,
+    body,
+  });
+};
+
+export const approveReview = async (
+  qnaId: number,
+  reviewId: number,
+): Promise<void> => {
+  return apiClient.patch<void>({
+    endpoint: `/qna/${qnaId}/reviews/${reviewId}/approve`,
+  });
 };
