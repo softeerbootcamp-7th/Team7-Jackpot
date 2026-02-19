@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -40,7 +41,6 @@ public class UploadJob extends BaseTimeEntity {
     }
 
     public boolean isOwner(String userId) {
-        return this.userId.equals(userId);
+        return Objects.equals(this.userId, userId);
     }
-
 }
