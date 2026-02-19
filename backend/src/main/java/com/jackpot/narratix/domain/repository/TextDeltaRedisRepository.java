@@ -225,6 +225,11 @@ public class TextDeltaRedisRepository {
      * @return 이동된 델타 수
      */
     public long commit(Long qnAId, long deltaCount) {
+        if (deltaCount <= 0) {
+            log.debug("commit 대상 델타 없음: qnAId={}, deltaCount={}", qnAId, deltaCount);
+            return 0L;
+        }
+
         Long moved = redisTemplate.execute(
                 COMMIT_REDIS_SCRIPT,
                 List.of(pendingKey(qnAId), committedKey(qnAId)),
