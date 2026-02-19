@@ -168,7 +168,6 @@ const CoverLetterContent = ({
           redoStack.current = [];
           isInputtingRef.current = true;
           latestTextRef.current = newText; // 즉시 동기 업데이트 — re-render 전 다음 입력에서도 최신 값 사용
-          onTextChangeRef.current(newText);
 
           if (isConnected && shareId && qnAId) {
             versionRef.current += 1;
