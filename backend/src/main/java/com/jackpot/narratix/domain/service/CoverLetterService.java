@@ -10,6 +10,7 @@ import com.jackpot.narratix.domain.exception.QnAErrorCode;
 import com.jackpot.narratix.domain.repository.CoverLetterRepository;
 import com.jackpot.narratix.domain.repository.QnARepository;
 import com.jackpot.narratix.domain.repository.ScrapRepository;
+import com.jackpot.narratix.domain.repository.UploadJobRepository;
 import com.jackpot.narratix.domain.repository.dto.QnACountProjection;
 import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.exception.GlobalErrorCode;
@@ -28,15 +29,15 @@ public class CoverLetterService {
 
     private final CoverLetterRepository coverLetterRepository;
     private final QnARepository qnARepository;
+    private final UploadJobRepository uploadJobRepository;
     private final ScrapRepository scrapRepository;
 
     @Transactional
     public CreateCoverLetterResponse createNewCoverLetter(String userId, CreateCoverLetterRequest createCoverLetterRequest) {
         CoverLetter coverLetter = createCoverLetterRequest.toEntity(userId);
-        CoverLetter.createNewCoverLetter(userId, createCoverLetterRequest);
-        CoverLetter newCoverLetter = coverLetterRepository.save(coverLetter);
+        coverLetter = coverLetterRepository.save(coverLetter);
 
-        return new CreateCoverLetterResponse(newCoverLetter.getId());
+        return new CreateCoverLetterResponse(coverLetter.getId());
     }
 
     @Transactional(readOnly = true)
@@ -235,5 +236,20 @@ public class CoverLetterService {
                         .map(QnAListResponse.QnAResponse::of)
                         .toList()
         );
+    }
+
+    @Transactional
+    public SavedCoverLetterCountResponse saveCoverLetterAndDeleteJob(
+            String userId, String uploadJobId, CoverLettersSaveRequest request
+    ) {
+        List<CoverLetter> coverLetters = request.toEntity(userId);
+        coverLetters = coverLetterRepository.saveAll(coverLetters);
+
+        int savedCount = coverLetters.size();
+
+        // TODO: 라벨링 결과도 함께 삭제되는지 확인 필요
+        uploadJobRepository.deleteById(uploadJobId);
+
+        return new SavedCoverLetterCountResponse(savedCount);
     }
 }
