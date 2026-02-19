@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TextDeltaService {
 
-    static final int FLUSH_THRESHOLD = 20;
+    private static final int FLUSH_THRESHOLD = 20;
 
     private final TextDeltaRedisRepository textDeltaRedisRepository;
     private final QnARepository qnARepository;
