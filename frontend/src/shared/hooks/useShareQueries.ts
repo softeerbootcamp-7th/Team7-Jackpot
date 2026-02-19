@@ -5,7 +5,7 @@ import {
   getShareQnA,
 } from '@/shared/api/shareApi';
 
-// ShareId로 CoverLetter 정보 + QnA ID 목록 조회 (초기 로딩용 Suspense)
+// ShareId로 CoverLetter 정보 + QnA ID 목록 조회 
 export const useShareCoverLetter = (shareId: string, isConnected: boolean) => {
   return useQuery({
     queryKey: ['share', shareId, 'coverLetter'],
