@@ -33,11 +33,6 @@ public class UploadFile {
     @Column(columnDefinition = "TEXT")
     private String extractedText;
 
-    @Lob
-    @Column(columnDefinition = "TEXT")
-    private String labeledText;
-
-
     public void successExtract(String extractedText) {
         this.extractedText = extractedText;
         changeStatus(UploadStatus.EXTRACTED);
@@ -47,8 +42,7 @@ public class UploadFile {
         changeStatus(UploadStatus.FAILED);
     }
 
-    public void successLabeling(String labeledJsonText) {
-        this.labeledText = labeledJsonText;
+    public void successLabeling() {
         changeStatus(UploadStatus.COMPLETED);
     }
 
