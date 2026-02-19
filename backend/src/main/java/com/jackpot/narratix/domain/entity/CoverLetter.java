@@ -62,7 +62,7 @@ public class CoverLetter extends BaseTimeEntity {
     }
 
     public int getQuestionCount() {
-        return qnAs != null ? qnAs.size() : 0;
+        return qnAs.size();
     }
 
     public boolean isOwner(String userId) {
