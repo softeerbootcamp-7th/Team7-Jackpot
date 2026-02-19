@@ -21,8 +21,6 @@ public class UploadFile {
     @JoinColumn(name = "upload_job_id")
     private UploadJob uploadJob;
 
-    @Column(nullable = false)
-    private String originalFileName;
 
     @Column(nullable = false)
     private String s3Key;
@@ -61,7 +59,6 @@ public class UploadFile {
     @Builder
     public UploadFile(String id, String originalFileName, String s3Key) {
         this.id = id;
-        this.originalFileName = originalFileName;
         this.s3Key = s3Key;
         this.status = UploadStatus.PENDING;
     }
