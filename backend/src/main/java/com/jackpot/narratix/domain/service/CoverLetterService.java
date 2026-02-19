@@ -4,6 +4,7 @@ import com.jackpot.narratix.domain.controller.request.*;
 import com.jackpot.narratix.domain.controller.response.*;
 import com.jackpot.narratix.domain.entity.CoverLetter;
 import com.jackpot.narratix.domain.entity.QnA;
+import com.jackpot.narratix.domain.entity.UploadJob;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
 import com.jackpot.narratix.domain.exception.QnAErrorCode;
@@ -247,8 +248,14 @@ public class CoverLetterService {
 
         int savedCount = coverLetters.size();
 
-        // TODO: 라벨링 결과도 함께 삭제되는지 확인 필요
-        uploadJobRepository.deleteById(uploadJobId);
+        Optional<UploadJob> uploadJobOpt = uploadJobRepository.findById(uploadJobId);
+        if(uploadJobOpt.isPresent()){
+            UploadJob uploadJob = uploadJobOpt.get();
+            if(!uploadJob.isOwner(userId)){
+                throw new BaseException(GlobalErrorCode.FORBIDDEN);
+            }
+            uploadJobRepository.deleteById(uploadJobId);
+        }
 
         return new SavedCoverLetterCountResponse(savedCount);
     }
