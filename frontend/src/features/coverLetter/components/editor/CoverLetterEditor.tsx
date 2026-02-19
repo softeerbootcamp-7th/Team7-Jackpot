@@ -34,6 +34,9 @@ interface CoverLetterEditorProps {
   toolbar: ReactNode;
   onPageChange: (index: number) => void;
   onTextChange: (newText: string) => void;
+  isConnected?: boolean;
+  sendMessage?: (destination: string, body: unknown) => void;
+  shareId?: string;
 }
 
 const CoverLetterEditor = ({
@@ -47,6 +50,9 @@ const CoverLetterEditor = ({
   toolbar,
   onPageChange,
   onTextChange,
+  isConnected = false,
+  sendMessage = () => {},
+  shareId = '',
 }: CoverLetterEditorProps) => {
   const [, setSearchParams] = useSearchParams();
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
@@ -156,6 +162,10 @@ const CoverLetterEditor = ({
               onReviewClick={handleReviewClick}
               onTextChange={onTextChange}
               onComposingLengthChange={setComposingLength}
+              isConnected={isConnected}
+              sendMessage={sendMessage}
+              shareId={shareId}
+              qnAId={currentQna.qnAId.toString()}
             />
           </div>
 
