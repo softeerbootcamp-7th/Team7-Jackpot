@@ -17,7 +17,7 @@ public class LabeledQnA {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "upload_file_id")
+    @JoinColumn(name = "upload_file_id", nullable = false)
     private UploadFile uploadFile;
 
     @Column(columnDefinition = "TEXT")
@@ -31,12 +31,12 @@ public class LabeledQnA {
     private QuestionCategoryType questionCategory;
 
     @Builder
-    public LabeledQnA(UploadFile uploadFile, String question, String answer, QuestionCategoryType category) {
+    public LabeledQnA(UploadFile uploadFile, String question, String answer, QuestionCategoryType questionCategory) {
         this.uploadFile = uploadFile;
         this.question = question;
         this.answer = answer;
-        this.questionCategory = category;
+        this.questionCategory = questionCategory;
     }
 
-    
+
 }
