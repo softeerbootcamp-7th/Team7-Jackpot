@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import type { IFrame, IMessage } from '@stomp/stompjs';
+import type { IFrame } from '@stomp/stompjs';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 
@@ -10,22 +10,11 @@ const SOCKET_URL = `${import.meta.env.VITE_SOCKET_URL}`;
 
 interface UseStompClientProps {
   shareId: string;
-  qnaId: string;
-  onMessage?: (message: IMessage) => void;
 }
 
-export const useStompClient = ({
-  shareId,
-  qnaId,
-  onMessage,
-}: UseStompClientProps) => {
+export const useStompClient = ({ shareId }: UseStompClientProps) => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const clientRef = useRef<Client | null>(null);
-  const onMessageRef = useRef(onMessage);
-
-  useEffect(() => {
-    onMessageRef.current = onMessage;
-  }, [onMessage]);
 
   useEffect(() => {
     if (!shareId) {
@@ -46,20 +35,6 @@ export const useStompClient = ({
       onConnect: () => {
         console.log('Websocket Connected!');
         setIsConnected(true);
-
-        // 리뷰에 대한 데이터만 받기 위해 review SUB URL 구독
-        client.subscribe(
-          `/sub/share/${shareId}/qna/${qnaId}/review`,
-          (message: IMessage) => {
-            if (message.body) {
-              const parsedBody = JSON.parse(message.body);
-              console.log('received message:', parsedBody);
-              if (onMessageRef.current) {
-                onMessageRef.current(parsedBody);
-              }
-            }
-          },
-        );
       },
       onStompError: (frame: IFrame) => {
         console.error('Broker reported error:', frame.headers['message']);
@@ -79,7 +54,7 @@ export const useStompClient = ({
       client.deactivate();
       setIsConnected(false);
     };
-  }, [shareId, qnaId]);
+  }, [shareId]);
 
   const sendMessage = (destination: string, body: unknown) => {
     if (clientRef.current && clientRef.current.connected) {
@@ -92,5 +67,5 @@ export const useStompClient = ({
     }
   };
 
-  return { isConnected, sendMessage };
+  return { isConnected, sendMessage, clientRef };
 };
