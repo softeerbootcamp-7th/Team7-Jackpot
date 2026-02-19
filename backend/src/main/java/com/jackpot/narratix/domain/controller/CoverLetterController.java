@@ -103,6 +103,7 @@ public class CoverLetterController implements CoverLetterApi {
         return ResponseEntity.ok(coverLetterService.findDeadlineByDateRange(userId, startDate, endDate));
     }
 
+    @Override
     @PostMapping("/upload/{uploadJobId}")
     public ResponseEntity<SavedCoverLetterCountResponse> saveUploadedCoverLetter(
             @UserId String userId,
