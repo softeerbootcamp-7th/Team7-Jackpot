@@ -6,10 +6,10 @@ const NotFoundPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className='flex h-screen w-full flex-col items-center justify-center bg-white'>
-      <div className='relative h-[35rem] w-[65rem]'>
-        <NotFoundIllustration className='h-full w-full' />
-        <div className='absolute top-[140px] left-1/2 inline-flex w-96 -translate-x-1/2 flex-col items-center justify-start gap-3'>
+    <div className='flex h-screen w-full max-w-full flex-col items-center justify-center bg-white'>
+      <div className='relative h-[35rem] max-w-full'>
+        <NotFoundIllustration className='h-full w-full' aria-hidden='true' />
+        <div className='absolute top-1/4 left-1/2 inline-flex w-96 -translate-x-1/2 flex-col items-center justify-start gap-3'>
           <h1 className='self-stretch text-center text-2xl font-bold text-gray-950'>
             페이지를 찾을 수 없습니다.
           </h1>

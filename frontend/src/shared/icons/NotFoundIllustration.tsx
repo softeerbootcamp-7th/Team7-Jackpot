@@ -1,6 +1,8 @@
-import type { SVGProps } from 'react';
+import { type SVGProps, useId } from 'react';
 
 const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
+  const id = useId();
+
   return (
     <svg
       viewBox='0 0 810 424'
@@ -14,7 +16,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
         cy='212'
         r='195'
         transform='rotate(90 405 212)'
-        fill='url(#paint0_linear_11741_42307)'
+        fill={`url(#${id}-paint0)`}
         fillOpacity='0.9'
       />
       <circle
@@ -23,7 +25,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
         cy='211.999'
         r='137.661'
         transform='rotate(90 404.999 211.999)'
-        fill='url(#paint1_linear_11741_42307)'
+        fill={`url(#${id}-paint1)`}
         fillOpacity='0.9'
       />
       <circle
@@ -32,7 +34,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
         cy='212'
         r='90.143'
         transform='rotate(90 405.002 212)'
-        fill='url(#paint2_linear_11741_42307)'
+        fill={`url(#${id}-paint2)`}
         fillOpacity='0.9'
       />
       <path
@@ -41,7 +43,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
       />
       <path
         d='M407.493 232.995C412.882 226.372 423.509 228.672 425.679 236.93L462.109 375.628C464.142 383.367 457.066 390.42 449.334 388.363L326.605 355.708C319.287 353.76 316.415 344.911 321.195 339.037L407.493 232.995Z'
-        fill='url(#paint3_linear_11741_42307)'
+        fill={`url(#${id}-paint3)`}
       />
       <path
         d='M400.835 274.388C401.524 271.067 404.375 268.634 407.763 268.475C412.9 268.234 416.724 273.157 415.219 278.075L402.36 320.08C401.65 322.399 399.483 323.961 397.059 323.901C393.688 323.818 391.215 320.701 391.901 317.399L400.835 274.388Z'
@@ -57,7 +59,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
       />
       <defs>
         <linearGradient
-          id='paint0_linear_11741_42307'
+          id={`${id}-paint0`}
           x1='405'
           y1='17'
           x2='405'
@@ -70,7 +72,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
           <stop offset='1' stopColor='#EAECED' />
         </linearGradient>
         <linearGradient
-          id='paint1_linear_11741_42307'
+          id={`${id}-paint1`}
           x1='404.999'
           y1='74.3379'
           x2='404.999'
@@ -83,7 +85,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
           <stop offset='1' stopColor='#EAECED' />
         </linearGradient>
         <linearGradient
-          id='paint2_linear_11741_42307'
+          id={`${id}-paint2`}
           x1='405.002'
           y1='121.857'
           x2='405.002'
@@ -96,7 +98,7 @@ const NotFoundIllustration = (props: SVGProps<SVGSVGElement>) => {
           <stop offset='1' stopColor='#EAECED' />
         </linearGradient>
         <linearGradient
-          id='paint3_linear_11741_42307'
+          id={`${id}-paint3`}
           x1='373.242'
           y1='223.828'
           x2='394.104'
