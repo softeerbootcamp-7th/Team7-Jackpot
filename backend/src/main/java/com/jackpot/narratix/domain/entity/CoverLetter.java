@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "coverletter")
@@ -67,6 +68,10 @@ public class CoverLetter extends BaseTimeEntity {
 
     public boolean isOwner(String userId) {
         return Objects.equals(this.userId, userId);
+    }
+
+    public void removeQnAsNotIn(Set<Long> keepIds) {
+        this.qnAs.removeIf(qnA -> !keepIds.contains(qnA.getId()));
     }
 
     public void edit(CoverLetterAndQnAEditRequest.CoverLetterEditRequest request){

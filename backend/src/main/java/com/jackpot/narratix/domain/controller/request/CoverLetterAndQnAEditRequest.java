@@ -25,7 +25,7 @@ public record CoverLetterAndQnAEditRequest(
     }
 
     public record QnAEditRequest(
-            @NotNull(message = "QnA 아이디는 필수 입력 항목입니다.") Long qnAId,
+            Long qnAId,
             @NotNull(message = "질문은 필수 입력 항목입니다.") String question,
             @NotNull(message = "문항 유형은 필수 입력 항목입니다.") QuestionCategoryType category
     ) {

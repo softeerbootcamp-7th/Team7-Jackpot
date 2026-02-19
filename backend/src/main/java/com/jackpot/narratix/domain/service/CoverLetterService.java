@@ -77,26 +77,42 @@ public class CoverLetterService {
     @Transactional
     public void editCoverLetterAndQnA(String userId, CoverLetterAndQnAEditRequest request) {
         Long coverLetterId = request.coverLetter().coverLetterId();
-        CoverLetter coverLetter = coverLetterRepository.findByIdOrElseThrow(coverLetterId);
+        CoverLetter coverLetter = coverLetterRepository.findByIdWithQnAsOrElseThrow(coverLetterId);
 
         if (!coverLetter.isOwner(userId)) throw new BaseException(GlobalErrorCode.FORBIDDEN);
         coverLetter.edit(request.coverLetter());
 
-        List<Long> qnAIds = request.questions().stream()
-                .map(CoverLetterAndQnAEditRequest.QnAEditRequest::qnAId)
+        List<CoverLetterAndQnAEditRequest.QnAEditRequest> newQnARequests = request.questions().stream()
+                .filter(q -> q.qnAId() == null)
                 .toList();
 
-        Map<Long, QnA> qnAMap = qnARepository.findByIds(qnAIds).stream()
+        List<CoverLetterAndQnAEditRequest.QnAEditRequest> existingQnARequests = request.questions().stream()
+                .filter(q -> q.qnAId() != null)
+                .toList();
+
+        Set<Long> keepIds = existingQnARequests.stream()
+                .map(CoverLetterAndQnAEditRequest.QnAEditRequest::qnAId)
+                .collect(Collectors.toSet());
+        coverLetter.removeQnAsNotIn(keepIds);
+
+        Map<Long, QnA> qnAMap = coverLetter.getQnAs().stream()
                 .collect(Collectors.toMap(QnA::getId, qnA -> qnA));
 
-        for (CoverLetterAndQnAEditRequest.QnAEditRequest qnAEditRequest : request.questions()) {
+        for (CoverLetterAndQnAEditRequest.QnAEditRequest qnAEditRequest : existingQnARequests) {
             QnA qnA = Optional.ofNullable(qnAMap.get(qnAEditRequest.qnAId()))
                     .orElseThrow(() -> new BaseException(QnAErrorCode.QNA_NOT_FOUND));
-            if (!qnA.getCoverLetter().getId().equals(coverLetterId)) {
-                throw new BaseException(QnAErrorCode.NOT_SAME_COVERLETTER);
-            }
             qnA.editQuestion(qnAEditRequest.question(), qnAEditRequest.category());
         }
+
+        // 새 QnA 추가
+        List<QnA> newQnAs = newQnARequests.stream()
+                .map(q -> QnA.builder()
+                        .userId(userId)
+                        .question(q.question())
+                        .questionCategory(q.category())
+                        .build())
+                .toList();
+        coverLetter.addQnAs(newQnAs);
     }
 
     @Transactional(readOnly = true)
