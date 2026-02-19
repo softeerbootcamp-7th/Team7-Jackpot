@@ -26,18 +26,16 @@ public class LambdaCallService {
     @Value("${aws.lambda.function-name}")
     private String functionName;
 
-    public void callLambda(String jobId, List<String> fileIds) {
-
+    public void callLambda(List<String> fileIds) {
         for (String fileId : fileIds) {
-            invokeSingle(jobId, fileId);
+            invokeSingle(fileId);
         }
     }
 
-    private void invokeSingle(String jobId, String fileId) {
+    private void invokeSingle(String fileId) {
 
         try {
             Map<String, Object> payload = Map.of(
-                    "jobId", jobId,
                     "fileId", fileId
             );
 
@@ -45,25 +43,23 @@ public class LambdaCallService {
 
             InvokeRequest request = InvokeRequest.builder()
                     .functionName(functionName)
-                    .invocationType(InvocationType.EVENT)
+                    .invocationType(InvocationType.EVENT) // 비동기 호출
                     .payload(SdkBytes.fromString(json, StandardCharsets.UTF_8))
                     .build();
 
             InvokeResponse response = lambdaClient.invoke(request);
 
             if (response.statusCode() != 202) {
-                log.error("[Lambda Invoke Fail] jobId={}, fileId={}, statusCode={}, functionName={}",
-                        jobId, fileId, response.statusCode(), functionName);
+                log.error("Lambda Invoke Fail : fileId={}, functionName={}, statusCode={}", fileId, functionName, response.statusCode());
             }
 
-            log.info("[Lambda Invoke Success] jobId={}, fileId={}, functionName={}, statusCode={}",
-                    jobId, fileId, functionName, response.statusCode());
+            log.info("Lambda Invoke Success : fileId={}, functionName={}, statusCode={}", fileId, functionName, response.statusCode());
 
         } catch (JsonProcessingException e) {
-            log.error("[Lambda Payload Serialize Fail] jobId={}, fileId={}", jobId, fileId, e);
+            log.error("Lambda Payload Serialize Fail : fileId={}", fileId, e);
         } catch (Exception e) {
-            log.error("[Lambda Invoke Error] jobId={}, fileId={}, functionName={}",
-                    jobId, fileId, functionName, e);
+            log.error("Lambda Invoke Error: fileId={}, functionName={}",
+                    fileId, functionName, e);
         }
     }
 }

@@ -17,6 +17,6 @@ public class JobEventListener {
     @Async
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handleJobCreatedEvent(JobCreatedEvent event) {
-        lambdaCallService.callLambda(event.jobId(), event.fileIds());
+        lambdaCallService.callLambda(event.fileIds());
     }
 }
