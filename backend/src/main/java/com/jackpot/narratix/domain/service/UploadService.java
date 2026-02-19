@@ -35,7 +35,6 @@ public class UploadService {
 
     private static final Duration PRESIGNED_URL_EXPIRE = Duration.ofMinutes(10);   // 10분
     private static final long MAX_FILE_SIZE = 5L * 1024 * 1024;                    // 5MB
-    private static final int MAX_FILE_COUNT = 3;
     private static final String FOLDER_NAME = "coverletter";
 
     public PresignedUrlResponse createPresignedUrl(String userId, PresignedUrlRequest request) {
@@ -95,9 +94,6 @@ public class UploadService {
     }
 
     public void createJob(String userId, JobCreateRequest request) {
-        if (request.files().size() > MAX_FILE_COUNT) {
-            throw new BaseException(UploadErrorCode.TOO_MANY_FILES);
-        }
 
         String jobId = UlidCreator.getUlid().toString();
         UploadJob job = UploadJob.builder()

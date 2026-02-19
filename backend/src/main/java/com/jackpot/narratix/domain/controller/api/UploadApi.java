@@ -31,8 +31,7 @@ public interface UploadApi {
 
     @Operation(summary = "Job 생성과 AI 라벨링 시작 요청 ", description = "Job을 생성하고 람다를 호출합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "job생성 및 람다 호출 성공",
-                    content = @Content(schema = @Schema(implementation = PresignedUrlResponse.class))),
+            @ApiResponse(responseCode = "200", description = "job생성 및 람다 호출 성공"),
     })
     ResponseEntity<Void> createJob(
             @Parameter(hidden = true) String userId,
