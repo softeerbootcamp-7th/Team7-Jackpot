@@ -2,6 +2,7 @@ package com.jackpot.narratix.domain.entity;
 
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,18 +13,21 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "labeled_qna")
 public class LabeledQnA {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "upload_file_id", nullable = false)
     private UploadFile uploadFile;
 
-    @Column(columnDefinition = "TEXT")
+    @NotNull
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String question;
 
-    @Column(columnDefinition = "TEXT")
+    @NotNull
+    @Column(columnDefinition = "TEXT", nullable = false)
     private String answer;
 
     @Enumerated(EnumType.STRING)
