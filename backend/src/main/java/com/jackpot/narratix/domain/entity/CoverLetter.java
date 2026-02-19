@@ -49,6 +49,7 @@ public class CoverLetter extends BaseTimeEntity {
     @Column(name = "deadline", nullable = true)
     private LocalDate deadline;
 
+    @Builder.Default
     @OneToMany(mappedBy = "coverLetter", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QnA> qnAs = new ArrayList<>();
 
