@@ -1,7 +1,9 @@
 package com.jackpot.narratix.domain.service;
 
 import com.jackpot.narratix.domain.entity.UploadFile;
+import com.jackpot.narratix.domain.exception.UploadErrorCode;
 import com.jackpot.narratix.domain.repository.UploadFileRepository;
+import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,12 +18,11 @@ public class FileProcessFacade {
     private final FileProcessService fileProcessService;
 
     public void processUploadedFile(String fileId, String extractedText) {
-
-        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
-        if (file == null) {
-            log.warn("File not found. skip. fileId={}", fileId);
-            return;
-        }
+        UploadFile file = uploadFileRepository.findById(fileId)
+                .orElseThrow(() -> {
+                    log.error("File not found. skip. fileId={}", fileId);
+                    return new BaseException(UploadErrorCode.FILE_NOT_FOUND);
+                });
 
         fileProcessService.saveExtractSuccess(file, extractedText);
 
