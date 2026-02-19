@@ -12,7 +12,7 @@ export interface WriterMessageType {
 export interface TextReplaceAllResponseType {
   type: 'TEXT_REPLACE_ALL';
   qnAId: number;
-  data: {
+  payload: {
     version: number;
     content: string;
   };
@@ -21,7 +21,7 @@ export interface TextReplaceAllResponseType {
 export interface TextUpdateResponseType {
   type: 'TEXT_UPDATE';
   qnAId: number;
-  data: {
+  payload: {
     version: number;
     startIdx: number;
     endIdx: number;
@@ -32,7 +32,7 @@ export interface TextUpdateResponseType {
 export interface ReviewUpdatedResponseType {
   type: 'REVIEW_UPDATED';
   qnAId: number;
-  data: {
+  payload: {
     reviewId: number;
     originText: string;
     suggest: string;
@@ -44,7 +44,7 @@ export interface ReviewUpdatedResponseType {
 export interface ReviewDeletedResponseType {
   type: 'REVIEW_DELETED';
   qnAId: number;
-  data: {
+  payload: {
     reviewId: number;
   };
 }
@@ -52,7 +52,7 @@ export interface ReviewDeletedResponseType {
 export interface ReviewCreatedResponseType {
   type: 'REVIEW_CREATED';
   qnAId: number;
-  data: {
+  payload: {
     sender: {
       id: string;
       nickname: string;
