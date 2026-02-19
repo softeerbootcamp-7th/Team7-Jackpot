@@ -6,7 +6,7 @@ import type {
   CoverLetterType,
   CreateCoverLetterRequest,
   CreateCoverLetterResponse,
-  RecentCoverLetter,
+  RecentCoverLetterType,
 } from '@/shared/types/coverLetter';
 
 interface SearchCoverLettersParams {
@@ -23,15 +23,13 @@ interface PageInfo {
 }
 
 interface CoverLetterSearchResponse {
-  coverLetters: RecentCoverLetter[];
+  coverLetters: RecentCoverLetterType[];
   page: PageInfo;
 }
 
 const CreateCoverLetterResponseSchema = z.object({
   coverLetterId: z.number(),
 });
-
-// --- Existing Search/Get APIs ---
 
 export const searchCoverLetters = async ({
   searchWord,
@@ -60,8 +58,6 @@ export const getCoverLetter = async (
     endpoint: `/coverletter/${coverLetterId}`,
   });
 };
-
-// --- Added Mutation APIs (Moved from features) ---
 
 export const createCoverLetter = async (
   payload: CreateCoverLetterRequest,

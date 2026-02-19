@@ -1,4 +1,3 @@
-import { QueryClientProvider } from '@tanstack/react-query';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router';
 
 import CoverLetterLandingPage from '@/pages/CoverLetterLandingPage';
@@ -11,10 +10,7 @@ import SignUpCompletePage from '@/pages/SignUpCompletePage';
 import SignUpPage from '@/pages/SignUpPage';
 import UploadPage from '@/pages/UploadPage';
 
-import { coverLetterEmptyCaseText } from './shared/constants/coverLetterEmptyCaseText';
-
-import CoverLetterEditContent from '@/features/coverLetter/components/CoverLetterEditContent';
-import NewCoverLetterContainer from '@/features/coverLetter/components/newCoverLetter/NewCoverLetterContainer';
+import CoverLetterReviewContent from '@/features/coverLetter/components/editor/CoverLetterReviewContent';
 import CoverLetterLayout from '@/features/coverLetter/layouts/CoverLetterLayout';
 import WriteSidebarLayout from '@/features/coverLetter/layouts/WriteSidebarLayout';
 import CompanyDetailView from '@/features/library/components/company/CompanyDetailView';
@@ -26,14 +22,23 @@ import LabelingResultSection from '@/features/upload/components/LabelingResultSe
 import UploadCompleteSection from '@/features/upload/components/UploadCompleteSection';
 import UploadInputSection from '@/features/upload/components/UploadInputSection';
 import EmptyCase from '@/shared/components/EmptyCase';
+import PrivateGuard from '@/shared/components/PrivateGuard';
+import PublicGuard from '@/shared/components/PublicGuard';
 import RootLayout from '@/shared/components/RootLayout';
-import { queryClient } from '@/shared/queries/queryClient';
+import { coverLetterEmptyCaseText } from '@/shared/constants/coverLetterEmptyCaseText';
+import NewCoverLetterContainer from './features/coverLetter/components/newCoverLetter/NewCoverLetterContainer';
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route element={<PublicGuard />}>
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/login' element={<LoginPage />} />
+          <Route path='/signup' element={<SignUpPage />} />
+          <Route path='/signup/complete' element={<SignUpCompletePage />} />
+        </Route>
+        <Route element={<PrivateGuard />}>
           <Route element={<RootLayout />}>
             <Route path='/home' element={<HomePage />} />
 
@@ -83,7 +88,7 @@ function App() {
               </Route>
             </Route>
 
-            <Route path='/review/:coverLetterId' element={<ReviewPage />} />
+            <Route path='/review/:sharedId' element={<ReviewPage />} />
 
             <Route path='/cover-letter' element={<CoverLetterLayout />}>
               <Route
@@ -105,7 +110,7 @@ function App() {
                 />
                 <Route
                   path='/cover-letter/edit/:coverLetterId'
-                  element={<CoverLetterEditContent />}
+                  element={<CoverLetterReviewContent />}
                 />
               </Route>
             </Route>
@@ -117,14 +122,10 @@ function App() {
               element={<RecruitPage />}
             />
           </Route>
-
-          <Route path='/' element={<LandingPage />} />
-          <Route path='/login' element={<LoginPage />} />
-          <Route path='/signup' element={<SignUpPage />} />
-          <Route path='/signup/complete' element={<SignUpCompletePage />} />
-        </Routes>
-      </BrowserRouter>
-    </QueryClientProvider>
+          {/* <Route path="/recruit" element={<RecruitPage />}/> */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
 

@@ -1,17 +1,16 @@
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
-import { DeleteIcon } from '@/shared/icons/Delete';
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
 
 interface CardProps {
-  item: ScrapItem | RecentCoverLetter;
+  item: ScrapItem | RecentCoverLetterType;
   isScrap: boolean;
   deleteScrap: (id: number) => void;
   onClick: () => void;
 }
 
-const Card = ({ item, isScrap, deleteScrap, onClick }: CardProps) => {
+const SidebarCard = ({ item, isScrap, deleteScrap, onClick }: CardProps) => {
   const scrapItem = isScrap ? (item as ScrapItem) : null;
-  const libraryItem = !isScrap ? (item as RecentCoverLetter) : null;
+  const libraryItem = !isScrap ? (item as RecentCoverLetterType) : null;
 
   const companyName = item.companyName;
   const jobPosition = item.jobPosition;
@@ -80,4 +79,4 @@ const Tag = ({ text, variant }: { text: string; variant: 'blue' | 'gray' }) => (
   </div>
 );
 
-export default Card;
+export default SidebarCard;
