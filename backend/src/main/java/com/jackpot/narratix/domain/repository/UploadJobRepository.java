@@ -9,8 +9,6 @@ import java.util.Optional;
 
 public interface UploadJobRepository extends JpaRepository<UploadJob, String> {
 
-    Optional<UploadJob> findById(String uploadJobId);
-
     default UploadJob findByIdOrElseThrow(String uploadJobId){
         return findById(uploadJobId).orElseThrow(() -> new BaseException(UploadErrorCode.UPLOAD_JOB_NOT_FOUND));
     }
