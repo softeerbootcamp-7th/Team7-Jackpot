@@ -12,6 +12,7 @@ import com.jackpot.narratix.domain.controller.response.SavedCoverLetterCountResp
 import com.jackpot.narratix.domain.controller.response.TotalCoverLetterCountResponse;
 import com.jackpot.narratix.domain.controller.response.UpcomingCoverLetterResponse;
 import com.jackpot.narratix.domain.entity.CoverLetter;
+import com.jackpot.narratix.domain.entity.UploadJob;
 import com.jackpot.narratix.domain.entity.enums.ApplyHalfType;
 import com.jackpot.narratix.domain.entity.enums.QuestionCategoryType;
 import com.jackpot.narratix.domain.exception.CoverLetterErrorCode;
@@ -724,6 +725,10 @@ class CoverLetterServiceTest {
         CoverLetter savedCoverLetter = mock(CoverLetter.class);
         given(coverLetterRepository.saveAll(any())).willReturn(List.of(savedCoverLetter));
 
+        UploadJob mockUploadJob = mock(UploadJob.class);
+        given(mockUploadJob.isOwner(userId)).willReturn(true);
+        given(uploadJobRepository.findById(uploadJobId)).willReturn(Optional.of(mockUploadJob));
+
         // when
         SavedCoverLetterCountResponse response = coverLetterService.saveCoverLetterAndDeleteJob(userId, uploadJobId, request);
 
@@ -774,6 +779,10 @@ class CoverLetterServiceTest {
                 mock(CoverLetter.class), mock(CoverLetter.class), mock(CoverLetter.class)
         );
         given(coverLetterRepository.saveAll(any())).willReturn(savedCoverLetters);
+
+        UploadJob mockUploadJob = mock(UploadJob.class);
+        given(mockUploadJob.isOwner(userId)).willReturn(true);
+        given(uploadJobRepository.findById(uploadJobId)).willReturn(Optional.of(mockUploadJob));
 
         // when
         SavedCoverLetterCountResponse response = coverLetterService.saveCoverLetterAndDeleteJob(userId, uploadJobId, request);
