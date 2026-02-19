@@ -16,11 +16,16 @@
 
 </div>
 
+
 ---
 
 ## 🏠 랜딩 페이지
 
-![Landing Page](https://github.com/user-attachments/assets/c57afce7-845a-456d-b515-35abb8ec45b5)
+<img 
+  src="https://i.imgur.com/lX3Cxmz.gif"
+  alt="Landing Page" 
+  width="100%" 
+/>
 
 <div align="center">
 취준생의 경험 정리부터 자기소개서 완성까지, Narratix의 핵심 가치를 랜딩에서 한눈에 보여줍니다.
