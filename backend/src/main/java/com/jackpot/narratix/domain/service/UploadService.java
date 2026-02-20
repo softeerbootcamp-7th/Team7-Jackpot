@@ -3,17 +3,22 @@ package com.jackpot.narratix.domain.service;
 import com.github.f4b6a3.ulid.UlidCreator;
 import com.jackpot.narratix.domain.controller.request.JobCreateRequest;
 import com.jackpot.narratix.domain.controller.request.PresignedUrlRequest;
+import com.jackpot.narratix.domain.controller.response.LabeledQnAListResponse;
 import com.jackpot.narratix.domain.controller.response.PresignedUrlResponse;
+import com.jackpot.narratix.domain.entity.LabeledQnA;
 import com.jackpot.narratix.domain.entity.UploadFile;
 import com.jackpot.narratix.domain.entity.UploadJob;
 import com.jackpot.narratix.domain.event.JobCreatedEvent;
 import com.jackpot.narratix.domain.exception.UploadErrorCode;
+import com.jackpot.narratix.domain.repository.LabeledQnARepository;
 import com.jackpot.narratix.domain.repository.UploadJobRepository;
 import com.jackpot.narratix.global.exception.BaseException;
+import com.jackpot.narratix.global.exception.GlobalErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.core.exception.SdkException;
@@ -26,6 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -36,6 +42,7 @@ public class UploadService {
     private final UploadJobRepository uploadJobRepository;
     private final ApplicationEventPublisher eventPublisher;
 
+    private final LabeledQnARepository labeledQnARepository;
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
@@ -51,18 +58,13 @@ public class UploadService {
         String fileId = UlidCreator.getUlid().toString();
         String s3Key = generateS3Key(userId, fileId);
 
-        Map<String, String> metadata = Map.of(
-                "fileId", fileId
-        );
-
         try {
             PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                     .signatureDuration(PRESIGNED_URL_EXPIRE)
                     .putObjectRequest(p -> p
                             .bucket(bucket)
                             .key(s3Key)
-                            .contentType(request.contentType())
-                            .metadata(metadata))
+                            .contentType(request.contentType()))
                     .build();
 
             PresignedPutObjectRequest presigned = s3Presigner.presignPutObject(presignRequest);
@@ -72,9 +74,7 @@ public class UploadService {
                     request.fileName(),
                     presigned.url().toString(),
                     s3Key,
-                    Map.of(
-                            "Content-Type", request.contentType(),
-                            "x-amz-meta-fileId", fileId)
+                    Map.of(HttpHeaders.CONTENT_TYPE, request.contentType())
             );
         } catch (SdkException e) {
             log.error("AWS S3 Error occurred while generating URL. key: {}, Error: {}", s3Key, e.getMessage());
@@ -97,7 +97,7 @@ public class UploadService {
     }
 
     private String generateS3Key(String userId, String fileId) {
-        return "%s/%s/%s".formatted(FOLDER_NAME, userId, fileId);
+        return "%s/%s/%s.pdf".formatted(FOLDER_NAME, userId, fileId);
     }
 
     @Transactional
@@ -127,10 +127,25 @@ public class UploadService {
 
     private String extractFileId(String fileKey) {
         int lastSlashIndex = fileKey.lastIndexOf("/");
-
-        if (lastSlashIndex != -1 && lastSlashIndex < fileKey.length() - 1) {
-            return fileKey.substring(lastSlashIndex + 1);
+        String fileName = (lastSlashIndex != -1 && lastSlashIndex < fileKey.length() - 1)
+                ? fileKey.substring(lastSlashIndex + 1)
+                : fileKey;
+        if (fileName.toLowerCase().endsWith(".pdf")) {
+            return fileName.substring(0, fileName.length() - 4);
         }
         throw new BaseException(UploadErrorCode.INVALID_FILE_KEY);
+    }
+
+    @Transactional(readOnly = true)
+    public LabeledQnAListResponse findLabeledCoverLetterByUploadJobId(String userId, String uploadJobId) {
+        UploadJob uploadJob = uploadJobRepository.findByIdOrElseThrow(uploadJobId);
+
+        if (!uploadJob.isOwner(userId)) {
+            throw new BaseException(GlobalErrorCode.FORBIDDEN);
+        }
+
+        List<LabeledQnA> labeledQnAs = labeledQnARepository.findAllByUploadJobId(uploadJobId);
+
+        return LabeledQnAListResponse.of(labeledQnAs);
     }
 }

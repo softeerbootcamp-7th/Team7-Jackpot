@@ -54,7 +54,7 @@ public class QnA extends BaseTimeEntity {
         this.coverLetter = coverLetter;
     }
 
-    public boolean isOwner(String userId){
+    public boolean isOwner(String userId) {
         return Objects.equals(this.userId, userId);
     }
 
