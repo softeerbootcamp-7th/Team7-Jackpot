@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { TextChangeResult } from '@/features/coverLetter/types/coverLetter';
 import type { ApiReview } from '@/shared/api/reviewApi';
 import {
+  applyViewStatus,
   buildReviewsFromApi,
   calculateTextChange,
   parseTaggedText,
@@ -12,10 +13,62 @@ import {
 import type { MinimalQnA } from '@/shared/types/qna';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
+import type {
+  ReviewCreatedResponseType,
+  ReviewDeletedResponseType,
+  ReviewUpdatedResponseType,
+  TextReplaceAllResponseType,
+  TextUpdateResponseType,
+} from '@/shared/types/websocket';
 
 interface UseReviewStateParams {
   qna: MinimalQnA | undefined;
   apiReviews: ApiReview[] | undefined;
+}
+
+interface TaggedRange {
+  id: number;
+  start: number;
+  end: number;
+}
+
+interface ReviewDispatchers {
+  handleTextUpdateEvent: (
+    qnaId: number,
+    payload: TextUpdateResponseType['payload'],
+  ) => void;
+  handleTextReplaceAllEvent: (
+    qnaId: number,
+    payload: TextReplaceAllResponseType['payload'],
+  ) => void;
+  handleReviewCreatedEvent: (
+    qnaId: number,
+    payload: ReviewCreatedResponseType['payload'],
+  ) => void;
+  handleReviewDeletedEvent: (
+    qnaId: number,
+    payload: ReviewDeletedResponseType['payload'],
+  ) => void;
+  handleReviewUpdatedEvent: (
+    qnaId: number,
+    payload: ReviewUpdatedResponseType['payload'],
+  ) => void;
+}
+
+export interface UseReviewStateResult {
+  currentText: string;
+  currentReviews: Review[];
+  currentVersion: number;
+  currentReplaceAllSignal: number;
+  editingReview: Review | null;
+  selection: SelectionInfo | null;
+  setSelection: (selection: SelectionInfo | null) => void;
+  handleTextChange: (newText: string) => TextChangeResult | void;
+  handleUpdateReview: (id: number, revision: string, comment: string) => void;
+  handleEditReview: (id: number) => void;
+  handleCancelEdit: () => void;
+  editedAnswers: Record<number, string>;
+  dispatchers: ReviewDispatchers;
 }
 
 /**
@@ -30,8 +83,13 @@ interface UseReviewStateParams {
  *   - 리뷰 삭제: API 호출 → REVIEW_DELETED 이벤트 수신 시 반영
  *   - 리뷰 적용(approve): API 호출 → WebSocket 이벤트 수신 시 반영
  */
-export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
+export const useReviewState = ({
+  qna,
+  apiReviews,
+}: UseReviewStateParams): UseReviewStateResult => {
   const qnaId = qna?.qnAId;
+  const qnaVersion =
+    qna && 'version' in qna ? ((qna as { version?: number }).version ?? 0) : 0;
 
   const [reviewsByQnaId, setReviewsByQnaId] = useState<
     Record<number, Review[]>
@@ -39,6 +97,12 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
   const [editedAnswers, setEditedAnswers] = useState<Record<number, string>>(
     {},
   );
+  const [versionByQnaId, setVersionByQnaId] = useState<Record<number, number>>(
+    {},
+  );
+  const [replaceAllSignalByQnaId, setReplaceAllSignalByQnaId] = useState<
+    Record<number, number>
+  >({});
 
   const answer = qna?.answer ?? '';
   const parsed = useMemo(
@@ -61,6 +125,10 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
     qnaId !== undefined && editedAnswers[qnaId] !== undefined
       ? editedAnswers[qnaId]
       : originalText;
+  const currentVersion =
+    qnaId !== undefined ? (versionByQnaId[qnaId] ?? qnaVersion) : 0;
+  const currentReplaceAllSignal =
+    qnaId !== undefined ? (replaceAllSignalByQnaId[qnaId] ?? 0) : 0;
 
   const currentReviews = useMemo(() => {
     if (qnaId === undefined) return [];
@@ -74,6 +142,24 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
   useEffect(() => {
     currentReviewsRef.current = currentReviews;
   }, [currentReviews]);
+
+  const editedAnswersRef = useRef(editedAnswers);
+  useEffect(() => {
+    editedAnswersRef.current = editedAnswers;
+  }, [editedAnswers]);
+
+  const versionByQnaIdRef = useRef(versionByQnaId);
+  useEffect(() => {
+    versionByQnaIdRef.current = versionByQnaId;
+  }, [versionByQnaId]);
+
+  const originalTextByQnaIdRef = useRef<Record<number, string>>({});
+  useEffect(() => {
+    if (qnaId === undefined) return;
+    originalTextByQnaIdRef.current[qnaId] = originalText;
+  }, [qnaId, originalText]);
+
+  const lastTaggedRangesRef = useRef<Record<number, TaggedRange[]>>({});
 
   const getLatestReviews = useCallback(
     (prev: Record<number, Review[]>, id: number): Review[] => {
@@ -95,11 +181,235 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
     [editingId, currentReviews],
   );
 
+  const getCurrentTextByQnaId = useCallback(
+    (targetQnaId: number) =>
+      editedAnswersRef.current[targetQnaId] ??
+      originalTextByQnaIdRef.current[targetQnaId] ??
+      '',
+    [],
+  );
+
+  const getCurrentVersionByQnaId = useCallback(
+    (targetQnaId: number) =>
+      versionByQnaIdRef.current[targetQnaId] ??
+      (targetQnaId === qnaId ? qnaVersion : 0),
+    [qnaId, qnaVersion],
+  );
+
+  const getApiReviewSource = useCallback(
+    (targetQnaId: number, baseReviews: Review[]) => {
+      if (targetQnaId === qnaId && apiReviews) return apiReviews;
+
+      return baseReviews.map((review) => ({
+        id: review.id,
+        sender: review.sender ?? { id: '', nickname: '' },
+        originText: review.originText ?? review.selectedText,
+        suggest: review.suggest ?? review.revision ?? null,
+        comment: review.comment ?? '',
+        createdAt: review.createdAt ?? '',
+        isApproved: Boolean(review.isApproved),
+      }));
+    },
+    [qnaId, apiReviews],
+  );
+
+  const handleTextUpdateEvent = useCallback(
+    (targetQnaId: number, payload: TextUpdateResponseType['payload']) => {
+      const oldText = getCurrentTextByQnaId(targetQnaId);
+      const { startIdx, endIdx, replacedText, version } = payload;
+      const currentVersionForQna = getCurrentVersionByQnaId(targetQnaId);
+      if (version <= currentVersionForQna) return;
+      const oldLength = Math.max(0, endIdx - startIdx);
+      const newText =
+        oldText.slice(0, startIdx) + replacedText + oldText.slice(endIdx);
+      const newLength = replacedText.length;
+
+      setEditedAnswers((prev) => ({ ...prev, [targetQnaId]: newText }));
+      setReviewsByQnaId((prevReviews) => {
+        const baseReviews = getLatestReviews(prevReviews, targetQnaId);
+        return {
+          ...prevReviews,
+          [targetQnaId]: updateReviewRanges(
+            baseReviews,
+            startIdx,
+            oldLength,
+            newLength,
+            newText,
+          ),
+        };
+      });
+
+      if (targetQnaId === qnaId) {
+        setSelection((prev) => {
+          if (!prev) return null;
+          return updateSelectionForTextChange(
+            prev,
+            startIdx,
+            oldLength,
+            newLength,
+            newText,
+          );
+        });
+      }
+
+      setVersionByQnaId((prev) => ({ ...prev, [targetQnaId]: version }));
+    },
+    [getCurrentTextByQnaId, getCurrentVersionByQnaId, getLatestReviews, qnaId],
+  );
+
+  const handleTextReplaceAllEvent = useCallback(
+    (targetQnaId: number, payload: TextReplaceAllResponseType['payload']) => {
+      const { version, content } = payload;
+      const { cleaned, taggedRanges } = parseTaggedText(content);
+      const oldText = getCurrentTextByQnaId(targetQnaId);
+      lastTaggedRangesRef.current[targetQnaId] = taggedRanges;
+      // 다음 소켓 이벤트가 render 이전에 와도 최신 기준으로 계산되도록 ref를 즉시 동기화한다.
+      editedAnswersRef.current = {
+        ...editedAnswersRef.current,
+        [targetQnaId]: cleaned,
+      };
+      versionByQnaIdRef.current = {
+        ...versionByQnaIdRef.current,
+        [targetQnaId]: version,
+      };
+
+      setEditedAnswers((prev) => ({ ...prev, [targetQnaId]: cleaned }));
+      setReviewsByQnaId((prevReviews) => {
+        const baseReviews = getLatestReviews(prevReviews, targetQnaId);
+        if (taggedRanges.length === 0) {
+          const change = calculateTextChange(oldText, cleaned);
+          const nextReviews = updateReviewRanges(
+            baseReviews,
+            change.changeStart,
+            change.oldLength,
+            change.newLength,
+            cleaned,
+          );
+          return {
+            ...prevReviews,
+            [targetQnaId]: nextReviews,
+          };
+        }
+
+        const sourceReviews = getApiReviewSource(targetQnaId, baseReviews);
+        const nextReviews = buildReviewsFromApi(
+          cleaned,
+          taggedRanges,
+          sourceReviews,
+        );
+        return {
+          ...prevReviews,
+          [targetQnaId]: nextReviews,
+        };
+      });
+
+      if (targetQnaId === qnaId) {
+        setSelection(null);
+      }
+      setVersionByQnaId((prev) => ({ ...prev, [targetQnaId]: version }));
+      setReplaceAllSignalByQnaId((prev) => ({
+        ...prev,
+        [targetQnaId]: (prev[targetQnaId] ?? 0) + 1,
+      }));
+    },
+    [getCurrentTextByQnaId, getLatestReviews, getApiReviewSource, qnaId],
+  );
+
+  const handleReviewCreatedEvent = useCallback(
+    (targetQnaId: number, payload: ReviewCreatedResponseType['payload']) => {
+      const { reviewId, originText, suggest, comment, sender, createdAt } =
+        payload;
+      const taggedRange = lastTaggedRangesRef.current[targetQnaId]?.find(
+        (range) => range.id === reviewId,
+      );
+      const currentDocumentText = getCurrentTextByQnaId(targetQnaId);
+
+      const review: Review = {
+        id: reviewId,
+        selectedText: originText,
+        revision: suggest ?? '',
+        comment,
+        range: taggedRange
+          ? { start: taggedRange.start, end: taggedRange.end }
+          : { start: -1, end: -1 },
+        sender,
+        originText,
+        suggest,
+        createdAt,
+        isApproved: false,
+        isValid: Boolean(
+          taggedRange &&
+          currentDocumentText.slice(taggedRange.start, taggedRange.end) ===
+            originText,
+        ),
+      };
+
+      setReviewsByQnaId((prevReviews) => {
+        const baseReviews = getLatestReviews(prevReviews, targetQnaId);
+        const nextReviews = baseReviews.some((r) => r.id === reviewId)
+          ? baseReviews.map((r) => (r.id === reviewId ? review : r))
+          : [...baseReviews, review];
+        return {
+          ...prevReviews,
+          [targetQnaId]: applyViewStatus(nextReviews, currentDocumentText),
+        };
+      });
+    },
+    [getCurrentTextByQnaId, getLatestReviews],
+  );
+
+  const handleReviewDeletedEvent = useCallback(
+    (targetQnaId: number, payload: ReviewDeletedResponseType['payload']) => {
+      setReviewsByQnaId((prevReviews) => ({
+        ...prevReviews,
+        [targetQnaId]: getLatestReviews(prevReviews, targetQnaId).filter(
+          (review) => review.id !== payload.reviewId,
+        ),
+      }));
+
+      if (targetQnaId === qnaId) {
+        setEditingId((prev) => (prev === payload.reviewId ? null : prev));
+      }
+    },
+    [getLatestReviews, qnaId],
+  );
+
+  const handleReviewUpdatedEvent = useCallback(
+    (targetQnaId: number, payload: ReviewUpdatedResponseType['payload']) => {
+      const currentDocumentText = getCurrentTextByQnaId(targetQnaId);
+
+      setReviewsByQnaId((prevReviews) => {
+        const baseReviews = getLatestReviews(prevReviews, targetQnaId);
+        const nextReviews = baseReviews.map((review) => {
+          if (review.id !== payload.reviewId) return review;
+
+          return {
+            ...review,
+            selectedText: payload.originText,
+            originText: payload.originText,
+            revision: payload.suggest ?? '',
+            suggest: payload.suggest,
+            comment: payload.content,
+            ...(payload.isApproved !== undefined
+              ? { isApproved: payload.isApproved }
+              : {}),
+          };
+        });
+
+        return {
+          ...prevReviews,
+          [targetQnaId]: applyViewStatus(nextReviews, currentDocumentText),
+        };
+      });
+    },
+    [getCurrentTextByQnaId, getLatestReviews],
+  );
+
   const handleTextChange = useCallback(
     (newText: string): TextChangeResult | void => {
       if (qnaId === undefined) return;
 
-      const oldText = editedAnswers[qnaId] ?? originalText;
+      const oldText = getCurrentTextByQnaId(qnaId);
       const change = calculateTextChange(oldText, newText);
 
       setEditedAnswers((prev) => ({ ...prev, [qnaId]: newText }));
@@ -116,6 +426,10 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
           ),
         };
       });
+      setVersionByQnaId((prev) => ({
+        ...prev,
+        [qnaId]: (prev[qnaId] ?? qnaVersion) + 1,
+      }));
 
       setSelection((prev) => {
         if (!prev) return null;
@@ -129,7 +443,7 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
       });
       return change;
     },
-    [qnaId, originalText, editedAnswers, getLatestReviews],
+    [qnaId, getCurrentTextByQnaId, getLatestReviews, qnaVersion],
   );
 
   const handleUpdateReview = useCallback(
@@ -149,9 +463,28 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
   const handleEditReview = useCallback((id: number) => setEditingId(id), []);
   const handleCancelEdit = useCallback(() => setEditingId(null), []);
 
+  const dispatchers = useMemo<ReviewDispatchers>(
+    () => ({
+      handleTextUpdateEvent,
+      handleTextReplaceAllEvent,
+      handleReviewCreatedEvent,
+      handleReviewDeletedEvent,
+      handleReviewUpdatedEvent,
+    }),
+    [
+      handleTextUpdateEvent,
+      handleTextReplaceAllEvent,
+      handleReviewCreatedEvent,
+      handleReviewDeletedEvent,
+      handleReviewUpdatedEvent,
+    ],
+  );
+
   return {
     currentText,
     currentReviews,
+    currentVersion,
+    currentReplaceAllSignal,
     editingReview,
     selection,
     setSelection,
@@ -160,6 +493,7 @@ export const useReviewState = ({ qna, apiReviews }: UseReviewStateParams) => {
     handleEditReview,
     handleCancelEdit,
     editedAnswers,
+    dispatchers,
   };
 };
 
