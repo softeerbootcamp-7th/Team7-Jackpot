@@ -15,7 +15,7 @@ const NotificationDropdown = ({
   isOpen,
 }: NotificationDropdownProps) => {
   const { data: unreadCount, isLoading, isError } = useGetNotificationCount();
-  const { mutateAsync: readAllNotification } = useReadAllNotification();
+  const { mutate: readAllNotification } = useReadAllNotification();
   if (isLoading) return <div>로딩 중...</div>;
   if (isError) return <div>에러 발생</div>;
   const safeCount = unreadCount ?? 0;
