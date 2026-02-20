@@ -92,7 +92,7 @@ public class UploadService {
     }
 
     private String generateS3Key(String userId, String fileId) {
-        return "%s/%s/%s".formatted(FOLDER_NAME, userId, fileId);
+        return "%s/%s/%s.pdf".formatted(FOLDER_NAME, userId, fileId);
     }
 
     @Transactional
@@ -121,9 +121,11 @@ public class UploadService {
 
     private String extractFileId(String fileKey) {
         int lastSlashIndex = fileKey.lastIndexOf("/");
-
-        if (lastSlashIndex != -1 && lastSlashIndex < fileKey.length() - 1) {
-            return fileKey.substring(lastSlashIndex + 1);
+        String fileName = (lastSlashIndex != -1 && lastSlashIndex < fileKey.length() - 1)
+                ? fileKey.substring(lastSlashIndex + 1)
+                : fileKey;
+        if (fileName.toLowerCase().endsWith(".pdf")) {
+            return fileName.substring(0, fileName.length() - 4);
         }
         throw new BaseException(UploadErrorCode.INVALID_FILE_KEY);
     }
