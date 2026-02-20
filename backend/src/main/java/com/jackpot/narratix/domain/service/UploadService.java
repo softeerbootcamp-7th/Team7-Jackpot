@@ -37,6 +37,8 @@ public class UploadService {
     private final S3Presigner s3Presigner;
 
     private final UploadJobRepository uploadJobRepository;
+    private final LambdaCallService lambdaCallService;
+
     private final LabeledQnARepository labeledQnARepository;
 
     @Value("${cloud.aws.s3.bucket}")
@@ -106,17 +108,15 @@ public class UploadService {
 
         for (JobCreateRequest.FileRequest fileRequest : request.files()) {
             String fileId = extractFileId(fileRequest.fileKey());
+            String s3Key = fileRequest.fileKey();
             UploadFile uploadFile = UploadFile.builder()
                     .id(fileId)
-                    .s3Key(fileRequest.fileKey())
+                    .s3Key(s3Key)
                     .build();
-
             job.addFile(uploadFile);
+            lambdaCallService.callLambda(fileId, s3Key);
         }
-
         uploadJobRepository.save(job);
-
-        //TODO : 람다 호출 이벤트 발행
     }
 
     private String extractFileId(String fileKey) {
