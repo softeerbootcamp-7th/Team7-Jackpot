@@ -16,7 +16,7 @@ public record SearchLibraryAndQnAResponse(
         Boolean hasNext
 ) {
     public record QnAItem(
-            Long id,
+            Long qnAId,
             String companyName,
             String jobPosition,
             String applySeason,
