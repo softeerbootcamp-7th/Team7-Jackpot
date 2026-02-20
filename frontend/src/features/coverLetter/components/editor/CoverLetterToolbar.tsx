@@ -1,7 +1,7 @@
 import LinkAngled from '@/features/coverLetter/icons/LinkAngled';
+import TrashIcon from '@/features/coverLetter/icons/TrashIcon';
 import { ReviewMessageIcon } from '@/shared/icons/ReviewMessageIcon';
 import SaveCheckIcon from '@/shared/icons/SaveCheckIcon';
-import TrashIcon from '@/features/coverLetter/icons/TrashIcon';
 
 type SaveProps =
   | { autoSave: true; onSave?: never; isPending?: never }
