@@ -31,28 +31,32 @@ export const readStream = async <T = unknown>(
         const lines = part.split(/\r\n|\n/);
 
         let jsonStr = '';
-        let isHeartbeat = false;
+        let hasData = false;
+        let hasOnlyComments = true;
 
         lines.forEach((line) => {
           const trimmedLine = line.trim();
 
           // Comment (Ping) 처리
           if (trimmedLine.startsWith(':')) {
-            isHeartbeat = true;
             return;
           }
 
           // Data 처리
           if (line.startsWith('data:')) {
             // "data:" 제거
+            hasData = true;
+            hasOnlyComments = false;
             const dataContent = line.replace(/^data:/, '');
             // 내부 데이터 공백을 제외한 앞뒤 공백 제거
             jsonStr += dataContent.trim();
+          } else if (trimmedLine.length > 0) {
+            hasOnlyComments = false;
           }
         });
 
         // 핑이면 파싱 로직 건너뜀
-        if (isHeartbeat) return;
+        if (hasOnlyComments && !hasData) return;
         // 데이터 없으면 건너뜀
         if (!jsonStr) return;
         if (jsonStr === '[DONE]') return;
