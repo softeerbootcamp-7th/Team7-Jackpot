@@ -83,7 +83,7 @@ const AddFileItem = ({
         type='file'
         className='hidden'
         onChange={handleInputChange}
-        accept='.pdf,.doc,.docx'
+        accept='.pdf'
         disabled={!!file}
       />
       {file ? (
@@ -157,7 +157,7 @@ const AddFileItem = ({
                 영역 내로 파일을 드래그해주세요
               </div>
               <div className='text-[0.9375rem] font-normal'>
-                pdf, docs 파일을 지원해요
+                pdf 파일을 지원해요
               </div>
             </div>
           </div>
