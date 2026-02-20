@@ -11,3 +11,13 @@ export interface GetScrapsResponse {
   scraps: ScrapItem[];
   hasNext: boolean;
 }
+
+export interface ErrorResponse {
+  message: string;
+}
+
+export interface TextChangeResult {
+  changeStart: number;
+  oldLength: number;
+  newLength: number;
+}
