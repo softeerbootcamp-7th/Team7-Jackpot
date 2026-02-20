@@ -177,7 +177,6 @@ const CoverLetterContent = ({
               endIdx,
               replacedText,
             };
-            console.log('Sending message to', payload);
             sendMessage(
               `/pub/share/${shareId}/qna/${qnAId}/text-update`,
               payload as WriterMessageType,
