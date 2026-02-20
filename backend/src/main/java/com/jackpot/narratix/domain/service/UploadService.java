@@ -8,7 +8,6 @@ import com.jackpot.narratix.domain.controller.response.PresignedUrlResponse;
 import com.jackpot.narratix.domain.entity.LabeledQnA;
 import com.jackpot.narratix.domain.entity.UploadFile;
 import com.jackpot.narratix.domain.entity.UploadJob;
-import com.jackpot.narratix.domain.event.JobCreatedEvent;
 import com.jackpot.narratix.domain.exception.UploadErrorCode;
 import com.jackpot.narratix.domain.repository.LabeledQnARepository;
 import com.jackpot.narratix.domain.repository.UploadJobRepository;
@@ -27,8 +26,6 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequ
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 
@@ -41,6 +38,7 @@ public class UploadService {
 
     private final UploadJobRepository uploadJobRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final LambdaCallService lambdaCallService;
 
     private final LabeledQnARepository labeledQnARepository;
 
@@ -109,20 +107,17 @@ public class UploadService {
                 .userId(userId)
                 .build();
 
-        List<String> fileKeys = new ArrayList<>();
         for (JobCreateRequest.FileRequest fileRequest : request.files()) {
             String fileId = extractFileId(fileRequest.fileKey());
+            String s3Key = fileRequest.fileKey();
             UploadFile uploadFile = UploadFile.builder()
                     .id(fileId)
-                    .s3Key(fileRequest.fileKey())
+                    .s3Key(s3Key)
                     .build();
             job.addFile(uploadFile);
-            fileKeys.add(fileRequest.fileKey());
+            lambdaCallService.callLambda(fileId, s3Key);
         }
-
         uploadJobRepository.save(job);
-
-        eventPublisher.publishEvent(new JobCreatedEvent(jobId, userId, fileKeys));
     }
 
     private String extractFileId(String fileKey) {
