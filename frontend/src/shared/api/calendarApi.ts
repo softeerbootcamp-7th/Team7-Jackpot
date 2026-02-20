@@ -13,6 +13,7 @@ const CalendarDatesResponseSchema = z.object({
   coverLetterDates: z.array(z.string()),
 });
 
+// [박소민] TODO: 현재 사용하지 않음. 확인 후 삭제 예정
 export const fetchCalendarDates = async ({
   startDate,
   endDate,
@@ -28,5 +29,5 @@ export const fetchCalendarDates = async ({
   });
 
   // Zod를 사용하여 응답 데이터의 유효성을 검사하고 파싱합니다.
-  return CalendarDatesResponseSchema.parse(response) as CalendarDatesResponse;
+  return CalendarDatesResponseSchema.parse(response);
 };

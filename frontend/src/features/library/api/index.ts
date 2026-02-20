@@ -36,7 +36,7 @@ const QuestionItemSchema = z.object({
   id: z.number(),
   companyName: z.string(),
   jobPosition: z.string(),
-  applySeason: z.string(),
+  applySeason: z.string().nullable(),
   question: z.string(),
   answer: z.string().nullable(),
   coverLetterId: z.number(),
@@ -67,7 +67,7 @@ export const SearchQnASchema = z.object({
   id: z.number(),
   companyName: z.string(),
   jobPosition: z.string(),
-  applySeason: z.string(),
+  applySeason: z.string().nullable(),
   question: z.string(),
   answer: z.string().nullable(),
   coverLetterId: z.number(),
@@ -199,8 +199,8 @@ export const createScrap = async (
 /**
  * 스크랩 삭제
  */
-export const deleteScrap = async (scrapId: number): Promise<void> => {
+export const deleteScrap = async (qnAId: number): Promise<void> => {
   return apiClient.delete<void>({
-    endpoint: `/scraps/${scrapId}`,
+    endpoint: `/scraps/${qnAId}`,
   });
 };

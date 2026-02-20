@@ -2,8 +2,10 @@ import { useParams } from 'react-router';
 
 import DetailButtons from '@/features/library/components/DetailButtons';
 import DetailView from '@/features/library/components/DetailView';
-import { useQnAListQueries } from '@/features/library/hooks/queries/useLibraryListQueries';
-import { useQnAQuery } from '@/features/library/hooks/queries/useLibraryListQueries';
+import {
+  useQnAListQueries,
+  useQnAQuery,
+} from '@/features/library/hooks/queries/useLibraryListQueries';
 import { getDate } from '@/shared/utils/dates';
 
 const QnADetailView = () => {
@@ -38,7 +40,6 @@ const QnADetailView = () => {
 
   // 두 데이터 중 하나라도 없으면 문서를 찾을 수 없음 처리
   if (!listDocument || !detailDocument) {
-    console.log('Document not found!');
     return <div>문서를 찾을 수 없습니다.</div>;
   }
 
@@ -46,7 +47,7 @@ const QnADetailView = () => {
     <DetailView
       companyName={listDocument.companyName}
       jobPosition={listDocument.jobPosition}
-      applySeason={listDocument.applySeason}
+      applySeason={listDocument.applySeason ?? ''}
       modifiedAt={getDate(detailDocument.modifiedAt)}
       question={detailDocument.question}
       answer={detailDocument.answer}

@@ -25,11 +25,7 @@ export const combineCoverLetterData = (
       deadline: coverLetterData.deadline,
     },
     // qnAs 배열을 questions라는 이름으로 매핑
-    questions: qnaData.qnAs.map((q) => ({
-      qnAId: q.qnAId,
-      question: q.question,
-      category: q.category,
-    })),
+    questions: qnaData.qnAs,
   };
 };
 

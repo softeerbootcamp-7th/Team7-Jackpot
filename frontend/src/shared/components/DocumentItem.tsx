@@ -5,10 +5,11 @@
 import type { ReactNode } from 'react';
 
 import type { CoverLetterBase } from '@/shared/types/coverLetter';
+import { getDate } from '@/shared/utils/dates';
 
 export interface DocumentItemProps extends CoverLetterBase {
   // 데이터 Props
-  applySeason?: string; // "2025 상반기"
+  applySeason?: string | null; // "2025 상반기"
   questionCount?: number;
   // 상태 및 이벤트 Props
   hasLink?: boolean; // 클릭 가능 여부 (기본값: true)
@@ -34,7 +35,17 @@ const DocumentItem = ({
   return (
     <div
       onClick={() => onClick?.(coverLetterId)}
-      className={`group w-full ${hasLink ? 'cursor-pointer hover:bg-gray-50' : ''} transition-opacity ${
+      role={hasLink ? 'button' : undefined}
+      tabIndex={hasLink ? 0 : undefined}
+      onKeyDown={
+        hasLink
+          ? // [박소민] TODO: 리팩토링
+            (e) => {
+              if (e.key === 'Enter' || e.key === ' ') onClick?.(coverLetterId);
+            }
+          : undefined
+      }
+      className={`w-full ${hasLink ? 'cursor-pointer hover:bg-gray-50' : ''} transition-opacity ${
         isSelected ? 'opacity-100' : 'opacity-30 hover:opacity-100'
       }`}
     >
@@ -78,9 +89,7 @@ const DocumentItem = ({
                 <span>·</span>
               </>
             )}
-            <span>
-              {deadline ? new Date(deadline).toLocaleDateString() : ''}
-            </span>
+            <span>{deadline ? getDate(deadline) : ''}</span>
           </div>
         </div>
       </div>

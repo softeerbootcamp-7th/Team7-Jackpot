@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 interface Props {
   companyName: string;
   jobPosition: string;
-  applySeason: string;
+  applySeason: string | null;
   modifiedAt: string;
   question: string;
   answer: string;

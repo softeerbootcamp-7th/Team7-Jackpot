@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-import type { UpdateCoverLetter } from '@/features/recruit/types';
 import {
   createCoverLetter,
   deleteCoverLetter,
@@ -10,6 +9,7 @@ import { coverLetterQueryKeys } from '@/shared/hooks/queries/coverLetterQueryKey
 import type {
   CreateCoverLetterRequest,
   CreateCoverLetterResponse,
+  UpdateCoverLetter,
 } from '@/shared/types/coverLetter';
 
 // [박소민] 공통으로 사용할 성공 핸들러

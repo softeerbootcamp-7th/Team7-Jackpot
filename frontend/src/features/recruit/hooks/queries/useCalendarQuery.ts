@@ -45,7 +45,7 @@ export interface RecruitFormViewModel {
   applyHalf?: ApiApplyHalf;
   deadline?: string;
   questions: {
-    qnAId: number;
+    qnAId: number | null; // 신규 질문은 qnAId가 없으므로 null 허용
     question: string;
     category: Category;
   }[];
@@ -69,19 +69,14 @@ export const useUpdateRecruit = (coverLetterId: number) => {
         const qnaRes = await fetchQnAList(qnAIdListRes);
         // [박소민] TODO: 리팩토링
         questions = qnaRes.qnAs
-          .filter(
-            (
-              q,
-            ): q is {
-              qnAId: number;
-              question: string;
-              category: Category;
-            } => q.qnAId !== undefined && q.category !== '',
-          )
+          .filter((q) => {
+            // ID가 없어도(신규), 질문 내용이나 카테고리가 있으면 유효한 데이터로 간주
+            return q.question !== '' || q.category !== '';
+          })
           .map((q) => ({
-            qnAId: q.qnAId,
-            question: q.question,
-            category: q.category,
+            qnAId: q.qnAId ?? null, // undefined인 경우 null로 명시적 변환
+            question: q.question ?? '',
+            category: q.category as Category,
           }));
       }
 

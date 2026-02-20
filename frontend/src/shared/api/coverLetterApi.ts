@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
-import type { UpdateCoverLetter } from '@/features/recruit/types';
 import { apiClient } from '@/shared/api/apiClient';
 import type {
   CoverLetterType,
   CreateCoverLetterRequest,
   CreateCoverLetterResponse,
   RecentCoverLetterType,
+  UpdateCoverLetter,
 } from '@/shared/types/coverLetter';
 
 interface SearchCoverLettersParams {

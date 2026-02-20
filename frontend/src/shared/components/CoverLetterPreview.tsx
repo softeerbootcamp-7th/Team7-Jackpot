@@ -50,7 +50,7 @@ const CoverLetterPreview = ({
             총 {data.questionCount}문항
           </div>
           <div className='text-caption-l font-normal text-gray-400'>
-            {getDate(data.deadline)}
+            {getDate(data.deadline ?? '')}
           </div>
         </div>
       </div>

@@ -6,7 +6,7 @@ export interface LibraryResponse {
 
 export interface CoverLetterItem {
   id: number;
-  applySeason?: string;
+  applySeason: string | null;
   companyName: string;
   jobPosition: string;
   questionCount: number;
@@ -27,7 +27,7 @@ export interface QuestionItem {
   id: number;
   companyName: string;
   jobPosition: string;
-  applySeason?: string; // "2024 상반기" 형식
+  applySeason: string | null; // "2024 상반기" 형식 (null 허용)
   question: string;
   answer: string | null;
   coverLetterId: number;

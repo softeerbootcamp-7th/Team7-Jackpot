@@ -30,7 +30,7 @@ const DetailButtons = ({ coverLetterId, qnAId, initialScrapState }: Props) => {
 
       <Link
         to={`/cover-letter/edit/${coverLetterId}?qnAId=${qnAId}`}
-        className={`flex cursor-pointer items-center gap-1.5 rounded-xl bg-gray-50 px-4 py-1.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100`}
+        className='flex cursor-pointer items-center gap-1.5 rounded-xl bg-gray-50 px-4 py-1.5 text-sm font-bold text-gray-600 transition-colors hover:bg-gray-100'
       >
         <EditIcon className='h-5 w-5' />
         <span>수정하기</span>

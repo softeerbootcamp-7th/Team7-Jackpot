@@ -1,12 +1,10 @@
 import { type ReactNode, useMemo } from 'react';
 
-import { recruitEmptyText } from '@/features/recruit/constants';
 import { useInfiniteCalendarDates } from '@/features/recruit/hooks/queries/useCalendarQuery';
 import { RecruitIcons as I } from '@/features/recruit/icons';
 import type { CalendarRequest } from '@/features/recruit/types';
 import DocumentItem from '@/shared/components/DocumentItem';
 import DocumentList from '@/shared/components/DocumentList';
-import EmptyCase from '@/shared/components/EmptyCase';
 import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface Props {
@@ -16,7 +14,12 @@ interface Props {
   emptyComponent?: ReactNode; // 빈 화면 커스텀
 }
 
-const RecruitListContainer = ({ dateParams, onEdit, onDelete }: Props) => {
+const RecruitListContainer = ({
+  dateParams,
+  onEdit,
+  onDelete,
+  emptyComponent,
+}: Props) => {
   const {
     data,
     isLoading,
@@ -71,7 +74,7 @@ const RecruitListContainer = ({ dateParams, onEdit, onDelete }: Props) => {
         items={formattedDocuments}
         isLoading={isLoading}
         isError={isError}
-        emptyComponent={<EmptyCase {...recruitEmptyText} size='small' />} // [박소민] DocumentList에 넣을지 고민
+        emptyComponent={emptyComponent} // [박소민] DocumentList에 넣을지 고민
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
         onLoadMore={() => fetchNextPage()}

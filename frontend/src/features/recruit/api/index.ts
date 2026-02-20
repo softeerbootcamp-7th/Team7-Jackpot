@@ -6,6 +6,7 @@ import type {
   QnAListResponse,
 } from '@/features/recruit/types';
 import { apiClient } from '@/shared/api/apiClient';
+import { CATEGORY_VALUES } from '@/shared/constants/createCoverLetter';
 
 const ApiApplyHalfSchema = z.enum(['FIRST_HALF', 'SECOND_HALF']);
 
@@ -25,21 +26,7 @@ const CalendarResponseSchema = z.object({
   hasNext: z.boolean(),
 });
 
-// [박소민] TODO: Category와 합치기
-const CategorySchema = z.enum([
-  '지원동기',
-  '협업경험',
-  '가치관',
-  '직무역량',
-  '성격의 장단점',
-  '입사 후 포부',
-  '문제해결',
-  '커리어 목표',
-  '실패경험',
-  '성장과정',
-  '사회이슈',
-  '기타',
-]);
+export const CategorySchema = z.enum(CATEGORY_VALUES);
 
 const QnAListResponseSchema = z.object({
   qnAs: z.array(

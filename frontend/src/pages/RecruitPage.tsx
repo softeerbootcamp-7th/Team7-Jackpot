@@ -43,11 +43,11 @@ const RecruitPage = () => {
     setIsFormOpen(true);
   }, []);
 
-  // [박소민] 리스트 아이템 클릭 (상세 조회) TODO: 기획 확인
-  const handleDocumentClick = useCallback((id: number) => {
-    console.log('상세 조회:', id);
-    // 상세 모달 로직 등
-  }, []);
+  // // [박소민] 리스트 아이템 클릭 (상세 조회) TODO: 기획 확인
+  // const handleDocumentClick = useCallback((id: number) => {
+  //   console.log('상세 조회:', id);
+  //   // 상세 모달 로직 등
+  // }, []);
 
   // 수정 버튼 클릭
   const handleEditClick = useCallback((id: number) => {
@@ -95,7 +95,7 @@ const RecruitPage = () => {
           ) : (
             <RecruitListContainer
               dateParams={selectedDateParams}
-              onItemClick={handleDocumentClick}
+              // onItemClick={handleDocumentClick}
               onEdit={handleEditClick}
               onDelete={handleDeleteClick}
               emptyComponent={

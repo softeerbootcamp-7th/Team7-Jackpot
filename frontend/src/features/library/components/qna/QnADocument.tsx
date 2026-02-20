@@ -44,11 +44,13 @@ const QnADocument = ({ content, rightAction }: Props) => {
             </div>
 
             {/* [변경 3] 시즌 뱃지 색상 통일 (bg-gray-50 -> bg-gray-100) */}
-            <div className='flex items-center justify-center gap-1 rounded-xl bg-gray-100 px-3 py-1.5'>
-              <div className='justify-start text-xs leading-4 font-medium text-gray-600'>
-                {applySeason}
+            {applySeason && (
+              <div className='flex items-center justify-center gap-1 rounded-xl bg-gray-100 px-3 py-1.5'>
+                <div className='justify-start text-xs leading-4 font-medium text-gray-600'>
+                  {applySeason}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* [로직 추가] rightAction이 들어오면 렌더링 (UI 구조에 영향 주지 않게 배치) */}

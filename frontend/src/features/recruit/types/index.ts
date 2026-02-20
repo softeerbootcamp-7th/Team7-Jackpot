@@ -1,7 +1,6 @@
 import type {
   CoverLetterBase,
   CoverLetterQuestion,
-  CoverLetterType,
 } from '@/shared/types/coverLetter';
 
 export interface CalendarCoverLetterItem extends CoverLetterBase {
@@ -27,7 +26,3 @@ export interface QnAListResponse {
   qnAs: CoverLetterQuestion[];
 }
 
-export interface UpdateCoverLetter {
-  coverLetter: CoverLetterType;
-  questions: CoverLetterQuestion[];
-}

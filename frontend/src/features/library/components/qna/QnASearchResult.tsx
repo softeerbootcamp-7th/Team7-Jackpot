@@ -30,7 +30,9 @@ const QnASearchResult = ({
   // 로딩 상태
   if (isLoading) {
     return (
-      <div className={`flex items-center justify-center pt-20 ${className}`}>
+      <div
+        className={`flex items-center justify-center pt-20 ${className ?? ''}`}
+      >
         <span className='text-gray-400'>검색 중...</span>
       </div>
     );
@@ -76,10 +78,10 @@ const QnASearchResult = ({
           {/* 세로 스크롤 가능한? 폴더 리스트 영역 [박소민] TODO: 어떻게 스크롤 처리할지 결정 */}
           <div className='flex w-full flex-col items-start justify-start'>
             <div className='scrollbar-hide inline-flex w-full items-center justify-start overflow-y-auto px-3'>
-              {data.libraries.map((libName, index) => (
+              {data.libraries.map((libName) => (
                 <NavLink
-                  to={`/library/qna/${libName}`}
-                  key={index}
+                  to={`/library/qna/${encodeURIComponent(libName)}`}
+                  key={libName}
                   className='inline-flex w-28 shrink-0 flex-col items-center justify-center gap-2.5 px-3 pt-5 pb-4'
                 >
                   <div className='relative flex flex-col items-center'>
@@ -120,12 +122,13 @@ const QnASearchResult = ({
 
           <div className='flex w-full flex-col items-start justify-start px-3'>
             {data.qnAs.map((qna) => (
-              <div
+              <button
+                type='button'
                 key={qna.id}
                 onClick={() =>
                   handleItemClick(qna.companyName, qna.coverLetterId)
                 }
-                className='flex w-full cursor-pointer flex-col items-start justify-start gap-3 border-b border-gray-200 px-3 py-5 transition-colors hover:bg-gray-50'
+                className='flex w-full cursor-pointer flex-col items-start justify-start gap-3 border-b border-gray-200 px-3 py-5 text-left transition-colors hover:bg-gray-50'
               >
                 <div className='inline-flex w-full items-center justify-between'>
                   <div className='flex flex-1 items-center justify-start gap-1'>
@@ -159,7 +162,7 @@ const QnASearchResult = ({
                     {qna.answer}
                   </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
