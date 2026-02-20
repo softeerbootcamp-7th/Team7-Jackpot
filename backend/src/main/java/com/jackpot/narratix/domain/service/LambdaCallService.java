@@ -55,6 +55,8 @@ public class LambdaCallService {
         } catch (JsonProcessingException e) {
             log.error("Lambda Payload Serialize Fail : fileId={}", fileId, e);
             throw new BaseException(UploadErrorCode.LAMBDA_CALL_FAILED);
+        } catch (BaseException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Lambda Invoke Error: fileId={}, functionName={}", fileId, functionName, e);
             throw new BaseException(UploadErrorCode.LAMBDA_CALL_FAILED);
