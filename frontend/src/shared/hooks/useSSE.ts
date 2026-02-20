@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 
 import { getAccessToken } from '@/features/auth/libs/tokenStore';
 import { sseStream } from '@/shared/api/sseStream';
+import { isNotificationPayload } from '@/shared/libs/checkStreamPayload';
 import { readStream } from '@/shared/libs/readStream';
 import type { SSEPayload } from '@/shared/types/sse';
 
@@ -23,7 +24,7 @@ export const useSSE = () => {
 
         await readStream<SSEPayload>(response, (data) => {
           // data 자체가 notification
-          if (!data || !('id' in data)) return;
+          if (!data || !isNotificationPayload(data)) return;
 
           queryClient.invalidateQueries({ queryKey: ['notificationCount'] });
           queryClient.invalidateQueries({ queryKey: ['notificationList'] });
