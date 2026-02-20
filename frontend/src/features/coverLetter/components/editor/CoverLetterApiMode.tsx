@@ -72,7 +72,6 @@ const CoverLetterApiMode = ({
 
   return (
     <CoverLetterEditor
-      key={safePageIndex}
       coverLetter={coverLetter}
       currentQna={currentQna}
       currentText={reviewState.currentText}
@@ -83,6 +82,8 @@ const CoverLetterApiMode = ({
       toolbar={toolbar}
       onPageChange={setCurrentPageIndex}
       onTextChange={reviewState.handleTextChange}
+      currentVersion={reviewState.currentVersion}
+      currentReplaceAllSignal={reviewState.currentReplaceAllSignal}
     />
   );
 };

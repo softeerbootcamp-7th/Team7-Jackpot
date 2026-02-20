@@ -34,6 +34,8 @@ interface CoverLetterEditorProps {
   toolbar: ReactNode;
   onPageChange: (index: number) => void;
   onTextChange: (newText: string) => void;
+  currentVersion: number;
+  currentReplaceAllSignal: number;
   isConnected?: boolean;
   sendMessage?: (destination: string, body: unknown) => void;
   shareId?: string;
@@ -50,6 +52,8 @@ const CoverLetterEditor = ({
   toolbar,
   onPageChange,
   onTextChange,
+  currentVersion,
+  currentReplaceAllSignal,
   isConnected = false,
   sendMessage = () => {},
   shareId = '',
@@ -166,7 +170,8 @@ const CoverLetterEditor = ({
               sendMessage={sendMessage}
               shareId={shareId}
               qnAId={currentQna.qnAId.toString()}
-              initialVersion={'version' in currentQna ? currentQna.version : 0}
+              initialVersion={currentVersion}
+              replaceAllSignal={currentReplaceAllSignal}
             />
           </div>
 

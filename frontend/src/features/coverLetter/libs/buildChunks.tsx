@@ -46,13 +46,14 @@ export const buildChunks = (
     if (!matchingReview) return renderText(chunk.text, key);
 
     const isSelected = selectedReviewId === matchingReview.id;
+    const reviewClassName = `${isReviewActive ? 'cursor-pointer font-bold' : ''} ${
+      isSelected ? 'rounded-sm bg-red-100 ring-1 ring-red-200' : ''
+    }`;
 
     return (
       <span
         key={`review-wrap-${matchingReview.id}-${i}`}
-        className={`${isReviewActive ? 'cursor-pointer font-bold' : ''} ${
-          isSelected ? 'rounded-sm bg-red-100 ring-1 ring-red-200' : ''
-        }`}
+        className={reviewClassName}
         data-review-id={matchingReview.id}
       >
         {renderText(chunk.text, `review-content-${matchingReview.id}-${i}`)}
