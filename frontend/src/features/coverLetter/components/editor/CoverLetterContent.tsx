@@ -68,7 +68,13 @@ const CoverLetterContent = ({
   const isInputtingRef = useRef(false);
   const caretOffsetRef = useRef(0);
   const isComposingRef = useRef(false);
+  const ignoreNextInputAfterCompositionRef = useRef(false);
   const composingLastSentTextRef = useRef<string | null>(null);
+  const lastSentPatchRef = useRef<{
+    oldText: string;
+    newText: string;
+    at: number;
+  } | null>(null);
   const composingFlushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
   );
@@ -211,6 +217,18 @@ const CoverLetterContent = ({
     (oldText: string, newText: string) => {
       if (!isConnected || !shareId || !qnAId) return false;
       if (oldText === newText) return false;
+      const now = Date.now();
+      const lastSentPatch = lastSentPatchRef.current;
+      // 일부 브라우저/IME 조합에서 동일 input이 연달아 올라올 수 있어
+      // 짧은 시간 내 동일(old/new) 패치는 한 번만 전송한다.
+      if (
+        lastSentPatch &&
+        lastSentPatch.oldText === oldText &&
+        lastSentPatch.newText === newText &&
+        now - lastSentPatch.at < 1000
+      ) {
+        return false;
+      }
 
       const patch = buildPatch(oldText, newText);
       const nextVersion = onReserveNextVersion
@@ -222,6 +240,7 @@ const CoverLetterContent = ({
         endIdx: patch.endIdx,
         replacedText: patch.replacedText,
       } as WriterMessageType);
+      lastSentPatchRef.current = { oldText, newText, at: now };
       onTextUpdateSent?.(new Date().toISOString());
       return true;
     },
@@ -371,6 +390,10 @@ const CoverLetterContent = ({
   }, [text, qnAId]);
 
   const handleInput = () => {
+    if (ignoreNextInputAfterCompositionRef.current && !isComposingRef.current) {
+      ignoreNextInputAfterCompositionRef.current = false;
+      return;
+    }
     // 조합 중에는 텍스트 상태를 갱신하지 않지만 글자 수만 실시간 반영
     if (isComposingRef.current) {
       if (contentRef.current) {
@@ -390,6 +413,7 @@ const CoverLetterContent = ({
     processInput();
   };
   const handleCompositionStart = () => {
+    ignoreNextInputAfterCompositionRef.current = false;
     clearComposingFlushTimer();
     composingLastSentTextRef.current = latestTextRef.current;
     isComposingRef.current = true;
@@ -403,6 +427,9 @@ const CoverLetterContent = ({
       skipSocket: true,
       skipVersionIncrement: sentBySocket,
     });
+    // compositionEnd 직후 브라우저가 추가 input 이벤트를 올릴 수 있어
+    // 동일 텍스트 중복 처리/중복 전송을 방지한다.
+    ignoreNextInputAfterCompositionRef.current = true;
     composingLastSentTextRef.current = null;
   };
 
