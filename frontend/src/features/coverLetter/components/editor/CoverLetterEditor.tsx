@@ -36,6 +36,7 @@ interface CoverLetterEditorProps {
   onTextChange: (newText: string) => void;
   currentVersion: number;
   currentReplaceAllSignal: number;
+  isSaving?: boolean;
   isConnected?: boolean;
   sendMessage?: (destination: string, body: unknown) => void;
   shareId?: string;
@@ -54,6 +55,7 @@ const CoverLetterEditor = ({
   onTextChange,
   currentVersion,
   currentReplaceAllSignal,
+  isSaving = false,
   isConnected = false,
   sendMessage = () => {},
   shareId = '',
@@ -62,6 +64,9 @@ const CoverLetterEditor = ({
   const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
   const [selection, setSelection] = useState<SelectionInfo | null>(null);
   const [composingLength, setComposingLength] = useState<number | null>(null);
+  const [lastTextUpdateAt, setLastTextUpdateAt] = useState<string | undefined>(
+    undefined,
+  );
 
   const { mutate: deleteReviewApi } = useDeleteReview(currentQna?.qnAId);
   const { mutate: updateReviewMutation } = useApproveReview(currentQna?.qnAId);
@@ -141,6 +146,9 @@ const CoverLetterEditor = ({
             coverLetter={coverLetter}
             totalPages={totalPages}
             modifiedAt={currentQna.modifiedAt}
+            isSaving={isSaving}
+            textUpdatedAt={lastTextUpdateAt}
+            isReviewActive={isReviewActive}
           />
 
           <div className='flex min-h-0 flex-1 flex-col gap-3.5 overflow-hidden'>
@@ -172,6 +180,7 @@ const CoverLetterEditor = ({
               qnAId={currentQna.qnAId.toString()}
               initialVersion={currentVersion}
               replaceAllSignal={currentReplaceAllSignal}
+              onTextUpdateSent={setLastTextUpdateAt}
             />
           </div>
 

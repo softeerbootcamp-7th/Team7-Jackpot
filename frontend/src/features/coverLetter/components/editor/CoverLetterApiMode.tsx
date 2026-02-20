@@ -86,6 +86,7 @@ const CoverLetterApiMode = ({
       onTextChange={reviewState.handleTextChange}
       currentVersion={reviewState.currentVersion}
       currentReplaceAllSignal={reviewState.currentReplaceAllSignal}
+      isSaving={isPending}
     />
   );
 };

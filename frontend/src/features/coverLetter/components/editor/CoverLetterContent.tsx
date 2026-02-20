@@ -36,6 +36,7 @@ interface CoverLetterContentProps {
   qnAId: string;
   initialVersion: number;
   replaceAllSignal: number;
+  onTextUpdateSent?: (at: string) => void;
 }
 
 const CoverLetterContent = ({
@@ -55,6 +56,7 @@ const CoverLetterContent = ({
   qnAId,
   initialVersion,
   replaceAllSignal,
+  onTextUpdateSent,
 }: CoverLetterContentProps) => {
   const [spacerHeight, setSpacerHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -215,8 +217,9 @@ const CoverLetterContent = ({
         endIdx: patch.endIdx,
         replacedText: patch.replacedText,
       } as WriterMessageType);
+      onTextUpdateSent?.(new Date().toISOString());
     },
-    [buildPatch, isConnected, qnAId, sendMessage, shareId],
+    [buildPatch, isConnected, onTextUpdateSent, qnAId, sendMessage, shareId],
   );
 
   const updateText = useCallback(
