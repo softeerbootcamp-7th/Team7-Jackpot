@@ -1,5 +1,3 @@
-import { useEffect, useRef } from 'react';
-
 import CoverLetterChipList from '@/features/review/components/coverLetter/CoverLetterChipList';
 import CoverLetterContent from '@/features/review/components/coverLetter/CoverLetterContent';
 import CoverLetterPagination from '@/features/review/components/coverLetter/CoverLetterPagination';
@@ -30,6 +28,7 @@ interface CoverLetterSectionProps {
   onCancelEdit: () => void;
   onPageChange: (index: number) => void;
   currentVersion: number;
+  onReserveNextVersion?: () => number;
 }
 
 const CoverLetterSection = ({
@@ -49,13 +48,8 @@ const CoverLetterSection = ({
   onCancelEdit,
   onPageChange,
   currentVersion,
+  onReserveNextVersion,
 }: CoverLetterSectionProps) => {
-  const versionRef = useRef(currentVersion);
-
-  useEffect(() => {
-    versionRef.current = currentVersion;
-  }, [currentVersion]);
-
   const { showToast } = useToastMessageContext();
 
   const { mutate: createReview } = useCreateReview(qnaId);
@@ -80,9 +74,12 @@ const CoverLetterSection = ({
         },
       );
     } else {
+      const nextVersion = onReserveNextVersion
+        ? onReserveNextVersion()
+        : currentVersion;
       createReview(
         {
-          version: versionRef.current,
+          version: nextVersion,
           startIdx: selection.range.start,
           endIdx: selection.range.end,
           originText: selection.selectedText,
