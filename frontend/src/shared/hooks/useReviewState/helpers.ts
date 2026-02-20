@@ -92,7 +92,7 @@ export const computeViewStatus = (
 
   if (review.isApproved) {
     if (matchesOrigin) return 'ACCEPTED';
-    if (matchesSuggest) return 'PENDING_CHANGED';
+    if (matchesSuggest) return 'ACCEPTED';
     return 'OUTDATED';
   }
 

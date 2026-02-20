@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import CommentTab from '@/features/review/components/reviewModal/CommentTab';
-import RevisionTab from '@/features/review/components/reviewModal/RevisionTab';
+import SuggestionTab from '@/features/review/components/reviewModal/SuggestionTab';
 import TabSelector from '@/features/review/components/reviewModal/TabSelector';
 import { REVIEW_CONSTRAINTS } from '@/features/review/constants/review';
 import type { TabType } from '@/features/review/types/review';
@@ -23,7 +23,7 @@ const ReviewModal = ({
 }: ReviewModalProps) => {
   const [suggest, setSuggest] = useState(initialSuggest);
   const [comment, setComment] = useState(initialComment);
-  const [tab, setTab] = useState<TabType>('revision');
+  const [tab, setTab] = useState<TabType>('suggest');
 
   const isSubmitEnabled =
     (suggest.trim().length > 0 || comment.trim().length > 0) &&
@@ -41,8 +41,8 @@ const ReviewModal = ({
       <div className='flex w-full flex-col items-start gap-2'>
         <TabSelector tab={tab} onTabChange={setTab} />
 
-        {tab === 'revision' && (
-          <RevisionTab suggest={suggest} onSuggestChange={setSuggest} />
+        {tab === 'suggest' && (
+          <SuggestionTab suggest={suggest} onSuggestChange={setSuggest} />
         )}
 
         {tab === 'comment' && (

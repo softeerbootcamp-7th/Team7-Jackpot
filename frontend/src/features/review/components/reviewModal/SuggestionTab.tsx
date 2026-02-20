@@ -1,9 +1,9 @@
-interface RevisionTabProps {
+interface SuggestionTabProps {
   suggest: string;
   onSuggestChange: (value: string) => void;
 }
 
-const RevisionTab = ({ suggest, onSuggestChange }: RevisionTabProps) => {
+const SuggestionTab = ({ suggest, onSuggestChange }: SuggestionTabProps) => {
   return (
     <div className='flex w-full flex-col items-start gap-2 rounded-2xl bg-gray-100 px-5 py-4'>
       <textarea
@@ -16,4 +16,4 @@ const RevisionTab = ({ suggest, onSuggestChange }: RevisionTabProps) => {
   );
 };
 
-export default RevisionTab;
+export default SuggestionTab;

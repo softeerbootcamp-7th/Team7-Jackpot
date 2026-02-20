@@ -92,8 +92,7 @@ export const useReviewState = ({
   apiReviews,
 }: UseReviewStateParams): UseReviewStateResult => {
   const qnaId = qna?.qnAId;
-  const qnaVersion =
-    qna && 'version' in qna ? ((qna as { version?: number }).version ?? 0) : 0;
+  const qnaVersion = qna?.version ?? 0;
 
   const [reviewsByQnaId, setReviewsByQnaId] = useState<
     Record<number, Review[]>
@@ -221,7 +220,7 @@ export const useReviewState = ({
   );
 
   const getApiReviewSource = useCallback(
-    (targetQnaId: number, baseReviews: Review[]) => {
+    (targetQnaId: number, baseReviews: Review[]): ApiReview[] => {
       if (targetQnaId === qnaId && apiReviews) return apiReviews;
 
       return baseReviews.map((review) => ({
@@ -256,6 +255,15 @@ export const useReviewState = ({
         oldText.slice(0, startIdx) + replacedText + oldText.slice(endIdx);
 
       const newLength = replacedText.length;
+      // 다음 소켓 이벤트가 render 이전에 와도 최신 기준으로 계산되도록 ref를 즉시 동기화한다.
+      editedAnswersRef.current = {
+        ...editedAnswersRef.current,
+        [targetQnaId]: newText,
+      };
+      versionByQnaIdRef.current = {
+        ...versionByQnaIdRef.current,
+        [targetQnaId]: version,
+      };
 
       setEditedAnswers((prev) => ({ ...prev, [targetQnaId]: newText }));
       setReviewsByQnaId((prevReviews) => {
@@ -418,8 +426,10 @@ export const useReviewState = ({
           const previousSuggest = review.suggest ?? null;
 
           // 승인/되돌리기 토글에서는 origin/suggest가 서로 뒤집혀 들어온다.
+          // originText === suggest인 경우 swap 감지가 불가하므로 제외
           const isSwapToggleEvent =
             previousSuggest !== null &&
+            incomingOriginText !== incomingSuggest &&
             incomingOriginText === previousSuggest &&
             incomingSuggest === previousOriginText;
 
@@ -506,13 +516,7 @@ export const useReviewState = ({
       return change;
     },
 
-    [
-      qnaId,
-      getCurrentTextByQnaId,
-      getCurrentVersionByQnaId,
-      getLatestReviews,
-      qnaVersion,
-    ],
+    [qnaId, getCurrentTextByQnaId, getCurrentVersionByQnaId, getLatestReviews],
   );
 
   const reserveNextVersion = useCallback((): number => {

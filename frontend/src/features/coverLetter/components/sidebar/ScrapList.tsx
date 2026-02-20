@@ -36,9 +36,9 @@ const ScrapList = ({ searchWord, deleteScrap, onSelect }: ScrapListProps) => {
 
   return (
     <>
-      {items.map((item, index) => (
+      {items.map((item) => (
         <SidebarCard
-          key={`scrap-${item.questionId ?? 'unknown'}-${index}`}
+          key={`scrap-${item.questionId}`}
           item={item}
           isScrap={true}
           deleteScrap={deleteScrap}

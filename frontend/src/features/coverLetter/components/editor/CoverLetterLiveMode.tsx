@@ -9,7 +9,7 @@ import { useSocketMessage } from '@/shared/hooks/websocket/useSocketMessage';
 import { useSocketSubscribe } from '@/shared/hooks/websocket/useSocketSubscribe';
 import { useStompClient } from '@/shared/hooks/websocket/useStompClient';
 import type { CoverLetterType } from '@/shared/types/coverLetter';
-import type { WebSocketResponse } from '@/shared/types/websocket';
+import { isWebSocketResponse } from '@/shared/types/websocket';
 
 interface CoverLetterLiveModeProps {
   shareId: string;
@@ -57,8 +57,10 @@ const CoverLetterLiveMode = ({
     isConnected,
     shareId: shareId,
     qnaId: currentQnAId?.toString(),
-    onMessage: (message: unknown) =>
-      handleMessage(message as WebSocketResponse),
+    onMessage: (message: unknown) => {
+      if (!isWebSocketResponse(message)) return;
+      handleMessage(message);
+    },
     clientRef,
   });
 

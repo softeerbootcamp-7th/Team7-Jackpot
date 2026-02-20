@@ -25,7 +25,7 @@ interface UseTextSelectionProps {
 const calculateModalInfo = (
   container: HTMLElement,
   range: Range,
-  selectedText: string,
+  selectionText: string,
 ): SelectionInfo | null => {
   const { start, end } = rangeToTextIndices(container, range);
   const rects = range.getClientRects();
@@ -44,7 +44,7 @@ const calculateModalInfo = (
 
   if (!endElement) {
     return {
-      selectedText,
+      selectedText: selectionText,
       range: { start, end },
       modalTop: lastLineRect.bottom,
       modalLeft: lastLineRect.left,
@@ -60,7 +60,7 @@ const calculateModalInfo = (
   const modalLeftViewport = lastLineRect.left;
 
   return {
-    selectedText,
+    selectedText: selectionText,
     range: { start, end },
     modalTop: modalTopViewport,
     modalLeft: modalLeftViewport,

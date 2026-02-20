@@ -13,7 +13,7 @@ import { useSocketMessage } from '@/shared/hooks/websocket/useSocketMessage';
 import { useSocketSubscribe } from '@/shared/hooks/websocket/useSocketSubscribe';
 import { useStompClient } from '@/shared/hooks/websocket/useStompClient';
 import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
-import type { WebSocketResponse } from '@/shared/types/websocket';
+import { isWebSocketResponse } from '@/shared/types/websocket';
 
 const ReviewLayout = () => {
   const { sharedId } = useParams();
@@ -60,8 +60,10 @@ const ReviewLayout = () => {
     shareId: sharedId,
     qnaId: currentQnAId?.toString(),
     clientRef,
-    onMessage: (message: unknown) =>
-      handleMessage(message as WebSocketResponse),
+    onMessage: (message: unknown) => {
+      if (!isWebSocketResponse(message)) return;
+      handleMessage(message);
+    },
   });
 
   if (!isConnected) {

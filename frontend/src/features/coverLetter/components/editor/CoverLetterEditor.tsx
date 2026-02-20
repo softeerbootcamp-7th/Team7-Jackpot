@@ -66,21 +66,40 @@ const CoverLetterEditor = ({
   shareId = '',
 }: CoverLetterEditorProps) => {
   const [, setSearchParams] = useSearchParams();
-  const [selectedReviewId, setSelectedReviewId] = useState<number | null>(null);
-  const [selection, setSelection] = useState<SelectionInfo | null>(null);
+  const currentQnaId = currentQna?.qnAId ?? null;
+  const [selectedReviewState, setSelectedReviewState] = useState<{
+    qnaId: number | null;
+    reviewId: number | null;
+  }>({
+    qnaId: null,
+    reviewId: null,
+  });
+  const [selectionState, setSelectionState] = useState<{
+    qnaId: number | null;
+    selection: SelectionInfo | null;
+  }>({
+    qnaId: null,
+    selection: null,
+  });
   const [composingLength, setComposingLength] = useState<number | null>(null);
   const [lastTextUpdateAt, setLastTextUpdateAt] = useState<string | undefined>(
     undefined,
   );
+  const selectedReviewId =
+    selectedReviewState.qnaId === currentQnaId
+      ? selectedReviewState.reviewId
+      : null;
+  const selection =
+    selectionState.qnaId === currentQnaId ? selectionState.selection : null;
 
   const { mutate: deleteReviewApi } = useDeleteReview(currentQna?.qnAId);
   const { mutate: updateReviewMutation } = useApproveReview(currentQna?.qnAId);
   const { showToast } = useToastMessageContext();
 
   const clearUIState = useCallback(() => {
-    setSelectedReviewId(null);
-    setSelection(null);
-  }, []);
+    setSelectedReviewState({ qnaId: currentQnaId, reviewId: null });
+    setSelectionState({ qnaId: currentQnaId, selection: null });
+  }, [currentQnaId]);
 
   const onDeleteReview = useCallback(
     (reviewId: number) => {
@@ -116,14 +135,24 @@ const CoverLetterEditor = ({
     [selectedReviewId, currentReviews],
   );
 
-  const handleReviewClick = useCallback((reviewId: number | null) => {
-    setSelectedReviewId(reviewId);
-  }, []);
+  const handleReviewClick = useCallback(
+    (reviewId: number | null) => {
+      setSelectedReviewState({ qnaId: currentQnaId, reviewId });
+    },
+    [currentQnaId],
+  );
 
   const handleDismiss = useCallback(() => {
-    setSelection(null);
-    setSelectedReviewId(null);
-  }, []);
+    setSelectionState({ qnaId: currentQnaId, selection: null });
+    setSelectedReviewState({ qnaId: currentQnaId, reviewId: null });
+  }, [currentQnaId]);
+
+  const handleSelectionChange = useCallback(
+    (nextSelection: SelectionInfo | null) => {
+      setSelectionState({ qnaId: currentQnaId, selection: nextSelection });
+    },
+    [currentQnaId],
+  );
 
   useEffect(() => {
     const qnAId = currentQna?.qnAId;
@@ -175,7 +204,7 @@ const CoverLetterEditor = ({
               selection={selection}
               isReviewActive={isReviewActive}
               selectedReviewId={selectedReviewId}
-              onSelectionChange={setSelection}
+              onSelectionChange={handleSelectionChange}
               onReviewClick={handleReviewClick}
               onTextChange={onTextChange}
               onReserveNextVersion={onReserveNextVersion}
@@ -184,7 +213,7 @@ const CoverLetterEditor = ({
               sendMessage={sendMessage}
               shareId={shareId}
               qnAId={currentQna.qnAId.toString()}
-              initialVersion={currentVersion}
+              currentVersion={currentVersion}
               replaceAllSignal={currentReplaceAllSignal}
               onTextUpdateSent={setLastTextUpdateAt}
             />

@@ -31,11 +31,13 @@ const useCoverLetterActions = ({
   const { mutate: toggleLink } = useSharedLinkToggle();
 
   const saveCurrentAnswer = async (showSuccessToast = true) => {
+    if (isPending) return false;
+
     const qnAId = currentQna?.qnAId;
     const editedText = qnAId !== undefined ? editedAnswers[qnAId] : null;
 
     if (qnAId === undefined) {
-      showToast('저장할 문항이 없습니다.');
+      showToast('저장할 문항이 없습니다.', false);
       return false;
     }
 

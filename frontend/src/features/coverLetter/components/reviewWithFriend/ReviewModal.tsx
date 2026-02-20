@@ -105,7 +105,7 @@ const ReviewModal = ({
             <button
               type='button'
               className='flex cursor-pointer items-center justify-start gap-1 rounded-xl bg-gray-900 px-3 py-1.5 text-white'
-              onClick={() => review && onToggleApproval(review.id)}
+              onClick={() => review && onToggleApproval?.(review.id)}
             >
               <span className='text-center text-sm leading-5 font-bold'>
                 {isPending ? '적용하기' : '되돌리기'}
