@@ -49,7 +49,10 @@ const NotificationDropdown = ({
               </div>
               <button
                 type='button'
-                onClick={() => readAllNotification()}
+                onClick={() => {
+                  readAllNotification();
+                  handleDropdown(false);
+                }}
                 className='text-caption-m flex items-center justify-center rounded-md bg-gray-50 px-2 py-1 font-medium text-gray-400 transition-all hover:bg-gray-100 hover:text-gray-700 active:scale-95'
               >
                 모두 읽음
