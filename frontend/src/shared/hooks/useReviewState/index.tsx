@@ -167,11 +167,11 @@ export const useReviewState = ({
   const isSocketQueueScheduledRef = useRef(false);
 
   const flushSocketEventQueue = useCallback(() => {
-    isSocketQueueScheduledRef.current = false;
     while (socketEventQueueRef.current.length > 0) {
       const job = socketEventQueueRef.current.shift();
       job?.();
     }
+    isSocketQueueScheduledRef.current = false;
   }, []);
 
   const enqueueSocketEvent = useCallback(

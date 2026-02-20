@@ -1,5 +1,6 @@
 import type { Review, ReviewViewStatus } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
+import { calculateTextChangeLengths } from '@/shared/utils/textDiff';
 
 // parseTaggedText: 태그 제거 + 위치 계산
 export const parseTaggedText = (raw: string) => {
@@ -162,33 +163,7 @@ export const calculateTextChange = (
   oldText: string,
   newText: string,
 ): { changeStart: number; oldLength: number; newLength: number } => {
-  // 앞에서부터 같은 부분 찾기
-  let changeStart = 0;
-  while (
-    changeStart < oldText.length &&
-    changeStart < newText.length &&
-    oldText[changeStart] === newText[changeStart]
-  ) {
-    changeStart++;
-  }
-
-  // 뒤에서부터 같은 부분 찾기
-  let oldEnd = oldText.length;
-  let newEnd = newText.length;
-  while (
-    oldEnd > changeStart &&
-    newEnd > changeStart &&
-    oldText[oldEnd - 1] === newText[newEnd - 1]
-  ) {
-    oldEnd--;
-    newEnd--;
-  }
-
-  return {
-    changeStart,
-    oldLength: oldEnd - changeStart,
-    newLength: newEnd - changeStart,
-  };
+  return calculateTextChangeLengths(oldText, newText);
 };
 
 // 텍스트 변경에 따라 리뷰 범위를 업데이트하고 겹침 감지
@@ -255,12 +230,13 @@ export const updateReviewRanges = <T extends Review>(
   // 리뷰 기준 텍스트 검증. 불일치 리뷰는 range를 비활성화한다.
   const validatedReviews = shiftedReviews.map((review) => {
     const { start, end } = review.range;
-    if (start < 0 || end < 0)
+    if (start < 0 || end < 0 || start >= end)
       return { ...review, range: { start: -1, end: -1 } };
 
     const currentText = newDocumentText.slice(start, end);
+    const hasSuggest = review.suggest != null && review.suggest.length > 0;
     const expectedText = review.isApproved
-      ? (review.suggest ?? review.originText)
+      ? (hasSuggest ? review.suggest : review.originText)
       : review.originText;
     if (currentText !== expectedText) {
       return { ...review, range: { start: -1, end: -1 } };

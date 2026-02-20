@@ -27,8 +27,8 @@ const ReviewModal = ({
   const displayOriginText = isAccepted
     ? (review?.suggest ?? review?.originText ?? '')
     : (review?.originText ?? '');
-  const displayRevision = isAccepted
-    ? (review?.originText ?? initialSuggest ?? '')
+  const displaySuggest = isAccepted
+    ? (review?.originText ?? '')
     : (initialSuggest ?? '');
 
   return (
@@ -61,7 +61,7 @@ const ReviewModal = ({
             </div>
             <div className='inline-flex items-center justify-center gap-2.5 self-stretch pl-6'>
               <div className='text-Primitive-Color-gray-gray-800 flex-1 justify-start text-sm leading-5 font-normal'>
-                {displayRevision}
+                {displaySuggest}
               </div>
             </div>
           </div>

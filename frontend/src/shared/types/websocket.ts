@@ -73,13 +73,19 @@ export type WebSocketResponse =
   | ReviewCreatedResponseType
   | TextReplaceAllResponseType;
 
-const WEBSOCKET_TYPES = new Set([
+const WEBSOCKET_TYPES = new Set<WebSocketResponse['type']>([
   'TEXT_UPDATE',
   'REVIEW_UPDATED',
   'REVIEW_DELETED',
   'REVIEW_CREATED',
   'TEXT_REPLACE_ALL',
 ]);
+
+const isWebSocketType = (
+  type: unknown,
+): type is WebSocketResponse['type'] =>
+  typeof type === 'string' &&
+  WEBSOCKET_TYPES.has(type as WebSocketResponse['type']);
 
 export const isWebSocketResponse = (
   message: unknown,
@@ -88,9 +94,9 @@ export const isWebSocketResponse = (
 
   const candidate = message as Record<string, unknown>;
   return (
-    typeof candidate.type === 'string' &&
-    WEBSOCKET_TYPES.has(candidate.type) &&
+    isWebSocketType(candidate.type) &&
     typeof candidate.qnAId === 'number' &&
-    'payload' in candidate
+    typeof candidate.payload === 'object' &&
+    candidate.payload !== null
   );
 };

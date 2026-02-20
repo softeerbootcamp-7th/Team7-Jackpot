@@ -18,6 +18,7 @@ import { useTextSelection } from '@/shared/hooks/useTextSelection';
 import type { Review } from '@/shared/types/review';
 import type { SelectionInfo } from '@/shared/types/selectionInfo';
 import type { WriterMessageType } from '@/shared/types/websocket';
+import { buildTextPatch } from '@/shared/utils/textDiff';
 
 interface CoverLetterContentProps {
   text: string;
@@ -70,6 +71,8 @@ const CoverLetterContent = ({
   const isComposingRef = useRef(false);
   const ignoreNextInputAfterCompositionRef = useRef(false);
   const composingLastSentTextRef = useRef<string | null>(null);
+  const composingDidSendRef = useRef(false);
+  const DUPLICATE_PATCH_WINDOW_MS = 150;
   const lastSentPatchRef = useRef<{
     oldText: string;
     newText: string;
@@ -87,8 +90,6 @@ const CoverLetterContent = ({
     onSelectionChange,
   });
 
-  const fallbackVersionRef = useRef(currentVersion);
-  const lastSeenVersionRef = useRef(currentVersion);
   const prevReplaceAllSignalRef = useRef(replaceAllSignal);
   const latestTextRef = useRef(text);
   const onComposingLengthChangeRef = useRef(onComposingLengthChange);
@@ -103,13 +104,11 @@ const CoverLetterContent = ({
 
   // qnAId가 바뀌거나 처음 로드될 때 API 초기 버전으로 ref 동기화
   useEffect(() => {
-    lastSeenVersionRef.current = currentVersion;
-    fallbackVersionRef.current = currentVersion;
-
     // qnA 전환/버전 동기화 시 조합 상태를 항상 정리한다.
     // 포커스/커서 복원은 replaceAllSignal 경로에서만 처리한다.
     const wasComposing = isComposingRef.current;
     isComposingRef.current = false;
+    composingDidSendRef.current = false;
     if (composingFlushTimerRef.current) {
       clearTimeout(composingFlushTimerRef.current);
       composingFlushTimerRef.current = null;
@@ -185,37 +184,16 @@ const CoverLetterContent = ({
     ],
   );
 
-  // 텍스트 변경 + Undo 스택 관리 (ref 기반 — 항상 최신 값 사용)
-  const buildPatch = useCallback((oldText: string, newText: string) => {
-    let startIdx = 0;
-    while (
-      startIdx < oldText.length &&
-      startIdx < newText.length &&
-      oldText[startIdx] === newText[startIdx]
-    ) {
-      startIdx++;
-    }
-
-    let suffixLen = 0;
-    while (
-      suffixLen < oldText.length - startIdx &&
-      suffixLen < newText.length - startIdx &&
-      oldText[oldText.length - 1 - suffixLen] ===
-        newText[newText.length - 1 - suffixLen]
-    ) {
-      suffixLen++;
-    }
-
-    return {
-      startIdx,
-      endIdx: oldText.length - suffixLen,
-      replacedText: newText.slice(startIdx, newText.length - suffixLen),
-    };
-  }, []);
-
   const sendTextPatch = useCallback(
     (oldText: string, newText: string) => {
-      if (!isConnected || !shareId || !qnAId) return false;
+      if (!isConnected) return false;
+      if (!shareId || !qnAId) return false;
+      if (!onReserveNextVersion) {
+        console.error(
+          '[CoverLetterContent] onReserveNextVersion is required when socket is connected.',
+        );
+        return false;
+      }
       if (oldText === newText) return false;
       const now = Date.now();
       const lastSentPatch = lastSentPatchRef.current;
@@ -225,15 +203,13 @@ const CoverLetterContent = ({
         lastSentPatch &&
         lastSentPatch.oldText === oldText &&
         lastSentPatch.newText === newText &&
-        now - lastSentPatch.at < 1000
+        now - lastSentPatch.at < DUPLICATE_PATCH_WINDOW_MS
       ) {
         return false;
       }
 
-      const patch = buildPatch(oldText, newText);
-      const nextVersion = onReserveNextVersion
-        ? onReserveNextVersion()
-        : (fallbackVersionRef.current += 1);
+      const patch = buildTextPatch(oldText, newText);
+      const nextVersion = onReserveNextVersion();
       sendMessage(`/pub/share/${shareId}/qna/${qnAId}/text-update`, {
         version: nextVersion,
         startIdx: patch.startIdx,
@@ -245,7 +221,6 @@ const CoverLetterContent = ({
       return true;
     },
     [
-      buildPatch,
       isConnected,
       onReserveNextVersion,
       onTextUpdateSent,
@@ -334,13 +309,14 @@ const CoverLetterContent = ({
   );
 
   const flushComposingSocketOnly = useCallback(() => {
-    if (!contentRef.current) return;
+    if (!contentRef.current) return false;
     const domText = collectText(contentRef.current);
     const baseText = composingLastSentTextRef.current ?? latestTextRef.current;
     if (domText === baseText) return false;
     const sent = sendTextPatch(baseText, domText);
     if (!sent) return false;
     composingLastSentTextRef.current = domText;
+    composingDidSendRef.current = true;
     return true;
   }, [sendTextPatch]);
 
@@ -416,6 +392,7 @@ const CoverLetterContent = ({
     ignoreNextInputAfterCompositionRef.current = false;
     clearComposingFlushTimer();
     composingLastSentTextRef.current = latestTextRef.current;
+    composingDidSendRef.current = false;
     isComposingRef.current = true;
   };
   const handleCompositionEnd = () => {
@@ -425,12 +402,13 @@ const CoverLetterContent = ({
     onComposingLengthChangeRef.current?.(null);
     flushDOMText({
       skipSocket: true,
-      skipVersionIncrement: sentBySocket,
+      skipVersionIncrement: sentBySocket || composingDidSendRef.current,
     });
     // compositionEnd 직후 브라우저가 추가 input 이벤트를 올릴 수 있어
     // 동일 텍스트 중복 처리/중복 전송을 방지한다.
     ignoreNextInputAfterCompositionRef.current = true;
     composingLastSentTextRef.current = null;
+    composingDidSendRef.current = false;
   };
 
   useEffect(
@@ -453,6 +431,7 @@ const CoverLetterContent = ({
 
     isComposingRef.current = false;
     composingLastSentTextRef.current = null;
+    composingDidSendRef.current = false;
     clearComposingFlushTimer();
     onComposingLengthChangeRef.current?.(null);
     latestTextRef.current = text;

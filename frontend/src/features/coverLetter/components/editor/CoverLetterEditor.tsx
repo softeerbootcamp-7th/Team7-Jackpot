@@ -182,7 +182,6 @@ const CoverLetterEditor = ({
             modifiedAt={currentQna.modifiedAt}
             isSaving={isSaving}
             textUpdatedAt={lastTextUpdateAt}
-            isReviewActive={isReviewActive}
           />
 
           <div className='flex min-h-0 flex-1 flex-col gap-3.5 overflow-hidden'>

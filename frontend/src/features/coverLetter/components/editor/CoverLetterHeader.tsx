@@ -9,7 +9,6 @@ interface CoverLetterHeaderProps {
   modifiedAt?: string;
   isSaving?: boolean;
   textUpdatedAt?: string;
-  isReviewActive?: boolean;
 }
 
 const CoverLetterHeader = ({
@@ -18,13 +17,12 @@ const CoverLetterHeader = ({
   modifiedAt,
   isSaving = false,
   textUpdatedAt,
-  isReviewActive = false,
 }: CoverLetterHeaderProps) => {
   const modifiedDisplay = useMemo(() => {
     const sourceRaw = modifiedAt ?? textUpdatedAt;
     const source = sourceRaw
       ? new Date(sourceRaw)
-      : isSaving || isReviewActive
+      : isSaving
         ? new Date()
         : null;
     if (!source || Number.isNaN(source.getTime())) return null;
@@ -37,7 +35,7 @@ const CoverLetterHeader = ({
       minute: '2-digit',
       hour12: false,
     });
-  }, [isReviewActive, isSaving, modifiedAt, textUpdatedAt]);
+  }, [isSaving, modifiedAt, textUpdatedAt]);
 
   return (
     <div className='flex flex-shrink-0 flex-col gap-0.5 pb-2 pl-2'>
