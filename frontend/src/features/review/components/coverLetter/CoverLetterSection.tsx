@@ -26,7 +26,7 @@ interface CoverLetterSectionProps {
   selection: SelectionInfo | null;
   onSelectionChange: (selection: SelectionInfo | null) => void;
   qnaId: number;
-  onUpdateReview: (id: number, revision: string, comment: string) => void;
+  onUpdateReview: (id: number, suggest: string, comment: string) => void;
   onCancelEdit: () => void;
   onPageChange: (index: number) => void;
   currentVersion: number;
@@ -61,7 +61,7 @@ const CoverLetterSection = ({
   const { mutate: createReview } = useCreateReview(qnaId);
   const { mutate: updateReviewMutation } = useUpdateReview(qnaId);
 
-  const handleSubmit = (revision: string, comment: string) => {
+  const handleSubmit = (suggest: string, comment: string) => {
     if (!selection) return;
 
     const resetSelection = () => onSelectionChange(null);
@@ -70,10 +70,10 @@ const CoverLetterSection = ({
       updateReviewMutation(
         {
           reviewId: editingReview.id,
-          body: { suggest: revision, comment },
+          body: { suggest, comment },
         },
         {
-          onSuccess: () => onUpdateReview(editingReview.id, revision, comment),
+          onSuccess: () => onUpdateReview(editingReview.id, suggest, comment),
           onError: () =>
             showToast('리뷰 업데이트에 실패했습니다. 다시 시도해주세요.'),
           onSettled: resetSelection,
@@ -86,7 +86,7 @@ const CoverLetterSection = ({
           startIdx: selection.range.start,
           endIdx: selection.range.end,
           originText: selection.selectedText,
-          suggest: revision,
+          suggest,
           comment,
         },
         {

@@ -1,6 +1,6 @@
 import LinkAngled from '@/features/coverLetter/icons/LinkAngled';
-import { ReviewMessageIcon } from '@/features/coverLetter/icons/ReviewMessageIcon';
-import SaveCheckIcon from '@/features/coverLetter/icons/SaveCheckIcon';
+import { ReviewMessageIcon } from '@/shared/icons/ReviewMessageIcon';
+import SaveCheckIcon from '@/shared/icons/SaveCheckIcon';
 import TrashIcon from '@/features/coverLetter/icons/TrashIcon';
 
 type SaveProps =

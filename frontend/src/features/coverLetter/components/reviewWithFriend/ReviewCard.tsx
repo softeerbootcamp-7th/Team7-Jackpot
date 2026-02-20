@@ -16,7 +16,7 @@ const ReviewCard = ({
   onReviewClick,
 }: ReviewCardProps) => {
   const isSelected = selectedReviewId === review.id;
-  const hasRevision = !!review.revision;
+  const hasRevision = !!review.suggest;
   const hasComment = !!review.comment;
 
   const formattedDate = review.createdAt
