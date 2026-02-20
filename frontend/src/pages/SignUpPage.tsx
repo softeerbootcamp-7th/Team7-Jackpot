@@ -1,21 +1,22 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useSearchParams } from 'react-router';
 
 import AuthLayout from '@/features/auth/components/AuthLayout';
 import SignUpForm from '@/features/auth/components/SignUpForm';
 import { SUB_TITLE } from '@/features/auth/constants/constantsInSignUpPage';
-import { useAuth } from '@/features/auth/hooks/useAuth';
 
 const SignUpPage = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
-
-  if (isAuthenticated) {
-    navigate('/home', { replace: true });
-    return null;
-  }
+  const [searchParams] = useSearchParams();
 
   const handleSuccess = () => {
-    navigate('/signup/complete', { replace: true });
+    const redirect = searchParams.get('redirect');
+    if (redirect) {
+      navigate(`/login?redirect=${encodeURIComponent(redirect)}`, {
+        replace: true,
+      });
+    } else {
+      navigate('/signup/complete', { replace: true });
+    }
   };
 
   return (

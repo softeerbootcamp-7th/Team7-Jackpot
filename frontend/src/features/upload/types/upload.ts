@@ -1,3 +1,5 @@
+import type { ApiApplyHalf } from '@/shared/types/coverLetter';
+
 export interface PaginationButtonIconProps {
   color: string;
 }
@@ -11,25 +13,19 @@ export interface StepDataType {
   loadingSubTitle: string;
 }
 
+// [박소민] TODO: year 유효성 검사
 export interface ContentItemType {
   companyName: string;
   jobPosition: string;
   recruitPeriod: {
     year: number;
-    season: 'FIRST_HALF' | 'SECOND_HALF';
+    season: ApiApplyHalf;
   };
   questionType: string;
 }
 
 export interface ContentStateType {
   [key: number]: ContentItemType;
-}
-
-export interface DropdownStateType {
-  companyNameDropdown: boolean;
-  jobPositionDropdown: boolean;
-  yearDropdown: boolean;
-  questionTypeDropdown: boolean;
 }
 
 export interface TabDataType {
@@ -39,7 +35,6 @@ export interface TabDataType {
 
 export interface UploadTabDataType {
   label: string;
-  targetTab: 'file' | 'text';
   icon: React.ReactNode;
 }
 

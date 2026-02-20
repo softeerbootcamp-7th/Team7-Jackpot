@@ -1,12 +1,12 @@
 import fileIcon from '/images/file.svg';
 import { Link } from 'react-router';
 
-import type { RecentCoverLetter } from '@/shared/types/coverLetter';
+import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
 import { getDate } from '@/shared/utils/dates';
 import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface CoverLetterPreviewProps {
-  data: RecentCoverLetter;
+  data: RecentCoverLetterType;
   isCoverLetter?: boolean;
 }
 
@@ -49,9 +49,11 @@ const CoverLetterPreview = ({
           <div className='text-caption-l font-normal text-gray-400'>
             총 {data.questionCount}문항
           </div>
-          <div className='text-caption-l font-normal text-gray-400'>
-            {getDate(data.deadline)}
-          </div>
+          {data.deadline && (
+            <div className='text-caption-l font-normal text-gray-400'>
+              {getDate(data.deadline)}
+            </div>
+          )}
         </div>
       </div>
     </Link>
