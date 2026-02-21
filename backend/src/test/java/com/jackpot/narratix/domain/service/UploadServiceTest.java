@@ -72,9 +72,11 @@ class UploadServiceTest {
         assertThat(response.coverLetters()).hasSize(1);
         assertThat(response.coverLetters().get(0).qnAs()).hasSize(2);
 
-        var firstQnA = response.coverLetters().get(0).qnAs().get(0);
-        assertThat(firstQnA.question()).isEqualTo("지원 동기는?");
-        assertThat(firstQnA.answerSize()).isEqualTo(firstQnA.answer().length());
+        assertThat(response.coverLetters().get(0).qnAs())
+                .anySatisfy(qna -> {
+                    assertThat(qna.question()).isEqualTo("지원 동기는?");
+                    assertThat(qna.answerSize()).isEqualTo("성장 가능성을 보고 지원했습니다.".length());
+                });
 
         verify(uploadJobRepository, times(1)).findByIdOrElseThrow(uploadJobId);
         verify(labeledQnARepository, times(1)).findAllByUploadJobId(uploadJobId);
