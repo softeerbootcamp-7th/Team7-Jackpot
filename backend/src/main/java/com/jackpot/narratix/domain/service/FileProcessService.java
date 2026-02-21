@@ -89,8 +89,8 @@ public class FileProcessService {
     private void checkJobCompletionAndNotify(UploadJob job) {
 
         uploadFileRepository.flush();
-        long totalCount = job.getFiles().size();
-        long failCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.FAILED)]
+        long totalCount = uploadFileRepository.countByUploadJobId(job.getId());
+        long failCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.FAILED);
         long successCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.COMPLETED);
 
         if (failCount + successCount == totalCount) {

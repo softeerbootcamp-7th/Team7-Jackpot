@@ -13,4 +13,6 @@ public interface UploadFileRepository extends JpaRepository<UploadFile, String> 
     }
 
     long countByUploadJobIdAndStatus(String uploadJobId, UploadStatus status);
+
+    long countByUploadJobId(String uploadJobId);
 }
