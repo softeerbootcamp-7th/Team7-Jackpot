@@ -265,14 +265,24 @@ public class CoverLetterService {
         int savedCount = coverLetters.size();
 
         Optional<UploadJob> uploadJobOpt = uploadJobRepository.findById(uploadJobId);
-        if(uploadJobOpt.isPresent()){
+        if (uploadJobOpt.isPresent()) {
             UploadJob uploadJob = uploadJobOpt.get();
-            if(!uploadJob.isOwner(userId)){
+            if (!uploadJob.isOwner(userId)) {
                 throw new BaseException(GlobalErrorCode.FORBIDDEN);
             }
             uploadJobRepository.deleteById(uploadJobId);
         }
 
         return new SavedCoverLetterCountResponse(savedCount);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getCompanies(String userId) {
+        return coverLetterRepository.findCompanyNamesByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getJobPositions(String userId) {
+        return coverLetterRepository.findJobPositionsByUserId(userId);
     }
 }
