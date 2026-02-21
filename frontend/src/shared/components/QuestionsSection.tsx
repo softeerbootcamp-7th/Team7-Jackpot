@@ -2,7 +2,6 @@ import Question from '@/shared/components/Question';
 import { SharedIcons as I } from '@/shared/icons';
 import type { CoverLetterQuestion } from '@/shared/types/coverLetter';
 
-// [박소민] TODO: 자기소개서 질문이 1개일 경우 삭제 버튼 숨김, 2개 이상일 때 삭제 버튼 보이도록 변경 예정
 interface Props {
   questions: CoverLetterQuestion[];
   onQuestionsChange: (newQuestions: CoverLetterQuestion[]) => void;
@@ -22,7 +21,6 @@ const QuestionsSection = ({ questions, onQuestionsChange }: Props) => {
     onQuestionsChange(nextQuestions);
   };
 
-  // key의 타입을 keyof CoverLetterQuestion으로
   const updateQuestion = (
     index: number,
     key: keyof CoverLetterQuestion,
@@ -53,7 +51,10 @@ const QuestionsSection = ({ questions, onQuestionsChange }: Props) => {
           key={index}
           displayIndex={index + 1}
           data={q}
-          onRemove={() => removeQuestion(index)}
+          // 배열의 길이가 1보다 클 때만 삭제 가능
+          onRemove={
+            questions.length > 1 ? () => removeQuestion(index) : undefined
+          }
           onChange={(key: keyof CoverLetterQuestion, val: string) =>
             updateQuestion(index, key, val)
           }
