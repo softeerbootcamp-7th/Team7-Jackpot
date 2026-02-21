@@ -64,11 +64,18 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendFeedbackNotificationToWriter(String reviewerId, String writerId, String notificationTitle, Long qnAId, String originText) {
+    public void sendFeedbackNotificationToWriter(
+            String reviewerId,
+            String writerId,
+            String notificationTitle,
+            Long coverLetterId,
+            Long qnAId,
+            String originText
+    ) {
         User reviewer = userRepository.findByIdOrElseThrow(reviewerId);
 
         FeedbackNotificationMeta feedbackNotificationMeta = FeedbackNotificationMeta.of(
-                reviewer.getId(), reviewer.getNickname(), qnAId
+                reviewer.getId(), reviewer.getNickname(), coverLetterId, qnAId
         );
 
         NotificationSendRequest request = NotificationSendRequest.builder()

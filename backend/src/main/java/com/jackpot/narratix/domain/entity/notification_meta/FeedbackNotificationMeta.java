@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 public class FeedbackNotificationMeta implements NotificationMeta {
 
     private Sender sender;
+    private Long coverLetterId;
     private Long qnAId;
 
-    public static FeedbackNotificationMeta of(String reviewerId, String senderNickname, Long qnaId){
-        return new FeedbackNotificationMeta(new Sender(reviewerId, senderNickname), qnaId);
+    public static FeedbackNotificationMeta of(String reviewerId, String senderNickname, Long coverLetterId, Long qnaId){
+        return new FeedbackNotificationMeta(new Sender(reviewerId, senderNickname), coverLetterId, qnaId);
     }
 
     @Getter
