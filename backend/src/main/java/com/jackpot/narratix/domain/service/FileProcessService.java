@@ -48,7 +48,8 @@ public class FileProcessService {
         List<LabeledQnARequest> qnARequests = List.of();
 
         try {
-            qnARequests = objectMapper.readValue(labelingJson, new TypeReference<>() {});
+            qnARequests = objectMapper.readValue(labelingJson, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             log.error("Failed to parse labeling result. fileId: {}, error: {}", fileId, e.getMessage());
             file.failLabeling();
@@ -69,6 +70,8 @@ public class FileProcessService {
         file.successLabeling();
 
         log.info("Successfully saved {} labeling items for file: {}", qnAs.size(), fileId);
+
+        checkJobCompletionAndNotify(file.getUploadJob());
     }
 
     @Transactional
@@ -80,5 +83,8 @@ public class FileProcessService {
         }
         file.failExtract();
         log.warn("Extract fail saved. FileId={}, error: {}", fileId, errorMessage);
+
+        checkJobCompletionAndNotify(file.getUploadJob());
+
     }
 }
