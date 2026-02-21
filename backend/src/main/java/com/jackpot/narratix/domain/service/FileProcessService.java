@@ -26,6 +26,8 @@ public class FileProcessService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final UploadFileRepository uploadFileRepository;
     private final LabeledQnARepository labeledQnARepository;
+    private final NotificationService notificationService;
+
 
     private static final int MAX_QNA_SIZE = 10;
 
@@ -39,6 +41,7 @@ public class FileProcessService {
         if (labelingJson == null) {
             file.failLabeling();
             log.warn("AI Labeling Fail saved. FileID: {}", fileId);
+            checkJobCompletionAndNotify(file.getUploadJob());
             return;
         }
 
@@ -50,6 +53,7 @@ public class FileProcessService {
         } catch (JsonProcessingException e) {
             log.error("Failed to parse labeling result. fileId: {}, error: {}", fileId, e.getMessage());
             file.failLabeling();
+            checkJobCompletionAndNotify(file.getUploadJob());
             return;
         }
 
@@ -74,10 +78,7 @@ public class FileProcessService {
     @Transactional
     public void processFailedFile(String fileId, String errorMessage) {
         UploadFile file = uploadFileRepository.findByIdOrElseThrow(fileId);
-        if (file == null) {
-            log.warn("File not found. skip. fileId={}", fileId);
-            return;
-        }
+
         file.failExtract();
         log.warn("Extract fail saved. FileId={}, error: {}", fileId, errorMessage);
 
@@ -88,15 +89,17 @@ public class FileProcessService {
     private void checkJobCompletionAndNotify(UploadJob job) {
 
         uploadFileRepository.flush();
-        long incompleteCount = uploadFileRepository.countIncompleteFiles(job.getId());
+        long totalCount = job.getFiles().size();
+        long failCount = uploadFileRepository.countFailedFiles(job.getId());
+        long successCount = uploadFileRepository.countCompletedFiles(job.getId());
 
-        if (incompleteCount == 0) {
+        if (failCount + successCount == totalCount) {
             log.info("All files completed for Job: {}. Sending SSE Notification.", job.getId());
 
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
                 @Override
                 public void afterCommit() {
-                    // TODO: SSE 알림 전송 로직 실행
+                    notificationService.sendLabelingCompleteNotification(job.getUserId(), job.getId(), successCount, failCount);
                 }
             });
         }
