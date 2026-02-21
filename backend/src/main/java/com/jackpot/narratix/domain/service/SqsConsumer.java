@@ -35,4 +35,12 @@ public class SqsConsumer {
             throw e;
         }
     }
+
+    @SqsListener(value = "${sqs.queue.dlqname}", factory = "sqsMessageListenerContainerFactory")
+    public void consumeDlq(FileProcessResult message) {
+        log.error("Final Fail from DLQ for fileId: {}", message.fileId());
+
+        fileProcessService.processFailedFile(message.fileId(), "최종 재시도 횟수 초과 (DLQ에서 받음)");
+    }
+
 }
