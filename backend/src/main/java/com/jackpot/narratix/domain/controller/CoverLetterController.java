@@ -1,11 +1,11 @@
 package com.jackpot.narratix.domain.controller;
 
 import com.jackpot.narratix.domain.controller.api.CoverLetterApi;
+import com.jackpot.narratix.domain.controller.request.CoverLetterAndQnAEditRequest;
 import com.jackpot.narratix.domain.controller.request.CoverLetterFilterRequest;
 import com.jackpot.narratix.domain.controller.request.CoverLettersSaveRequest;
-import com.jackpot.narratix.domain.controller.response.*;
 import com.jackpot.narratix.domain.controller.request.CreateCoverLetterRequest;
-import com.jackpot.narratix.domain.controller.request.CoverLetterAndQnAEditRequest;
+import com.jackpot.narratix.domain.controller.response.*;
 import com.jackpot.narratix.domain.service.CoverLetterService;
 import com.jackpot.narratix.global.auth.UserId;
 import jakarta.validation.Valid;
@@ -76,7 +76,7 @@ public class CoverLetterController implements CoverLetterApi {
     public ResponseEntity<FilteredCoverLettersResponse> getAllCoverLetterByFilter(
             @UserId String userId,
             @Valid @ModelAttribute CoverLetterFilterRequest request
-            ) {
+    ) {
         return ResponseEntity.ok(coverLetterService.getAllCoverLetterByFilter(userId, request));
     }
 
@@ -111,5 +111,17 @@ public class CoverLetterController implements CoverLetterApi {
             @RequestBody @Valid CoverLettersSaveRequest request
     ) {
         return ResponseEntity.ok(coverLetterService.saveCoverLetterAndDeleteJob(userId, uploadJobId, request));
+    }
+
+    @Override
+    @GetMapping("/companies/all")
+    public ResponseEntity<List<String>> getCompanies(@UserId String userId) {
+        return ResponseEntity.ok(coverLetterService.getCompanies(userId));
+    }
+
+    @Override
+    @GetMapping("/jobpositions/all")
+    public ResponseEntity<List<String>> getJobPositions(@UserId String userId) {
+        return ResponseEntity.ok(coverLetterService.getJobPositions(userId));
     }
 }
