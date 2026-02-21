@@ -1,3 +1,4 @@
+import { DateIcon } from '@/features/recruit/icons/Date';
 import { EditIcon } from '@/features/recruit/icons/Edit';
 import { NewRecruitIcon } from '@/features/recruit/icons/NewRecruit';
 import { RecruitIcon } from '@/features/recruit/icons/Recruit';
@@ -10,4 +11,5 @@ export const RecruitIcons = {
   NewRecruitIcon,
   RecruitIcon,
   RecruitEditIcon,
+  DateIcon: DateIcon,
 };

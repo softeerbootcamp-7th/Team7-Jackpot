@@ -26,7 +26,7 @@ const contentClasses = {
 
 const imageClasses = {
   small: 'pt-2 w-30 h-30',
-  medium: 'pt-3 w-32 h-32',
+  medium: 'pt-3 w-100 h-60',
   large: 'pt-5 w-48 h-48',
 };
 

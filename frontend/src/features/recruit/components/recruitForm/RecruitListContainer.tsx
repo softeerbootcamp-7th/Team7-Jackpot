@@ -5,6 +5,7 @@ import { RecruitIcons as I } from '@/features/recruit/icons';
 import type { CalendarRequest } from '@/features/recruit/types';
 import DocumentItem from '@/shared/components/DocumentItem';
 import DocumentList from '@/shared/components/DocumentList';
+import { getDate } from '@/shared/utils/dates';
 import { mapApplyHalf } from '@/shared/utils/recruitSeason';
 
 interface Props {
@@ -68,24 +69,44 @@ const RecruitListContainer = ({
     </div>
   );
 
+  const headerDate = getDate(formattedDocuments[0]?.deadline || '');
+  const headerCount = formattedDocuments.length || 0;
+
+  const subHeading = (
+    <div className='inline-flex items-center justify-between self-stretch'>
+      <div className='flex items-center justify-start gap-2'>
+        <div className='relative h-8 w-8 overflow-hidden'>
+          <I.DateIcon />
+        </div>
+        <div className='justify-start text-xl leading-8 font-bold text-gray-950'>
+          {headerDate}
+        </div>
+      </div>
+      <div className='flex min-w-6 items-center justify-center gap-1 rounded-[10px] bg-gray-50 px-2 py-1'>
+        <div className='text-gray-500 flex-1 justify-start text-center text-xs leading-4 font-medium'>
+          {headerCount}건
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className='flex h-full w-full flex-col'>
       <DocumentList
         items={formattedDocuments}
         isLoading={isLoading}
         isError={isError}
-        emptyComponent={emptyComponent} // [박소민] DocumentList에 넣을지 고민
+        emptyComponent={emptyComponent}
         hasNextPage={hasNextPage}
         isFetchingNextPage={isFetchingNextPage}
         onLoadMore={() => fetchNextPage()}
-        // [핵심] renderItem을 통해 UI 결정
+        subHeading={subHeading}
         renderItem={(doc) => {
-          // [박소민] applyYear, applyHalf은 DocumentItem에서 applySeason으로 합쳐서 보여줍니다.
           const applySeason = `${doc.applyYear} ${mapApplyHalf(doc.applyHalf)}`;
 
           return (
             <DocumentItem
-              hasLink={false} // 리스트 아이템 자체는 클릭 불가능하게 설정 (액션 버튼으로 이동 유도)
+              hasLink={false}
               key={doc.coverLetterId}
               coverLetterId={doc.coverLetterId}
               companyName={doc.companyName}
