@@ -7,10 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @AllArgsConstructor
-public enum CoverLetterErrorCode implements ErrorCode {
-
-    COVER_LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 자기소개서를 찾을 수 없습니다."),
-    DATE_RANGE_EXCEEDED(HttpStatus.BAD_REQUEST, "조회 기간은 최대 1개월까지만 가능합니다.");
+public enum ScrapErrorCode implements ErrorCode {
+    DUPLICATE_SCRAP(HttpStatus.CONFLICT, "이미 스크랩한 문항입니다.");
 
     private final HttpStatus status;
     private final String message;
