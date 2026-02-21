@@ -1,4 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
+
+import useEscapeKey from '@/shared/hooks/useEscapeKey';
 
 interface LabeledSelectInputProps<T extends string | number> {
   label: string;
@@ -31,23 +33,11 @@ const LabeledSelectInput = <T extends string | number>({
 
   const inputId = `labeled-select-${name}`;
 
-  // [박소민] 모달 이벤트 핸들러 커스텀 훅으로 옮기기 (RecruitPeriodSelectInput과 공유 가능)
-  useEffect(() => {
-    if (!isOpen || !handleDropdown) return;
+  const closeDropdown = useCallback(() => {
+    handleDropdown(false);
+  }, [handleDropdown]);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleDropdown(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleDropdown]);
-
+  useEscapeKey(closeDropdown, isOpen);
   return (
     <div className='flex flex-col gap-3'>
       <label htmlFor={inputId} className='text-lg font-bold text-gray-950'>

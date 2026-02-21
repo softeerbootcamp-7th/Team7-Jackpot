@@ -1,7 +1,3 @@
-import { useCallback, useMemo, useState } from 'react';
-
-import { useParams } from 'react-router';
-
 import CalendarContainer from '@/features/recruit/components/calendar/CalendarContainer';
 import NewRecruitButton from '@/features/recruit/components/NewRecruitButton';
 import RecruitFormContainer from '@/features/recruit/components/recruitForm/RecruitFormContainer';
@@ -10,98 +6,63 @@ import {
   recruitEmptyText,
   recruitHeaderText,
 } from '@/features/recruit/constants';
-import { useDeleteCoverLetter } from '@/features/recruit/hooks/queries/useCoverLetterMutation';
+import { useRecruit } from '@/features/recruit/hooks/useRecruit';
 import ContentHeader from '@/shared/components/ContentHeader';
 import EmptyCase from '@/shared/components/EmptyCase';
-import { useToastMessageContext } from '@/shared/hooks/toastMessage/useToastMessageContext';
-import { getISODate } from '@/shared/utils/dates';
+import ConfirmModal from '@/shared/components/modal/ConfirmModal';
 
 const RecruitPage = () => {
-  const { year, month, day } = useParams();
-  const { mutate: deleteCoverLetter } = useDeleteCoverLetter();
-  const { showToast } = useToastMessageContext();
-
-  // 상태 관리
-  // 폼이 열려있는지 여부
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  // 수정할 공고의 ID (null이면 신규 작성, 값이 있으면 수정 모드)
-  const [editingRecruitId, setEditingRecruitId] = useState<number | null>(null);
-
-  // 날짜 계산 로직
-  const selectedDateParams = useMemo(() => {
-    if (year && month && day) {
-      const dateStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-      return { startDate: dateStr, endDate: dateStr };
-    }
-    const today = getISODate(new Date());
-    return { startDate: today, endDate: today };
-  }, [year, month, day]);
-
-  // 신규 등록 버튼 클릭
-  const handleNewRecruitButtonClick = useCallback(() => {
-    setEditingRecruitId(null); // ID 초기화 (신규)
-    setIsFormOpen(true);
-  }, []);
-
-  // 수정 버튼 클릭
-  const handleEditClick = useCallback((id: number) => {
-    setEditingRecruitId(id); // 수정할 ID 설정
-    setIsFormOpen(true); // 폼 열기
-  }, []);
-
-  // 삭제 버튼 클릭
-  const handleDeleteClick = useCallback(
-    (id: number) => {
-      if (window.confirm('정말 삭제하시겠습니까?')) {
-        deleteCoverLetter({ coverLetterId: id });
-        showToast('공고가 삭제되었습니다.', true);
-      }
-    },
-    [deleteCoverLetter, showToast],
-  );
-
-  // 폼 닫기
-  const handleCloseForm = useCallback(() => {
-    setIsFormOpen(false);
-    setEditingRecruitId(null);
-  }, []);
+  const { state, actions } = useRecruit();
 
   return (
-    <div className='flex h-[calc(100vh-5.625rem)] w-full max-w-screen min-w-[1700px] flex-col px-75 pb-30'>
-      <div className='flex flex-row items-center justify-between'>
-        <ContentHeader {...recruitHeaderText} />
-        <NewRecruitButton onClick={handleNewRecruitButtonClick} />
+    <>
+      <div className='flex min-h-[calc(100vh-5.625rem)] w-full max-w-screen min-w-[1700px] flex-col px-75 pb-30'>
+        <div className='flex flex-row items-center justify-between'>
+          <ContentHeader {...recruitHeaderText} />
+          <NewRecruitButton onClick={actions.openNewForm} />
+        </div>
+
+        <div className='flex flex-1 flex-row items-start gap-1'>
+          <div className='flex-none'>
+            <CalendarContainer />
+          </div>
+
+          <div className='flex-1 overflow-auto pl-4'>
+            {state.isFormOpen ? (
+              <RecruitFormContainer
+                recruitId={state.editingRecruitId}
+                onClose={actions.closeForm}
+              />
+            ) : (
+              <RecruitListContainer
+                dateParams={state.selectedDateParams}
+                onEdit={actions.openEditForm}
+                // 💡 2. 수정됨: 진짜 삭제가 아니라 모달을 '여는' 액션을 전달!
+                onDelete={actions.openDeleteModal}
+                emptyComponent={
+                  <EmptyCase
+                    {...recruitEmptyText}
+                    size='small'
+                    className='mt-35'
+                  />
+                }
+              />
+            )}
+          </div>
+        </div>
       </div>
 
-      <div className='flex h-full flex-row items-start gap-1'>
-        <div className='flex-none'>
-          <CalendarContainer />
-        </div>
-        {/* [박소민] TODO: 레이아웃 flex-1 처리 필요 */}
-        <div className='h-full flex-1 pl-4'>
-          {isFormOpen ? (
-            <RecruitFormContainer
-              // 수정 모드일 경우 ID를 넘겨줘서 데이터를 불러오게 함
-              recruitId={editingRecruitId}
-              onClose={handleCloseForm}
-            />
-          ) : (
-            <RecruitListContainer
-              dateParams={selectedDateParams}
-              onEdit={handleEditClick}
-              onDelete={handleDeleteClick}
-              emptyComponent={
-                <EmptyCase
-                  {...recruitEmptyText}
-                  size='small'
-                  className='mt-35'
-                />
-              }
-            />
-          )}
-        </div>
-      </div>
-    </div>
+      {/* 💡 3. 모달은 최상단 페이지 레벨에 배치! */}
+      <ConfirmModal
+        isOpen={state.deletingId !== null}
+        title='연결된 자기소개서가 사라져요!'
+        description={
+          '해당 공고를 삭제하시면 공고와 연결되어 있는\n자기소개서 문항들이 함께 삭제됩니다.'
+        }
+        onConfirm={actions.confirmDelete} // 여기서 진짜 삭제 실행
+        onCancel={actions.closeDeleteModal} // 취소 시 닫힘
+      />
+    </>
   );
 };
 

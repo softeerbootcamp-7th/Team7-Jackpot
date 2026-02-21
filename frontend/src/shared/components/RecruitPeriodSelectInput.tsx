@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { RECRUIT_SEASON_LIST } from '@/shared/constants/recruitSeason';
+import useEscapeKey from '@/shared/hooks/useEscapeKey';
 import type { ApiApplyHalf } from '@/shared/types/coverLetter';
 
 interface RecruitPeriodSelectInputProps {
@@ -28,22 +29,11 @@ const RecruitPeriodSelectInput = ({
   dropdownDirection = 'bottom',
   icon,
 }: RecruitPeriodSelectInputProps) => {
-  // [박소민] 모달 이벤트 핸들러 커스텀 훅으로 옮기기 (LabelSelectedInput과 공유 가능)
-  useEffect(() => {
-    if (!isOpen || !handleDropdown) return;
+  const closeDropdown = useCallback(() => {
+    handleDropdown?.(false);
+  }, [handleDropdown]);
 
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        handleDropdown(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleDropdown]);
+  useEscapeKey(closeDropdown, isOpen);
 
   return (
     <div className='flex flex-col gap-3'>

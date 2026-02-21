@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router';
 
 import folderIconInSignUp from '@/assets/icons/folderIconInSignUp.png';
 import { SignUpPageIcons as SI } from '@/features/auth/icons';
-import { CommonIcon as CI } from '@/shared/icons';
+import { SharedIcons as CI } from '@/shared/icons';
 
 const SignUpCompletePage = () => {
   const navigate = useNavigate();

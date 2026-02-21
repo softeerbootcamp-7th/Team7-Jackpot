@@ -1,5 +1,5 @@
 import type { ScrapItem } from '@/features/coverLetter/types/coverLetter';
-import { DeleteIcon } from '@/shared/icons/Delete';
+import { SharedIcons as I } from '@/shared/icons';
 import type { RecentCoverLetterType } from '@/shared/types/coverLetter';
 
 interface CardProps {
@@ -50,7 +50,7 @@ const SidebarCard = ({ item, isScrap, deleteScrap, onClick }: CardProps) => {
                   deleteScrap(scrapItem.questionId);
                 }}
               >
-                <DeleteIcon />
+                <I.DeleteIcon />
               </button>
             )}
           </div>

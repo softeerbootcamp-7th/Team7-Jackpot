@@ -6,7 +6,7 @@ import NotificationDropdown from '@/features/notification/components/Notificatio
 import NavItem from '@/shared/components/NavItem';
 import { NAV_ITEMS } from '@/shared/constants/globalHeader';
 import { useSmartNavigate } from '@/shared/hooks/useSmartNavigate';
-import { CommonIcon as I } from '@/shared/icons';
+import { SharedIcons as I } from '@/shared/icons';
 
 const PageGlobalHeader = () => {
   const smartNavigate = useSmartNavigate();

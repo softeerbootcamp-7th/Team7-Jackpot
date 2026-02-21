@@ -69,10 +69,10 @@ const RecruitFormView = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className='inline-flex h-full w-96 flex-col items-center justify-start gap-7 py-6'
+      className='inline-flex min-h-full w-full max-w-96 flex-col items-center justify-start gap-7 py-6'
     >
       {/* 헤더 영역 */}
-      <div className='flex w-full flex-row items-center justify-between'>
+      <div className='flex w-full flex-shrink-0 flex-row items-center justify-between'>
         <div className='inline-flex flex-row items-center gap-2'>
           {mode === 'EDIT' ? <I.RecruitEditIcon /> : <I.NewRecruitIcon />}
           <h2 className='text-xl font-bold'>
@@ -85,12 +85,18 @@ const RecruitFormView = ({
       </div>
 
       {/* Step 1: 상세 정보 입력 */}
-      <div style={{ display: step === 1 ? 'block' : 'none', width: '100%' }}>
+      <div
+        style={{ display: step === 1 ? 'block' : 'none', width: '100%' }}
+        className='flex-1'
+      >
         <RecruitDetail formData={formData} onUpdate={onChange} />
       </div>
 
       {/* Step 2: 질문 목록 입력 */}
-      <div style={{ display: step === 2 ? 'block' : 'none', width: '100%' }}>
+      <div
+        style={{ display: step === 2 ? 'block' : 'none', width: '100%' }}
+        className='flex-1'
+      >
         <QuestionsSection
           questions={formData.questions ?? []}
           onQuestionsChange={(newQuestions) =>
@@ -100,13 +106,15 @@ const RecruitFormView = ({
       </div>
 
       {/* 하단 버튼 */}
-      <PaginationButton
-        onClick={handlePrevStep}
-        step={step}
-        isSubmitting={isSubmitting}
-        mode={mode}
-        isValid={isValid}
-      />
+      <div className='w-full flex-shrink-0'>
+        <PaginationButton
+          onClick={handlePrevStep}
+          step={step}
+          isSubmitting={isSubmitting}
+          mode={mode}
+          isValid={isValid}
+        />
+      </div>
     </form>
   );
 };

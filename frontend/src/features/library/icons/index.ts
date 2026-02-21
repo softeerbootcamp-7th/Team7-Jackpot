@@ -5,9 +5,10 @@ import { FolderIcon } from '@/features/library/icons/Folder';
 import { LibraryIcon } from '@/features/library/icons/Library';
 import { LibraryFolder } from '@/features/library/icons/LibraryFolder';
 import { QnALibrary } from '@/features/library/icons/QnALibrary';
+import { QnASearchResultIcon } from '@/features/library/icons/QnASearchResult';
 import { QuestionIcon } from '@/features/library/icons/Question';
 import { ScrapIcon } from '@/features/library/icons/Scrap';
-import { SearchIcon } from '@/shared/icons/Search';
+import { SharedIcons } from '@/shared/icons';
 
 export const LibraryIcons = {
   ChevronLeftIcon,
@@ -17,7 +18,8 @@ export const LibraryIcons = {
   LibraryIcon,
   LibraryFolder,
   QnALibrary,
+  QnASearchResultIcon,
   QuestionIcon,
   ScrapIcon,
-  SearchIcon,
+  SearchIcon: SharedIcons.SearchIcon,
 };
