@@ -27,14 +27,7 @@ const EmptyState = ({ title, description, to, className }: EmptyStateProps) => {
   );
 
   if (to) {
-    return (
-      <Link
-        to={to}
-        className='flex h-full flex-col items-center justify-center gap-5 self-stretch rounded-2xl bg-gray-50/50'
-      >
-        {content}
-      </Link>
-    );
+    return <Link to={to}>{content}</Link>;
   }
 
   return content;

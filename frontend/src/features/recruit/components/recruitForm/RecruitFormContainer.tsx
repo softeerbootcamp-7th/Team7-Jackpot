@@ -71,8 +71,7 @@ const RecruitFormContainer = ({ recruitId, onClose }: Props) => {
       }
 
       onClose();
-    } catch (error) {
-      console.error('작업 실패:', error);
+    } catch {
       showToast('저장에 실패했습니다. 다시 시도해주세요.', false);
     }
   };

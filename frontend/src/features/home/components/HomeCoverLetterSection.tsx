@@ -11,7 +11,7 @@ import RightArrow from '@/shared/icons/RightArrow';
 
 const LinkToCoverLetter = () => {
   return (
-    <Link to={'/cover-letter'}>
+    <Link to={'/cover-letter'} aria-label='자기소개서 작성 페이지로 이동'>
       <RightArrow />
     </Link>
   );

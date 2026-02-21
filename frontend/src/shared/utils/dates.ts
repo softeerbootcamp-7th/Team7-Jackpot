@@ -212,9 +212,13 @@ export const generateYearList = (year: number) => {
 export const getDDay = (targetDate: string | Date): number => {
   if (!targetDate) return 0;
 
-  // "YYYY-MM-DD" 문자열을 다시 Date 객체로 만들어 시분초 00:00:00 KST 상태로 맞춤
+  // "YYYY-MM-DD" 문자열을 다시 Date 객체로 만들어 시분초 00:00:00 UTC 상태로 통일
+  // (양쪽 모두 UTC 자정이므로 차이는 정확히 정수 일(day) 단위가 됨)
   const today = new Date(getTodayISODate());
-  const target = new Date(getISODate(targetDate));
+
+  const targetISO = getISODate(targetDate);
+  if (!targetISO) return 0; // invalid Date 또는 빈 문자열 처리
+  const target = new Date(targetISO);
 
   const diffTime = target.getTime() - today.getTime();
   return Math.ceil(diffTime / (1000 * 60 * 60 * 24));

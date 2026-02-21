@@ -393,26 +393,19 @@
     }
   }
 
-  /* 모든 인터랙티브 요소에서 마우스 클릭 시 생기는 기본 포커스 제거 */
-  button:focus,
-  input:focus,
-  a:focus {
-    outline: none;
-  }
-
   /* 모든 인터랙티브 요소에 공통 포커스 링 적용 (Tab 접근 시) */
   button:focus-visible,
   input:focus-visible,
   a:focus-visible,
   [tabindex='0']:focus-visible {
-    outline: 2px solid var(--color-blue-600); /* blue-500 */
+    outline: 2px solid var(--color-blue-600);
     outline-offset: 2px;
     transition: outline-offset 0.1s ease; /* 약간의 생동감 */
   }
 
   .focusable-card {
     /* 기본 상태: 1px 회색 테두리 (안쪽으로 -1px 오프셋) */
-    outline: 1px solid #f3f4f6; /* gray-100 */
+    outline: 1px solid var(--color-gray-100); /* gray-100 */
     outline-offset: -1px;
 
     /* 애니메이션 설정 */

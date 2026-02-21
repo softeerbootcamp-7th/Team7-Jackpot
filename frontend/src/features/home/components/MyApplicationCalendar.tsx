@@ -21,9 +21,9 @@ const MyApplicationCalendar = () => {
           <div className='h-7 w-7'>
             <CalendarIcon />
           </div>
-          <div className='justify-start text-xl leading-9 font-bold text-gray-950'>
+          <h2 className='justify-start text-xl leading-9 font-bold text-gray-950'>
             {MY_APPLICATION_CALENDAR_TITLE}
-          </div>
+          </h2>
         </div>
         <Link to={'/recruit'} aria-label={MY_APPLICATION_CALENDAR_ARIA_LABEL}>
           <RightArrow size='lg' aria-hidden='true' />
@@ -38,7 +38,7 @@ const MyApplicationCalendar = () => {
             const isSunday = index === 0;
             const isSaturday = index === 6;
             const textColor = isSunday
-              ? 'text-rose-400'
+              ? 'text-red-600'
               : isSaturday
                 ? 'text-blue-500'
                 : 'text-gray-950';

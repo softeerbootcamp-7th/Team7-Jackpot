@@ -51,7 +51,7 @@ export const useMyApplicationCalendar = () => {
 
   // 4. 7일씩 배열 쪼개기 (1차원 배열 -> 2차원 배열)
   const weeks: MyApplicationCalendarData = useMemo(() => {
-    const result = [];
+    const result: MyApplicationCalendarData = [];
     for (let i = 0; i < calendarDays.length; i += 7) {
       result.push(calendarDays.slice(i, i + 7));
     }

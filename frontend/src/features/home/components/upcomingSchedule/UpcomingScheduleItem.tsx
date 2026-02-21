@@ -17,6 +17,7 @@ const UpcomingScheduleItem = ({
 }: Props) => {
   return (
     <Link
+      aria-label={isUrgent ? '긴급' : ''}
       to={`/library/company/${encodeURIComponent(companyName)}/${coverLetterId}`}
       className='inline-flex items-center justify-start gap-3.5 self-stretch py-0.5'
     >
@@ -33,7 +34,7 @@ const UpcomingScheduleItem = ({
           {position}
         </div>
       </div>
-      <RightArrow size='sm' />
+      <RightArrow size='sm' aria-hidden='true' />
     </Link>
   );
 };

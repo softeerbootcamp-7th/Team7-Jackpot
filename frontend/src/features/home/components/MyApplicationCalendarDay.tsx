@@ -19,6 +19,7 @@ const MyApplicationCalendarDay = ({ dayInfo }: Props) => {
 
   return (
     <Link
+      aria-label={`${dayInfo.dateString} 지원 일정 보기`}
       to={`/recruit/${date}`}
       className={`relative inline-flex h-12 w-12 flex-col items-center justify-center gap-1.5 rounded-lg px-4 py-1 transition-colors hover:bg-gray-100 ${
         dayInfo.isToday ? 'bg-purple-50 hover:bg-purple-100' : ''

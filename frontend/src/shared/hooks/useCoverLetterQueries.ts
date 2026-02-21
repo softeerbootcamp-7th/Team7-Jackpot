@@ -68,7 +68,6 @@ export const useInvalidateCoverLetters = () => {
   return () => {
     // 1. 본인 도메인 갱신 (shared 내부에 있으므로 직접 참조 가능)
     queryClient.invalidateQueries({ queryKey: coverLetterQueryKeys.all });
-    queryClient.invalidateQueries({ queryKey: ['coverletter'] });
 
     // 2. 타 도메인 갱신 (shared에서 상위 레이어 import 방지를 위해 문자열 사용)
     // TODO: 추후 시간 여유가 생기면 Page 레이어에서 onSuccess 콜백을 주입하는 방식(IoC)으로 리팩토링 권장
@@ -91,6 +90,5 @@ export const useCreateCoverLetter = () => {
     onSuccess: () => {
       invalidateAllRelatedQueries();
     },
-    onError: (error) => console.error('생성 실패:', error.message),
   });
 };

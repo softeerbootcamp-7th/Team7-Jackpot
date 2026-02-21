@@ -14,7 +14,6 @@ export const useUpdateCoverLetter = () => {
   return useMutation<void, Error, UpdateCoverLetter>({
     mutationFn: updateCoverLetter,
     onSuccess: () => invalidate(), // ['coverLetters'] 전체 무효화
-    onError: (error) => console.error('수정 실패:', error.message),
   });
 };
 
@@ -25,6 +24,5 @@ export const useDeleteCoverLetter = () => {
   return useMutation<void, Error, { coverLetterId: number }>({
     mutationFn: (variables) => deleteCoverLetter(variables.coverLetterId),
     onSuccess: () => invalidate(), // ['coverLetters'] 전체 무효화
-    onError: (error) => console.error('삭제 실패:', error.message),
   });
 };

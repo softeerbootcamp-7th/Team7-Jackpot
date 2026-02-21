@@ -7,7 +7,7 @@ export const SUMMARY_OVERVIEW_COMPLETE_SUFFIX = '님은 지금까지';
 export const SUMMARY_OVERVIEW_COVER_LETTER_COUNT =
   '장의 자기소개서를 완성했어요';
 export const SUMMARY_OVERVIEW_QNA_ANSWERED = '끝까지 작성을 마친 답변들은';
-export const SUMMARY_OVERVIEW_QNA_COUNT = '문항이에요';
+export const SUMMARY_OVERVIEW_QNA_COUNT = '총 {n}문항이에요';
 export const SUMMARY_OVERVIEW_SEASON = '이번 시즌에는';
 export const SUMMARY_OVERVIEW_SEASON_COUNT = '개의 공고에 지원했어요';
 export const SUMMARY_OVERVIEW_DEFAULT_USER = '사용자';

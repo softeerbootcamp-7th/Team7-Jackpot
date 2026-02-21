@@ -6,11 +6,11 @@ export const homeKeys = {
   upcomingDeadlines: (
     date: string,
     maxDeadLineSize: number,
-    maxCoverLetterSize: number,
+    maxCoverLetterSizePerDeadLine: number,
   ) =>
     [
       ...homeKeys.all,
       'upcoming-deadlines',
-      { date, maxDeadLineSize, maxCoverLetterSize },
+      { date, maxDeadLineSize, maxCoverLetterSizePerDeadLine },
     ] as const,
 };

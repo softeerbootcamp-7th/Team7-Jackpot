@@ -27,9 +27,7 @@ const NewCoverLetterContainer = () => {
 
         navigate(`/cover-letter/edit/${res.coverLetterId}`);
       }
-    } catch (error) {
-      console.error('공고 저장 실패:', error);
-
+    } catch {
       // 실패 시: 페이지 이동 안 함.
       showToast('저장에 실패했습니다. 잠시 후 다시 시도해주세요.', false);
     }

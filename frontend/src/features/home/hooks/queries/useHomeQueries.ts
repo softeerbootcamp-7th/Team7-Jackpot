@@ -9,6 +9,7 @@ import {
   MAX_COVER_LETTER_SIZE_PER_DEADLINE,
   MAX_DEADLINE_SIZE,
 } from '@/features/home/constants';
+import { homeKeys } from '@/features/home/hooks/queries/keys';
 import type { CalendarDatesResponse } from '@/features/home/types/home';
 import { searchCoverLetters } from '@/shared/api/coverLetterApi';
 import { getTodayISODate } from '@/shared/utils/dates';
@@ -18,7 +19,7 @@ export const useHomeCount = (date?: string) => {
   const targetDate = date || getTodayISODate();
 
   return useSuspenseQuery({
-    queryKey: ['home', 'count', { date: targetDate }],
+    queryKey: homeKeys.count(targetDate),
     queryFn: () => fetchHomeCount(targetDate),
     staleTime: 5 * 60 * 1000,
   });
@@ -30,7 +31,7 @@ export const useCalendarDates = (
   endDate: string,
 ): CalendarDatesResponse => {
   const { data } = useSuspenseQuery({
-    queryKey: ['home', 'calendar', { startDate, endDate }],
+    queryKey: homeKeys.calendar(startDate, endDate),
     queryFn: () => fetchCalendarDates({ startDate, endDate }),
     staleTime: 5 * 60 * 1000,
   });
@@ -47,11 +48,11 @@ export const useUpcomingDeadlines = (
   const targetDate = date || getTodayISODate();
 
   return useSuspenseQuery({
-    queryKey: [
-      'home',
-      'upcoming-deadlines',
-      { date: targetDate, maxDeadLineSize, maxCoverLetterSizePerDeadLine },
-    ],
+    queryKey: homeKeys.upcomingDeadlines(
+      targetDate,
+      maxDeadLineSize,
+      maxCoverLetterSizePerDeadLine,
+    ),
     queryFn: () =>
       fetchUpcomingDeadlines({
         date: targetDate,
