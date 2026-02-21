@@ -1,5 +1,6 @@
 package com.jackpot.narratix.global.exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -67,9 +68,18 @@ public class GlobalExceptionHandler {
 
     // SSE 스트림에 JSON 에러 응답을 쓰려다 실패하는 경우를 대비한 핸들러
     @ExceptionHandler(HttpMessageNotWritableException.class)
-    public void handleHttpMessageNotWritableException(HttpMessageNotWritableException e) {
-        log.warn("Failed to write error response to client (possibly due to closed connection): {}", e.getMessage());
-        // 이 예외가 발생했다는 건 이미 클라이언트에게 응답을 보낼 수 없다는 뜻이므로 무시
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotWritableException(
+            HttpMessageNotWritableException e, HttpServletRequest request
+    ) {
+        String acceptHeader = request.getHeader("Accept");
+        boolean isSseRequest = acceptHeader != null && acceptHeader.contains("text/event-stream");
+        if (isSseRequest) {
+            log.warn("Failed to write SSE response (client likely disconnected): {}", e.getMessage());
+            return null; // SSE 연결이 이미 닫힌 경우 응답 불필요
+        }
+        log.error("Failed to write HTTP response: {}", e.getMessage());
+        ErrorResponse response = ErrorResponse.of(GlobalErrorCode.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.internalServerError().body(response);
     }
 
     @ExceptionHandler(Exception.class)
