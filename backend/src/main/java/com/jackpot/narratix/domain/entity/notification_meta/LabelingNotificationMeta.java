@@ -4,21 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class LabelingNotificationMeta implements NotificationMeta {
 
-    private List<CoverLetterMeta> coverLetters;
+    private String jobId;
+    private Long successFileCount;
+    private Long failFileCount;
 
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CoverLetterMeta {
-        private Long coverLetterId;
-        private List<Long> questionIds;
+    public static LabelingNotificationMeta of(String jobId, Long successFileCount, Long failFileCount) {
+        return new LabelingNotificationMeta(jobId, successFileCount, failFileCount);
     }
 }
 
