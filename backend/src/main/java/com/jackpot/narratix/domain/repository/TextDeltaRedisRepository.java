@@ -47,7 +47,7 @@ public class TextDeltaRedisRepository {
     /**
      * 버전 검증 + RPUSH(pending) + INCR(version) 원자적 실행 Lua 스크립트.
      *
-     * <p>ARGV[2](클라이언트 예상 버전)가 현재 카운터와 일치할 때만 push를 수행한다.
+     * <p>ARGV[2](클라이언트 예상 버전)가 현재 카운터 + 1과 일치할 때만 push를 수행한다.
      * 불일치 시 RPUSH/INCR 없이 -1을 반환해 버전 충돌을 알린다.</p>
      *
      * pending 키 TTL은 각 배치의 첫 push 시 {@link #refreshPendingTtl}로 1회 설정되고,
@@ -59,7 +59,7 @@ public class TextDeltaRedisRepository {
      */
     private static final String PUSH_AND_INCR_SCRIPT = """
             local current = redis.call('get', KEYS[2])
-            if current == false or tonumber(current) ~= tonumber(ARGV[2]) then
+            if current == false or tonumber(current) + 1 ~= tonumber(ARGV[2]) then
                 return -1
             end
             redis.call('rpush', KEYS[1], ARGV[1])
@@ -144,7 +144,8 @@ public class TextDeltaRedisRepository {
     /**
      * 버전 검증 후 델타를 pending List에 RPUSH하고 버전 카운터를 INCR한다 (Lua 스크립트로 원자적 실행).
      *
-     * <p>{@code delta.version()}이 현재 Redis 버전 카운터와 일치해야 push가 수행된다.
+     * <p>{@code delta.version()}이 현재 Redis 버전 카운터 + 1과 일치해야 push가 수행된다.
+     * 클라이언트는 현재 버전이 아닌 다음 버전을 보내야 한다.
      * 불일치 시 push 없이 {@link VersionConflictException}을 던진다.
      * 성공 시 pending/version 키의 TTL이 {@link #KEY_TTL}으로 갱신된다.</p>
      *
