@@ -104,6 +104,6 @@ public interface CoverLetterJpaRepository extends JpaRepository<CoverLetter, Lon
             Pageable pageable
     );
 
-    @Query("SELECT DISTINCT c.jobPosition FROM CoverLetter c WHERE c.userId = :userId")
+    @Query("SELECT DISTINCT c.jobPosition FROM CoverLetter c WHERE c.userId = :userId AND c.jobPosition IS NOT NULL")
     List<String> findDistinctJobPositionsByUserId(@Param("userId") String userId);
 }
