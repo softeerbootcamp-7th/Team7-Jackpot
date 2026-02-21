@@ -87,14 +87,20 @@ public class ReviewService {
         Review review = reviewRepository.save(request.toEntity(reviewerId, qnAId));
 
         // 텍스트 마킹 삽입
-        String wrappedAnswer = addTagToReviewedSection(currentAnswer, transformedStart, transformedEnd, review.getId(), request.originText());
+        String wrappedAnswer = addTagToReviewedSection(
+                currentAnswer, transformedStart, transformedEnd, review.getId(), request.originText()
+        );
         editAnswerAndPublishTextReplaceAllEvent(qnAId, qnA, wrappedAnswer, coverLetterId);
         eventPublisher.publishEvent(ReviewCreatedEvent.of(coverLetterId, qnAId, review));
 
-        notificationService.sendFeedbackNotificationToWriter(reviewerId, writerId, notificationTitle, qnAId, request.originText());
+        notificationService.sendFeedbackNotificationToWriter(
+                reviewerId, writerId, notificationTitle, coverLetterId, qnAId, request.originText()
+        );
     }
 
-    private String addTagToReviewedSection(String currentAnswer, int transformedStart, int transformedEnd, Long tagId, String originText) {
+    private String addTagToReviewedSection(
+            String currentAnswer, int transformedStart, int transformedEnd, Long tagId, String originText
+    ) {
         return currentAnswer.substring(0, transformedStart)
                 + markerOpen(tagId) + originText + MARKER_CLOSE
                 + currentAnswer.substring(transformedEnd);
