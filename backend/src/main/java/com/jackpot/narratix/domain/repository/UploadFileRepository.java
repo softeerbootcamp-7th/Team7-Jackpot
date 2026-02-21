@@ -1,11 +1,10 @@
 package com.jackpot.narratix.domain.repository;
 
 import com.jackpot.narratix.domain.entity.UploadFile;
+import com.jackpot.narratix.domain.entity.enums.UploadStatus;
 import com.jackpot.narratix.domain.exception.UploadErrorCode;
 import com.jackpot.narratix.global.exception.BaseException;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface UploadFileRepository extends JpaRepository<UploadFile, String> {
 
@@ -13,9 +12,5 @@ public interface UploadFileRepository extends JpaRepository<UploadFile, String> 
         return findById(fileId).orElseThrow(() -> new BaseException(UploadErrorCode.FILE_NOT_FOUND));
     }
 
-    @Query("SELECT COUNT(f) FROM UploadFile f WHERE f.uploadJob.id = :jobId AND f.status = 'FAILED'")
-    long countFailedFiles(@Param("jobId") String jobId);
-
-    @Query("SELECT COUNT(f) FROM UploadFile f WHERE f.uploadJob.id = :jobId AND f.status = 'COMPLETED'")
-    long countCompletedFiles(@Param("jobId") String jobId);
+    long countByUploadJobIdAndStatus(String uploadJobId, UploadStatus status);
 }

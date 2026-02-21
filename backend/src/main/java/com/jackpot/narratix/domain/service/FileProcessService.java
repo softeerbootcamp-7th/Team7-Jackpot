@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jackpot.narratix.domain.entity.LabeledQnA;
 import com.jackpot.narratix.domain.entity.UploadFile;
 import com.jackpot.narratix.domain.entity.UploadJob;
+import com.jackpot.narratix.domain.entity.enums.UploadStatus;
 import com.jackpot.narratix.domain.repository.LabeledQnARepository;
 import com.jackpot.narratix.domain.repository.UploadFileRepository;
 import com.jackpot.narratix.domain.service.dto.LabeledQnARequest;
@@ -89,8 +90,8 @@ public class FileProcessService {
 
         uploadFileRepository.flush();
         long totalCount = job.getFiles().size();
-        long failCount = uploadFileRepository.countFailedFiles(job.getId());
-        long successCount = uploadFileRepository.countCompletedFiles(job.getId());
+        long failCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.FAILED)]
+        long successCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.COMPLETED);
 
         if (failCount + successCount == totalCount) {
             log.info("All files completed for Job: {}. Sending SSE Notification.", job.getId());
