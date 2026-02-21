@@ -1043,7 +1043,7 @@ class CoverLetterServiceTest {
         List<String> result = coverLetterService.getCompanies(userId);
 
         // then
-        assertThat(result).hasSize(3).contains("Samsung", "Naver");
+        assertThat(result).containsExactlyInAnyOrder("Samsung", "Naver", "Kakao");
         verify(coverLetterRepository, times(1)).findCompanyNamesByUserId(userId);
     }
 
