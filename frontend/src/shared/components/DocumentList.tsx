@@ -3,6 +3,7 @@ import { type ReactNode, useRef } from 'react';
 import useInfiniteScroll from '@/shared/hooks/useInfiniteScroll';
 
 interface Props<T> {
+  subHeading?: ReactNode;
   className?: string;
   items: T[];
   isLoading?: boolean;
@@ -22,6 +23,7 @@ const DocumentList = <T,>({
   isError = false,
   emptyMessage = '데이터가 없습니다.',
   emptyComponent,
+  subHeading,
   renderItem,
   hasNextPage,
   isFetchingNextPage,
@@ -72,6 +74,7 @@ const DocumentList = <T,>({
 
   return (
     <div className={`flex w-full flex-col ${className}`}>
+      {subHeading && <>{subHeading}</>}
       {/* 기존 리스트 렌더링 */}
       {items.map((item) => renderItem(item))}
 

@@ -69,10 +69,10 @@ const RecruitFormView = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className='inline-flex min-h-full w-full max-w-96 flex-col items-center justify-start gap-7 py-6'
+      className='inline-flex min-h-full w-full flex-col items-center justify-start gap-7 px-3 py-6'
     >
       {/* 헤더 영역 */}
-      <div className='flex w-full flex-shrink-0 flex-row items-center justify-between'>
+      <div className='flex w-full flex-row items-center justify-between'>
         <div className='inline-flex flex-row items-center gap-2'>
           {mode === 'EDIT' ? <I.RecruitEditIcon /> : <I.NewRecruitIcon />}
           <h2 className='text-xl font-bold'>
@@ -106,7 +106,7 @@ const RecruitFormView = ({
       </div>
 
       {/* 하단 버튼 */}
-      <div className='w-full flex-shrink-0'>
+      <div className='w-full'>
         <PaginationButton
           onClick={handlePrevStep}
           step={step}
