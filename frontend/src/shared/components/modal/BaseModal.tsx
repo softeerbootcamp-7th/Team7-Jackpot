@@ -27,7 +27,7 @@ const BaseModal = ({ isOpen, onClose, children }: BaseModalProps) => {
   if (!modalRoot) return null;
 
   return createPortal(
-    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4'>
+    <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4'>
       <div ref={modalRef} className='relative z-50'>
         {children}
       </div>

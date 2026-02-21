@@ -1,3 +1,4 @@
+import { AlertIcon } from '@/shared/icons/Alert';
 import { DeleteIcon } from '@/shared/icons/Delete';
 import MoreVertIcon from '@/shared/icons/MoreVertIcon';
 import NotFoundIllustration from '@/shared/icons/NotFoundIllustration';
@@ -28,4 +29,5 @@ export const SharedIcons = {
   TitleLogo,
   UserAvatarIcon,
   WritingCoverLetterIcon,
+  AlertIcon,
 };

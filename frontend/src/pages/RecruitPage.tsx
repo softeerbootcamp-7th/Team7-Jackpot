@@ -37,7 +37,7 @@ const RecruitPage = () => {
               <RecruitListContainer
                 dateParams={state.selectedDateParams}
                 onEdit={actions.openEditForm}
-                // 💡 2. 수정됨: 진짜 삭제가 아니라 모달을 '여는' 액션을 전달!
+                // 진짜 삭제가 아니라 모달 열기만 한다.
                 onDelete={actions.openDeleteModal}
                 emptyComponent={
                   <EmptyCase
@@ -52,7 +52,6 @@ const RecruitPage = () => {
         </div>
       </div>
 
-      {/* 💡 3. 모달은 최상단 페이지 레벨에 배치! */}
       <ConfirmModal
         isOpen={state.deletingId !== null}
         title='연결된 자기소개서가 사라져요!'
