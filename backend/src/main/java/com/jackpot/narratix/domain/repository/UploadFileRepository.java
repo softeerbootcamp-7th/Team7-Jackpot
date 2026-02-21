@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface UploadFileRepository extends JpaRepository<UploadFile, String> {
 
     default UploadFile findByIdOrElseThrow(String fileId) {
-        return findById(fileId).orElseThrow(() -> new BaseException(UploadErrorCode.FILE_NOT_FOUND)); // 에러 코드는 프로젝트에 맞게 수정해주세요
+        return findById(fileId).orElseThrow(() -> new BaseException(UploadErrorCode.FILE_NOT_FOUND));
     }
 
     @Query("SELECT COUNT(f) FROM UploadFile f WHERE f.uploadJob.id = :jobId AND f.status = 'FAILED'")
