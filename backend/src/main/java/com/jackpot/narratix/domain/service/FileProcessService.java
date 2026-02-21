@@ -5,11 +5,11 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jackpot.narratix.domain.entity.LabeledQnA;
 import com.jackpot.narratix.domain.entity.UploadFile;
-import com.jackpot.narratix.domain.exception.UploadErrorCode;
+import com.jackpot.narratix.domain.entity.UploadJob;
+import com.jackpot.narratix.domain.entity.enums.UploadStatus;
 import com.jackpot.narratix.domain.repository.LabeledQnARepository;
 import com.jackpot.narratix.domain.repository.UploadFileRepository;
 import com.jackpot.narratix.domain.service.dto.LabeledQnARequest;
-import com.jackpot.narratix.global.exception.BaseException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,16 +25,13 @@ public class FileProcessService {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final UploadFileRepository uploadFileRepository;
     private final LabeledQnARepository labeledQnARepository;
+    private final NotificationService notificationService;
 
     private static final int MAX_QNA_SIZE = 10;
 
     @Transactional
     public void processUploadedFile(String fileId, String extractedText, String labelingJson) {
-        UploadFile file = uploadFileRepository.findById(fileId)
-                .orElseThrow(() -> {
-                    log.error("File not found. skip. fileId={}", fileId);
-                    return new BaseException(UploadErrorCode.FILE_NOT_FOUND);
-                });
+        UploadFile file = uploadFileRepository.findByIdOrElseThrow(fileId);
 
         file.successExtract(extractedText);
         log.info("Extract success saved. FileId = {}", fileId);
@@ -42,16 +39,19 @@ public class FileProcessService {
         if (labelingJson == null) {
             file.failLabeling();
             log.warn("AI Labeling Fail saved. FileID: {}", fileId);
+            checkJobCompletionAndNotify(file.getUploadJob());
             return;
         }
 
         List<LabeledQnARequest> qnARequests = List.of();
 
         try {
-            qnARequests = objectMapper.readValue(labelingJson, new TypeReference<>() {});
+            qnARequests = objectMapper.readValue(labelingJson, new TypeReference<>() {
+            });
         } catch (JsonProcessingException e) {
             log.error("Failed to parse labeling result. fileId: {}, error: {}", fileId, e.getMessage());
             file.failLabeling();
+            checkJobCompletionAndNotify(file.getUploadJob());
             return;
         }
 
@@ -69,16 +69,33 @@ public class FileProcessService {
         file.successLabeling();
 
         log.info("Successfully saved {} labeling items for file: {}", qnAs.size(), fileId);
+
+        checkJobCompletionAndNotify(file.getUploadJob());
     }
 
     @Transactional
     public void processFailedFile(String fileId, String errorMessage) {
-        UploadFile file = uploadFileRepository.findById(fileId).orElse(null);
-        if (file == null) {
-            log.warn("File not found. skip. fileId={}", fileId);
-            return;
-        }
+        UploadFile file = uploadFileRepository.findByIdOrElseThrow(fileId);
+
         file.failExtract();
         log.warn("Extract fail saved. FileId={}, error: {}", fileId, errorMessage);
+
+        checkJobCompletionAndNotify(file.getUploadJob());
+
+    }
+
+    private void checkJobCompletionAndNotify(UploadJob job) {
+
+        uploadFileRepository.flush();
+        long totalCount = uploadFileRepository.countByUploadJobId(job.getId());
+        long failCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.FAILED);
+        long successCount = uploadFileRepository.countByUploadJobIdAndStatus(job.getId(), UploadStatus.COMPLETED);
+
+        if (failCount + successCount == totalCount) {
+            log.info("All files completed for Job: {}. Sending SSE Notification.", job.getId());
+
+            notificationService.sendLabelingCompleteNotification(job.getUserId(), job.getId(), successCount, failCount);
+        }
     }
 }
+
