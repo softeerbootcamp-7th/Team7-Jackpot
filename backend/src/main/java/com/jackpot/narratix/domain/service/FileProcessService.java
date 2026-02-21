@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -96,12 +94,7 @@ public class FileProcessService {
         if (failCount + successCount == totalCount) {
             log.info("All files completed for Job: {}. Sending SSE Notification.", job.getId());
 
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    notificationService.sendLabelingCompleteNotification(job.getUserId(), job.getId(), successCount, failCount);
-                }
-            });
+            notificationService.sendLabelingCompleteNotification(job.getUserId(), job.getId(), successCount, failCount);
         }
     }
 }
