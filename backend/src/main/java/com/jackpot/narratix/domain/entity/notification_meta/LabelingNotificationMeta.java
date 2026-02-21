@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 public class LabelingNotificationMeta implements NotificationMeta {
 
     private String jobId;
-    private Long successFileCount;
-    private Long failFileCount;
+    private long successFileCount;
+    private long failFileCount;
 
-    public static LabelingNotificationMeta of(String jobId, Long successFileCount, Long failFileCount) {
+    public static LabelingNotificationMeta of(String jobId, long successFileCount, long failFileCount) {
         return new LabelingNotificationMeta(jobId, successFileCount, failFileCount);
     }
 }

@@ -28,7 +28,6 @@ public class FileProcessService {
     private final LabeledQnARepository labeledQnARepository;
     private final NotificationService notificationService;
 
-
     private static final int MAX_QNA_SIZE = 10;
 
     @Transactional

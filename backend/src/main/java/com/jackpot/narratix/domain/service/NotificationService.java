@@ -85,7 +85,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendLabelingCompleteNotification(String userId, String jobId, Long successCount, Long failCount) {
+    public void sendLabelingCompleteNotification(String userId, String jobId, long successCount, long failCount) {
 
         LabelingNotificationMeta labelingNotificationMeta = LabelingNotificationMeta.of(
                 jobId, successCount, failCount
