@@ -30,7 +30,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static final String LABELING_NOTIFICATION_TITLE = "총 {}개의 자기소개서를 분석했어요";
+    private static final String LABELING_NOTIFICATION_TITLE = "총 %d개의 자기소개서를 분석했어요";
 
     @Transactional(readOnly = true)
     public NotificationsPaginationResponse getNotificationsByUserId(
