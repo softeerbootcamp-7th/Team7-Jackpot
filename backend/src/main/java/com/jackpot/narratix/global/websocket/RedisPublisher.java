@@ -26,6 +26,9 @@ public class RedisPublisher {
         } catch (JacksonException e) {
             log.error("WebSocket 메시지 직렬화 실패: destination={}", destination, e);
             throw new RuntimeException("Redis WebSocket 메시지 직렬화에 실패했습니다.", e);
+        } catch (Exception e) {
+            log.error("Redis 메시지 발행 실패: destination={}", destination, e);
+            throw new RuntimeException("Redis WebSocket 메시지 발행에 실패했습니다.", e);
         }
     }
 }
