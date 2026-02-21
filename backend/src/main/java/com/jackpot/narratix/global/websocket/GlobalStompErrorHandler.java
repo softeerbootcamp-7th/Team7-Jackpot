@@ -24,7 +24,6 @@ public class GlobalStompErrorHandler extends StompSubProtocolErrorHandler {
     ) {
         // JWT 예외는 예상 가능한 시나리오이므로 간단한 WARN 로그만 출력
         if (ex.getCause() instanceof JwtException jwtException) {
-            log.warn("WebSocket JWT authentication failed: {}", jwtException.getErrorCode().getMessage());
             return handleBaseException(clientMessage, jwtException);
         }
 
