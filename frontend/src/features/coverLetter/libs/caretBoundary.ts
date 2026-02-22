@@ -65,7 +65,6 @@ const ensureEditableTextAnchorAfter = (
   }
 
   const span = document.createElement('span');
-  span.className = '';
   const anchor = document.createTextNode('');
   span.appendChild(anchor);
   parent.insertBefore(span, node.nextSibling);
@@ -212,7 +211,7 @@ export const normalizeCaretAtReviewBoundary = ({
           ? ensureEditableTextAnchorInNode(nextSibling)
           : null;
         if (nextText) {
-          range.setStart(nextText, nextText.textContent?.length ?? 0);
+          range.setStart(nextText, 0);
         } else {
           const anchor = ensureEditableTextAnchorAfter(boundary);
           if (!anchor) {
@@ -301,14 +300,6 @@ export const normalizeCaretAtReviewBoundary = ({
     }
   }
 
-  const caretRange = currentRange.cloneRange();
-  caretRange.collapse(true);
-  const startBoundary = document.createRange();
-  startBoundary.selectNodeContents(reviewWrapper);
-  startBoundary.collapse(true);
-  const endBoundary = document.createRange();
-  endBoundary.selectNodeContents(reviewWrapper);
-  endBoundary.collapse(false);
   const leadingRange = document.createRange();
   leadingRange.selectNodeContents(reviewWrapper);
   leadingRange.setEnd(currentRange.startContainer, currentRange.startOffset);

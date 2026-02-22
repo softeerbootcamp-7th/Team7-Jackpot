@@ -82,6 +82,10 @@ export const useCoverLetterInputHandlers = ({
       }
 
       if (e.key === 'Delete') {
+        const elapsed = Date.now() - lastCompositionEndAtRef.current;
+
+        if (elapsed < 120) return;
+
         e.preventDefault();
         normalizeCaretAtReviewBoundary();
         applyDeleteByDirection('forward');
