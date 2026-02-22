@@ -18,7 +18,7 @@ public enum WebSocketErrorCode implements ErrorCode {
     SESSION_ATTRIBUTES_NOT_FOUND(HttpStatus.BAD_REQUEST, "웹소켓 세션에서 세션 속성이 존재하지 않습니다."),
     ROLE_NOT_FOUND(HttpStatus.BAD_REQUEST, "웹소켓 세션에서 Role이 존재하지 않습니다."),
     USER_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "웹소켓 세션에서 유저 아이디가 존재하지 않습니다."),
-    SHARE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "웹소켓 세션에서 세션 아이디가 존재하지 않습니다.");
+    SHARE_ID_NOT_FOUND(HttpStatus.BAD_REQUEST, "웹소켓 세션에서 첨삭 링크가 존재하지 않습니다.");
 
     private final HttpStatus status;
     private final String message;
