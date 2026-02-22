@@ -46,7 +46,7 @@ export const useFocusTrap = (isOpen: boolean) => {
     ) as NodeListOf<HTMLElement>;
 
     if (focusableNodes?.length) {
-      setTimeout(() => focusableNodes[0].focus(), 10);
+      focusableNodes[0].focus();
     }
 
     return () => {

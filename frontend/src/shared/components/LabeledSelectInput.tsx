@@ -58,8 +58,12 @@ const LabeledSelectInput = <T extends string | number>({
             onChange(e.target.value);
             if (!isOpen) handleDropdown(true);
           }}
+          role='combobox'
+          aria-expanded={isOpen}
+          aria-haspopup='listbox'
+          aria-autocomplete='list'
           onClick={() => handleDropdown(!isOpen)}
-          autoComplete='off'
+          // autoComplete='off'
           className='w-full rounded-lg bg-gray-50 px-5 py-[0.875rem] text-gray-950 placeholder:text-gray-400 focus:ring-2 focus:ring-gray-200 focus:outline-none'
           placeholder={`${label}을(를) 입력해주세요`}
         />
@@ -76,6 +80,7 @@ const LabeledSelectInput = <T extends string | number>({
             >
               <div
                 ref={listRef} // 스크롤 컨테이너에 Ref 연결
+                role='listbox'
                 className='max-h-48 overflow-y-auto p-1'
               >
                 {searchData &&
@@ -86,6 +91,8 @@ const LabeledSelectInput = <T extends string | number>({
                       <button
                         key={`${item}-${index}`}
                         type='button'
+                        role='option'
+                        aria-selected={isHighlighted}
                         onMouseEnter={() => setHighlightedIndex(index)} // 마우스가 올라가면 인덱스 동기화
                         onClick={() => {
                           onChange(String(item));

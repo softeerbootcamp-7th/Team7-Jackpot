@@ -7,11 +7,12 @@ interface StepItemProps {
 }
 
 const StepItem = ({ step }: StepItemProps) => {
-  const generateStepIcon = () => {
-    if (step === '1') return <UI.UploadInputIcon />;
-    else if (step === '2') return <UI.LabelingResultIcon />;
-    else if (step === '3') return <UI.UploadCompleteIcon />;
+  const STEP_ICONS: Record<string, React.ReactNode> = {
+    '1': <UI.UploadInputIcon />,
+    '2': <UI.LabelingResultIcon />,
+    '3': <UI.UploadCompleteIcon />,
   };
+  const generateStepIcon = () => STEP_ICONS[step] ?? null;
 
   return (
     <div className='flex flex-col items-center justify-center gap-7 select-none'>

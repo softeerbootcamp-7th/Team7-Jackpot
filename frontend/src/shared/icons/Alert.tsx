@@ -1,6 +1,7 @@
-import { type SVGProps } from 'react';
+import { type SVGProps, useId } from 'react';
 
 export const AlertIcon = (props: SVGProps<SVGSVGElement>) => {
+  const clipId = useId();
   return (
     <svg
       xmlns='http://www.w3.org/2000/svg'
@@ -11,11 +12,11 @@ export const AlertIcon = (props: SVGProps<SVGSVGElement>) => {
       {...props}
     >
       <defs>
-        <clipPath id='a'>
+        <clipPath id={clipId}>
           <rect width='36' height='36' />
         </clipPath>
       </defs>
-      <g clipPath='url(#a)'>
+      <g clipPath={`url(#${clipId})`}>
         <path
           fill='#ED2015'
           d='M34.163 28.812 31.247 2.678A3.01 3.01 0 0 0 28.254 0H7.667A3.01 3.01 0 0 0 4.67 2.704L2 28.812z'

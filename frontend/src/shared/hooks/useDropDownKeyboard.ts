@@ -25,6 +25,11 @@ export const useDropdownKeyboard = ({
     setHighlightedIndex(-1);
   }
 
+  // itemCount가 줄어들면 highlightedIndex를 클램핑
+  if (highlightedIndex >= itemCount) {
+    setHighlightedIndex(itemCount > 0 ? itemCount - 1 : -1);
+  }
+
   // 드롭다운이 열려있을 때(isOpen === true)만 Escape 키 감지가 활성화됩니다.
   useEscapeKey(() => setIsOpen(false), isOpen);
 
@@ -68,7 +73,7 @@ export const useDropdownKeyboard = ({
         break;
       case 'ArrowUp':
         e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        setHighlightedIndex((prev) => (prev <= 0 ? itemCount - 1 : prev - 1));
         break;
       case 'Enter':
         e.preventDefault();

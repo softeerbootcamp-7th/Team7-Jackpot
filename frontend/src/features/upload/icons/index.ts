@@ -3,7 +3,6 @@ import AddFileIcon from '@/features/upload/icons/AddFileIcon';
 import AILabelingIcon from '@/features/upload/icons/AILabelingIcon';
 import CompleteSavedIcon from '@/features/upload/icons/CompleteSavedIcon';
 import DocumentBoxIcon from '@/features/upload/icons/DocumentBoxIcon';
-import DropdownArrow from '@/features/upload/icons/DropdownArrow';
 import FileRemoveIcon from '@/features/upload/icons/FileRemoveIcon';
 import FileUploadIcon from '@/features/upload/icons/FileUploadIcon';
 import FolderIconInButton from '@/features/upload/icons/FolderIconInButton';
@@ -25,7 +24,6 @@ export {
   AILabelingIcon,
   CompleteSavedIcon,
   DocumentBoxIcon,
-  DropdownArrow,
   FileRemoveIcon,
   FileUploadIcon,
   FolderIconInButton,
@@ -41,4 +39,3 @@ export {
   UploadIconInButton,
   UploadInputIcon,
 };
-

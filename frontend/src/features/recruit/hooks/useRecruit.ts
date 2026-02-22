@@ -62,9 +62,14 @@ export const useRecruit = () => {
   // 실제 '삭제하기' 버튼을 눌렀을 때 실행될 로직
   const confirmDelete = useCallback(async () => {
     if (deletingId !== null) {
-      await deleteCoverLetter({ coverLetterId: deletingId });
-      showToast('공고가 삭제되었습니다.', true);
-      setDeletingId(null); // 완료 후 모달 닫기
+      try {
+        await deleteCoverLetter({ coverLetterId: deletingId });
+        showToast('공고가 삭제되었습니다.', true);
+        setDeletingId(null);
+      } catch {
+        showToast('공고 삭제에 실패했습니다.', false);
+        // 모달은 열린 상태 유지
+      }
     }
   }, [deletingId, deleteCoverLetter, showToast]);
 

@@ -105,7 +105,10 @@ const RecruitListContainer = ({
         onLoadMore={() => fetchNextPage()}
         subHeading={subHeading}
         renderItem={(doc) => {
-          const applySeason = `${doc.applyYear} ${mapApplyHalf(doc.applyHalf)}`;
+          const applyHalf = mapApplyHalf(doc.applyHalf);
+          const applySeason = applyHalf
+            ? `${doc.applyYear} ${applyHalf}`
+            : `${doc.applyYear}`;
 
           return (
             <DocumentItem

@@ -5,9 +5,9 @@ import CoverLetterList from '@/features/upload/components/CoverLetterList';
 import LabeledSelectInput from '@/features/upload/components/LabeledSelectInput';
 import { QUESTION_TYPE_LIST } from '@/features/upload/constants/uploadPage';
 import useCoverLetterState from '@/features/upload/hooks/useCoverLetterState';
-import * as UI from '@/features/upload/icons';
 import { yearList } from '@/features/upload/utils/generateAboutDate';
 import RecruitPeriodSelectInput from '@/shared/components/RecruitPeriodSelectInput';
+import * as SI from '@/shared/icons';
 import type { DropdownStateType } from '@/shared/types/dropdown';
 
 // [윤종근] - 추후에 지울 예정인 UI 테스트만을 위한 임시 데이터라서 constants에 옮기지 않았습니다.
@@ -93,9 +93,7 @@ const LabelingResultItem = ({
                   yearDropdown: isOpen,
                 }));
               }}
-              icon={
-                <UI.DropdownArrow isOpen={isDropdownOpen.yearDropdown} />
-              }
+              icon={<SI.DropdownArrow isOpen={isDropdownOpen.yearDropdown} />}
               isOpen={isDropdownOpen.yearDropdown}
               dropdownDirection='bottom'
             />

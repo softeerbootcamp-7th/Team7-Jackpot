@@ -69,6 +69,11 @@ const RecruitPeriodSelectInput = ({
             aria-haspopup='listbox'
             aria-expanded={isOpen}
             aria-controls={isOpen ? listboxId : undefined}
+            aria-activedescendant={
+              isOpen && highlightedIndex >= 0
+                ? `${listboxId}-option-${highlightedIndex}`
+                : undefined
+            }
           >
             <span className='font-medium text-gray-950'>{yearValue}</span>
             {icon}
@@ -83,11 +88,15 @@ const RecruitPeriodSelectInput = ({
               <div ref={listRef} className='max-h-40 overflow-y-auto p-1'>
                 {constantData.map((year, index) => {
                   const isHighlighted = index === highlightedIndex;
+                  const getOptionId = (index: number) =>
+                    `${listboxId}-option-${index}`;
                   return (
                     <button
                       key={year}
                       type='button'
                       role='option'
+                      id={getOptionId(index)}
+                      tabIndex={-1}
                       aria-selected={year === yearValue}
                       onMouseEnter={() => setHighlightedIndex(index)}
                       onClick={() => {

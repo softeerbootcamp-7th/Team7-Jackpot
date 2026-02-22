@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import Calendar from '@/features/recruit/components/calendar/Calendar';
 import { useInfiniteCalendarDates } from '@/features/recruit/hooks/queries/useCalendarQuery';
@@ -12,12 +12,19 @@ const CalendarContainer = () => {
   const startDateStr = useMemo(() => getISODate(startDate), [startDate]);
   const endDateStr = useMemo(() => getISODate(endDate), [endDate]);
 
-  const { data, isLoading } = useInfiniteCalendarDates({
-    startDate: startDateStr,
-    endDate: endDateStr,
-    size: 100, // 한 달 치 데이터로는 충분히 넉넉한 사이즈
-    isShared: false,
-  });
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } =
+    useInfiniteCalendarDates({
+      startDate: startDateStr,
+      endDate: endDateStr,
+      size: 100, // 한 달 치 데이터로는 충분히 넉넉한 사이즈
+      isShared: false,
+    });
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const eventsByDate = useMemo(() => {
     if (!data) return {};
