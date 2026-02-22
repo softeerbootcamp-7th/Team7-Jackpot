@@ -1,3 +1,4 @@
+import { QUESTION_TYPE_LIST } from '@/features/upload/constants/uploadPage';
 import type { ApiApplyHalf } from '@/shared/types/coverLetter';
 
 export interface PaginationButtonIconProps {
@@ -21,6 +22,7 @@ export interface ContentItemType {
     year: number;
     season: ApiApplyHalf;
   };
+  deadline: string;
   questionType: string;
 }
 
@@ -55,7 +57,20 @@ export interface PresignedUrlResponse {
   fileName: string;
   presignedUrl: string;
   fileKey: string;
-  requiredHeaders: Record<string, string>;
+  requiredHeaders: {
+    'Content-Type': string;
+    'x-amz-meta-fileid': string;
+  };
+}
+
+export interface SaveCoverLetterResponse {
+  savedCoverLetterCount: number;
+}
+
+export interface FileUploadRequest {
+  presignedUrl: string;
+  file: File;
+  contentType: string;
 }
 
 export interface FileState {
@@ -71,4 +86,36 @@ export interface StartLabelingRequest {
     presignedUrl: string;
     fileKey: string;
   }>;
+}
+
+interface BeforeLabelingFileType {
+  presignedUrl: string;
+  fileKey: string;
+}
+export interface StartAiLabelingRequest {
+  files: BeforeLabelingFileType[];
+}
+
+type QuestionCategoryType = typeof QUESTION_TYPE_LIST[number]['value']
+interface QnAInSaveCoverLetter {
+  question: string;
+  answer: string;
+  questionCategory: QuestionCategoryType;
+}
+
+interface EachCoverLetterInSaveCoverLetter {
+  companyName: string;
+  jobPosition: string;
+  applyYear: number;
+  applyHalf: 'FIRST_HALF' | 'SECOND_HALF';
+  deadline: string;
+}
+
+interface CoverLetterInSaveCoverLetter {
+  coverLetter: EachCoverLetterInSaveCoverLetter;
+  qnAs: QnAInSaveCoverLetter[];
+}
+export interface SaveCoverLetterRequest {
+  uploadJobId: string;
+  coverLetters: CoverLetterInSaveCoverLetter[];
 }
