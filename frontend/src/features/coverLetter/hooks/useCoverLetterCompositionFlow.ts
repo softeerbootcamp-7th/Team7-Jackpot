@@ -75,6 +75,5 @@ export const useCoverLetterCompositionFlow = ({
     handleInput,
     handleCompositionStart,
     handleCompositionEnd,
-    cancelPendingCompositionCommit: () => {},
   };
 };

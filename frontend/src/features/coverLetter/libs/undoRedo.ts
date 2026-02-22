@@ -50,10 +50,17 @@ export const bindUndoRedoShortcuts = ({
     if (!contentRef.current?.contains(document.activeElement)) return;
 
     if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') {
-      e.preventDefault();
-      if (e.shiftKey) performRedo();
-      else performUndo();
+      if (e.shiftKey) {
+        if (redoStack.current.length === 0) return;
+        e.preventDefault();
+        performRedo();
+      } else {
+        if (undoStack.current.length === 0) return;
+        e.preventDefault();
+        performUndo();
+      }
     } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'y') {
+      if (redoStack.current.length === 0) return;
       e.preventDefault();
       performRedo();
     }

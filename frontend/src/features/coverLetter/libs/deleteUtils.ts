@@ -1,7 +1,8 @@
+import type { ReviewRangeMap } from '@/features/coverLetter/libs/reviewTracking';
 import { updateReviewRanges } from '@/shared/hooks/useReviewState/helpers';
 import type { Review } from '@/shared/types/review';
 
-export type ReviewRangeMap = Record<number, { start: number; end: number }>;
+export type { ReviewRangeMap };
 export type DeleteDirection = 'backward' | 'forward';
 
 interface ComputeDeleteEditInput {
@@ -149,7 +150,8 @@ export const computeDeleteEdit = ({
   } else if (direction === 'forward' && caretStart < currentText.length) {
     deleteStart = caretStart;
     deleteEnd = caretStart + 1;
-    newText = currentText.slice(0, caretStart) + currentText.slice(caretEnd + 1);
+    newText =
+      currentText.slice(0, caretStart) + currentText.slice(caretEnd + 1);
     caretOffset = caretStart;
   }
 

@@ -85,6 +85,9 @@ const CoverLetterEditor = ({
   const [lastTextUpdateAt, setLastTextUpdateAt] = useState<string | undefined>(
     undefined,
   );
+  const [composingCharCount, setComposingCharCount] = useState<number | null>(
+    null,
+  );
   const selectedReviewId =
     selectedReviewState.qnaId === currentQnaId
       ? selectedReviewState.reviewId
@@ -132,11 +135,22 @@ const CoverLetterEditor = ({
 
   const handleDeleteReviewsByText = useCallback(
     (reviewIds: number[]) => {
-      for (const reviewId of reviewIds) {
-        onDeleteReview(reviewId);
-      }
+      Promise.allSettled(
+        reviewIds.map(
+          (reviewId) =>
+            new Promise<void>((resolve, reject) => {
+              deleteReviewApi(reviewId, {
+                onSuccess: () => resolve(),
+                onError: () => reject(),
+              });
+            }),
+        ),
+      ).then((results) => {
+        const failed = results.filter((r) => r.status === 'rejected').length;
+        if (failed > 0) showToast(`리뷰 ${failed}개 삭제에 실패했습니다.`);
+      });
     },
-    [onDeleteReview],
+    [deleteReviewApi, showToast],
   );
 
   // 에디터 내부(useTextSelection): composition 중 안정적인 범위 유지 → IME 보호
@@ -228,11 +242,12 @@ const CoverLetterEditor = ({
               replaceAllSignal={currentReplaceAllSignal}
               onTextUpdateSent={setLastTextUpdateAt}
               onDeleteReviewsByText={handleDeleteReviewsByText}
+              onComposingLengthChange={setComposingCharCount}
             />
           </div>
 
           <CoverLetterFooter
-            charCount={currentText.length}
+            charCount={composingCharCount ?? currentText.length}
             currentPageIndex={currentPageIndex}
             totalPages={totalPages}
             onPageChange={onPageChange}

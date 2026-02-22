@@ -134,11 +134,14 @@ export const useReviewState = ({
   const currentReplaceAllSignal =
     qnaId !== undefined ? (replaceAllSignalByQnaId[qnaId] ?? 0) : 0;
 
+  const reviewsForCurrentQna =
+    qnaId !== undefined ? reviewsByQnaId[qnaId] : undefined;
+
   const currentReviews = useMemo(() => {
     if (qnaId === undefined) return [];
 
     const baseReviews = (() => {
-      if (reviewsByQnaId[qnaId]) return reviewsByQnaId[qnaId];
+      if (reviewsForCurrentQna) return reviewsForCurrentQna;
       if (!apiReviews) return [];
       return buildReviewsFromApi(
         parsed.cleaned,
@@ -150,7 +153,7 @@ export const useReviewState = ({
     // 입력 경로별 로컬 상태 업데이트 타이밍 차이가 있어도
     // 현재 본문 기준으로 viewStatus를 항상 최신으로 유지한다.
     return applyViewStatus(baseReviews, currentText);
-  }, [qnaId, apiReviews, parsed, reviewsByQnaId, currentText]);
+  }, [qnaId, apiReviews, parsed, reviewsForCurrentQna, currentText]);
 
   const currentReviewsRef = useRef(currentReviews);
   useEffect(() => {
@@ -178,15 +181,21 @@ export const useReviewState = ({
   const isSocketQueueScheduledRef = useRef(false);
 
   const flushSocketEventQueue = useCallback(function flushQueuedSocketEvents() {
-    while (socketEventQueueRef.current.length > 0) {
-      const job = socketEventQueueRef.current.shift();
-      job?.();
-    }
-    isSocketQueueScheduledRef.current = false;
-    // flush 중 추가된 이벤트가 남아 있으면 다음 microtask에서 이어서 처리
-    if (socketEventQueueRef.current.length > 0) {
-      isSocketQueueScheduledRef.current = true;
-      queueMicrotask(flushQueuedSocketEvents);
+    try {
+      while (socketEventQueueRef.current.length > 0) {
+        const job = socketEventQueueRef.current.shift();
+        try {
+          job?.();
+        } catch (e) {
+          console.error('[useReviewState] socket event handler error:', e);
+        }
+      }
+    } finally {
+      isSocketQueueScheduledRef.current = false;
+      if (socketEventQueueRef.current.length > 0) {
+        isSocketQueueScheduledRef.current = true;
+        queueMicrotask(flushQueuedSocketEvents);
+      }
     }
   }, []);
 

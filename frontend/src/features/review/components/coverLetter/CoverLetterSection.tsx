@@ -88,17 +88,19 @@ const CoverLetterSection = ({
         return;
       }
 
-      const nextVersion = onReserveNextVersion
+      const reservedVersion = onReserveNextVersion
         ? onReserveNextVersion()
-        : currentVersion;
+        : currentVersion + 1;
+
       const taggedRange = mapCleanRangeToTaggedRange(
         text,
         reviews,
         selection.range,
       );
+
       createReview(
         {
-          version: Math.max(0, nextVersion - 1),
+          version: Math.max(0, reservedVersion - 1),
           startIdx: taggedRange.startIdx,
           endIdx: taggedRange.endIdx,
           originText: selection.selectedText,

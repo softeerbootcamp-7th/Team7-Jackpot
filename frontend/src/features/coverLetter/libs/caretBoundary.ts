@@ -4,7 +4,6 @@ import type { Review } from '@/shared/types/review';
 interface NormalizeCaretAtReviewBoundaryParams {
   contentEl: HTMLDivElement;
   reviews: Review[];
-  isComposing: boolean;
 }
 
 type BoundaryMoveDirection = 'left' | 'right';
@@ -151,7 +150,6 @@ export const moveCaretAcrossReviewBoundaryMarker = ({
 export const normalizeCaretAtReviewBoundary = ({
   contentEl,
   reviews,
-  isComposing,
 }: NormalizeCaretAtReviewBoundaryParams): boolean => {
   const selection = window.getSelection();
   if (!selection || selection.rangeCount === 0 || !selection.isCollapsed) {
@@ -347,7 +345,6 @@ export const normalizeCaretAtReviewBoundary = ({
   }
 
   if (!isAtEndBoundary) {
-    if (isComposing) return false;
     return false;
   }
 

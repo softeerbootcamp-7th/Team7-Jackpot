@@ -1,5 +1,4 @@
 import {
-  type KeyboardEvent as ReactKeyboardEvent,
   memo,
   useCallback,
   useEffect,
@@ -56,6 +55,7 @@ interface CoverLetterContentProps {
   replaceAllSignal: number;
   onTextUpdateSent?: (at: string) => void;
   onDeleteReviewsByText?: (reviewIds: number[]) => void;
+  onComposingLengthChange?: (len: number | null) => void;
 }
 
 const CoverLetterContent = ({
@@ -77,6 +77,7 @@ const CoverLetterContent = ({
   replaceAllSignal,
   onTextUpdateSent,
   onDeleteReviewsByText,
+  onComposingLengthChange,
 }: CoverLetterContentProps) => {
   const [spacerHeight, setSpacerHeight] = useState(0);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -275,6 +276,12 @@ const CoverLetterContent = ({
     ],
   );
 
+  const sendTextPatchRef = useRef(sendTextPatch);
+
+  useEffect(() => {
+    sendTextPatchRef.current = sendTextPatch;
+  }, [sendTextPatch]);
+
   const updateText = useCallback(
     (
       newText: string,
@@ -370,7 +377,6 @@ const CoverLetterContent = ({
     return normalizeCaretAtReviewBoundaryUtil({
       contentEl: contentRef.current,
       reviews: reviewsRef.current,
-      isComposing: isComposingRef.current,
     });
   }, []);
 
@@ -462,17 +468,33 @@ const CoverLetterContent = ({
     isInputtingRef.current = false;
   }, [text, qnAId]);
 
-  const { handleInput, handleCompositionStart, handleCompositionEnd } =
-    useCoverLetterCompositionFlow({
-      contentRef,
-      latestTextRef,
-      isComposingRef,
-      lastCompositionEndAtRef,
-      composingLastSentTextRef,
-      clearComposingFlushTimer,
-      processInput,
-      normalizeCaretAtReviewBoundary,
-    });
+  const {
+    handleInput: rawHandleInput,
+    handleCompositionStart,
+    handleCompositionEnd: rawHandleCompositionEnd,
+  } = useCoverLetterCompositionFlow({
+    contentRef,
+    latestTextRef,
+    isComposingRef,
+    lastCompositionEndAtRef,
+    composingLastSentTextRef,
+    clearComposingFlushTimer,
+    processInput,
+    normalizeCaretAtReviewBoundary,
+  });
+
+  const handleInput = useCallback(() => {
+    if (isComposingRef.current && contentRef.current) {
+      onComposingLengthChange?.(collectText(contentRef.current).length);
+      return;
+    }
+    rawHandleInput();
+  }, [rawHandleInput, onComposingLengthChange]);
+
+  const handleCompositionEnd = useCallback(() => {
+    rawHandleCompositionEnd();
+    onComposingLengthChange?.(null);
+  }, [rawHandleCompositionEnd, onComposingLengthChange]);
 
   useLayoutEffect(() => {
     if (!contentRef.current) return;
@@ -515,9 +537,13 @@ const CoverLetterContent = ({
         caretOffsetRef.current = caret;
       },
       applyText: (nextText) => {
+        const prevText = latestTextRef.current;
         isInputtingRef.current = true;
         latestTextRef.current = nextText;
-        onTextChangeRef.current?.(nextText);
+        const sentBySocket = sendTextPatchRef.current(prevText, nextText);
+        onTextChangeRef.current?.(nextText, {
+          skipVersionIncrement: sentBySocket,
+        });
       },
     });
   }, []);
@@ -532,24 +558,6 @@ const CoverLetterContent = ({
     caretOffsetRef,
     handleCompositionEnd,
   });
-
-  const onInputWithTrace = useCallback(() => {
-    handleInput();
-  }, [handleInput]);
-
-  const onKeyDownWithTrace = useCallback(
-    (e: ReactKeyboardEvent<HTMLDivElement>) => {
-      handleKeyDown(e);
-    },
-    [handleKeyDown],
-  );
-
-  const onPasteWithTrace = useCallback(
-    (e: React.ClipboardEvent<HTMLDivElement>) => {
-      handlePaste(e);
-    },
-    [handlePaste],
-  );
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     let target = e.target as Node;
@@ -618,15 +626,11 @@ const CoverLetterContent = ({
           aria-multiline='true'
           aria-label='자기소개서 내용'
           suppressContentEditableWarning
-          onInput={onInputWithTrace}
-          onKeyDown={onKeyDownWithTrace}
-          onPaste={onPasteWithTrace}
-          onCompositionStart={() => {
-            handleCompositionStart();
-          }}
-          onCompositionEnd={() => {
-            handleCompositionEnd();
-          }}
+          onInput={handleInput}
+          onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
+          onCompositionStart={handleCompositionStart}
+          onCompositionEnd={handleCompositionEnd}
           onClick={handleClick}
           onMouseUp={handleMouseUp}
           className='w-full cursor-text py-3 text-base leading-7 font-normal text-gray-800 outline-none'

@@ -32,7 +32,8 @@ export const useStompClient = ({ shareId }: UseStompClientProps) => {
       beforeConnect: async () => {
         let token = getAccessToken();
         try {
-          token = await refreshAccessToken();
+          await refreshAccessToken();
+          token = getAccessToken();
         } catch (error) {
           // refresh 실패 시 기존 access token으로 한 번 더 시도한다.
           // (로그아웃/만료 상태면 서버에서 연결을 거절하고 재연결 루프가 중단된다)
@@ -56,7 +57,16 @@ export const useStompClient = ({ shareId }: UseStompClientProps) => {
       onStompError: (frame: IFrame) => {
         setIsConnected(false);
         console.error('Broker reported error:', frame.headers['message']);
-        console.error('Addtional details', frame.body);
+        console.error('Additional details', frame.body);
+
+        // 인증 오류는 재연결해도 해결되지 않으므로 즉시 비활성화
+        const message = frame.headers['message'] ?? '';
+        if (
+          message.toLowerCase().includes('auth') ||
+          message.toLowerCase().includes('unauthorized')
+        ) {
+          client.deactivate();
+        }
       },
       reconnectDelay: 5000,
       // 서버에게 연결이 끊긴지 확인하는 수신 주기

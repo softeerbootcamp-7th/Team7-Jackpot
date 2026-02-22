@@ -36,31 +36,17 @@ export const useCoverLetterInputHandlers = ({
       const isImeProcessKey =
         e.key === 'Process' || native.keyCode === 229 || native.isComposing;
 
-      if (isImeProcessKey || isComposingRef.current) return;
+      // OS 레벨에서 IME가 처리 중인 키는 항상 무시한다.
+      if (isImeProcessKey) return;
 
-      if (e.key === 'Backspace') {
-        const elapsed = Date.now() - lastCompositionEndAtRef.current;
-
-        if (elapsed < 120) return;
-
-        e.preventDefault();
-        normalizeCaretAtReviewBoundary();
-        applyDeleteByDirection('backward');
-        return;
-      }
-
-      if (e.key === 'Delete') {
-        e.preventDefault();
-        normalizeCaretAtReviewBoundary();
-        applyDeleteByDirection('forward');
-        return;
-      }
-
+      // Enter는 조합 중이라도 줄바꿈 트리거로 처리한다.
+      // compositionend가 이미 발생했지만 isComposingRef가 아직 정리되지 않은
+      // 타이밍에도 올바르게 동작하도록 isComposingRef 가드보다 앞에 배치한다.
       if (e.key === 'Enter') {
         e.preventDefault();
         normalizeCaretAtReviewBoundary();
 
-        // 현재 composition이 있으면 강제 종료
+        // 조합이 아직 열려 있으면 강제 종료해 latestTextRef를 확정 상태로 만든다.
         if (isComposingRef.current) {
           handleCompositionEnd?.();
         }
@@ -79,6 +65,26 @@ export const useCoverLetterInputHandlers = ({
           });
         });
 
+        return;
+      }
+
+      if (isComposingRef.current) return;
+
+      if (e.key === 'Backspace') {
+        const elapsed = Date.now() - lastCompositionEndAtRef.current;
+
+        if (elapsed < 120) return;
+
+        e.preventDefault();
+        normalizeCaretAtReviewBoundary();
+        applyDeleteByDirection('backward');
+        return;
+      }
+
+      if (e.key === 'Delete') {
+        e.preventDefault();
+        normalizeCaretAtReviewBoundary();
+        applyDeleteByDirection('forward');
         return;
       }
     },

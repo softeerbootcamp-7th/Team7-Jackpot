@@ -13,6 +13,14 @@ export const buildChunks = (
   isReviewActive: boolean,
   selection: SelectionInfo | null,
 ) => {
+  const findMatchingReview = (pos: number, length: number) =>
+    reviews.find(
+      (review) =>
+        review.range.start >= 0 &&
+        review.range.start <= pos &&
+        review.range.end >= pos + length,
+    );
+
   const renderText = (text: string, keyPrefix: string, isDimmed = false) => {
     return (
       <span
@@ -32,11 +40,9 @@ export const buildChunks = (
     const key = `before-${i}`;
     if (!chunk.isHighlighted) return renderText(chunk.text, key);
 
-    const matchingReview = reviews.find(
-      (review) =>
-        review.range.start >= 0 &&
-        review.range.start <= chunkPositions[i] &&
-        review.range.end >= chunkPositions[i] + chunk.text.length,
+    const matchingReview = findMatchingReview(
+      chunkPositions[i],
+      chunk.text.length,
     );
 
     if (!matchingReview) return renderText(chunk.text, key);
@@ -119,12 +125,7 @@ export const buildChunks = (
       const lastChunk = before[lastIndex];
       const lastPos = chunkPositions[lastIndex];
 
-      const matchingReview = reviews.find(
-        (review) =>
-          review.range.start >= 0 &&
-          review.range.start <= lastPos &&
-          review.range.end >= lastPos + lastChunk.text.length,
-      );
+      const matchingReview = findMatchingReview(lastPos, lastChunk.text.length);
 
       if (matchingReview) {
         finalChunks.push(
