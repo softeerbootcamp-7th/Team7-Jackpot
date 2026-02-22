@@ -36,16 +36,9 @@ export const useDropdownKeyboard = ({
     setHighlightedIndex(-1);
   }
 
-<<<<<<< HEAD
-  // itemCount가 줄어들면 highlightedIndex를 클램핑
-  if (highlightedIndex >= itemCount) {
-    setHighlightedIndex(itemCount > 0 ? itemCount - 1 : -1);
-  }
-=======
   const handleEscape = useCallback(() => {
     setIsOpen(false);
   }, [setIsOpen]);
->>>>>>> aeb91534 ([fix] 코드리뷰 반영)
 
   // 드롭다운이 열려있을 때(isOpen === true)만 Escape 키 감지가 활성화됩니다.
   useEscapeKey(handleEscape, isOpen);
