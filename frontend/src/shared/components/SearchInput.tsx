@@ -16,7 +16,7 @@ const SearchInput = ({
   errorMessage,
 }: SearchInputProps) => {
   return (
-    <div className='mb-6 w-full max-w-[25rem]'>
+    <div className='w-full max-w-[25rem]'>
       <search
         className={`inline-flex h-12 w-full items-center justify-between rounded-lg px-5 py-3.5 transition-colors ${
           errorMessage

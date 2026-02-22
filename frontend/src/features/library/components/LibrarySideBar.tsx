@@ -122,7 +122,7 @@ const LibrarySideBar = ({ folderList }: LibrarySideBarProps) => {
   return (
     <div className='flex h-full w-107 flex-col overflow-hidden pr-5'>
       {currentTab === 'QUESTION' && (
-        <div className='flex-none shrink-0'>
+        <div className='flex-none shrink-0 pb-6'>
           <SearchInput
             placeholder='문항 유형을 입력해주세요'
             keyword={keyword}
