@@ -25,10 +25,7 @@ export const useStompClient = ({ shareId }: UseStompClientProps) => {
       // 소켓 재연결을 위해 새 소켓을 만들 수 있는 콜백 함수
       // 이미 만들어진 소켓 객체를 넘겨주면 재사용이 불가
       webSocketFactory: () => new SockJS(`${SOCKET_URL}/ws/connect`),
-      connectHeaders: {
-        Authorization: '',
-        shareId: shareId,
-      },
+      connectHeaders: {},
       beforeConnect: async () => {
         let token = getAccessToken();
         try {
@@ -65,7 +62,7 @@ export const useStompClient = ({ shareId }: UseStompClientProps) => {
           message.toLowerCase().includes('auth') ||
           message.toLowerCase().includes('unauthorized')
         ) {
-          client.deactivate();
+          client.deactivate({ force: true });
         }
       },
       reconnectDelay: 5000,

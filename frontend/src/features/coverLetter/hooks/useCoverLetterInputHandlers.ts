@@ -110,7 +110,7 @@ export const useCoverLetterInputHandlers = ({
 
       normalizeCaretAtReviewBoundary();
 
-      insertPlainTextAtCaret(plainText.replace(/\r\n/g, '\n'));
+      insertPlainTextAtCaret(plainText.replace(/\r\n|\r/g, '\n'));
     },
     [insertPlainTextAtCaret, normalizeCaretAtReviewBoundary],
   );

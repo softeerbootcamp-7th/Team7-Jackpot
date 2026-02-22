@@ -32,9 +32,12 @@ const setCaretRelativeTo = (
   selection.addRange(range);
 };
 
-const ensureEditableTextAnchorAfter = (node: Node, createSpan = true): Text => {
+const ensureEditableTextAnchorAfter = (
+  node: Node,
+  createSpan = true,
+): Text | null => {
   const parent = node.parentNode;
-  if (!parent) return document.createTextNode('');
+  if (!parent) return null;
 
   let next = node.nextSibling;
   while (next) {
@@ -212,6 +215,9 @@ export const normalizeCaretAtReviewBoundary = ({
           range.setStart(nextText, nextText.textContent?.length ?? 0);
         } else {
           const anchor = ensureEditableTextAnchorAfter(boundary);
+          if (!anchor) {
+            return false;
+          }
           range.setStart(anchor, 0);
         }
       } else {
@@ -381,6 +387,9 @@ export const normalizeCaretAtReviewBoundary = ({
       }
     }
     const anchor = ensureEditableTextAnchorAfter(target);
+    if (!anchor) {
+      return false;
+    }
     nextRange.setStart(anchor, 0);
     nextRange.collapse(true);
   }
