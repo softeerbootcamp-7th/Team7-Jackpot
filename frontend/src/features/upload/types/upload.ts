@@ -44,14 +44,14 @@ export type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
 // 1-1. 타입 정의
 
 export interface PresignedUrlRequest {
-  clientFileId: bigint;
+  clientFileId: number;
   fileName: string;
   contentType: string;
   fileSize: number;
 }
 
 export interface PresignedUrlResponse {
-  clientFileId: bigint;
+  clientFileId: number;
   fileName: string;
   presignedUrl: string;
   fileKey: string;
@@ -59,7 +59,7 @@ export interface PresignedUrlResponse {
 }
 
 export interface FileState {
-  clientFileId: bigint;
+  clientFileId: number;
   file: File | null;
   status: UploadStatus;
   presignedUrl?: string;
