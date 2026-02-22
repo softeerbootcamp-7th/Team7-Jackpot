@@ -14,6 +14,7 @@ import com.jackpot.narratix.domain.service.dto.WebSocketDeleteReviewMessage;
 import com.jackpot.narratix.domain.service.dto.WebSocketEditReviewMessage;
 
 import com.jackpot.narratix.domain.service.dto.WebSocketTextReplaceAllMessage;
+import com.jackpot.narratix.global.exception.BaseException;
 import com.jackpot.narratix.global.websocket.WebSocketSessionAttributes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -115,12 +116,16 @@ public class WebSocketEventListener {
                     shareLinkService.flushPendingDeltasByShareId(shareId);
                 }
             }
+        } catch (BaseException e) {
+            log.warn("Writer disconnect flush 중단: sessionId={}, 원인={}", sessionId, e.getMessage());
         } catch (Exception e) {
             log.error("Writer disconnect flush 실패: sessionId={}", sessionId, e);
         }
 
         try {
             shareLinkLockManager.unlock(sessionId);
+        } catch (BaseException e) {
+            log.warn("Lock 해제 중 예외 발생: sessionId={}, 원인={}", sessionId, e.getMessage());
         } catch (Exception e) {
             log.error("Failed to release lock on disconnect: sessionId={}", sessionId, e);
         }
