@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import RightArrow from '@/shared/icons/RightArrow';
+import * as SI from '@/shared/icons';
 
 interface Props {
   isUrgent: boolean;
@@ -34,7 +34,7 @@ const UpcomingScheduleItem = ({
           {position}
         </div>
       </div>
-      <RightArrow size='sm' aria-hidden='true' />
+      <SI.RightArrow size='sm' aria-hidden='true' />
     </Link>
   );
 };
