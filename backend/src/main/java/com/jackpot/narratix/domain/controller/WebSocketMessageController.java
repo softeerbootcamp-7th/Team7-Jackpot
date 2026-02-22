@@ -138,7 +138,7 @@ public class WebSocketMessageController {
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
         if (sessionAttributes == null) {
             log.warn("Session attributes is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.SESSION_ATTRIBUTES_NOT_FOUND);
         }
 
         String shareId = WebSocketSessionAttributes.getShareId(sessionAttributes);
