@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 
-import { HomePageIcons as HI } from '@/features/home/icons';
+import * as HI from '@/features/home/icons';
 
 interface EmptyStateProps {
   className?: string;

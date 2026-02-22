@@ -42,25 +42,3 @@ export {
   UploadInputIcon,
 };
 
-// 네임스페이스 export (기존 호환성)
-export const UploadPageIcons = {
-  AddFileIcon,
-  AILabelingIcon,
-  CompleteSavedIcon,
-  DocumentBoxIcon,
-  DropdownArrowIcon: DropdownArrow,
-  FileRemoveIcon,
-  FileUploadIcon,
-  FolderIconInButton,
-  LabelingResultIcon,
-  LeftPaginationButtonIcon,
-  LoadingSpinnerIcon,
-  RightPaginationButtonIcon,
-  TextDocumentIcon,
-  TextUploadIcon,
-  UploadCompleteBackgroundIcon: UploadCompleteBackground,
-  UploadCompleteIcon,
-  UploadIcon,
-  UploadIconInButton,
-  UploadInputIcon,
-} as const;

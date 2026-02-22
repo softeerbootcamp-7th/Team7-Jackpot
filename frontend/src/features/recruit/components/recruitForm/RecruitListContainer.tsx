@@ -1,7 +1,7 @@
 import { type ReactNode, useMemo } from 'react';
 
 import { useInfiniteCalendarDates } from '@/features/recruit/hooks/queries/useCalendarQuery';
-import { RecruitIcons as RCI } from '@/features/recruit/icons';
+import * as RCI from '@/features/recruit/icons';
 import type { CalendarRequest } from '@/features/recruit/types';
 import DocumentItem from '@/shared/components/DocumentItem';
 import DocumentList from '@/shared/components/DocumentList';

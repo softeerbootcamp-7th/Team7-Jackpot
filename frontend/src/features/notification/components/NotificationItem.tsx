@@ -1,4 +1,4 @@
-import { NotificationDropdownIcon as NI } from '@/features/notification/icons';
+import * as NI from '@/features/notification/icons';
 import type { NotificationType } from '@/features/notification/types/notification';
 
 interface NotificationItemProps {

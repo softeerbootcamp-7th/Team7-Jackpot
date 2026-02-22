@@ -7,7 +7,7 @@
 icons는 다음 두 가지 방식으로 import할 수 있습니다:
 
 - **네임스페이스 import** (권장): tree-shaking이 가능한 방식
-- **기존 호환성 방식**: 기존 코드와의 호환성을 위한 방식
+- **개별 import**: 명시적인 의존성 선언 방식
 
 ## shared/icons 사용법
 
@@ -54,27 +54,6 @@ export default function MyComponent() {
 - 매우 명확한 dependency 명시
 - Tree-shaking 지원
 
-### 3. 기존 네임스페이스 방식 (호환성)
-
-```tsx
-import { SharedIcons as SI } from '@/shared/icons';
-
-export default function MyComponent() {
-  return (
-    <div>
-      <SI.SearchIcon />
-      <SI.AlertIcon />
-      <SI.DeleteIcon />
-    </div>
-  );
-}
-```
-
-**주의:**
-
-- const로 선언되어 있어 tree-shaking이 완벽하게 작동하지 않을 수 있음
-- 기존 코드와의 호환성을 위해 지원
-
 ## Features Icons 사용법
 
 각 feature 도메인의 icons도 동일한 방식을 지원합니다.
@@ -110,21 +89,6 @@ export default function UploadComponent() {
       <UploadIcon />
       <AILabelingIcon />
       <LoadingSpinnerIcon />
-    </div>
-  );
-}
-```
-
-```tsx
-// 방식 3: 기존 네임스페이스 (호환성)
-import { UploadPageIcons as UI } from '@/features/upload/icons';
-
-export default function UploadComponent() {
-  return (
-    <div>
-      <UI.UploadIcon />
-      <UI.AILabelingIcon />
-      <UI.LoadingSpinnerIcon />
     </div>
   );
 }
@@ -190,15 +154,6 @@ export default function LibraryComponent() {
 
 기존 코드를 새로운 방식으로 마이그레이션하려면:
 
-### Before (기존 방식)
-
-```tsx
-import { SharedIcons as SI } from '@/shared/icons';
-
-<SI.SearchIcon />
-<SI.AlertIcon />
-```
-
 ### After (새 방식)
 
 ```tsx
@@ -216,7 +171,6 @@ import * as SI from '@/shared/icons';
 
 1. ✅ `import * as SI from '@/shared/icons'` - 완벽한 tree-shaking
 2. ✅ `import { SearchIcon, AlertIcon } from '@/shared/icons'` - 완벽한 tree-shaking
-3. ⚠️ `import { SharedIcons as SI } from '@/shared/icons'` - tree-shaking 미보장
 
 ## 사용 가능한 Icons
 

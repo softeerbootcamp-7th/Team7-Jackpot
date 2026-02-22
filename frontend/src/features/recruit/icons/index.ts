@@ -16,12 +16,3 @@ export {
   RecruitIcon,
 };
 
-// 네임스페이스 export (기존 호환성)
-export const RecruitIcons = {
-  DateIcon,
-  EditIcon,
-  NewRecruitIcon,
-  RecruitIcon,
-  RecruitEditIcon,
-  DeleteIcon,
-} as const;

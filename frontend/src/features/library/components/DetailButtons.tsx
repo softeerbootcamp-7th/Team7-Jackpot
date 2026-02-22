@@ -1,7 +1,7 @@
 import { Link } from 'react-router';
 
 import { useScrap } from '@/features/library/hooks/useScrap';
-import { LibraryIcons as LII } from '@/features/library/icons';
+import * as LII from '@/features/library/icons';
 
 interface Props {
   coverLetterId: number;

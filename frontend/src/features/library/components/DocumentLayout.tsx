@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import { NavLink } from 'react-router';
 
-import { LibraryIcons as LII } from '@/features/library/icons';
+import * as LII from '@/features/library/icons';
 
 interface Props {
   title: string;

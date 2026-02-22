@@ -26,17 +26,3 @@ export {
   SearchIcon,
 };
 
-// 네임스페이스 export (기존 호환성)
-export const LibraryIcons = {
-  ChevronLeftIcon,
-  CompanyNameLibraryIcon: CompanyNameLibrary,
-  EditIcon,
-  FolderIcon,
-  LibraryIcon,
-  LibraryFolderIcon: LibraryFolder,
-  QnALibraryIcon: QnALibrary,
-  QnASearchResultIcon,
-  QuestionIcon,
-  ScrapIcon,
-  SearchIcon,
-} as const;

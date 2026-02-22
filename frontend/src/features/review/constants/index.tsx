@@ -1,4 +1,4 @@
-import { ReviewPageIcons as RVI } from '@/features/review/icons';
+import * as RVI from '@/features/review/icons';
 
 export const reviewHeaderText = {
   icon: <RVI.PenIcon />,

@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router';
 
 import { LANDING_CARD_DATA } from '@/features/landing/constants/landing';
-import { LandingPageIcon as LAI } from '@/features/landing/icons';
+import * as LAI from '@/features/landing/icons';
 
 interface LandingInformationProps {
   isAnimating: boolean;

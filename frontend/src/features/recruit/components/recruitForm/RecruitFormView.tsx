@@ -2,7 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 
 import PaginationButton from '@/features/recruit/components/recruitForm/PaginationButton';
 import RecruitDetail from '@/features/recruit/components/recruitForm/RecruitDetail';
-import { RecruitIcons as RCI } from '@/features/recruit/icons';
+import * as RCI from '@/features/recruit/icons';
 import QuestionsSection from '@/shared/components/QuestionsSection';
 import type { CreateCoverLetterRequest } from '@/shared/types/coverLetter';
 import { isQuestionsValid } from '@/shared/utils/coverLetter';

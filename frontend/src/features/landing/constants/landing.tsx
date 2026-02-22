@@ -1,4 +1,4 @@
-import { LandingPageIcon as LAI } from '@/features/landing/icons';
+import * as LAI from '@/features/landing/icons';
 
 export const LANDING_CARD_DATA = [
   {

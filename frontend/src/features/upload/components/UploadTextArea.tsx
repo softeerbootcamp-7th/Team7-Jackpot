@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import CoverLetterList from '@/features/upload/components/CoverLetterList';
-import { UploadPageIcons as UI } from '@/features/upload/icons';
+import * as UI from '@/features/upload/icons';
 
 interface UploadTextAreaProps {
   setIsContent: (state: boolean) => void;

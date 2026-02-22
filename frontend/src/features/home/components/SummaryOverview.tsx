@@ -9,7 +9,7 @@ import {
   SUMMARY_OVERVIEW_SEASON_COUNT,
 } from '@/features/home/constants';
 import { useHomeCount } from '@/features/home/hooks/queries/useHomeQueries';
-import { HomePageIcons as HI } from '@/features/home/icons';
+import * as HI from '@/features/home/icons';
 
 const SummaryOverview = () => {
   const { data } = useHomeCount();

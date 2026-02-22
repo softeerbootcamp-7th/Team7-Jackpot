@@ -36,22 +36,3 @@ export {
   WritingCoverLetterIcon,
 };
 
-// 네임스페이스 export (기존 호환성)
-export const SharedIcons = {
-  AlertIcon,
-  DeleteIcon,
-  MoreVertIcon,
-  NotFoundIllustrationIcon: NotFoundIllustration,
-  PaginationIcon,
-  PaperChipIcon,
-  PenToolIcon,
-  PlusIcon,
-  ReviewMessageIcon,
-  RightArrowIcon: RightArrow,
-  SaveCheckIcon,
-  SearchIcon,
-  TitleLogoIcon: TitleLogo,
-  UserAvatarIcon,
-  WritingCoverLetterIcon,
-  DropdownArrowIcon: DropdownArrow,
-} as const;

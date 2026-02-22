@@ -1,4 +1,4 @@
-import { LibraryIcons as LII } from '@/features/library/icons';
+import * as LII from '@/features/library/icons';
 import type { LibraryView } from '@/features/library/types';
 import type { TabContentType } from '@/shared/types/tab';
 
@@ -20,13 +20,13 @@ export const libraryContent: TabContentType<LibraryView>[] = [
   {
     name: 'COMPANY',
     label: '기업 라이브러리',
-    icon: <LII.CompanyNameLibraryIcon />,
+    icon: <LII.CompanyNameLibrary />,
     path: '/library/company',
   },
   {
     name: 'QUESTION',
     label: '문항 라이브러리',
-    icon: <LII.QnALibraryIcon />,
+    icon: <LII.QnALibrary />,
     path: '/library/qnA',
   },
 ];

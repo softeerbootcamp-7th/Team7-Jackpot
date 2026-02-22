@@ -1,4 +1,4 @@
-import { CoverLetterPageIcons as CI } from '@/features/coverLetter/icons';
+import * as CI from '@/features/coverLetter/icons';
 
 export const coverLetterHeaderText = {
   icon: <CI.CoverLetterIcon />,

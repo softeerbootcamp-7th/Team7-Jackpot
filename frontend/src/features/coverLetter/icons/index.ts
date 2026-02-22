@@ -24,16 +24,3 @@ export {
   TrashIcon,
 };
 
-// 네임스페이스 export (기존 호환성)
-export const CoverLetterPageIcons = {
-  ChevronDownIcon,
-  CoverLetterIcon,
-  CoverLetterWriteIcon,
-  FileDocumentIcon: FileDocument,
-  LinkAngledIcon: LinkAngled,
-  NewCoverLetterIcon,
-  NewCoverLetterTabIcon,
-  ReviewWithFriendIcon,
-  ToggleIcon,
-  TrashIcon,
-} as const;

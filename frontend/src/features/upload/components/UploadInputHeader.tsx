@@ -1,7 +1,7 @@
 import TabButton from '@/features/upload/components/TabButton';
 import { UPLOAD_TAB_DATA } from '@/features/upload/constants/uploadPage';
 import { MAX_BYTES } from '@/features/upload/constants/uploadPage';
-import { UploadPageIcons as UI } from '@/features/upload/icons';
+import * as UI from '@/features/upload/icons';
 import { formatFileSize } from '@/features/upload/utils/formatFileSize';
 
 interface UploadInputHeaderProps {

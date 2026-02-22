@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router';
 
-import { LibraryIcons as LII } from '@/features/library/icons';
+import * as LII from '@/features/library/icons';
 import type { QnASearchResponse } from '@/features/library/types';
 
 interface QnASearchResultProps {
@@ -74,7 +74,7 @@ const QnASearchResult = ({
                   className='inline-flex w-28 shrink-0 flex-col items-center justify-center gap-2.5 px-3 pt-5 pb-4'
                 >
                   <div className='relative flex flex-col items-center'>
-                    <LII.LibraryFolderIcon />
+                    <LII.LibraryFolder />
                   </div>
                   {/* 라이브러리 이름 */}
                   <div className='line-clamp-1 w-24 text-center text-xs leading-5 font-medium text-gray-900'>

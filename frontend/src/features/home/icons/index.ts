@@ -9,12 +9,3 @@ import ThoughtIcon from '@/features/home/icons/ThoughtIcon';
 // 개별 export (tree-shaking 가능)
 export { AlarmIcon, BooksIcon, CalendarIcon, PlusIcon, ScrollIcon, ThoughtIcon };
 
-// 네임스페이스 export (기존 호환성)
-export const HomePageIcons = {
-  AlarmIcon,
-  BooksIcon,
-  CalendarIcon,
-  PlusIcon,
-  ScrollIcon,
-  ThoughtIcon,
-} as const;

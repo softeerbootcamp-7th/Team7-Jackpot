@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import NewCoverLetterDetail from '@/features/coverLetter/components/newCoverLetter/NewCoverLetterDetail';
-import { CoverLetterPageIcons as CI } from '@/features/coverLetter/icons';
+import * as CI from '@/features/coverLetter/icons';
 import QuestionsSection from '@/shared/components/QuestionsSection';
 import type { CreateCoverLetterRequest } from '@/shared/types/coverLetter';
 import { isQuestionsValid } from '@/shared/utils/coverLetter';

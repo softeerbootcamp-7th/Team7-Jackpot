@@ -1,4 +1,4 @@
-import { RecruitIcons as RCI } from '@/features/recruit/icons';
+import * as RCI from '@/features/recruit/icons';
 
 export const recruitHeaderText = {
   icon: <RCI.RecruitIcon />,

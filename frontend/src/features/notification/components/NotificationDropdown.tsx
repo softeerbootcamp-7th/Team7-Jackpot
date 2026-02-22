@@ -3,7 +3,7 @@ import {
   useGetNotificationCount,
   useReadAllNotification,
 } from '@/features/notification/hooks/useNotification';
-import { NotificationDropdownIcon as NI } from '@/features/notification/icons';
+import * as NI from '@/features/notification/icons';
 
 interface NotificationDropdownProps {
   handleDropdown: (isOpen: boolean) => void;
