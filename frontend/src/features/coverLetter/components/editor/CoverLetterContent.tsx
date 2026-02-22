@@ -33,7 +33,6 @@ import type { SelectionInfo } from '@/shared/types/selectionInfo';
 import type { WriterMessageType } from '@/shared/types/websocket';
 
 const DUPLICATE_PATCH_WINDOW_MS = 150;
-const DEBUG_COVER_LETTER_INPUT = false;
 
 interface CoverLetterContentProps {
   text: string;
@@ -601,26 +600,6 @@ const CoverLetterContent = ({
       normalizeCaretAtReviewBoundary();
     });
   };
-
-  useEffect(() => {
-    if (!DEBUG_COVER_LETTER_INPUT) return;
-    const onWindowError = (event: ErrorEvent) => {
-      const message = String(event.message || '');
-      if (
-        !message.includes('removeChild') &&
-        !message.includes('insertBefore')
-      ) {
-        return;
-      }
-      debugLog('window-error', {
-        message,
-        errorName: event.error?.name,
-        errorMessage: event.error?.message,
-      });
-    };
-    window.addEventListener('error', onWindowError);
-    return () => window.removeEventListener('error', onWindowError);
-  }, [debugLog]);
 
   return (
     <div className='relative ml-12 min-h-0 flex-1'>
