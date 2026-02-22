@@ -1,25 +1,35 @@
 import { useEffect, useRef, useState } from 'react';
 
-import {
-  requestPresignedUrl,
-  uploadFileToS3,
-} from '@/features/upload/api/uploadApi';
 import AddFileItem from '@/features/upload/components/AddFileItem';
 import { MAX_BYTES } from '@/features/upload/constants/uploadPage';
+import {
+  useFileUpload,
+  useIssuePresignedUrl,
+} from '@/features/upload/hooks/useUploadQueries';
 import type { FileState } from '@/features/upload/types/upload';
 
 interface UploadFileAreaProps {
   setIsContent: (state: boolean) => void;
+  setUploadedFiles: (
+    files: Array<{ presignedUrl: string; fileKey: string }>,
+  ) => void;
+  resetKey?: number;
 }
 
-const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
+const UploadFileArea = ({
+  setIsContent,
+  setUploadedFiles,
+  resetKey,
+}: UploadFileAreaProps) => {
   // 2단계: UploadFileArea 상태 관리 리팩토링
   // 2-1. State 구조 변경: FileState[] 사용
   const [files, setFiles] = useState<FileState[]>([
-    { clientFileId: 1n, file: null, status: 'idle' },
-    { clientFileId: 2n, file: null, status: 'idle' },
-    { clientFileId: 3n, file: null, status: 'idle' },
+    { clientFileId: 1, file: null, status: 'idle' },
+    { clientFileId: 2, file: null, status: 'idle' },
+    { clientFileId: 3, file: null, status: 'idle' },
   ]);
+  const { mutateAsync: requestPresignedUrl } = useIssuePresignedUrl();
+  const { mutateAsync: uploadFileToS3 } = useFileUpload();
 
   // 2-3. 순차 업로드 로직: uploadInProgressRef로 중복 업로드 방지
   const uploadInProgressRef = useRef<Set<number>>(new Set());
@@ -59,18 +69,18 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
     try {
       // 1. presigned URL 요청
       const presignedResponse = await requestPresignedUrl({
-        clientFileId: BigInt(index + 1),
+        clientFileId: index + 1,
         fileName: file.name,
         contentType: file.type,
         fileSize: file.size,
       });
 
       // 2. S3에 파일 업로드
-      await uploadFileToS3(
-        presignedResponse.presignedUrl,
+      await uploadFileToS3({
+        presignedUrl: presignedResponse.presignedUrl,
         file,
-        presignedResponse.requiredHeaders,
-      );
+        contentType: presignedResponse.requiredHeaders['Content-Type'],
+      });
 
       // 3. 상태 업데이트 (성공)
       setFiles((prev) => {
@@ -81,6 +91,9 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
           presignedUrl: presignedResponse.presignedUrl,
           fileKey: presignedResponse.fileKey,
         };
+
+        // (uploaded files are synced to parent via useEffect watching `files`)
+
         return newFiles;
       });
     } catch (error) {
@@ -103,7 +116,7 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
       setFiles((prev) => {
         const newFiles = [...prev];
         newFiles[index] = {
-          clientFileId: BigInt(index + 1),
+          clientFileId: index + 1,
           file: null,
           status: 'idle',
         };
@@ -118,7 +131,7 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
       setFiles((prev) => {
         const newFiles = [...prev];
         newFiles[index] = {
-          clientFileId: BigInt(index + 1),
+          clientFileId: index + 1,
           file: newFile,
           status: 'error',
         };
@@ -131,7 +144,7 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
     setFiles((prev) => {
       const newFiles = [...prev];
       newFiles[index] = {
-        clientFileId: BigInt(index + 1),
+        clientFileId: index + 1,
         file: newFile,
         status: 'idle',
       };
@@ -147,14 +160,32 @@ const UploadFileArea = ({ setIsContent }: UploadFileAreaProps) => {
       (file) => file.file !== null && file.status === 'success',
     );
     setIsContent(hasContent);
-  }, [files, setIsContent]);
+
+    // 성공한 파일들의 정보를 부모 컴포넌트로 전달
+    const successFiles = files
+      .filter((f) => f.status === 'success')
+      .map((f) => ({
+        presignedUrl: f.presignedUrl!,
+        fileKey: f.fileKey!,
+      }));
+    setUploadedFiles(successFiles);
+  }, [files, setIsContent, setUploadedFiles]);
+
+  // resetKey가 변경되면 내부 파일 상태 초기화
+  useEffect(() => {
+    if (resetKey == null) return;
+    setFiles([
+      { clientFileId: 1, file: null, status: 'idle' },
+      { clientFileId: 2, file: null, status: 'idle' },
+      { clientFileId: 3, file: null, status: 'idle' },
+    ]);
+  }, [resetKey]);
 
   return (
     <div className='flex justify-between gap-3'>
       {files.map((fileState, index) => (
         <AddFileItem
           key={index}
-          index={index}
           file={fileState.file}
           uploadStatus={fileState.status}
           onFileChange={(newFile) => handleFileChange(index, newFile)}
