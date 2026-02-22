@@ -215,7 +215,7 @@ class WebSocketMessageControllerTest {
         assertThatThrownBy(() ->
                 webSocketMessageController.updateText(shareId, qnAId, request, headerAccessor)
         ).isInstanceOf(BaseException.class)
-                .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.INVALID_SESSION);
+                .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.SESSION_ATTRIBUTES_NOT_FOUND);
 
         verifyNoInteractions(webSocketMessageSender);
     }
@@ -281,6 +281,6 @@ class WebSocketMessageControllerTest {
         assertThatThrownBy(() ->
                 webSocketMessageController.subscribeWriterCoverLetter(shareId, qnAId, headerAccessor)
         ).isInstanceOf(BaseException.class)
-                .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.INVALID_SESSION);
+                .hasFieldOrPropertyWithValue("errorCode", WebSocketErrorCode.SESSION_ATTRIBUTES_NOT_FOUND);
     }
 }
