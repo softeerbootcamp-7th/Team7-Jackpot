@@ -29,7 +29,6 @@ const LibrarySideBar = ({ folderList }: LibrarySideBarProps) => {
     handleChange,
     data: searchResults,
     isLoading,
-    errorMessage,
   } = useSearch({
     queryKey: 'keyword',
     fetchAction: searchLibrary,
@@ -127,7 +126,6 @@ const LibrarySideBar = ({ folderList }: LibrarySideBarProps) => {
             placeholder='문항 유형을 입력해주세요'
             keyword={keyword}
             onChange={handleChange}
-            errorMessage={errorMessage}
           />
         </div>
       )}

@@ -18,11 +18,11 @@ interface SearchCoverLettersParams {
 interface PageInfo {
   number: number;
   size: number;
-  totalElements: number;
-  totalPages: number;
+  totalElement: number;
+  totalPage: number;
 }
 
-interface CoverLetterSearchResponse {
+export interface CoverLetterSearchResponse {
   coverLetters: RecentCoverLetterType[];
   page: PageInfo;
 }
@@ -40,6 +40,7 @@ export const searchCoverLetters = async ({
 
   if (searchWord) params.append('searchWord', searchWord);
   params.append('size', size.toString());
+  // API는 0-based 페이지 번호를 기대하므로, 클라이언트에서 1-based 페이지 번호를 전달받아 0-based로 변환
   params.append('page', page.toString());
 
   return apiClient.get<CoverLetterSearchResponse>({
