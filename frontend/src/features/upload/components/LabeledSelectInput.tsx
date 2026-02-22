@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 interface LabeledSelectInputProps {
   label: string;
   value: string | number;
-  constantData?: string[];
+  constantData?: Record<string, string>[] | string[];
   handleChange: (value: string | number) => void;
   handleDropdown: (isOpen: boolean) => void;
   isOpen: boolean;
@@ -31,11 +31,16 @@ const LabeledSelectInput = ({
   }, [value]);
 
   // 데이터가 커졌을 때를 대비하여 useMemo 적용
-  const searchData = useMemo(
-    () =>
-      constantData.filter((each) => each.includes(debounceValue.toString())),
-    [constantData, debounceValue],
-  );
+  const searchData = useMemo(() => {
+    return constantData.filter((each) => {
+      // 타입 내로잉
+      const targetValue = typeof each === 'string' ? each : each.label;
+
+      // boolean 값을 return 해야 filter가 동작
+      return targetValue.includes(debounceValue.toString());
+    });
+  }, [constantData, debounceValue]);
+
   return (
     <div className='flex flex-col gap-3'>
       <div className='text-lg font-bold'>
@@ -61,19 +66,23 @@ const LabeledSelectInput = ({
             >
               <div className='flex flex-col gap-1 p-1'>
                 {searchData &&
-                  searchData.map((name, index) => (
-                    <button
-                      type='button'
-                      onClick={() => {
-                        handleChange(name);
-                        handleDropdown(false);
-                      }}
-                      key={index}
-                      className='w-full cursor-pointer rounded-md px-4 py-[0.875rem] text-left text-[0.813rem] font-medium text-gray-700 hover:bg-gray-50 hover:font-bold hover:text-gray-950 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
-                    >
-                      {name}
-                    </button>
-                  ))}
+                  searchData.map((each, index) => {
+                    const displayValue =
+                      typeof each === 'string' ? each : each.label;
+                    return (
+                      <button
+                        type='button'
+                        onClick={() => {
+                          handleChange(displayValue);
+                          handleDropdown(false);
+                        }}
+                        key={index}
+                        className='w-full cursor-pointer rounded-md px-4 py-[0.875rem] text-left text-[0.813rem] font-medium text-gray-700 hover:bg-gray-50 hover:font-bold hover:text-gray-950 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden'
+                      >
+                        {displayValue}
+                      </button>
+                    );
+                  })}
               </div>
             </div>
           </>
