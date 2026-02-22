@@ -27,7 +27,7 @@ public class WebSocketSessionAttributes {
 
         if (value == null) {
             log.warn("WebSocket session userId is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.USER_ID_NOT_FOUND);
         }
 
         return value.toString();
@@ -43,7 +43,7 @@ public class WebSocketSessionAttributes {
 
         if (value == null) {
             log.warn("WebSocket session shareId is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.SHARE_ID_NOT_FOUND);
         }
 
         return value.toString();
@@ -60,21 +60,21 @@ public class WebSocketSessionAttributes {
 
         if (role == null) {
             log.warn("WebSocket session role is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.ROLE_NOT_FOUND);
         }
 
         if (role instanceof ReviewRoleType type) {
             return type;
         } else {
             log.warn("WebSocket session role is not ReviewRoleType");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.ROLE_NOT_FOUND);
         }
     }
 
     private static void validateSession(Map<String, Object> attributes) {
         if (attributes == null) {
             log.warn("WebSocket session attributes is null");
-            throw new BaseException(WebSocketErrorCode.INVALID_SESSION);
+            throw new BaseException(WebSocketErrorCode.SESSION_ATTRIBUTES_NOT_FOUND);
         }
     }
 }
