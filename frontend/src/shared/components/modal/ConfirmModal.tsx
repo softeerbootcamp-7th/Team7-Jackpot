@@ -5,6 +5,7 @@ import * as SI from '@/shared/icons';
 
 interface ConfirmModalProps {
   isOpen: boolean;
+  isPending?: boolean;
   title: string;
   description: string;
   confirmText?: string;
@@ -15,6 +16,7 @@ interface ConfirmModalProps {
 
 const ConfirmModal = ({
   isOpen,
+  isPending = false,
   title,
   description,
   confirmText = '삭제하기',
@@ -71,6 +73,7 @@ const ConfirmModal = ({
           </button>
           <button
             type='button'
+            disabled={isPending}
             onClick={onConfirm}
             className='flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-gray-950 px-5 py-3 transition-opacity hover:opacity-80 active:scale-95'
           >

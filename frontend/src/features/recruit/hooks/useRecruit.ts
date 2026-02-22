@@ -8,7 +8,7 @@ import { getISODate, isValidDate } from '@/shared/utils/dates';
 
 export const useRecruit = () => {
   const { year, month, day } = useParams();
-  const { mutateAsync: deleteCoverLetter } = useDeleteCoverLetter();
+  const { mutateAsync: deleteCoverLetter, isPending } = useDeleteCoverLetter();
   const { showToast } = useToastMessageContext();
 
   // 1. 상태 관리: 폼 UI 상태
@@ -79,6 +79,7 @@ export const useRecruit = () => {
       editingRecruitId,
       selectedDateParams,
       deletingId,
+      isDeleting: isPending,
     },
     actions: {
       openNewForm,

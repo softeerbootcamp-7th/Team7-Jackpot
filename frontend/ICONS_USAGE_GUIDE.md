@@ -33,6 +33,9 @@ export default function MyComponent() {
 - 사용하지 않는 icon은 번들에서 제거됨
 - 명확한 네임스페이스
 
+> ⚠️ **주의**: `import * as SI`를 사용할 때 `SI[dynamicKey]` 같은 동적 접근은 tree-shaking을 무력화합니다.
+> 항상 `SI.SearchIcon` 같은 정적 접근 방식을 사용하세요.
+
 ### 2. 개별 Import
 
 ```tsx
@@ -153,6 +156,19 @@ export default function LibraryComponent() {
 ## 마이그레이션 팁
 
 기존 코드를 새로운 방식으로 마이그레이션하려면:
+
+## 마이그레이션 팁
+
+기존 코드를 새로운 방식으로 마이그레이션하려면:
+
+### Before (기존 방식)
+
+```tsx
+  // 기존: CommonIcon/SharedIcons 집계 객체 사용
+  import { SharedIcons } from '@/shared/icons';
+  <SharedIcons.SearchIcon />
+  <SharedIcons.AlertIcon />
+```
 
 ### After (새 방식)
 

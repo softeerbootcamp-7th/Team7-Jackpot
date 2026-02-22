@@ -54,6 +54,7 @@ const RecruitPage = () => {
 
       <ConfirmModal
         isOpen={state.deletingId !== null}
+        isPending={state.isDeleting}
         title='연결된 자기소개서가 사라져요!'
         description={
           '해당 공고를 삭제하시면 공고와 연결되어 있는\n자기소개서 문항들이 함께 삭제됩니다.'

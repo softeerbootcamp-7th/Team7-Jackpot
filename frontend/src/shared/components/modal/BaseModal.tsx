@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
 import { createPortal } from 'react-dom';
 
 import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
@@ -7,7 +7,7 @@ import useOutsideClick from '@/shared/hooks/useOutsideClick'; // 기존에 만�
 interface BaseModalProps {
   isOpen: boolean;
   onClose: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const BaseModal = ({ isOpen, onClose, children }: BaseModalProps) => {

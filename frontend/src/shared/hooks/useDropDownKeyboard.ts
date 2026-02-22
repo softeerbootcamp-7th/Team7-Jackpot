@@ -1,4 +1,10 @@
-import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import {
+  type KeyboardEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { useEscapeKey } from '@/shared/hooks/useEscapeKey';
 
@@ -19,19 +25,30 @@ export const useDropdownKeyboard = ({
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
   const [prevIsOpen, setPrevIsOpen] = useState<boolean>(isOpen);
 
+  // itemCount가 줄어들면 highlightedIndex를 클램핑
+  if (highlightedIndex >= itemCount) {
+    setHighlightedIndex(itemCount > 0 ? itemCount - 1 : -1);
+  }
+
   // 드롭다운이 열리거나 닫힐 때 인덱스 초기화 (렌더링 중 조건문 검사 유지)
   if (isOpen !== prevIsOpen) {
     setPrevIsOpen(isOpen);
     setHighlightedIndex(-1);
   }
 
+<<<<<<< HEAD
   // itemCount가 줄어들면 highlightedIndex를 클램핑
   if (highlightedIndex >= itemCount) {
     setHighlightedIndex(itemCount > 0 ? itemCount - 1 : -1);
   }
+=======
+  const handleEscape = useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
+>>>>>>> aeb91534 ([fix] 코드리뷰 반영)
 
   // 드롭다운이 열려있을 때(isOpen === true)만 Escape 키 감지가 활성화됩니다.
-  useEscapeKey(() => setIsOpen(false), isOpen);
+  useEscapeKey(handleEscape, isOpen);
 
   // 스크롤 자동 동기화 로직
   useEffect(() => {

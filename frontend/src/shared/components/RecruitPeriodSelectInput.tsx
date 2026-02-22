@@ -53,6 +53,8 @@ const RecruitPeriodSelectInput = ({
       onSelect: (index) => onChangeYear(constantData[index]),
     });
 
+  const getOptionId = (index: number) => `${listboxId}-option-${index}`;
+
   return (
     <div className='flex flex-col gap-3'>
       <div className='text-lg font-bold text-gray-950'>
@@ -88,8 +90,6 @@ const RecruitPeriodSelectInput = ({
               <div ref={listRef} className='max-h-40 overflow-y-auto p-1'>
                 {constantData.map((year, index) => {
                   const isHighlighted = index === highlightedIndex;
-                  const getOptionId = (index: number) =>
-                    `${listboxId}-option-${index}`;
                   return (
                     <button
                       key={year}
