@@ -215,4 +215,13 @@ public class ShareLinkService {
         }
         return shareLink;
     }
+
+    @Transactional(readOnly = true)
+    public boolean isConnectedUserInCoverLetterId(String userId, Long coverLetterId, ReviewRoleType role) {
+        return shareLinkRepository.findByCoverLetterId(coverLetterId)
+                .filter(ShareLink::isValid)
+                .map(ShareLink::getShareId)
+                .map(shareId -> shareLinkSessionRegistry.isConnectedUserInCoverLetter(userId, shareId, role))
+                .orElse(false);
+    }
 }

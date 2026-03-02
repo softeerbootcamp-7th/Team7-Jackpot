@@ -1,12 +1,9 @@
 package com.jackpot.narratix.domain.service;
 
-import com.jackpot.narratix.domain.entity.ShareLink;
 import com.jackpot.narratix.domain.entity.enums.ReviewRoleType;
-import com.jackpot.narratix.domain.repository.ShareLinkRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -25,8 +22,6 @@ import static com.jackpot.narratix.domain.service.ShareLinkLockManager.getLockKe
 @Component
 @RequiredArgsConstructor
 public class ShareLinkSessionRegistry {
-
-    private final ShareLinkRepository shareLinkRepository;
 
     // key: sessionId, value: SessionEntry(lockKey, userId)
     private final Map<String, SessionEntry> sessionEntries = new ConcurrentHashMap<>();
@@ -59,20 +54,6 @@ public class ShareLinkSessionRegistry {
         String ownerSessionId = lockOwners.get(lockKey);
         if (ownerSessionId == null) return Optional.empty();
         return Optional.ofNullable(sessionEntries.get(ownerSessionId)).map(SessionEntry::userId);
-    }
-
-    @Transactional(readOnly = true)
-    public boolean isConnectedUserInCoverLetter(String userId, Long coverLetterId, ReviewRoleType role) {
-        return findValidShareId(coverLetterId)
-                .flatMap(shareId -> findConnectedUserId(shareId, role))
-                .map(userId::equals)
-                .orElse(false);
-    }
-
-    private Optional<String> findValidShareId(Long coverLetterId) {
-        return shareLinkRepository.findByCoverLetterId(coverLetterId)
-                .filter(ShareLink::isValid)
-                .map(ShareLink::getShareId);
     }
 
     public List<Map.Entry<String, SessionEntry>> getAllEntries() {
