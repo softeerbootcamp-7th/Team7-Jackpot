@@ -38,7 +38,6 @@ public class ShareLinkService {
 
     private final WebSocketMessageSender webSocketMessageSender;
     private final ShareLinkLockManager shareLinkLockManager;
-    private final ShareLinkSessionRegistry shareLinkSessionRegistry;
     private final TextDeltaService textDeltaService;
     private final TextSyncService textSyncService;
 
@@ -200,7 +199,7 @@ public class ShareLinkService {
     }
 
     private void validateWebSocketConnected(String userId, String shareId, ReviewRoleType role) {
-        if (!shareLinkSessionRegistry.isConnectedUserInCoverLetter(userId, shareId, role)) {
+        if (!shareLinkLockManager.isConnectedUserInCoverLetter(userId, shareId, role)) {
             throw new BaseException(GlobalErrorCode.FORBIDDEN);
         }
     }
@@ -221,7 +220,11 @@ public class ShareLinkService {
         return shareLinkRepository.findByCoverLetterId(coverLetterId)
                 .filter(ShareLink::isValid)
                 .map(ShareLink::getShareId)
-                .map(shareId -> shareLinkSessionRegistry.isConnectedUserInCoverLetter(userId, shareId, role))
+                .map(shareId -> shareLinkLockManager.isConnectedUserInCoverLetter(userId, shareId, role))
                 .orElse(false);
+    }
+
+    public void updateActivity(String sessionId) {
+        shareLinkLockManager.updateActivity(sessionId);
     }
 }

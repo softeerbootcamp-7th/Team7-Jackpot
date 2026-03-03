@@ -161,4 +161,8 @@ public class ShareLinkLockManager {
     private String getSessionKey(String sessionId) {
         return SESSION_KEY_FORMAT.formatted(sessionId);
     }
+
+    public void updateActivity(String sessionId) {
+        sessionRegistry.updateActivity(sessionId);
+    }
 }
