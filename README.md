@@ -337,7 +337,7 @@
 - [[김승환] ‐ 실시간 첨삭 기능, 어떻게 구현할 것인가? (데이터 구조부터 OT 알고리즘까지)](<https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B김승환%5D-‐-실시간-첨삭-기능,-어떻게-구현할-것인가%3F-(데이터-구조부터-OT-알고리즘까지)>)
 - [[김승환] ‐ 동시 편집(OT) 알고리즘 구현 중 만난 버전 충돌 개선기](<https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B김승환%5D-‐-동시-편집(OT)-알고리즘-구현-중-만난-버전-충돌-개선기>)
 - [[김승환] ‐ 트랜잭션 경계 재설계와 낙관적 락을 통한 리뷰 생성 로직 개선](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B김승환%5D-‐-트랜잭션-경계-재설계와-낙관적-락을-통한-리뷰-생성-로직-개선)
-- [[김승환] 웹소켓 환경에서 Redis 분산락과 Pipelining으로 단일 접속 완벽 제어하기](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B김승환%5D-웹소켓-환경에서-Redis-분산락과-Pipelining으로-단일-접속-완벽-제어하기)
+- [[김승환] 웹소켓 다중 서버 환경에서 Redis 분산락과 Pipelining으로 단일 접속 제어하기](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B%EA%B9%80%EC%8A%B9%ED%99%98%5D-%EC%9B%B9%EC%86%8C%EC%BC%93-%EB%8B%A4%EC%A4%91-%EC%84%9C%EB%B2%84-%ED%99%98%EA%B2%BD%EC%97%90%EC%84%9C-Redis-%EB%B6%84%EC%82%B0%EB%9D%BD%EA%B3%BC-Pipelining%EC%9C%BC%EB%A1%9C-%EB%8B%A8%EC%9D%BC-%EC%A0%91%EC%86%8D-%EC%A0%9C%EC%96%B4%ED%95%98%EA%B8%B0)
 - [[김승환] WebSocket과 달리, SSE에서는 onCompletion이 왜 바로 호출되지 않았을까?](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B김승환%5D-WebSocket과-달리,-SSE에서는-onCompletion이-왜-바로-호출되지-않았을까%3F)
 
 ### 이정민 (Backend & Infra)
