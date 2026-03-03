@@ -354,6 +354,8 @@
 - [[이정민] - 스크랩 내 QnA 검색 최적화 (Full‐Text Search 도입)](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B%EC%9D%B4%EC%A0%95%EB%AF%BC%5D-%E2%80%90-%EC%8A%A4%ED%81%AC%EB%9E%A9-%EB%82%B4-QnA-%EA%B2%80%EC%83%89-%EC%B5%9C%EC%A0%81%ED%99%94-(Full%E2%80%90Text-Search-%EB%8F%84%EC%9E%85))
 - [[이정민] ‐ 스크랩 검색 오류 해결 (불용어 필터링 설정, LazyInitializationException)](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B%EC%9D%B4%EC%A0%95%EB%AF%BC%5D-%E2%80%90-%EC%8A%A4%ED%81%AC%EB%9E%A9-%EA%B2%80%EC%83%89-%EC%98%A4%EB%A5%98-%ED%95%B4%EA%B2%B0-(%EB%B6%88%EC%9A%A9%EC%96%B4-%ED%95%84%ED%84%B0%EB%A7%81-%EC%84%A4%EC%A0%95,-LazyInitializationException))
 - [[이정민] ‐ 업로드 완료 알림 중복과 누락 문제 해결하기 (feat. REQUIRES_NEW, CAS)](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B%EC%9D%B4%EC%A0%95%EB%AF%BC%5D-%E2%80%90-%EC%97%85%EB%A1%9C%EB%93%9C-%EC%99%84%EB%A3%8C-%EC%95%8C%EB%A6%BC-%EC%A4%91%EB%B3%B5%EA%B3%BC-%EB%88%84%EB%9D%BD-%EB%AC%B8%EC%A0%9C-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0--(feat.-REQUIRES_NEW,-CAS))
+- [[이정민] - AWS 인프라(Terraform) 및 Lambda 구현 코드](https://github.com/softeerbootcamp-7th/WEB-Team7-Jackpot/wiki/%5B%EC%9D%B4%EC%A0%95%EB%AF%BC%5D-AWS-%EC%9D%B8%ED%94%84%EB%9D%BC(Terraform)-%EB%B0%8F-Lambda-%EA%B5%AC%ED%98%84-%EC%BD%94%EB%93%9C)
+
 
 ## 🚀 기술적 도전 (Top Picks)
 
