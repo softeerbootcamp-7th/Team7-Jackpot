@@ -133,12 +133,17 @@ const scheduleReconnect = () => {
 
 // 메인 스레드로부터 메시지 수신 처리
 const handleMessage = (e: MessageEvent, port?: MessagePort) => {
-  const { type, payload } = e.data;
+  if (!e.data || typeof e.data !== 'object' || !('type' in e.data)) return;
+
+  const { type, payload } = e.data as {
+    type: string;
+    payload?: { token?: string };
+  };
 
   if (type === SSE_MESSAGE_TYPE.START) {
     // 메인 스레드에서 받아온 토큰을 Worker 환경의 tokenStore에 저장
     // 이렇게 해둬야 apiClient가 내부에서 getAccessToken()을 호출할 때 값을 가져올 수 있음
-    if (payload.token) {
+    if (payload?.token) {
       token = payload.token;
       setAccessToken(payload.token);
     }
