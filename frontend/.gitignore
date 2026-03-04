@@ -25,3 +25,20 @@ dist-ssr
 
 # Environments
 .env
+
+# OS generated files (System specific)
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Windows shortcuts
+*.lnk
+
+# macOS specific
+.AppleDouble
+.LSOverride
