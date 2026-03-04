@@ -28,7 +28,7 @@ let isConnected = false;
 // isConnected가 여러번 호출되는 race condition 방지하기 위한 플래그 (연결 시도를 한다는 플래그)
 let isConnecting = false;
 // 지수 백오프용 카운트
-let retryCount = 2;
+let retryCount = SSE_RECONNECT_CONFIG.INITIAL_BACKOFF_EXPONENT;
 
 // 연결된 모든 탭(port)에 메시지 브로드캐스트
 const broadcast = (data: unknown) => {
@@ -65,7 +65,7 @@ const connectSSE = async () => {
     // 연결 완료 했다는 의미
     isConnecting = false;
     // 연결 성공 시 백오프 카운트 초기화
-    retryCount = 0;
+    retryCount = SSE_RECONNECT_CONFIG.INITIAL_BACKOFF_EXPONENT;
 
     await readStream<SSEPayload>(response, (data) => {
       if (!data || !isNotificationPayload(data)) return;
@@ -110,7 +110,7 @@ const scheduleReconnect = () => {
 
   // 지수 백오프 알고리즘 (4초 ~ 최대 2^4 = 16초)
   // Jitter 적용: 지수 값이 중간 값이 되도록 딜레이 설정
-  const maxRetries = SSE_RECONNECT_CONFIG.MAX_RETRIES;
+  const maxRetries = SSE_RECONNECT_CONFIG.MAX_BACKOFF_EXPONENT;
   const currentRetry = Math.min(retryCount, maxRetries);
 
   // 기준이 되는 지수 값 (중간값) (4, 8, 16)
